@@ -1,0 +1,14 @@
+{
+  "name": "js-basics-demo",
+  "version": "0.0.1",
+  "description": "JS Basics Demo for JS course",
+  "main": "index.js",
+  "scripts": {
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://gitlab.cs.ttu.ee/magord/icd0009-2019s.git"
+  },
+  "author": "magord",
+  "license": "ISC"
+}
