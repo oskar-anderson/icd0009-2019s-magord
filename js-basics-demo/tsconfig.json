@@ -1,0 +1,26 @@
+{
+    "compilerOptions": {
+    "module": "esnext",
+    "target": "es2017",
+    "noImplicitAny": true,
+    "noImplicitThis": true,
+    "sourceMap": true,
+    "strict": true,
+    "noUnusedLocals": false,
+    "alwaysStrict": true,
+    "esModuleInterop": true,
+    "experimentalDecorators": true,
+    "removeComments": true,
+    "moduleResolution": "node",
+    "lib": [
+    "dom",
+    "esnext",
+    ]
+    },
+    "include": [
+    "global.d.ts", "./src/**/*"
+    ],
+    "exclude": [
+    "node_modules",
+    ]
+    }
