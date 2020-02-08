@@ -11,7 +11,7 @@ module.exports = {
         path: path.resolve(__dirname, 'dist')
     },
     resolve: {
-        extensons: ['.ts', '.js', '.tsx']
+        extensions: ['.ts', '.js', '.tsx']
     },
     module: {
         rules: [
