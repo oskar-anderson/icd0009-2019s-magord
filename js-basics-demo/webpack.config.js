@@ -3,6 +3,24 @@
 const path = require('path');
 
 module.exports = {
+    entry: {
+        main: './src/index.js'
+    },
+    output: {
+        filename: '[name].js',
+        path: path.resolve(__dirname, 'dist')
+    },
+    resolve: {
+        extensons: ['.ts', '.js', '.tsx']
+    },
+    module: {
+        rules: [
+            {
+                loader: 'ts-loader',
+                test: /\.tsx?$/
+            }
+        ]
+    },
     devServer: {
         port: 8090,
         compress: true,
