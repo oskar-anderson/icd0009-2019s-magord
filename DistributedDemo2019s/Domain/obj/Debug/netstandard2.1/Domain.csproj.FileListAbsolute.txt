@@ -6,3 +6,11 @@ C:\Users\marko\DistributedCourse\DistributedDemo2019s\Domain\obj\Debug\netstanda
 C:\Users\marko\DistributedCourse\DistributedDemo2019s\Domain\obj\Debug\netstandard2.1\Domain.AssemblyInfo.cs
 C:\Users\marko\DistributedCourse\DistributedDemo2019s\Domain\obj\Debug\netstandard2.1\Domain.dll
 C:\Users\marko\DistributedCourse\DistributedDemo2019s\Domain\obj\Debug\netstandard2.1\Domain.pdb
+C:\Users\marko\icd0009-2019s\DistributedDemo2019s\Domain\bin\Debug\netstandard2.1\Domain.deps.json
+C:\Users\marko\icd0009-2019s\DistributedDemo2019s\Domain\bin\Debug\netstandard2.1\Domain.dll
+C:\Users\marko\icd0009-2019s\DistributedDemo2019s\Domain\bin\Debug\netstandard2.1\Domain.pdb
+C:\Users\marko\icd0009-2019s\DistributedDemo2019s\Domain\obj\Debug\netstandard2.1\Domain.csprojAssemblyReference.cache
+C:\Users\marko\icd0009-2019s\DistributedDemo2019s\Domain\obj\Debug\netstandard2.1\Domain.AssemblyInfoInputs.cache
+C:\Users\marko\icd0009-2019s\DistributedDemo2019s\Domain\obj\Debug\netstandard2.1\Domain.AssemblyInfo.cs
+C:\Users\marko\icd0009-2019s\DistributedDemo2019s\Domain\obj\Debug\netstandard2.1\Domain.dll
+C:\Users\marko\icd0009-2019s\DistributedDemo2019s\Domain\obj\Debug\netstandard2.1\Domain.pdb

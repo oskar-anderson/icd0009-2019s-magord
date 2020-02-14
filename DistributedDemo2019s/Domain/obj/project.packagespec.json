@@ -1,10 +1,10 @@
 ﻿{
   "version": "1.0.0",
   "restore": {
-    "projectUniqueName": "C:\\Users\\marko\\DistributedCourse\\DistributedDemo2019s\\Domain\\Domain.csproj",
+    "projectUniqueName": "C:\\Users\\marko\\icd0009-2019s\\DistributedDemo2019s\\Domain\\Domain.csproj",
     "projectName": "Domain",
-    "projectPath": "C:\\Users\\marko\\DistributedCourse\\DistributedDemo2019s\\Domain\\Domain.csproj",
-    "outputPath": "C:\\Users\\marko\\DistributedCourse\\DistributedDemo2019s\\Domain\\obj\\",
+    "projectPath": "C:\\Users\\marko\\icd0009-2019s\\DistributedDemo2019s\\Domain\\Domain.csproj",
+    "outputPath": "C:\\Users\\marko\\icd0009-2019s\\DistributedDemo2019s\\Domain\\obj\\",
     "projectStyle": "PackageReference",
     "fallbackFolders": [
       "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"

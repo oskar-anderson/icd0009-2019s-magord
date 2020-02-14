@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\marko\\DistributedCourse\\DistributedDemo2019s\\WebApp\\WebApp.csproj": {}
+    "C:\\Users\\marko\\icd0009-2019s\\DistributedDemo2019s\\WebApp\\WebApp.csproj": {}
   },
   "projects": {
-    "C:\\Users\\marko\\DistributedCourse\\DistributedDemo2019s\\Domain\\Domain.csproj": {
+    "C:\\Users\\marko\\icd0009-2019s\\DistributedDemo2019s\\Domain\\Domain.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\marko\\DistributedCourse\\DistributedDemo2019s\\Domain\\Domain.csproj",
+        "projectUniqueName": "C:\\Users\\marko\\icd0009-2019s\\DistributedDemo2019s\\Domain\\Domain.csproj",
         "projectName": "Domain",
-        "projectPath": "C:\\Users\\marko\\DistributedCourse\\DistributedDemo2019s\\Domain\\Domain.csproj",
+        "projectPath": "C:\\Users\\marko\\icd0009-2019s\\DistributedDemo2019s\\Domain\\Domain.csproj",
         "packagesPath": "C:\\Users\\marko\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\marko\\DistributedCourse\\DistributedDemo2019s\\Domain\\obj\\",
+        "outputPath": "C:\\Users\\marko\\icd0009-2019s\\DistributedDemo2019s\\Domain\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
@@ -53,24 +53,18 @@
             "net48"
           ],
           "assetTargetFallback": true,
-          "warn": true,
-          "frameworkReferences": {
-            "NETStandard.Library": {
-              "privateAssets": "all"
-            }
-          },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.1.101\\RuntimeIdentifierGraph.json"
+          "warn": true
         }
       }
     },
-    "C:\\Users\\marko\\DistributedCourse\\DistributedDemo2019s\\WebApp\\WebApp.csproj": {
+    "C:\\Users\\marko\\icd0009-2019s\\DistributedDemo2019s\\WebApp\\WebApp.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\marko\\DistributedCourse\\DistributedDemo2019s\\WebApp\\WebApp.csproj",
+        "projectUniqueName": "C:\\Users\\marko\\icd0009-2019s\\DistributedDemo2019s\\WebApp\\WebApp.csproj",
         "projectName": "WebApp",
-        "projectPath": "C:\\Users\\marko\\DistributedCourse\\DistributedDemo2019s\\WebApp\\WebApp.csproj",
+        "projectPath": "C:\\Users\\marko\\icd0009-2019s\\DistributedDemo2019s\\WebApp\\WebApp.csproj",
         "packagesPath": "C:\\Users\\marko\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\marko\\DistributedCourse\\DistributedDemo2019s\\WebApp\\obj\\",
+        "outputPath": "C:\\Users\\marko\\icd0009-2019s\\DistributedDemo2019s\\WebApp\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
@@ -87,8 +81,8 @@
         "frameworks": {
           "netcoreapp3.1": {
             "projectReferences": {
-              "C:\\Users\\marko\\DistributedCourse\\DistributedDemo2019s\\Domain\\Domain.csproj": {
-                "projectPath": "C:\\Users\\marko\\DistributedCourse\\DistributedDemo2019s\\Domain\\Domain.csproj"
+              "C:\\Users\\marko\\icd0009-2019s\\DistributedDemo2019s\\Domain\\Domain.csproj": {
+                "projectPath": "C:\\Users\\marko\\icd0009-2019s\\DistributedDemo2019s\\Domain\\Domain.csproj"
               }
             }
           }
@@ -144,16 +138,7 @@
             "net48"
           ],
           "assetTargetFallback": true,
-          "warn": true,
-          "frameworkReferences": {
-            "Microsoft.AspNetCore.App": {
-              "privateAssets": "none"
-            },
-            "Microsoft.NETCore.App": {
-              "privateAssets": "all"
-            }
-          },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.1.101\\RuntimeIdentifierGraph.json"
+          "warn": true
         }
       }
     }

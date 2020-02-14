@@ -4,8 +4,8 @@
   "description": "JS Basics Demo for JS course",
   "main": "index.js",
   "scripts": {
-    "build" : "webpack --mode production",
-    "start" : "webpack-dev-server --mode development --progress --color"
+    "build": "webpack --mode production",
+    "start": "webpack-dev-server --mode development --progress --color"
   },
   "repository": {
     "type": "git",

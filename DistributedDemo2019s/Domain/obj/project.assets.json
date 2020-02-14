@@ -116,11 +116,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\marko\\DistributedCourse\\DistributedDemo2019s\\Domain\\Domain.csproj",
+      "projectUniqueName": "C:\\Users\\marko\\icd0009-2019s\\DistributedDemo2019s\\Domain\\Domain.csproj",
       "projectName": "Domain",
-      "projectPath": "C:\\Users\\marko\\DistributedCourse\\DistributedDemo2019s\\Domain\\Domain.csproj",
+      "projectPath": "C:\\Users\\marko\\icd0009-2019s\\DistributedDemo2019s\\Domain\\Domain.csproj",
       "packagesPath": "C:\\Users\\marko\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\marko\\DistributedCourse\\DistributedDemo2019s\\Domain\\obj\\",
+      "outputPath": "C:\\Users\\marko\\icd0009-2019s\\DistributedDemo2019s\\Domain\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
@@ -162,13 +162,7 @@
           "net48"
         ],
         "assetTargetFallback": true,
-        "warn": true,
-        "frameworkReferences": {
-          "NETStandard.Library": {
-            "privateAssets": "all"
-          }
-        },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.1.101\\RuntimeIdentifierGraph.json"
+        "warn": true
       }
     }
   }
