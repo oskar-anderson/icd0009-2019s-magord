@@ -8,3 +8,5 @@ let obj_a = {
 }
 
 obj_a.printName();
+
+console.log("Hello !!!!!!!")
