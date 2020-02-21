@@ -17,7 +17,11 @@
     },
     "frameworks": {
       "netcoreapp3.1": {
-        "projectReferences": {}
+        "projectReferences": {
+          "C:\\Users\\marko\\icd0009-2019s\\HomeProject\\FoodOrderingSolution\\DAL.App.EF\\DAL.App.EF.csproj": {
+            "projectPath": "C:\\Users\\marko\\icd0009-2019s\\HomeProject\\FoodOrderingSolution\\DAL.App.EF\\DAL.App.EF.csproj"
+          }
+        }
       }
     },
     "warningProperties": {
@@ -46,6 +50,10 @@
           "version": "[3.1.1, )"
         },
         "Microsoft.EntityFrameworkCore.Tools": {
+          "target": "Package",
+          "version": "[3.1.1, )"
+        },
+        "Pomelo.EntityFrameworkCore.MySql": {
           "target": "Package",
           "version": "[3.1.1, )"
         }
