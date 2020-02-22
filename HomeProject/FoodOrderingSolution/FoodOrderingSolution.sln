@@ -13,6 +13,10 @@ ProjectSection(SolutionItems) = preProject
 	Directory.Build.props = Directory.Build.props
 EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Contracts.DAL.Base", "Contracts.DAL.Base\Contracts.DAL.Base.csproj", "{2F8BD455-4FB7-48DE-9EA0-86976303E9D7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DAL.Base", "DAL.Base\DAL.Base.csproj", "{7F728974-7E1D-4A18-9E77-C32AE8C26E09}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -31,5 +35,13 @@ Global
 		{A9BC9908-9170-46AC-8870-642C1231034A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A9BC9908-9170-46AC-8870-642C1231034A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A9BC9908-9170-46AC-8870-642C1231034A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2F8BD455-4FB7-48DE-9EA0-86976303E9D7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2F8BD455-4FB7-48DE-9EA0-86976303E9D7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2F8BD455-4FB7-48DE-9EA0-86976303E9D7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2F8BD455-4FB7-48DE-9EA0-86976303E9D7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7F728974-7E1D-4A18-9E77-C32AE8C26E09}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7F728974-7E1D-4A18-9E77-C32AE8C26E09}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7F728974-7E1D-4A18-9E77-C32AE8C26E09}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7F728974-7E1D-4A18-9E77-C32AE8C26E09}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

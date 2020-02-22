@@ -1,23 +1,25 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+using DAL.Base;
 
 namespace Domain
 {
-    public class Restaurant
+    public class Restaurant : DomainEntityMetadata
     {
-        public int RestaurantId { get; set; }
         [MaxLength(256)] [MinLength(1)] public string Name { get; set; } = default!;
 
         [MaxLength(512)] [MinLength(1)] public string Address { get; set; } = default!;
 
-        public DateTime OpenedFrom { get; set; }
-        
-        public DateTime ClosedFrom { get; set; }
+        public DateTime OpenedFrom { get; set; } = default!;
 
-        public int AreaId { get; set; }
+        public DateTime ClosedFrom { get; set; } = default!;
+
+        [MaxLength(36)] public string AreaId { get; set; } = default!;
         public Area? Area { get; set; }
-        
-        
+
+        public ICollection<PersonInRestaurant>? PersonInRestaurants { get; set; }
+
+        public ICollection<Order>? Orders { get; set; }
     }
 }

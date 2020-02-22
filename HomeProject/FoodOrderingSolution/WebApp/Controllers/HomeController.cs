@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using WebApp.Models;
@@ -21,6 +23,14 @@ namespace WebApp.Controllers
         public IActionResult Index()
         {
             return View();
+        }
+        
+        // DUMMY METHOD - REMOVE AFTER TRYING
+        // [AllowAnonymous] - Allows access to non users
+        [Authorize] // This means - only the logged in user can access it
+        public string Test()
+        {
+            return "Test it is!" + User.Identity.Name;
         }
 
         public IActionResult Privacy()
