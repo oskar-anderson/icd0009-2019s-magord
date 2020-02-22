@@ -18,6 +18,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\DAL.App.EF\DAL.App.EF.csproj" />
+      <ProjectReference Include="..\Extensions\Extensions.csproj" />
     </ItemGroup>
 
     <ItemGroup>
