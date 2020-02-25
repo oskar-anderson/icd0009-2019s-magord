@@ -25,7 +25,12 @@ namespace WebApp.Controllers
         // GET: Bills
         public async Task<IActionResult> Index()
         {
-            var appDbContext = _context.Bills.Include(b => b.AppUser).Include(b => b.Order).Include(b => b.Person);
+            var appDbContext = _context.Bills
+                .Include(b => b.AppUser)
+                .Include(b => b.Order)
+                .Include(b => b.Person)
+                .Where(b => b.AppUserId == User.UserId());
+            
             return View(await appDbContext.ToListAsync());
         }
 
