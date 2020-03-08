@@ -1,57 +1,20 @@
-let app = "5";
-app.innerHTML = "fido";
+import {Calculator} from './calculator.js';
 
+let calcBrain = new Calculator();
 
+let calculator = document.querySelector('#calculator');
+let display = calculator.querySelector('.js-display');
+let numberButtons = calculator.querySelectorAll('.js-number')
 
+// Set the initial display value
+display.innerHTML = calcBrain.display;
 
+function numberPressed(event) {
+    let key = this.dataset.value;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-/*let appContainer = document.body.firstElementChild;
-let innerDiv = appContainer.firstElementChild;
-
-console.dir(appContainer)
-
-console.log(this);
-
-appContainer.onclick = function(...params) {
-    console.log(params)
-    console.log(this);
-    alert('in code');
+    display.innerHTML = calcBrain.handleKey(key);
 }
 
-innerDiv.onclick = function (...params) {
-    alert('in inner div');
+for (const numberButton of numberButtons) {
+    numberButton.onclick = numberPressed
 }
-
-
-//document.body.append(appContainer);
-*/
-
-/*
-for (let index = 0; index < document.body.childNodes.length; index++) {
-    const element = document.body.childNodes[index]
-    console.log(element)
-    
-}
-*/
-
-
-/*window.document.body.style.background = "#0F0";
-
-setTimeout(
-    () => window.document.body.style.background = "#00F"
-    ,2000
-)
-*/

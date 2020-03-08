@@ -1,13 +1,125 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
-    <title>JS Basics</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0"/>
+  <title>Calculator - Materialize</title>
+
+  <!-- CSS  -->
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link href="css/materialize.css" type="text/css" rel="stylesheet" media="screen,projection"/>
+  <link href="css/style.css" type="text/css" rel="stylesheet" media="screen,projection"/>
 </head>
 <body>
-    <div id ="app"<div id ="second"></div>>first</div>
-    
-    <script src="main.js"></script>
-</body>
+  <nav class="light-blue lighten-1" role="navigation">
+    <div class="nav-wrapper container"><a id="logo-container" href="#" class="brand-logo">Calculator</a>
+
+      
+      
+    </div>
+  </nav>
+
+
+  <div class="container">
+    <div class="section" id="calculator">
+
+      <!--   Display   -->
+      <div class="row">
+        <div class="col s12 m12 right-align grey lighten-1">
+          <h1 class="js-display">-</h1>
+        </div>
+      </div>
+
+      <!-- Row 1-->
+      <div class="row">
+        <div class="col s3 m3">
+          <a class="waves-effect waves-light btn green">AC</a>
+        </div>
+        <div class="col s3 m3">
+          <a class="waves-effect waves-light btn green">+/-</a>
+        </div>
+        <div class="col s3 m3">
+          <a class="waves-effect waves-light btn green">%</a>
+        </div>
+        <div class="col s3 m3">
+          <a class="waves-effect waves-light btn green">/</a>
+        </div>
+      </div>
+      <!-- Row 2-->
+      <div class="row">
+        <div class="col s3 m3">
+          <a class="waves-effect waves-light btn grey darken-1 js-number" data-value="7">7</a>
+        </div>
+        <div class="col s3 m3">
+          <a class="waves-effect waves-light btn grey darken-1 js-number" data-value="8">8</a>
+        </div>
+        <div class="col s3 m3">
+          <a class="waves-effect waves-light btn grey darken-1 js-number" data-value="9">9</a>
+        </div>
+        <div class="col s3 m3">
+          <a class="waves-effect waves-light btn green">*</a>
+        </div>
+      </div>
+      <!-- Row 3-->
+      <div class="row">
+        <div class="col s3 m3">
+          <a class="waves-effect waves-light btn grey darken-1 js-number" data-value="4">4</a>
+        </div>
+        <div class="col s3 m3">
+          <a class="waves-effect waves-light btn grey darken-1 js-number" data-value="5">5</a>
+        </div>
+        <div class="col s3 m3">
+          <a class="waves-effect waves-light btn grey darken-1 js-number" data-value="6">6</a>
+        </div>
+        <div class="col s3 m3">
+          <a class="waves-effect waves-light btn green">-</a>
+        </div>
+      </div>
+      <!-- Row 4-->
+      <div class="row">
+        <div class="col s3 m3">
+          <a class="waves-effect waves-light btn grey darken-1 js-number" data-value="1">1</a>
+        </div>
+        <div class="col s3 m3">
+          <a class="waves-effect waves-light btn grey darken-1 js-number" data-value="2">2</a>
+        </div>
+        <div class="col s3 m3">
+          <a class="waves-effect waves-light btn grey darken-1 js-number" data-value="3">3</a>
+        </div>
+        <div class="col s3 m3">
+          <a class="waves-effect waves-light btn green">+</a>
+        </div>
+      </div>
+      <!-- Row 5-->
+      <div class="row">
+        <div class="col s6 m6">
+          <a class="waves-effect waves-light btn grey darken-1 js-number" data-value="0">0</a>
+        </div>
+        <div class="col s3 m3">
+          <a class="waves-effect waves-light btn grey darken-1 ">,</a>
+        </div>
+        <div class="col s3 m3">
+          <a class="waves-effect waves-light btn green">=</a>
+        </div>
+      </div>
+
+    </div>
+    <br><br>
+  </div>
+
+  <footer class="page-footer orange">
+    <div class="footer-copyright">
+      <div class="container">
+      Made by magord
+      </div>
+    </div>
+  </footer>
+
+
+  <!--  Scripts-->
+  <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+  <script src="js/materialize.js"></script>
+  <script src="main.js"></script>
+
+  </body>
 </html>
