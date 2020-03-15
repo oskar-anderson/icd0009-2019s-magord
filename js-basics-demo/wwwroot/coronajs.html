@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0" />
+  <title>Corona JS - Materialize</title>
+
+  <!-- CSS  -->
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link href="css/materialize.css" type="text/css" rel="stylesheet" media="screen,projection" />
+  <link href="css/style.css" type="text/css" rel="stylesheet" media="screen,projection" />
+</head>
+
+<body>
+
+  <nav class="light-blue lighten-1" role="navigation">
+    <div class="nav-wrapper container">
+      <a id="logo-container" href="#" class="brand-logo">JS Demos</a>
+      <ul id="nav-mobile" class="right hide-on-med-and-down">
+        <li><a href="calculator.html">Calculator</a></li>
+        <li><a href="coronajs.html">CoronaJS</a></li>
+      </ul>
+    </div>
+  </nav>
+
+
+  <div class="container">
+    <div class="section">
+      <div class="row">
+        <form class="col s12">
+
+          <div class="row">
+            <div class="input-field col s12">
+              <input id="name" type="text" data-model="name" />
+              <label for="name">Enter your name:</label>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="input-field col s12">
+              <input id="title" type="text" data-model="title" />
+              <label for="title">Enter your title:</label>
+            </div>
+          </div>
+
+        </form>
+      </div>
+
+      <div>
+        <h2 data-binding="name">-</h2>
+        <h3 data-binding="title">-</h3>
+      </div>
+      <div>
+        <a href="javascript:{}" class="waves-effect waves-light btn js-reset-data">Reset data!</a>
+      </div>
+    </div>
+    <br><br>
+  </div>
+
+  <footer class="page-footer orange">
+    <div class="footer-copyright">
+      <div class="container">
+        Made by magord <a href="https://materializecss.com/" class="grey-text text-lighten-4 right">https://materializecss.com/</a>
+      </div>
+    </div>
+  </footer>
+
+
+
+  <!--  Scripts-->
+  <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+  <script src="js/materialize.js"></script>
+  <script src="coronajs.js"></script>
+
+</body>
+
+</html>

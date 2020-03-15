@@ -1,119 +1,110 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0"/>
-  <title>Calculator - Materialize</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0" />
+  <title>Dara Game - Materialize</title>
 
   <!-- CSS  -->
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <link href="css/materialize.css" type="text/css" rel="stylesheet" media="screen,projection"/>
   <link href="css/style.css" type="text/css" rel="stylesheet" media="screen,projection"/>
 </head>
-<body>
-  <nav class="light-blue lighten-1" role="navigation">
-    <div class="nav-wrapper container"><a id="logo-container" href="#" class="brand-logo">Calculator</a>
 
-      
-      
+<body>
+  <nav class="green" role="navigation">
+    <div class="nav-wrapper container"><a id="logo-container" href="#" class="brand-logo center">Dara</a>
     </div>
   </nav>
 
-
   <div class="container">
-    <div class="section" id="calculator">
-
-      <!--   Display   -->
-      <div class="row">
-        <div class="col s12 m12 right-align grey lighten-1">
-          <h1 class="js-display">-</h1>
-        </div>
+    <!-- Buttons-->
+    <h5>Choose gamemode!</h5>
+    <div class="section" id="dara">
+      <a class="waves-effect waves-light blue btn" id="1player"><i class="material-icons left">looks_one</i>Player</a>
+      <a class="waves-effect waves-light blue btn" id ="2player"><i class="material-icons left">looks_two</i>Player</a>
+      <a class="waves-effect waves-light blue btn" id="0player"><i class="material-icons left">android</i>CPU Game</a>
+      <div>
+        <h5>Choose who starts:</h5>
+          <p>
+            <label>
+              <input id="rd1" name="group1" type="radio" value="player1" checked="checked" />
+              <span>Player 1</span>
+            </label>
+          </p>
+          <p>
+            <label>
+              <input id="rd2" name="group1" type="radio" value="player2"/>
+              <span>Player 2</span>
+            </label>
+          </p>
       </div>
-
-      <!-- Row 1-->
-      <div class="row">
-        <div class="col s3 m3">
-          <a class="waves-effect waves-light btn green">AC</a>
-        </div>
-        <div class="col s3 m3">
-          <a class="waves-effect waves-light btn green">+/-</a>
-        </div>
-        <div class="col s3 m3">
-          <a class="waves-effect waves-light btn green">%</a>
-        </div>
-        <div class="col s3 m3">
-          <a class="waves-effect waves-light btn green">/</a>
-        </div>
-      </div>
-      <!-- Row 2-->
-      <div class="row">
-        <div class="col s3 m3">
-          <a class="waves-effect waves-light btn grey darken-1 js-number" data-value="7">7</a>
-        </div>
-        <div class="col s3 m3">
-          <a class="waves-effect waves-light btn grey darken-1 js-number" data-value="8">8</a>
-        </div>
-        <div class="col s3 m3">
-          <a class="waves-effect waves-light btn grey darken-1 js-number" data-value="9">9</a>
-        </div>
-        <div class="col s3 m3">
-          <a class="waves-effect waves-light btn green">*</a>
-        </div>
-      </div>
-      <!-- Row 3-->
-      <div class="row">
-        <div class="col s3 m3">
-          <a class="waves-effect waves-light btn grey darken-1 js-number" data-value="4">4</a>
-        </div>
-        <div class="col s3 m3">
-          <a class="waves-effect waves-light btn grey darken-1 js-number" data-value="5">5</a>
-        </div>
-        <div class="col s3 m3">
-          <a class="waves-effect waves-light btn grey darken-1 js-number" data-value="6">6</a>
-        </div>
-        <div class="col s3 m3">
-          <a class="waves-effect waves-light btn green">-</a>
-        </div>
-      </div>
-      <!-- Row 4-->
-      <div class="row">
-        <div class="col s3 m3">
-          <a class="waves-effect waves-light btn grey darken-1 js-number" data-value="1">1</a>
-        </div>
-        <div class="col s3 m3">
-          <a class="waves-effect waves-light btn grey darken-1 js-number" data-value="2">2</a>
-        </div>
-        <div class="col s3 m3">
-          <a class="waves-effect waves-light btn grey darken-1 js-number" data-value="3">3</a>
-        </div>
-        <div class="col s3 m3">
-          <a class="waves-effect waves-light btn green">+</a>
-        </div>
-      </div>
-      <!-- Row 5-->
-      <div class="row">
-        <div class="col s6 m6">
-          <a class="waves-effect waves-light btn grey darken-1 js-number" data-value="0">0</a>
-        </div>
-        <div class="col s3 m3">
-          <a class="waves-effect waves-light btn grey darken-1 ">,</a>
-        </div>
-        <div class="col s3 m3">
-          <a class="waves-effect waves-light btn green">=</a>
-        </div>
-      </div>
-
     </div>
-    <br><br>
+  </div>
+
+  <div class="main">
+
+    <!--ondragstart="onDragStart(event)" ondragover="onDragOver(event)" ondrop="onDrop(event)"
+
+    <!-- Game board -->
+    <div class="container2">
+      <div class="q r0 c0" id="q0"></div>
+      <div class="q r0 c1" id="q1"></div>
+      <div class="q r0 c2" id="q2"></div>
+      <div class="q r0 c3" id="q3"></div>
+      <div class="q r0 c4" id="q4"></div>
+      <div class="q r0 c5" id="q5"></div>
+
+      <div class="q r1 c0" id="q6"></div>
+      <div class="q r1 c1" id="q7"></div>
+      <div class="q r1 c2" id="q8"></div>
+      <div class="q r1 c3" id="q9"></div>
+      <div class="q r1 c4" id="q10"></div>
+      <div class="q r1 c5" id="q11"></div>
+
+      <div class="q r2 c0" id="q12"></div>
+      <div class="q r2 c1" id="q13"></div>
+      <div class="q r2 c2" id="q14"></div>
+      <div class="q r2 c3" id="q15"></div>
+      <div class="q r2 c4" id="q16"></div>
+      <div class="q r2 c5" id="q17"></div>
+
+      <div class="q r3 c0" id="q18"></div>
+      <div class="q r3 c1" id="q19"></div>
+      <div class="q r3 c2" id="q20"></div>
+      <div class="q r3 c3" id="q21"></div>
+      <div class="q r3 c4" id="q22"></div>
+      <div class="q r3 c5" id="q23"></div>
+
+      <div class="q r4 c0" id="q24"></div>
+      <div class="q r4 c1" id="q25"></div>
+      <div class="q r4 c2" id="q26"></div>
+      <div class="q r4 c3" id="q27"></div>
+      <div class="q r4 c4" id="q28"></div>
+      <div class="q r4 c5" id="q29"></div>
+    </div>
+    
+
+    
+
+    <div class="gameHud">
+      <div id="gamePhase"></div>
+      <div id="whosTurn"></div>
+      <div class="tokenArea">Player 1 tokens: <p id="player1Token"></p>
+        Player 2 tokens: <p id="player2Token"></p>
+       </div>
+    </div>
   </div>
 
   <footer class="page-footer orange">
     <div class="footer-copyright">
-      <div class="container">
-      Made by magord
+      <div class="container center-align">
+        <a class="white-text">Made by magord 2020</a>
       </div>
     </div>
   </footer>
+  </div>
 
 
   <!--  Scripts-->
@@ -121,5 +112,6 @@
   <script src="js/materialize.js"></script>
   <script src="main.js"></script>
 
-  </body>
+</body>
+
 </html>

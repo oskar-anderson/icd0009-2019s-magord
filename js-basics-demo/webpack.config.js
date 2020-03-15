@@ -4,7 +4,9 @@ const path = require('path');
 
 module.exports = {
     entry: {
-        main: './src/index.js'
+        main: './src/index.js',
+        coronajs: './src/coronajs.ts',
+        calculatorjs: './src/calculatorjs.ts'
     },
     output: {
         filename: '[name].js',
