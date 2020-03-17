@@ -57,7 +57,7 @@ function toggleTurn() {
 
 function clickFn(event) {
     if (!(emptyQs().includes(event.target))) {
-        document.getElementsByClassName('q').removeEventListener('click', clickFn());
+        return "";
     }
     if (Player1.myTurn == true) {
         player1TakeTurn(qNumId(event.target), 'x');
@@ -161,7 +161,20 @@ function displayGamePhase() {
 
 function makeElementsDraggable() {
     grid().forEach((_qEl) => {
-        _qEl.setAttribute('draggable', true),
+        if(Player1.myTurn == true) {
+            if(_qEl.innerText == 'x') {
+                _qEl.setAttribute('draggable', true)
+            } else {
+                _qEl.setAttribute('draggable', false)
+            }
+        }
+        else {
+            if(_qEl.innerText == 'o') {
+                _qEl.setAttribute('draggable', true)
+            } else {
+                _qEl.setAttribute('draggable', false)
+            }
+        }
         _qEl.addEventListener('dragstart', onDragStart),
         _qEl.addEventListener('dragover', onDragOver)
         _qEl.addEventListener('drop', onDrop),
@@ -169,6 +182,7 @@ function makeElementsDraggable() {
         }
     )
 }
+
 
 let sameQuad = false;
 
@@ -179,6 +193,16 @@ function onDragEnd(event) {
 }
 
 function onDragStart(event) {
+
+    let nearbyQuads = getNearbyQuads(event.target);
+
+    grid().forEach((_qEl) => {
+        if(!(nearbyQuads.includes(_qEl))) {
+            _qEl.removeEventListener('drop', onDrop);
+        }
+
+    })
+
     event.dataTransfer.setData('text', event.target.innerText);
   }
 
@@ -191,13 +215,83 @@ function onDrop(event) {
     const data = event.dataTransfer.getData('text');
     if(event.target.innerText != '') {
         sameQuad = true;
-        alert("Can't drop here!")
+        alert("Can't drop there!");
+    } /*else if(!(getNearbyQuads(event.target).includes(event.target))) {
+        sameQuad = true;
+        alert("Can't drop there!");
+        return "";
     }
+    */
     else {
         sameQuad = false;
         event.target.innerText = data;
+        getNearbyQuads(event.target);
         toggleTurn();
+        makeElementsDraggable();
     displayWhosTurn();
     }
     event.dataTransfer.clearData();
+
+    grid().forEach((_qEl) => {
+        _qEl.addEventListener('drop', onDrop);
+    })
 }
+
+
+function getNearbyQuads(targetEl) {
+
+    // PUT ALL NEARBY QUADS TO LIST AND RETURN
+    // PUT NEXT QUAD ID AND PREVIOUS ID TO LIST
+    // PUT +6 QUAD ID and -6 QUAD ID TO LIST
+    let nearbyQuads = [];
+    
+    grid().forEach((_qEl) => {
+        
+
+        if(getLeftColumnQuads().includes(targetEl)) {
+            if((qNumId(targetEl) + 1 == qNumId(_qEl)) || (qNumId(targetEl) - 6 == qNumId(_qEl)) || (qNumId(targetEl) + 6 == qNumId(_qEl))){
+                nearbyQuads.push(_qEl);
+            }
+        }
+        else if(getRightColumnQuads().includes(targetEl)) {
+            if((qNumId(targetEl) - 1 == qNumId(_qEl)) || (qNumId(targetEl) - 6 == qNumId(_qEl)) || (qNumId(targetEl) + 6 == qNumId(_qEl))){
+                nearbyQuads.push(_qEl);
+            }
+        }
+        else {
+            if((qNumId(targetEl) - 1 == qNumId(_qEl)) || (qNumId(targetEl) + 1 == qNumId(_qEl)) || (qNumId(targetEl) - 6 == qNumId(_qEl)) || (qNumId(targetEl) + 6 == qNumId(_qEl))) {
+                nearbyQuads.push(_qEl);
+            }
+        }
+    })
+    console.log(nearbyQuads);
+}
+
+function getLeftColumnQuads() {
+    let leftQuads = [];
+
+    grid().forEach((_qEl) => {
+        if (qNumId(_qEl) == 0 || qNumId(_qEl) == 6 || qNumId(_qEl) == 12 || qNumId(_qEl) == 18 || qNumId(_qEl) == 24) {
+            leftQuads.push(_qEl);
+        }
+    })
+    return leftQuads;
+}
+
+function getRightColumnQuads() {
+    let rightQuads = [];
+
+    grid().forEach((_qEl) => {
+        if(qNumId(_qEl) == 5 || qNumId(_qEl) == 11 || qNumId(_qEl) == 17 || qNumId(_qEl) == 23 || qNumId(_qEl) == 29) {
+            rightQuads.push(_qEl);
+        }
+    })
+    return rightQuads;
+}
+
+
+/*
+function checkIfThreeButtonsInRow() {
+
+}
+*/
