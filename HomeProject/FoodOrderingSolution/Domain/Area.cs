@@ -4,7 +4,7 @@ using DAL.Base;
 
 namespace Domain
 {
-    public class Area : DomainEntityMetadata
+    public class Area : DomainEntity
     {
         // If can be null then -> public string? Name { get; set; }
         // If cannot be null then -> public string Name { get; set; } = default!;

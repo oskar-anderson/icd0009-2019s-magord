@@ -5,7 +5,7 @@ using DAL.Base;
 
 namespace Domain
 {
-    public class Restaurant : DomainEntityMetadata
+    public class Restaurant : DomainEntity
     {
         [MaxLength(256)] [MinLength(1)] public string Name { get; set; } = default!;
 

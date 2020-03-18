@@ -1,14 +1,13 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using Contracts.DAL.Base;
 using Microsoft.AspNetCore.Identity;
 
 namespace Domain.Identity
 {
-    public class AppUser : IdentityUser
+    public class AppUser : IdentityUser<Guid>
     {
-        [MaxLength(36)] public override string Id { get; set; } = default!;
-
         [MaxLength(36)]
         public string? PersonId { get; set; }
         public Person? Person { get; set; }

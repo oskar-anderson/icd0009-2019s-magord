@@ -4,7 +4,7 @@ using DAL.Base;
 
 namespace Domain
 {
-    public class PersonInRestaurant : DomainEntityMetadata
+    public class PersonInRestaurant : DomainEntity
     {
         public DateTime From { get; set; } = default!;
 

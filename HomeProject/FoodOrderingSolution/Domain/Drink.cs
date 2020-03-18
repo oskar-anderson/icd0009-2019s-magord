@@ -5,7 +5,7 @@ using DAL.Base;
 
 namespace Domain
 {
-    public class Drink : DomainEntityMetadata
+    public class Drink : DomainEntity
     {
         public int Size { get; set; } = default!;
 

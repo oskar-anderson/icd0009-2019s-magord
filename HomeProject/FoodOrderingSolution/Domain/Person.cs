@@ -6,7 +6,7 @@ using Domain.Identity;
 
 namespace Domain
 {
-    public class Person : DomainEntityMetadata
+    public class Person : DomainEntity
     {
         [MaxLength(128)] [MinLength(1)] public string FirstName { get; set; } = default!;
         

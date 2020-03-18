@@ -4,7 +4,7 @@ using DAL.Base;
 
 namespace Domain
 {
-    public class Price : DomainEntityMetadata
+    public class Price : DomainEntity
     {
         public DateTime From { get; set; } = default!;
 

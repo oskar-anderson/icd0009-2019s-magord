@@ -29,23 +29,28 @@
             </div>
             <div class="form-group">
                 <label asp-for="IngredientId" class="control-label"></label>
-                <select asp-for="IngredientId" class ="form-control" asp-items="ViewBag.IngredientId"></select>
+                <input asp-for="IngredientId" class="form-control" />
+                <span asp-validation-for="IngredientId" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="FoodId" class="control-label"></label>
-                <select asp-for="FoodId" class ="form-control" asp-items="ViewBag.FoodId"></select>
+                <input asp-for="FoodId" class="form-control" />
+                <span asp-validation-for="FoodId" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="DrinkId" class="control-label"></label>
-                <select asp-for="DrinkId" class ="form-control" asp-items="ViewBag.DrinkId"></select>
+                <input asp-for="DrinkId" class="form-control" />
+                <span asp-validation-for="DrinkId" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="OrderId" class="control-label"></label>
-                <select asp-for="OrderId" class ="form-control" asp-items="ViewBag.OrderId"></select>
+                <input asp-for="OrderId" class="form-control" />
+                <span asp-validation-for="OrderId" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="CampaignId" class="control-label"></label>
-                <select asp-for="CampaignId" class ="form-control" asp-items="ViewBag.CampaignId"></select>
+                <input asp-for="CampaignId" class="form-control" />
+                <span asp-validation-for="CampaignId" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="CreatedBy" class="control-label"></label>
@@ -58,19 +63,14 @@
                 <span asp-validation-for="CreatedAt" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="DeletedBy" class="control-label"></label>
-                <input asp-for="DeletedBy" class="form-control" />
-                <span asp-validation-for="DeletedBy" class="text-danger"></span>
+                <label asp-for="ChangedBy" class="control-label"></label>
+                <input asp-for="ChangedBy" class="form-control" />
+                <span asp-validation-for="ChangedBy" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="DeletedAt" class="control-label"></label>
-                <input asp-for="DeletedAt" class="form-control" />
-                <span asp-validation-for="DeletedAt" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Id" class="control-label"></label>
-                <input asp-for="Id" class="form-control" />
-                <span asp-validation-for="Id" class="text-danger"></span>
+                <label asp-for="ChangedAt" class="control-label"></label>
+                <input asp-for="ChangedAt" class="form-control" />
+                <span asp-validation-for="ChangedAt" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />

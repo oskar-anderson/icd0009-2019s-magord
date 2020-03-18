@@ -6,7 +6,7 @@ using Domain.Identity;
 
 namespace Domain
 {
-    public class Bill : DomainEntityMetadata
+    public class Bill : DomainEntity
     {
         public DateTime TimeIssued { get; set; } = default!;
         

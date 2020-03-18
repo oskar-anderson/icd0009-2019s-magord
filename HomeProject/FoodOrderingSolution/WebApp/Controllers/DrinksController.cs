@@ -2,10 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Contracts.DAL.App.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using DAL.App.EF;
+using DAL.App.EF.Repositories;
 using Domain;
 
 namespace WebApp.Controllers
@@ -13,28 +15,30 @@ namespace WebApp.Controllers
     public class DrinksController : Controller
     {
         private readonly AppDbContext _context;
+        private readonly IDrinkRepository _drinkRepository;
 
         public DrinksController(AppDbContext context)
         {
             _context = context;
+            _drinkRepository = new DrinkRepository(_context);
         }
 
         // GET: Drinks
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Drinks.ToListAsync());
+            return View(await _drinkRepository.AllAsync());
         }
 
         // GET: Drinks/Details/5
-        public async Task<IActionResult> Details(string id)
+        public async Task<IActionResult> Details(Guid? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var drink = await _context.Drinks
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var drink = await _drinkRepository.FindAsync();
+            
             if (drink == null)
             {
                 return NotFound();
@@ -54,26 +58,28 @@ namespace WebApp.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Size,Name,Amount,CreatedBy,CreatedAt,DeletedBy,DeletedAt,Id")] Drink drink)
+        public async Task<IActionResult> Create([Bind("Size,Name,Amount,Id,CreatedBy,CreatedAt,ChangedBy,ChangedAt")] Drink drink)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(drink);
-                await _context.SaveChangesAsync();
+                //drink.Id = Guid.NewGuid();
+                _drinkRepository.Add(drink);
+                await _drinkRepository.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
             return View(drink);
         }
 
         // GET: Drinks/Edit/5
-        public async Task<IActionResult> Edit(string id)
+        public async Task<IActionResult> Edit(Guid? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var drink = await _context.Drinks.FindAsync(id);
+            var drink = await _drinkRepository.FindAsync(id);
+            
             if (drink == null)
             {
                 return NotFound();
@@ -86,7 +92,7 @@ namespace WebApp.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(string id, [Bind("Size,Name,Amount,CreatedBy,CreatedAt,DeletedBy,DeletedAt,Id")] Drink drink)
+        public async Task<IActionResult> Edit(Guid id, [Bind("Size,Name,Amount,Id,CreatedBy,CreatedAt,ChangedBy,ChangedAt")] Drink drink)
         {
             if (id != drink.Id)
             {
@@ -95,37 +101,24 @@ namespace WebApp.Controllers
 
             if (ModelState.IsValid)
             {
-                try
-                {
-                    _context.Update(drink);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!DrinkExists(drink.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
+                _drinkRepository.Update(drink);
+                await _drinkRepository.SaveChangesAsync();
+                
                 return RedirectToAction(nameof(Index));
             }
             return View(drink);
         }
 
         // GET: Drinks/Delete/5
-        public async Task<IActionResult> Delete(string id)
+        public async Task<IActionResult> Delete(Guid? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var drink = await _context.Drinks
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var drink = await _drinkRepository.FindAsync(id);
+            
             if (drink == null)
             {
                 return NotFound();
@@ -137,17 +130,12 @@ namespace WebApp.Controllers
         // POST: Drinks/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(string id)
+        public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            var drink = await _context.Drinks.FindAsync(id);
-            _context.Drinks.Remove(drink);
-            await _context.SaveChangesAsync();
+            var drink = _drinkRepository.Remove(id);
+            await _drinkRepository.SaveChangesAsync();
+            
             return RedirectToAction(nameof(Index));
-        }
-
-        private bool DrinkExists(string id)
-        {
-            return _context.Drinks.Any(e => e.Id == id);
         }
     }
 }

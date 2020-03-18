@@ -22,25 +22,25 @@
                 @Html.DisplayNameFor(model => model.TimeCreated)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Food)
+                @Html.DisplayNameFor(model => model.FoodId)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Ingredient)
+                @Html.DisplayNameFor(model => model.IngredientId)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Drink)
+                @Html.DisplayNameFor(model => model.DrinkId)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Restaurant)
+                @Html.DisplayNameFor(model => model.RestaurantId)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.OrderType)
+                @Html.DisplayNameFor(model => model.OrderTypeId)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.AppUser)
+                @Html.DisplayNameFor(model => model.AppUserId)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Person)
+                @Html.DisplayNameFor(model => model.PersonId)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.CreatedBy)
@@ -49,10 +49,10 @@
                 @Html.DisplayNameFor(model => model.CreatedAt)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.DeletedBy)
+                @Html.DisplayNameFor(model => model.ChangedBy)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.DeletedAt)
+                @Html.DisplayNameFor(model => model.ChangedAt)
             </th>
             <th></th>
         </tr>
@@ -70,25 +70,25 @@
                 @Html.DisplayFor(modelItem => item.TimeCreated)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Food.Id)
+                @Html.DisplayFor(modelItem => item.FoodId)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Ingredient.Id)
+                @Html.DisplayFor(modelItem => item.IngredientId)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Drink.Id)
+                @Html.DisplayFor(modelItem => item.DrinkId)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Restaurant.Id)
+                @Html.DisplayFor(modelItem => item.RestaurantId)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.OrderType.Id)
+                @Html.DisplayFor(modelItem => item.OrderTypeId)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.AppUser.Id)
+                @Html.DisplayFor(modelItem => item.AppUserId)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Person.Id)
+                @Html.DisplayFor(modelItem => item.PersonId)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.CreatedBy)
@@ -97,10 +97,10 @@
                 @Html.DisplayFor(modelItem => item.CreatedAt)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.DeletedBy)
+                @Html.DisplayFor(modelItem => item.ChangedBy)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.DeletedAt)
+                @Html.DisplayFor(modelItem => item.ChangedAt)
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |

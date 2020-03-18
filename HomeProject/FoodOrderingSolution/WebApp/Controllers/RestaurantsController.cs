@@ -2,10 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Contracts.DAL.App.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using DAL.App.EF;
+using DAL.App.EF.Repositories;
 using Domain;
 
 namespace WebApp.Controllers
@@ -13,30 +15,30 @@ namespace WebApp.Controllers
     public class RestaurantsController : Controller
     {
         private readonly AppDbContext _context;
+        private readonly IRestaurantRepository _restaurantRepository;
 
         public RestaurantsController(AppDbContext context)
         {
             _context = context;
+            _restaurantRepository = new RestaurantRepository(_context);
         }
 
         // GET: Restaurants
         public async Task<IActionResult> Index()
         {
-            var appDbContext = _context.Restaurants.Include(r => r.Area);
-            return View(await appDbContext.ToListAsync());
+            return View(await _restaurantRepository.AllAsync());
         }
 
         // GET: Restaurants/Details/5
-        public async Task<IActionResult> Details(string id)
+        public async Task<IActionResult> Details(Guid? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var restaurant = await _context.Restaurants
-                .Include(r => r.Area)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var restaurant = await _restaurantRepository.FindAsync(id);
+            
             if (restaurant == null)
             {
                 return NotFound();
@@ -48,7 +50,6 @@ namespace WebApp.Controllers
         // GET: Restaurants/Create
         public IActionResult Create()
         {
-            ViewData["AreaId"] = new SelectList(_context.Areas, "Id", "Id");
             return View();
         }
 
@@ -57,32 +58,32 @@ namespace WebApp.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Name,Address,OpenedFrom,ClosedFrom,AreaId,CreatedBy,CreatedAt,DeletedBy,DeletedAt,Id")] Restaurant restaurant)
+        public async Task<IActionResult> Create([Bind("Name,Address,OpenedFrom,ClosedFrom,AreaId,Id,CreatedBy,CreatedAt,ChangedBy,ChangedAt")] Restaurant restaurant)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(restaurant);
-                await _context.SaveChangesAsync();
+                //restaurant.Id = Guid.NewGuid();
+                _restaurantRepository.Add(restaurant);
+                await _restaurantRepository.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["AreaId"] = new SelectList(_context.Areas, "Id", "Id", restaurant.AreaId);
             return View(restaurant);
         }
 
         // GET: Restaurants/Edit/5
-        public async Task<IActionResult> Edit(string id)
+        public async Task<IActionResult> Edit(Guid? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var restaurant = await _context.Restaurants.FindAsync(id);
+            var restaurant = await _restaurantRepository.FindAsync(id);
+            
             if (restaurant == null)
             {
                 return NotFound();
             }
-            ViewData["AreaId"] = new SelectList(_context.Areas, "Id", "Id", restaurant.AreaId);
             return View(restaurant);
         }
 
@@ -91,7 +92,7 @@ namespace WebApp.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(string id, [Bind("Name,Address,OpenedFrom,ClosedFrom,AreaId,CreatedBy,CreatedAt,DeletedBy,DeletedAt,Id")] Restaurant restaurant)
+        public async Task<IActionResult> Edit(Guid id, [Bind("Name,Address,OpenedFrom,ClosedFrom,AreaId,Id,CreatedBy,CreatedAt,ChangedBy,ChangedAt")] Restaurant restaurant)
         {
             if (id != restaurant.Id)
             {
@@ -100,39 +101,24 @@ namespace WebApp.Controllers
 
             if (ModelState.IsValid)
             {
-                try
-                {
-                    _context.Update(restaurant);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!RestaurantExists(restaurant.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
+                _restaurantRepository.Update(restaurant);
+                await _restaurantRepository.SaveChangesAsync();
+                
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["AreaId"] = new SelectList(_context.Areas, "Id", "Id", restaurant.AreaId);
             return View(restaurant);
         }
 
         // GET: Restaurants/Delete/5
-        public async Task<IActionResult> Delete(string id)
+        public async Task<IActionResult> Delete(Guid? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var restaurant = await _context.Restaurants
-                .Include(r => r.Area)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var restaurant = await _restaurantRepository.FindAsync(id);
+            
             if (restaurant == null)
             {
                 return NotFound();
@@ -144,17 +130,12 @@ namespace WebApp.Controllers
         // POST: Restaurants/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(string id)
+        public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            var restaurant = await _context.Restaurants.FindAsync(id);
-            _context.Restaurants.Remove(restaurant);
-            await _context.SaveChangesAsync();
+            var restaurant = _restaurantRepository.Remove(id);
+            await _restaurantRepository.SaveChangesAsync();
+            
             return RedirectToAction(nameof(Index));
-        }
-
-        private bool RestaurantExists(string id)
-        {
-            return _context.Restaurants.Any(e => e.Id == id);
         }
     }
 }

@@ -2,10 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Contracts.DAL.App.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using DAL.App.EF;
+using DAL.App.EF.Repositories;
 using Domain;
 
 namespace WebApp.Controllers
@@ -13,28 +15,30 @@ namespace WebApp.Controllers
     public class PersonsController : Controller
     {
         private readonly AppDbContext _context;
+        private readonly IPersonRepository _personRepository;
 
         public PersonsController(AppDbContext context)
         {
             _context = context;
+            _personRepository = new PersonRepository(_context);
         }
 
         // GET: Persons
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Persons.ToListAsync());
+            return View(await _personRepository.AllAsync());
         }
 
         // GET: Persons/Details/5
-        public async Task<IActionResult> Details(string id)
+        public async Task<IActionResult> Details(Guid? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var person = await _context.Persons
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var person = await _personRepository.FindAsync(id);
+            
             if (person == null)
             {
                 return NotFound();
@@ -54,26 +58,28 @@ namespace WebApp.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("FirstName,LastName,Sex,DateOfBirth,CreatedBy,CreatedAt,DeletedBy,DeletedAt,Id")] Person person)
+        public async Task<IActionResult> Create([Bind("FirstName,LastName,Sex,DateOfBirth,Id,CreatedBy,CreatedAt,ChangedBy,ChangedAt")] Person person)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(person);
-                await _context.SaveChangesAsync();
+                //person.Id = Guid.NewGuid();
+                _personRepository.Add(person);
+                await _personRepository.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
             return View(person);
         }
 
         // GET: Persons/Edit/5
-        public async Task<IActionResult> Edit(string id)
+        public async Task<IActionResult> Edit(Guid? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var person = await _context.Persons.FindAsync(id);
+            var person = await _personRepository.FindAsync(id);
+            
             if (person == null)
             {
                 return NotFound();
@@ -86,7 +92,7 @@ namespace WebApp.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(string id, [Bind("FirstName,LastName,Sex,DateOfBirth,CreatedBy,CreatedAt,DeletedBy,DeletedAt,Id")] Person person)
+        public async Task<IActionResult> Edit(Guid id, [Bind("FirstName,LastName,Sex,DateOfBirth,Id,CreatedBy,CreatedAt,ChangedBy,ChangedAt")] Person person)
         {
             if (id != person.Id)
             {
@@ -95,37 +101,24 @@ namespace WebApp.Controllers
 
             if (ModelState.IsValid)
             {
-                try
-                {
-                    _context.Update(person);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!PersonExists(person.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
+                _personRepository.Update(person);
+                await _personRepository.SaveChangesAsync();
+                
                 return RedirectToAction(nameof(Index));
             }
             return View(person);
         }
 
         // GET: Persons/Delete/5
-        public async Task<IActionResult> Delete(string id)
+        public async Task<IActionResult> Delete(Guid? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var person = await _context.Persons
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var person = await _personRepository.FindAsync(id);
+            
             if (person == null)
             {
                 return NotFound();
@@ -137,17 +130,12 @@ namespace WebApp.Controllers
         // POST: Persons/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(string id)
+        public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            var person = await _context.Persons.FindAsync(id);
-            _context.Persons.Remove(person);
-            await _context.SaveChangesAsync();
+            var person = _personRepository.Remove(id);
+            await _personRepository.SaveChangesAsync();
+            
             return RedirectToAction(nameof(Index));
-        }
-
-        private bool PersonExists(string id)
-        {
-            return _context.Persons.Any(e => e.Id == id);
         }
     }
 }

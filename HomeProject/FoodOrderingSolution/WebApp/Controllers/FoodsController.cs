@@ -2,10 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Contracts.DAL.App.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using DAL.App.EF;
+using DAL.App.EF.Repositories;
 using Domain;
 
 namespace WebApp.Controllers
@@ -13,30 +15,30 @@ namespace WebApp.Controllers
     public class FoodsController : Controller
     {
         private readonly AppDbContext _context;
+        private readonly IFoodRepository _foodRepository;
 
         public FoodsController(AppDbContext context)
         {
             _context = context;
+            _foodRepository = new FoodRepository(_context);
         }
 
         // GET: Foods
         public async Task<IActionResult> Index()
         {
-            var appDbContext = _context.Foods.Include(f => f.FoodType);
-            return View(await appDbContext.ToListAsync());
+            return View(await _foodRepository.AllAsync());
         }
 
         // GET: Foods/Details/5
-        public async Task<IActionResult> Details(string id)
+        public async Task<IActionResult> Details(Guid? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var food = await _context.Foods
-                .Include(f => f.FoodType)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var food = await _foodRepository.FindAsync();
+            
             if (food == null)
             {
                 return NotFound();
@@ -48,7 +50,6 @@ namespace WebApp.Controllers
         // GET: Foods/Create
         public IActionResult Create()
         {
-            ViewData["FoodTypeId"] = new SelectList(_context.FoodTypes, "Id", "Id");
             return View();
         }
 
@@ -57,32 +58,32 @@ namespace WebApp.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Description,Name,Amount,Size,FoodTypeId,CreatedBy,CreatedAt,DeletedBy,DeletedAt,Id")] Food food)
+        public async Task<IActionResult> Create([Bind("Description,Name,Amount,Size,FoodTypeId,Id,CreatedBy,CreatedAt,ChangedBy,ChangedAt")] Food food)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(food);
-                await _context.SaveChangesAsync();
+                //food.Id = Guid.NewGuid();
+                _foodRepository.Add(food);
+                await _foodRepository.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["FoodTypeId"] = new SelectList(_context.FoodTypes, "Id", "Id", food.FoodTypeId);
             return View(food);
         }
 
         // GET: Foods/Edit/5
-        public async Task<IActionResult> Edit(string id)
+        public async Task<IActionResult> Edit(Guid? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var food = await _context.Foods.FindAsync(id);
+            var food = await _foodRepository.FindAsync(id);
+            
             if (food == null)
             {
                 return NotFound();
             }
-            ViewData["FoodTypeId"] = new SelectList(_context.FoodTypes, "Id", "Id", food.FoodTypeId);
             return View(food);
         }
 
@@ -91,7 +92,7 @@ namespace WebApp.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(string id, [Bind("Description,Name,Amount,Size,FoodTypeId,CreatedBy,CreatedAt,DeletedBy,DeletedAt,Id")] Food food)
+        public async Task<IActionResult> Edit(Guid id, [Bind("Description,Name,Amount,Size,FoodTypeId,Id,CreatedBy,CreatedAt,ChangedBy,ChangedAt")] Food food)
         {
             if (id != food.Id)
             {
@@ -100,39 +101,24 @@ namespace WebApp.Controllers
 
             if (ModelState.IsValid)
             {
-                try
-                {
-                    _context.Update(food);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!FoodExists(food.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
+                _foodRepository.Update(food);
+                await _foodRepository.SaveChangesAsync();
+                
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["FoodTypeId"] = new SelectList(_context.FoodTypes, "Id", "Id", food.FoodTypeId);
             return View(food);
         }
 
         // GET: Foods/Delete/5
-        public async Task<IActionResult> Delete(string id)
+        public async Task<IActionResult> Delete(Guid? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var food = await _context.Foods
-                .Include(f => f.FoodType)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var food = await _foodRepository.FindAsync(id);
+            
             if (food == null)
             {
                 return NotFound();
@@ -144,17 +130,12 @@ namespace WebApp.Controllers
         // POST: Foods/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(string id)
+        public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            var food = await _context.Foods.FindAsync(id);
-            _context.Foods.Remove(food);
-            await _context.SaveChangesAsync();
+            var food = _foodRepository.Remove(id);
+            await _foodRepository.SaveChangesAsync();
+            
             return RedirectToAction(nameof(Index));
-        }
-
-        private bool FoodExists(string id)
-        {
-            return _context.Foods.Any(e => e.Id == id);
         }
     }
 }

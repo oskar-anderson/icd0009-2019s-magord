@@ -2,10 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Contracts.DAL.App.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using DAL.App.EF;
+using DAL.App.EF.Repositories;
 using Domain;
 
 namespace WebApp.Controllers
@@ -13,28 +15,30 @@ namespace WebApp.Controllers
     public class FoodTypesController : Controller
     {
         private readonly AppDbContext _context;
+        private readonly IFoodTypeRepository _foodTypeRepository;
 
         public FoodTypesController(AppDbContext context)
         {
             _context = context;
+            _foodTypeRepository = new FoodTypeRepository(_context);
         }
 
         // GET: FoodTypes
         public async Task<IActionResult> Index()
         {
-            return View(await _context.FoodTypes.ToListAsync());
+            return View(await _foodTypeRepository.AllAsync());
         }
 
         // GET: FoodTypes/Details/5
-        public async Task<IActionResult> Details(string id)
+        public async Task<IActionResult> Details(Guid? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var foodType = await _context.FoodTypes
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var foodType = await _foodTypeRepository.FindAsync(id);
+            
             if (foodType == null)
             {
                 return NotFound();
@@ -54,26 +58,28 @@ namespace WebApp.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Name,CreatedBy,CreatedAt,DeletedBy,DeletedAt,Id")] FoodType foodType)
+        public async Task<IActionResult> Create([Bind("Name,Id,CreatedBy,CreatedAt,ChangedBy,ChangedAt")] FoodType foodType)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(foodType);
-                await _context.SaveChangesAsync();
+                //foodType.Id = Guid.NewGuid();
+                _foodTypeRepository.Add(foodType);
+                await _foodTypeRepository.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
             return View(foodType);
         }
 
         // GET: FoodTypes/Edit/5
-        public async Task<IActionResult> Edit(string id)
+        public async Task<IActionResult> Edit(Guid? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var foodType = await _context.FoodTypes.FindAsync(id);
+            var foodType = await _foodTypeRepository.FindAsync(id);
+            
             if (foodType == null)
             {
                 return NotFound();
@@ -86,7 +92,7 @@ namespace WebApp.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(string id, [Bind("Name,CreatedBy,CreatedAt,DeletedBy,DeletedAt,Id")] FoodType foodType)
+        public async Task<IActionResult> Edit(Guid id, [Bind("Name,Id,CreatedBy,CreatedAt,ChangedBy,ChangedAt")] FoodType foodType)
         {
             if (id != foodType.Id)
             {
@@ -95,37 +101,24 @@ namespace WebApp.Controllers
 
             if (ModelState.IsValid)
             {
-                try
-                {
-                    _context.Update(foodType);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!FoodTypeExists(foodType.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
+                _foodTypeRepository.Update(foodType);
+                await _foodTypeRepository.SaveChangesAsync();
+                
                 return RedirectToAction(nameof(Index));
             }
             return View(foodType);
         }
 
         // GET: FoodTypes/Delete/5
-        public async Task<IActionResult> Delete(string id)
+        public async Task<IActionResult> Delete(Guid? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var foodType = await _context.FoodTypes
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var foodType = await _foodTypeRepository.FindAsync(id);
+            
             if (foodType == null)
             {
                 return NotFound();
@@ -137,17 +130,12 @@ namespace WebApp.Controllers
         // POST: FoodTypes/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(string id)
+        public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            var foodType = await _context.FoodTypes.FindAsync(id);
-            _context.FoodTypes.Remove(foodType);
-            await _context.SaveChangesAsync();
+            var foodType = _foodTypeRepository.Remove(id);
+            await _foodTypeRepository.SaveChangesAsync();
+            
             return RedirectToAction(nameof(Index));
-        }
-
-        private bool FoodTypeExists(string id)
-        {
-            return _context.FoodTypes.Any(e => e.Id == id);
         }
     }
 }

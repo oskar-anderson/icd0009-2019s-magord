@@ -2,10 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Contracts.DAL.App.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using DAL.App.EF;
+using DAL.App.EF.Repositories;
 using Domain;
 
 namespace WebApp.Controllers
@@ -13,28 +15,30 @@ namespace WebApp.Controllers
     public class ContactTypesController : Controller
     {
         private readonly AppDbContext _context;
+        private readonly IContactTypeRepository _contactTypeRepository;
 
         public ContactTypesController(AppDbContext context)
         {
             _context = context;
+            _contactTypeRepository = new ContactTypeRepository(_context);
         }
 
         // GET: ContactTypes
         public async Task<IActionResult> Index()
         {
-            return View(await _context.ContactTypes.ToListAsync());
+            return View(await _contactTypeRepository.AllAsync());
         }
 
         // GET: ContactTypes/Details/5
-        public async Task<IActionResult> Details(string id)
+        public async Task<IActionResult> Details(Guid? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var contactType = await _context.ContactTypes
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var contactType = await _contactTypeRepository.FindAsync(id);
+            
             if (contactType == null)
             {
                 return NotFound();
@@ -54,26 +58,28 @@ namespace WebApp.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Name,CreatedBy,CreatedAt,DeletedBy,DeletedAt,Id")] ContactType contactType)
+        public async Task<IActionResult> Create([Bind("Name,Id,CreatedBy,CreatedAt,ChangedBy,ChangedAt")] ContactType contactType)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(contactType);
-                await _context.SaveChangesAsync();
+                //contactType.Id = Guid.NewGuid();
+                _contactTypeRepository.Add(contactType);
+                await _contactTypeRepository.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
             return View(contactType);
         }
 
         // GET: ContactTypes/Edit/5
-        public async Task<IActionResult> Edit(string id)
+        public async Task<IActionResult> Edit(Guid? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var contactType = await _context.ContactTypes.FindAsync(id);
+            var contactType = await _contactTypeRepository.FindAsync(id);
+            
             if (contactType == null)
             {
                 return NotFound();
@@ -86,7 +92,7 @@ namespace WebApp.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(string id, [Bind("Name,CreatedBy,CreatedAt,DeletedBy,DeletedAt,Id")] ContactType contactType)
+        public async Task<IActionResult> Edit(Guid id, [Bind("Name,Id,CreatedBy,CreatedAt,ChangedBy,ChangedAt")] ContactType contactType)
         {
             if (id != contactType.Id)
             {
@@ -95,37 +101,24 @@ namespace WebApp.Controllers
 
             if (ModelState.IsValid)
             {
-                try
-                {
-                    _context.Update(contactType);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!ContactTypeExists(contactType.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
+                _contactTypeRepository.Update(contactType);
+                await _contactTypeRepository.SaveChangesAsync();
+                
                 return RedirectToAction(nameof(Index));
             }
             return View(contactType);
         }
 
         // GET: ContactTypes/Delete/5
-        public async Task<IActionResult> Delete(string id)
+        public async Task<IActionResult> Delete(Guid? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var contactType = await _context.ContactTypes
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var contactType = await _contactTypeRepository.FindAsync(id);
+            
             if (contactType == null)
             {
                 return NotFound();
@@ -137,17 +130,12 @@ namespace WebApp.Controllers
         // POST: ContactTypes/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(string id)
+        public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            var contactType = await _context.ContactTypes.FindAsync(id);
-            _context.ContactTypes.Remove(contactType);
-            await _context.SaveChangesAsync();
+            var contactType = _contactTypeRepository.Remove(id);
+            await _contactTypeRepository.SaveChangesAsync();
+            
             return RedirectToAction(nameof(Index));
-        }
-
-        private bool ContactTypeExists(string id)
-        {
-            return _context.ContactTypes.Any(e => e.Id == id);
         }
     }
 }

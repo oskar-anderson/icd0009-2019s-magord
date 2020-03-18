@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DAL.App.EF
 {
-    public class AppDbContext : IdentityDbContext<AppUser, AppRole, string> // Before was DbContext
+    public class AppDbContext : IdentityDbContext<AppUser, AppRole, Guid> // Before was DbContext
     {
         public DbSet<Restaurant> Restaurants { get; set; } = default!;
         public DbSet<Town> Towns { get; set; } = default!;

@@ -4,7 +4,7 @@ using DAL.Base;
 
 namespace Domain
 {
-    public class OrderType : DomainEntityMetadata
+    public class OrderType : DomainEntity
     {
         [MaxLength(256)] [MinLength(1)] public string Name { get; set; } = default!;
 

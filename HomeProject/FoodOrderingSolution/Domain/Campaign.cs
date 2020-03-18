@@ -5,7 +5,7 @@ using DAL.Base;
 
 namespace Domain
 {
-    public class Campaign : DomainEntityMetadata
+    public class Campaign : DomainEntity
     {
         public DateTime From { get; set; } = default!;
 

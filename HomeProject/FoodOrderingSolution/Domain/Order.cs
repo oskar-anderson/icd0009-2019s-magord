@@ -6,7 +6,7 @@ using Domain.Identity;
 
 namespace Domain
 {
-    public class Order : DomainEntityMetadata
+    public class Order : DomainEntity
     {
         [MaxLength(256)] [MinLength(1)] public string OrderStatus { get; set; } = default!;
 

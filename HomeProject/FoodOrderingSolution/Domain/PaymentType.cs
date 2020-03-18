@@ -4,7 +4,7 @@ using DAL.Base;
 
 namespace Domain
 {
-    public class PaymentType : DomainEntityMetadata
+    public class PaymentType : DomainEntity
     {
         [MaxLength(128)] [MinLength(1)] public string Name { get; set; } = default!;
 

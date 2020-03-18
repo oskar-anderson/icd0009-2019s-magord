@@ -4,7 +4,7 @@ using DAL.Base;
 
 namespace Domain
 {
-    public class FoodType : DomainEntityMetadata
+    public class FoodType : DomainEntity
     {
         [MaxLength(256)] [MinLength(1)] public string Name { get; set; } = default!;
 

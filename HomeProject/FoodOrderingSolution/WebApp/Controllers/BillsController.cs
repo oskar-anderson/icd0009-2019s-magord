@@ -1,52 +1,44 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Claims;
 using System.Threading.Tasks;
+using Contracts.DAL.App.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using DAL.App.EF;
+using DAL.App.EF.Repositories;
 using Domain;
-using Extensions;
-using Microsoft.AspNetCore.Authorization;
 
 namespace WebApp.Controllers
 {
     public class BillsController : Controller
     {
         private readonly AppDbContext _context;
+        private readonly IBillRepository _billRepository;
 
         public BillsController(AppDbContext context)
         {
             _context = context;
+            _billRepository = new BillRepository(_context);
         }
 
         // GET: Bills
         public async Task<IActionResult> Index()
         {
-            var appDbContext = _context.Bills
-                .Include(b => b.AppUser)
-                .Include(b => b.Order)
-                .Include(b => b.Person)
-                .Where(b => b.AppUserId == User.UserId());
-            
-            return View(await appDbContext.ToListAsync());
+            return View(await _billRepository.AllAsync());
         }
 
         // GET: Bills/Details/5
-        public async Task<IActionResult> Details(string id)
+        public async Task<IActionResult> Details(Guid? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
-
-            var bill = await _context.Bills
-                .Include(b => b.AppUser)
-                .Include(b => b.Order)
-                .Include(b => b.Person)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            
+            var bill = await _billRepository.FindAsync(id);
+            
             if (bill == null)
             {
                 return NotFound();
@@ -58,9 +50,6 @@ namespace WebApp.Controllers
         // GET: Bills/Create
         public IActionResult Create()
         {
-            //ViewData["AppUserId"] = new SelectList(_context.Users, "Id", "Id");
-            ViewData["OrderId"] = new SelectList(_context.Orders, "Id", "Id");
-            ViewData["PersonId"] = new SelectList(_context.Persons, "Id", "Id");
             return View();
         }
 
@@ -69,38 +58,32 @@ namespace WebApp.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create( Bill bill)
+        public async Task<IActionResult> Create([Bind("TimeIssued,Number,Sum,OrderId,AppUserId,PersonId,Id,CreatedBy,CreatedAt,ChangedBy,ChangedAt")] Bill bill)
         {
-            
-            bill.AppUserId = User.UserId();
-            
             if (ModelState.IsValid)
             {
-                _context.Add(bill);
-                await _context.SaveChangesAsync();
+                //bill.Id = Guid.NewGuid();
+                _billRepository.Add(bill);
+                await _billRepository.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["OrderId"] = new SelectList(_context.Orders, "Id", "Id", bill.OrderId);
-            ViewData["PersonId"] = new SelectList(_context.Persons, "Id", "Id", bill.PersonId);
             return View(bill);
         }
 
         // GET: Bills/Edit/5
-        public async Task<IActionResult> Edit(string id)
+        public async Task<IActionResult> Edit(Guid? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var bill = await _context.Bills.FindAsync(id);
+            var bill = await _billRepository.FindAsync(id);
+            
             if (bill == null)
             {
                 return NotFound();
             }
-            ViewData["AppUserId"] = new SelectList(_context.Users, "Id", "Id", bill.AppUserId);
-            ViewData["OrderId"] = new SelectList(_context.Orders, "Id", "Id", bill.OrderId);
-            ViewData["PersonId"] = new SelectList(_context.Persons, "Id", "Id", bill.PersonId);
             return View(bill);
         }
 
@@ -109,7 +92,7 @@ namespace WebApp.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(string id, [Bind("TimeIssued,Number,Sum,OrderId,AppUserId,PersonId,CreatedBy,CreatedAt,DeletedBy,DeletedAt,Id")] Bill bill)
+        public async Task<IActionResult> Edit(Guid id, [Bind("TimeIssued,Number,Sum,OrderId,AppUserId,PersonId,Id,CreatedBy,CreatedAt,ChangedBy,ChangedAt")] Bill bill)
         {
             if (id != bill.Id)
             {
@@ -118,43 +101,23 @@ namespace WebApp.Controllers
 
             if (ModelState.IsValid)
             {
-                try
-                {
-                    _context.Update(bill);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!BillExists(bill.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
+                _billRepository.Update(bill);
+                await _billRepository.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["AppUserId"] = new SelectList(_context.Users, "Id", "Id", bill.AppUserId);
-            ViewData["OrderId"] = new SelectList(_context.Orders, "Id", "Id", bill.OrderId);
-            ViewData["PersonId"] = new SelectList(_context.Persons, "Id", "Id", bill.PersonId);
             return View(bill);
         }
 
         // GET: Bills/Delete/5
-        public async Task<IActionResult> Delete(string id)
+        public async Task<IActionResult> Delete(Guid? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var bill = await _context.Bills
-                .Include(b => b.AppUser)
-                .Include(b => b.Order)
-                .Include(b => b.Person)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var bill = await _billRepository.FindAsync(id);
+            
             if (bill == null)
             {
                 return NotFound();
@@ -166,17 +129,12 @@ namespace WebApp.Controllers
         // POST: Bills/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(string id)
+        public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            var bill = await _context.Bills.FindAsync(id);
-            _context.Bills.Remove(bill);
-            await _context.SaveChangesAsync();
+            var bill = _billRepository.Remove(id);
+            await _billRepository.SaveChangesAsync();
+            
             return RedirectToAction(nameof(Index));
-        }
-
-        private bool BillExists(string id)
-        {
-            return _context.Bills.Any(e => e.Id == id);
         }
     }
 }

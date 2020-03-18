@@ -2,10 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Contracts.DAL.App.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using DAL.App.EF;
+using DAL.App.EF.Repositories;
 using Domain;
 
 namespace WebApp.Controllers
@@ -13,28 +15,30 @@ namespace WebApp.Controllers
     public class OrderTypesController : Controller
     {
         private readonly AppDbContext _context;
+        private readonly IOrderTypeRepository _orderTypeRepository;
 
         public OrderTypesController(AppDbContext context)
         {
             _context = context;
+            _orderTypeRepository = new OrderTypeRepository(_context);
         }
 
         // GET: OrderTypes
         public async Task<IActionResult> Index()
         {
-            return View(await _context.OrderTypes.ToListAsync());
+            return View(await _orderTypeRepository.AllAsync());
         }
 
         // GET: OrderTypes/Details/5
-        public async Task<IActionResult> Details(string id)
+        public async Task<IActionResult> Details(Guid? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var orderType = await _context.OrderTypes
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var orderType = await _orderTypeRepository.FindAsync(id);
+            
             if (orderType == null)
             {
                 return NotFound();
@@ -54,26 +58,28 @@ namespace WebApp.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Name,Comment,CreatedBy,CreatedAt,DeletedBy,DeletedAt,Id")] OrderType orderType)
+        public async Task<IActionResult> Create([Bind("Name,Comment,Id,CreatedBy,CreatedAt,ChangedBy,ChangedAt")] OrderType orderType)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(orderType);
-                await _context.SaveChangesAsync();
+                //orderType.Id = Guid.NewGuid();
+                _orderTypeRepository.Add(orderType);
+                await _orderTypeRepository.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
             return View(orderType);
         }
 
         // GET: OrderTypes/Edit/5
-        public async Task<IActionResult> Edit(string id)
+        public async Task<IActionResult> Edit(Guid? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var orderType = await _context.OrderTypes.FindAsync(id);
+            var orderType = await _orderTypeRepository.FindAsync(id);
+            
             if (orderType == null)
             {
                 return NotFound();
@@ -86,7 +92,7 @@ namespace WebApp.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(string id, [Bind("Name,Comment,CreatedBy,CreatedAt,DeletedBy,DeletedAt,Id")] OrderType orderType)
+        public async Task<IActionResult> Edit(Guid id, [Bind("Name,Comment,Id,CreatedBy,CreatedAt,ChangedBy,ChangedAt")] OrderType orderType)
         {
             if (id != orderType.Id)
             {
@@ -95,37 +101,24 @@ namespace WebApp.Controllers
 
             if (ModelState.IsValid)
             {
-                try
-                {
-                    _context.Update(orderType);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!OrderTypeExists(orderType.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
+                _orderTypeRepository.Update(orderType);
+                await _orderTypeRepository.SaveChangesAsync();
+                
                 return RedirectToAction(nameof(Index));
             }
             return View(orderType);
         }
 
         // GET: OrderTypes/Delete/5
-        public async Task<IActionResult> Delete(string id)
+        public async Task<IActionResult> Delete(Guid? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var orderType = await _context.OrderTypes
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var orderType = await _orderTypeRepository.FindAsync(id);
+            
             if (orderType == null)
             {
                 return NotFound();
@@ -137,17 +130,12 @@ namespace WebApp.Controllers
         // POST: OrderTypes/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(string id)
+        public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            var orderType = await _context.OrderTypes.FindAsync(id);
-            _context.OrderTypes.Remove(orderType);
-            await _context.SaveChangesAsync();
+            var orderType = _orderTypeRepository.Remove(id);
+            await _orderTypeRepository.SaveChangesAsync();
+            
             return RedirectToAction(nameof(Index));
-        }
-
-        private bool OrderTypeExists(string id)
-        {
-            return _context.OrderTypes.Any(e => e.Id == id);
         }
     }
 }
