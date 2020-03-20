@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Contracts.DAL.App;
 using Contracts.DAL.App.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -14,19 +15,17 @@ namespace WebApp.Controllers
 {
     public class OrdersController : Controller
     {
-        private readonly AppDbContext _context;
-        private readonly IOrderRepository _orderRepository;
+        private readonly IAppUnitOfWork _uow;
 
-        public OrdersController(AppDbContext context)
+        public OrdersController(IAppUnitOfWork uow)
         {
-            _context = context;
-            _orderRepository = new OrderRepository(_context);
+            _uow = uow;
         }
 
         // GET: Orders
         public async Task<IActionResult> Index()
         {
-            return View(await _orderRepository.AllAsync());
+            return View(await _uow.Orders.AllAsync());
         }
 
         // GET: Orders/Details/5
@@ -37,7 +36,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var order = await _orderRepository.FindAsync(id);
+            var order = await _uow.Orders.FindAsync(id);
             
             if (order == null)
             {
@@ -63,8 +62,8 @@ namespace WebApp.Controllers
             if (ModelState.IsValid)
             {
                 //order.Id = Guid.NewGuid();
-                _orderRepository.Add(order);
-                await _orderRepository.SaveChangesAsync();
+                _uow.Orders.Add(order);
+                await _uow.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
             return View(order);
@@ -78,7 +77,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var order = await _orderRepository.FindAsync(id);
+            var order = await _uow.Orders.FindAsync(id);
             
             if (order == null)
             {
@@ -101,8 +100,8 @@ namespace WebApp.Controllers
 
             if (ModelState.IsValid)
             {
-                _orderRepository.Update(order);
-                await _orderRepository.SaveChangesAsync();
+                _uow.Orders.Update(order);
+                await _uow.SaveChangesAsync();
                 
                 return RedirectToAction(nameof(Index));
             }
@@ -117,7 +116,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var order = await _orderRepository.FindAsync(id);
+            var order = await _uow.Orders.FindAsync(id);
             
             if (order == null)
             {
@@ -132,8 +131,8 @@ namespace WebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            var order = _orderRepository.Remove(id);
-            await _orderRepository.SaveChangesAsync();
+            var order = _uow.Orders.Remove(id);
+            await _uow.SaveChangesAsync();
             
             return RedirectToAction(nameof(Index));
         }

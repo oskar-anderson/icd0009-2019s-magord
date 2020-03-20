@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Contracts.DAL.App;
 using Contracts.DAL.App.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -14,19 +15,17 @@ namespace WebApp.Controllers
 {
     public class CampaignsController : Controller
     {
-        private readonly AppDbContext _context;
-        private readonly ICampaignRepository _campaignRepository;
+        private readonly IAppUnitOfWork _uow;
 
-        public CampaignsController(AppDbContext context)
+        public CampaignsController(IAppUnitOfWork uow)
         {
-            _context = context;
-            _campaignRepository = new CampaignRepository(_context);
+            _uow = uow;
         }
 
         // GET: Campaigns
         public async Task<IActionResult> Index()
         {
-            return View(await _campaignRepository.AllAsync());
+            return View(await _uow.Campaigns.AllAsync());
         }
 
         // GET: Campaigns/Details/5
@@ -37,7 +36,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var campaign = await _campaignRepository.FindAsync(id);
+            var campaign = await _uow.Campaigns.FindAsync(id);
             
             if (campaign == null)
             {
@@ -63,8 +62,8 @@ namespace WebApp.Controllers
             if (ModelState.IsValid)
             {
                 //campaign.Id = Guid.NewGuid();
-                _campaignRepository.Add(campaign);
-                await _campaignRepository.SaveChangesAsync();
+                _uow.Campaigns.Add(campaign);
+                await _uow.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
             return View(campaign);
@@ -78,7 +77,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var campaign = await _campaignRepository.FindAsync(id);
+            var campaign = await _uow.Campaigns.FindAsync(id);
             
             if (campaign == null)
             {
@@ -101,8 +100,8 @@ namespace WebApp.Controllers
 
             if (ModelState.IsValid)
             {
-                _campaignRepository.Update(campaign);
-                await _campaignRepository.SaveChangesAsync();
+                _uow.Campaigns.Update(campaign);
+                await _uow.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
             return View(campaign);
@@ -116,7 +115,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var campaign = await _campaignRepository.FindAsync(id);
+            var campaign = await _uow.Campaigns.FindAsync(id);
             
             if (campaign == null)
             {
@@ -131,8 +130,8 @@ namespace WebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            var campaign = _campaignRepository.Remove(id);
-            await _campaignRepository.SaveChangesAsync();
+            var campaign = _uow.Campaigns.Remove(id);
+            await _uow.SaveChangesAsync();
             
             return RedirectToAction(nameof(Index));
         }

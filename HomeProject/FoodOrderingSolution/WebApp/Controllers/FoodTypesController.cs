@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Contracts.DAL.App;
 using Contracts.DAL.App.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -14,19 +15,17 @@ namespace WebApp.Controllers
 {
     public class FoodTypesController : Controller
     {
-        private readonly AppDbContext _context;
-        private readonly IFoodTypeRepository _foodTypeRepository;
+        private readonly IAppUnitOfWork _uow;
 
-        public FoodTypesController(AppDbContext context)
+        public FoodTypesController(IAppUnitOfWork uow)
         {
-            _context = context;
-            _foodTypeRepository = new FoodTypeRepository(_context);
+            _uow = uow;
         }
 
         // GET: FoodTypes
         public async Task<IActionResult> Index()
         {
-            return View(await _foodTypeRepository.AllAsync());
+            return View(await _uow.FoodTypes.AllAsync());
         }
 
         // GET: FoodTypes/Details/5
@@ -37,7 +36,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var foodType = await _foodTypeRepository.FindAsync(id);
+            var foodType = await _uow.FoodTypes.FindAsync(id);
             
             if (foodType == null)
             {
@@ -63,8 +62,8 @@ namespace WebApp.Controllers
             if (ModelState.IsValid)
             {
                 //foodType.Id = Guid.NewGuid();
-                _foodTypeRepository.Add(foodType);
-                await _foodTypeRepository.SaveChangesAsync();
+                _uow.FoodTypes.Add(foodType);
+                await _uow.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
             return View(foodType);
@@ -78,7 +77,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var foodType = await _foodTypeRepository.FindAsync(id);
+            var foodType = await _uow.FoodTypes.FindAsync(id);
             
             if (foodType == null)
             {
@@ -101,8 +100,8 @@ namespace WebApp.Controllers
 
             if (ModelState.IsValid)
             {
-                _foodTypeRepository.Update(foodType);
-                await _foodTypeRepository.SaveChangesAsync();
+                _uow.FoodTypes.Update(foodType);
+                await _uow.SaveChangesAsync();
                 
                 return RedirectToAction(nameof(Index));
             }
@@ -117,7 +116,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var foodType = await _foodTypeRepository.FindAsync(id);
+            var foodType = await _uow.FoodTypes.FindAsync(id);
             
             if (foodType == null)
             {
@@ -132,8 +131,8 @@ namespace WebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            var foodType = _foodTypeRepository.Remove(id);
-            await _foodTypeRepository.SaveChangesAsync();
+            var foodType = _uow.FoodTypes.Remove(id);
+            await _uow.SaveChangesAsync();
             
             return RedirectToAction(nameof(Index));
         }

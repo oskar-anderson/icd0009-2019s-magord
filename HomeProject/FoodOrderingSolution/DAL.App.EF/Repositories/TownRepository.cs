@@ -5,9 +5,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DAL.App.EF.Repositories
 {
-    public class TownRepository : BaseRepository<Town>, ITownRepository
+    public class TownRepository : EFBaseRepository<Town, AppDbContext>, ITownRepository
     {
-        public TownRepository(DbContext dbContext) : base(dbContext)
+        public TownRepository(AppDbContext dbContext) : base(dbContext)
         {
         }
     }

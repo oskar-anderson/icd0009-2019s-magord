@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Contracts.DAL.App;
 using Contracts.DAL.App.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -14,19 +15,17 @@ namespace WebApp.Controllers
 {
     public class ContactsController : Controller
     {
-        private readonly AppDbContext _context;
-        private readonly IContactRepository _contactRepository;
+        private readonly IAppUnitOfWork _uow;
 
-        public ContactsController(AppDbContext context)
+        public ContactsController(IAppUnitOfWork uow)
         {
-            _context = context;
-            _contactRepository = new ContactRepository(_context);
+            _uow = uow;
         }
 
         // GET: Contacts
         public async Task<IActionResult> Index()
         {
-            return View(await _contactRepository.AllAsync());
+            return View(await _uow.Contacts.AllAsync());
         }
 
         // GET: Contacts/Details/5
@@ -37,7 +36,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var contact = await _contactRepository.FindAsync(id);
+            var contact = await _uow.Contacts.FindAsync(id);
             
             if (contact == null)
             {
@@ -63,8 +62,8 @@ namespace WebApp.Controllers
             if (ModelState.IsValid)
             {
                 //contact.Id = Guid.NewGuid();
-                _contactRepository.Add(contact);
-                await _contactRepository.SaveChangesAsync();
+                _uow.Contacts.Add(contact);
+                await _uow.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
             return View(contact);
@@ -78,7 +77,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var contact = await _contactRepository.FindAsync(id);
+            var contact = await _uow.Contacts.FindAsync(id);
             
             if (contact == null)
             {
@@ -101,8 +100,8 @@ namespace WebApp.Controllers
 
             if (ModelState.IsValid)
             {
-                _contactRepository.Update(contact);
-                await _contactRepository.SaveChangesAsync();
+                _uow.Contacts.Update(contact);
+                await _uow.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
             return View(contact);
@@ -116,7 +115,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var contact = await _contactRepository.FindAsync(id);
+            var contact = await _uow.Contacts.FindAsync(id);
             
             if (contact == null)
             {
@@ -131,9 +130,9 @@ namespace WebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            var contact = await _context.Contacts.FindAsync(id);
-            _context.Contacts.Remove(contact);
-            await _context.SaveChangesAsync();
+            var contact = _uow.Contacts.Remove(id);
+            await _uow.SaveChangesAsync();
+            
             return RedirectToAction(nameof(Index));
         }
         

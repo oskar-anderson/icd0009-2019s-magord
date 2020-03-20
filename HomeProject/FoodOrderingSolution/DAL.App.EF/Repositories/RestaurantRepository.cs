@@ -5,9 +5,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DAL.App.EF.Repositories
 {
-    public class RestaurantRepository : BaseRepository<Restaurant>, IRestaurantRepository
+    public class RestaurantRepository : EFBaseRepository<Restaurant, AppDbContext>, IRestaurantRepository
     {
-        public RestaurantRepository(DbContext dbContext) : base(dbContext)
+        public RestaurantRepository(AppDbContext dbContext) : base(dbContext)
         {
         }
     }

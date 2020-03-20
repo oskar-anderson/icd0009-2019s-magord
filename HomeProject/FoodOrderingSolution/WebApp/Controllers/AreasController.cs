@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Contracts.DAL.App;
 using Contracts.DAL.App.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -14,19 +15,17 @@ namespace WebApp.Controllers
 {
     public class AreasController : Controller
     {
-        private readonly AppDbContext _context;
-        private readonly IAreaRepository _areaRepository;
+        private readonly IAppUnitOfWork _uow;
 
-        public AreasController(AppDbContext context)
+        public AreasController(IAppUnitOfWork uow)
         {
-            _context = context;
-            _areaRepository = new AreaRepository(_context);
+            _uow = uow;
         }
 
         // GET: Areas
         public async Task<IActionResult> Index()
         {
-            return View(await _areaRepository.AllAsync());
+            return View(await _uow.Areas.AllAsync());
         }
 
         // GET: Areas/Details/5
@@ -37,7 +36,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var area = await _areaRepository.FindAsync(id);
+            var area = await _uow.Areas.FindAsync(id);
             
             if (area == null)
             {
@@ -63,8 +62,8 @@ namespace WebApp.Controllers
             if (ModelState.IsValid)
             {
                 //area.Id = Guid.NewGuid();
-                _areaRepository.Add(area);
-                await _areaRepository.SaveChangesAsync();
+                _uow.Areas.Add(area);
+                await _uow.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
             return View(area);
@@ -78,7 +77,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var area = await _areaRepository.FindAsync(id);
+            var area = await _uow.Areas.FindAsync(id);
             
             if (area == null)
             {
@@ -101,8 +100,8 @@ namespace WebApp.Controllers
 
             if (ModelState.IsValid)
             {
-                _areaRepository.Update(area);
-                await _areaRepository.SaveChangesAsync();
+                _uow.Areas.Update(area);
+                await _uow.SaveChangesAsync();
                     
                 return RedirectToAction(nameof(Index));
             }
@@ -117,7 +116,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var area = await _areaRepository.FindAsync(id);
+            var area = await _uow.Areas.FindAsync(id);
             
             if (area == null)
             {
@@ -132,8 +131,8 @@ namespace WebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            var area = _areaRepository.Remove(id);
-            await _areaRepository.SaveChangesAsync();
+            var area = _uow.Areas.Remove(id);
+            await _uow.SaveChangesAsync();
             
             return RedirectToAction(nameof(Index));
         }

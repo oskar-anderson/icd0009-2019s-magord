@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Contracts.DAL.App;
 using Contracts.DAL.App.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -14,19 +15,17 @@ namespace WebApp.Controllers
 {
     public class OrderTypesController : Controller
     {
-        private readonly AppDbContext _context;
-        private readonly IOrderTypeRepository _orderTypeRepository;
+        private readonly IAppUnitOfWork _uow;
 
-        public OrderTypesController(AppDbContext context)
+        public OrderTypesController(IAppUnitOfWork uow)
         {
-            _context = context;
-            _orderTypeRepository = new OrderTypeRepository(_context);
+            _uow = uow;
         }
 
         // GET: OrderTypes
         public async Task<IActionResult> Index()
         {
-            return View(await _orderTypeRepository.AllAsync());
+            return View(await _uow.OrderTypes.AllAsync());
         }
 
         // GET: OrderTypes/Details/5
@@ -37,7 +36,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var orderType = await _orderTypeRepository.FindAsync(id);
+            var orderType = await _uow.OrderTypes.FindAsync(id);
             
             if (orderType == null)
             {
@@ -63,8 +62,8 @@ namespace WebApp.Controllers
             if (ModelState.IsValid)
             {
                 //orderType.Id = Guid.NewGuid();
-                _orderTypeRepository.Add(orderType);
-                await _orderTypeRepository.SaveChangesAsync();
+                _uow.OrderTypes.Add(orderType);
+                await _uow.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
             return View(orderType);
@@ -78,7 +77,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var orderType = await _orderTypeRepository.FindAsync(id);
+            var orderType = await _uow.OrderTypes.FindAsync(id);
             
             if (orderType == null)
             {
@@ -101,8 +100,8 @@ namespace WebApp.Controllers
 
             if (ModelState.IsValid)
             {
-                _orderTypeRepository.Update(orderType);
-                await _orderTypeRepository.SaveChangesAsync();
+                _uow.OrderTypes.Update(orderType);
+                await _uow.SaveChangesAsync();
                 
                 return RedirectToAction(nameof(Index));
             }
@@ -117,7 +116,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var orderType = await _orderTypeRepository.FindAsync(id);
+            var orderType = await _uow.OrderTypes.FindAsync(id);
             
             if (orderType == null)
             {
@@ -132,8 +131,8 @@ namespace WebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            var orderType = _orderTypeRepository.Remove(id);
-            await _orderTypeRepository.SaveChangesAsync();
+            var orderType = _uow.OrderTypes.Remove(id);
+            await _uow.SaveChangesAsync();
             
             return RedirectToAction(nameof(Index));
         }

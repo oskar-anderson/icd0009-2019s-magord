@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Contracts.DAL.App;
 using Contracts.DAL.App.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -14,19 +15,17 @@ namespace WebApp.Controllers
 {
     public class RestaurantsController : Controller
     {
-        private readonly AppDbContext _context;
-        private readonly IRestaurantRepository _restaurantRepository;
+        private readonly IAppUnitOfWork _uow;
 
-        public RestaurantsController(AppDbContext context)
+        public RestaurantsController(IAppUnitOfWork uow)
         {
-            _context = context;
-            _restaurantRepository = new RestaurantRepository(_context);
+            _uow = uow;
         }
 
         // GET: Restaurants
         public async Task<IActionResult> Index()
         {
-            return View(await _restaurantRepository.AllAsync());
+            return View(await _uow.Restaurants.AllAsync());
         }
 
         // GET: Restaurants/Details/5
@@ -37,7 +36,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var restaurant = await _restaurantRepository.FindAsync(id);
+            var restaurant = await _uow.Restaurants.FindAsync(id);
             
             if (restaurant == null)
             {
@@ -63,8 +62,8 @@ namespace WebApp.Controllers
             if (ModelState.IsValid)
             {
                 //restaurant.Id = Guid.NewGuid();
-                _restaurantRepository.Add(restaurant);
-                await _restaurantRepository.SaveChangesAsync();
+                _uow.Restaurants.Add(restaurant);
+                await _uow.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
             return View(restaurant);
@@ -78,7 +77,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var restaurant = await _restaurantRepository.FindAsync(id);
+            var restaurant = await _uow.Restaurants.FindAsync(id);
             
             if (restaurant == null)
             {
@@ -101,8 +100,8 @@ namespace WebApp.Controllers
 
             if (ModelState.IsValid)
             {
-                _restaurantRepository.Update(restaurant);
-                await _restaurantRepository.SaveChangesAsync();
+                _uow.Restaurants.Update(restaurant);
+                await _uow.SaveChangesAsync();
                 
                 return RedirectToAction(nameof(Index));
             }
@@ -117,7 +116,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var restaurant = await _restaurantRepository.FindAsync(id);
+            var restaurant = await _uow.Restaurants.FindAsync(id);
             
             if (restaurant == null)
             {
@@ -132,8 +131,8 @@ namespace WebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            var restaurant = _restaurantRepository.Remove(id);
-            await _restaurantRepository.SaveChangesAsync();
+            var restaurant = _uow.Restaurants.Remove(id);
+            await _uow.SaveChangesAsync();
             
             return RedirectToAction(nameof(Index));
         }

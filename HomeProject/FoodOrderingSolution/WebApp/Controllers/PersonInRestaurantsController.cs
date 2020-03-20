@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Contracts.DAL.App;
 using Contracts.DAL.App.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -14,19 +15,17 @@ namespace WebApp.Controllers
 {
     public class PersonInRestaurantsController : Controller
     {
-        private readonly AppDbContext _context;
-        private readonly IPersonInRestaurantRepository _personInRestaurantRepository;
+        private readonly IAppUnitOfWork _uow;
 
-        public PersonInRestaurantsController(AppDbContext context)
+        public PersonInRestaurantsController(IAppUnitOfWork uow)
         {
-            _context = context;
-            _personInRestaurantRepository = new PersonInRestaurantRepository(_context);
+            _uow = uow;
         }
 
         // GET: PersonInRestaurants
         public async Task<IActionResult> Index()
         {
-            return View(await _personInRestaurantRepository.AllAsync());
+            return View(await _uow.PersonsInRestaurants.AllAsync());
         }
 
         // GET: PersonInRestaurants/Details/5
@@ -37,7 +36,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var personInRestaurant = await _personInRestaurantRepository.FindAsync(id);
+            var personInRestaurant = await _uow.PersonsInRestaurants.FindAsync(id);
             
             if (personInRestaurant == null)
             {
@@ -63,8 +62,8 @@ namespace WebApp.Controllers
             if (ModelState.IsValid)
             {
                 //personInRestaurant.Id = Guid.NewGuid();
-                _personInRestaurantRepository.Add(personInRestaurant);
-                await _personInRestaurantRepository.SaveChangesAsync();
+                _uow.PersonsInRestaurants.Add(personInRestaurant);
+                await _uow.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
             return View(personInRestaurant);
@@ -78,7 +77,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var personInRestaurant = await _personInRestaurantRepository.FindAsync(id);
+            var personInRestaurant = await _uow.PersonsInRestaurants.FindAsync(id);
             
             if (personInRestaurant == null)
             {
@@ -101,8 +100,8 @@ namespace WebApp.Controllers
 
             if (ModelState.IsValid)
             {
-                _personInRestaurantRepository.Update(personInRestaurant);
-                await _personInRestaurantRepository.SaveChangesAsync();
+                _uow.PersonsInRestaurants.Update(personInRestaurant);
+                await _uow.SaveChangesAsync();
                 
                 return RedirectToAction(nameof(Index));
             }
@@ -117,7 +116,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var personInRestaurant = await _personInRestaurantRepository.FindAsync(id);
+            var personInRestaurant = await _uow.PersonsInRestaurants.FindAsync(id);
             
             if (personInRestaurant == null)
             {
@@ -132,8 +131,8 @@ namespace WebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            var personInRestaurant = _personInRestaurantRepository.Remove(id);
-            await _personInRestaurantRepository.SaveChangesAsync();
+            var personInRestaurant = _uow.PersonsInRestaurants.Remove(id);
+            await _uow.SaveChangesAsync();
             
             return RedirectToAction(nameof(Index));
         }

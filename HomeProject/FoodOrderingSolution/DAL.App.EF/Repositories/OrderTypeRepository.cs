@@ -5,9 +5,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DAL.App.EF.Repositories
 {
-    public class OrderTypeRepository : BaseRepository<OrderType>, IOrderTypeRepository
+    public class OrderTypeRepository : EFBaseRepository<OrderType, AppDbContext>, IOrderTypeRepository
     {
-        public OrderTypeRepository(DbContext dbContext) : base(dbContext)
+        public OrderTypeRepository(AppDbContext dbContext) : base(dbContext)
         {
         }
     }

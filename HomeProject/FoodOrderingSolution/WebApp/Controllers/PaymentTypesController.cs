@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Contracts.DAL.App;
 using Contracts.DAL.App.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -14,19 +15,17 @@ namespace WebApp.Controllers
 {
     public class PaymentTypesController : Controller
     {
-        private readonly AppDbContext _context;
-        private readonly IPaymentTypeRepository _paymentTypeRepository;
+        private readonly IAppUnitOfWork _uow;
 
-        public PaymentTypesController(AppDbContext context)
+        public PaymentTypesController(IAppUnitOfWork uow)
         {
-            _context = context;
-            _paymentTypeRepository = new PaymentTypeRepository(_context);
+            _uow = uow;
         }
 
         // GET: PaymentTypes
         public async Task<IActionResult> Index()
         {
-            return View(await _paymentTypeRepository.AllAsync());
+            return View(await _uow.PaymentTypes.AllAsync());
         }
 
         // GET: PaymentTypes/Details/5
@@ -37,7 +36,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var paymentType = await _paymentTypeRepository.FindAsync(id);
+            var paymentType = await _uow.PaymentTypes.FindAsync(id);
             
             if (paymentType == null)
             {
@@ -63,8 +62,8 @@ namespace WebApp.Controllers
             if (ModelState.IsValid)
             {
                 //paymentType.Id = Guid.NewGuid();
-                _paymentTypeRepository.Add(paymentType);
-                await _paymentTypeRepository.SaveChangesAsync();
+                _uow.PaymentTypes.Add(paymentType);
+                await _uow.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
             return View(paymentType);
@@ -78,7 +77,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var paymentType = await _paymentTypeRepository.FindAsync(id);
+            var paymentType = await _uow.PaymentTypes.FindAsync(id);
             
             if (paymentType == null)
             {
@@ -101,8 +100,8 @@ namespace WebApp.Controllers
 
             if (ModelState.IsValid)
             {
-                _paymentTypeRepository.Update(paymentType);
-                await _paymentTypeRepository.SaveChangesAsync();
+                _uow.PaymentTypes.Update(paymentType);
+                await _uow.SaveChangesAsync();
                 
                 return RedirectToAction(nameof(Index));
             }
@@ -117,7 +116,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var paymentType = await _paymentTypeRepository.FindAsync(id);
+            var paymentType = await _uow.PaymentTypes.FindAsync(id);
             
             if (paymentType == null)
             {
@@ -132,8 +131,8 @@ namespace WebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            var paymentType = _paymentTypeRepository.Remove(id);
-            await _paymentTypeRepository.SaveChangesAsync();
+            var paymentType = _uow.PaymentTypes.Remove(id);
+            await _uow.SaveChangesAsync();
             
             return RedirectToAction(nameof(Index));
         }

@@ -8,9 +8,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DAL.App.EF.Repositories
 {
-    public class AreaRepository : BaseRepository<Area>, IAreaRepository
+    public class AreaRepository : EFBaseRepository<Area, AppDbContext>, IAreaRepository
     {
-        public AreaRepository(DbContext dbContext) : base(dbContext)
+        public AreaRepository(AppDbContext dbContext) : base(dbContext)
         {
         }
 

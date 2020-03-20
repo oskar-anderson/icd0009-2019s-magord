@@ -5,9 +5,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DAL.App.EF.Repositories
 {
-    public class PriceRepository : BaseRepository<Price>, IPriceRepository
+    public class PriceRepository : EFBaseRepository<Price, AppDbContext>, IPriceRepository
     {
-        public PriceRepository(DbContext dbContext) : base(dbContext)
+        public PriceRepository(AppDbContext dbContext) : base(dbContext)
         {
         }
     }

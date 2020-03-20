@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Contracts.DAL.App;
 using Contracts.DAL.App.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -14,19 +15,17 @@ namespace WebApp.Controllers
 {
     public class BillsController : Controller
     {
-        private readonly AppDbContext _context;
-        private readonly IBillRepository _billRepository;
+        private readonly IAppUnitOfWork _uow;
 
-        public BillsController(AppDbContext context)
+        public BillsController(IAppUnitOfWork uow)
         {
-            _context = context;
-            _billRepository = new BillRepository(_context);
+            _uow = uow;
         }
 
         // GET: Bills
         public async Task<IActionResult> Index()
         {
-            return View(await _billRepository.AllAsync());
+            return View(await _uow.Bills.AllAsync());
         }
 
         // GET: Bills/Details/5
@@ -37,7 +36,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
             
-            var bill = await _billRepository.FindAsync(id);
+            var bill = await _uow.Bills.FindAsync(id);
             
             if (bill == null)
             {
@@ -63,8 +62,8 @@ namespace WebApp.Controllers
             if (ModelState.IsValid)
             {
                 //bill.Id = Guid.NewGuid();
-                _billRepository.Add(bill);
-                await _billRepository.SaveChangesAsync();
+                _uow.Bills.Add(bill);
+                await _uow.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
             return View(bill);
@@ -78,7 +77,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var bill = await _billRepository.FindAsync(id);
+            var bill = await _uow.Bills.FindAsync(id);
             
             if (bill == null)
             {
@@ -101,8 +100,8 @@ namespace WebApp.Controllers
 
             if (ModelState.IsValid)
             {
-                _billRepository.Update(bill);
-                await _billRepository.SaveChangesAsync();
+                _uow.Bills.Update(bill);
+                await _uow.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
             return View(bill);
@@ -116,7 +115,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var bill = await _billRepository.FindAsync(id);
+            var bill = await _uow.Bills.FindAsync(id);
             
             if (bill == null)
             {
@@ -131,8 +130,8 @@ namespace WebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            var bill = _billRepository.Remove(id);
-            await _billRepository.SaveChangesAsync();
+            var bill = _uow.Bills.Remove(id);
+            await _uow.SaveChangesAsync();
             
             return RedirectToAction(nameof(Index));
         }

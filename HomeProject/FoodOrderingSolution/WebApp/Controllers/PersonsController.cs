@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Contracts.DAL.App;
 using Contracts.DAL.App.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -14,19 +15,17 @@ namespace WebApp.Controllers
 {
     public class PersonsController : Controller
     {
-        private readonly AppDbContext _context;
-        private readonly IPersonRepository _personRepository;
+        private readonly IAppUnitOfWork _uow;
 
-        public PersonsController(AppDbContext context)
+        public PersonsController(IAppUnitOfWork uow)
         {
-            _context = context;
-            _personRepository = new PersonRepository(_context);
+            _uow = uow;
         }
 
         // GET: Persons
         public async Task<IActionResult> Index()
         {
-            return View(await _personRepository.AllAsync());
+            return View(await _uow.Persons.AllAsync());
         }
 
         // GET: Persons/Details/5
@@ -37,7 +36,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var person = await _personRepository.FindAsync(id);
+            var person = await _uow.Persons.FindAsync(id);
             
             if (person == null)
             {
@@ -63,8 +62,8 @@ namespace WebApp.Controllers
             if (ModelState.IsValid)
             {
                 //person.Id = Guid.NewGuid();
-                _personRepository.Add(person);
-                await _personRepository.SaveChangesAsync();
+                _uow.Persons.Add(person);
+                await _uow.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
             return View(person);
@@ -78,7 +77,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var person = await _personRepository.FindAsync(id);
+            var person = await _uow.Persons.FindAsync(id);
             
             if (person == null)
             {
@@ -101,8 +100,8 @@ namespace WebApp.Controllers
 
             if (ModelState.IsValid)
             {
-                _personRepository.Update(person);
-                await _personRepository.SaveChangesAsync();
+                _uow.Persons.Update(person);
+                await _uow.SaveChangesAsync();
                 
                 return RedirectToAction(nameof(Index));
             }
@@ -117,7 +116,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var person = await _personRepository.FindAsync(id);
+            var person = await _uow.Persons.FindAsync(id);
             
             if (person == null)
             {
@@ -132,8 +131,8 @@ namespace WebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            var person = _personRepository.Remove(id);
-            await _personRepository.SaveChangesAsync();
+            var person = _uow.Persons.Remove(id);
+            await _uow.SaveChangesAsync();
             
             return RedirectToAction(nameof(Index));
         }

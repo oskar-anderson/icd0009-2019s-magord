@@ -5,9 +5,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DAL.App.EF.Repositories
 {
-    public class FoodTypeRepository : BaseRepository<FoodType>, IFoodTypeRepository
+    public class FoodTypeRepository : EFBaseRepository<FoodType, AppDbContext>, IFoodTypeRepository
     {
-        public FoodTypeRepository(DbContext dbContext) : base(dbContext)
+        public FoodTypeRepository(AppDbContext dbContext) : base(dbContext)
         {
         }
     }
