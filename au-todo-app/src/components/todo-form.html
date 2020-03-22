@@ -1,0 +1,8 @@
+<template>
+    <h4 class="card-title" click.delegate="dummyClick()">${appTitle}</h4>
+    <form class="add-items d-flex" submit.delegate="formSubmitted($event)">
+        <input value.bind="_input" type="text" class="form-control todo-list-input" placeholder.bind="placeholder">
+        <button class="add btn btn-primary font-weight-bold todo-list-add-btn"
+            innerhtml.bind="submitButtonTitle"></button>
+    </form>
+</template>
