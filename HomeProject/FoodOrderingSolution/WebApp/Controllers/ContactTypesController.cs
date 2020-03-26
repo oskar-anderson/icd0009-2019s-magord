@@ -2,30 +2,27 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Contracts.DAL.App;
-using Contracts.DAL.App.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using DAL.App.EF;
-using DAL.App.EF.Repositories;
 using Domain;
 
 namespace WebApp.Controllers
 {
     public class ContactTypesController : Controller
     {
-        private readonly IAppUnitOfWork _uow;
+        private readonly AppDbContext _context;
 
-        public ContactTypesController(IAppUnitOfWork uow)
+        public ContactTypesController(AppDbContext context)
         {
-            _uow = uow;
+            _context = context;
         }
 
         // GET: ContactTypes
         public async Task<IActionResult> Index()
         {
-            return View(await _uow.ContactTypes.AllAsync());
+            return View(await _context.ContactTypes.ToListAsync());
         }
 
         // GET: ContactTypes/Details/5
@@ -36,8 +33,8 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var contactType = await _uow.ContactTypes.FindAsync(id);
-            
+            var contactType = await _context.ContactTypes
+                .FirstOrDefaultAsync(m => m.Id == id);
             if (contactType == null)
             {
                 return NotFound();
@@ -61,9 +58,9 @@ namespace WebApp.Controllers
         {
             if (ModelState.IsValid)
             {
-                //contactType.Id = Guid.NewGuid();
-                _uow.ContactTypes.Add(contactType);
-                await _uow.SaveChangesAsync();
+                contactType.Id = Guid.NewGuid();
+                _context.Add(contactType);
+                await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
             return View(contactType);
@@ -77,8 +74,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var contactType = await _uow.ContactTypes.FindAsync(id);
-            
+            var contactType = await _context.ContactTypes.FindAsync(id);
             if (contactType == null)
             {
                 return NotFound();
@@ -100,9 +96,22 @@ namespace WebApp.Controllers
 
             if (ModelState.IsValid)
             {
-                _uow.ContactTypes.Update(contactType);
-                await _uow.SaveChangesAsync();
-                
+                try
+                {
+                    _context.Update(contactType);
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!ContactTypeExists(contactType.Id))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
                 return RedirectToAction(nameof(Index));
             }
             return View(contactType);
@@ -116,8 +125,8 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var contactType = await _uow.ContactTypes.FindAsync(id);
-            
+            var contactType = await _context.ContactTypes
+                .FirstOrDefaultAsync(m => m.Id == id);
             if (contactType == null)
             {
                 return NotFound();
@@ -131,10 +140,15 @@ namespace WebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            var contactType = _uow.ContactTypes.Remove(id);
-            await _uow.SaveChangesAsync();
-            
+            var contactType = await _context.ContactTypes.FindAsync(id);
+            _context.ContactTypes.Remove(contactType);
+            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
+        }
+
+        private bool ContactTypeExists(Guid id)
+        {
+            return _context.ContactTypes.Any(e => e.Id == id);
         }
     }
 }

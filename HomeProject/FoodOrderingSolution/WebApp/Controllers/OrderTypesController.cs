@@ -2,30 +2,27 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Contracts.DAL.App;
-using Contracts.DAL.App.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using DAL.App.EF;
-using DAL.App.EF.Repositories;
 using Domain;
 
 namespace WebApp.Controllers
 {
     public class OrderTypesController : Controller
     {
-        private readonly IAppUnitOfWork _uow;
+        private readonly AppDbContext _context;
 
-        public OrderTypesController(IAppUnitOfWork uow)
+        public OrderTypesController(AppDbContext context)
         {
-            _uow = uow;
+            _context = context;
         }
 
         // GET: OrderTypes
         public async Task<IActionResult> Index()
         {
-            return View(await _uow.OrderTypes.AllAsync());
+            return View(await _context.OrderTypes.ToListAsync());
         }
 
         // GET: OrderTypes/Details/5
@@ -36,8 +33,8 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var orderType = await _uow.OrderTypes.FindAsync(id);
-            
+            var orderType = await _context.OrderTypes
+                .FirstOrDefaultAsync(m => m.Id == id);
             if (orderType == null)
             {
                 return NotFound();
@@ -61,9 +58,9 @@ namespace WebApp.Controllers
         {
             if (ModelState.IsValid)
             {
-                //orderType.Id = Guid.NewGuid();
-                _uow.OrderTypes.Add(orderType);
-                await _uow.SaveChangesAsync();
+                orderType.Id = Guid.NewGuid();
+                _context.Add(orderType);
+                await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
             return View(orderType);
@@ -77,8 +74,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var orderType = await _uow.OrderTypes.FindAsync(id);
-            
+            var orderType = await _context.OrderTypes.FindAsync(id);
             if (orderType == null)
             {
                 return NotFound();
@@ -100,9 +96,22 @@ namespace WebApp.Controllers
 
             if (ModelState.IsValid)
             {
-                _uow.OrderTypes.Update(orderType);
-                await _uow.SaveChangesAsync();
-                
+                try
+                {
+                    _context.Update(orderType);
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!OrderTypeExists(orderType.Id))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
                 return RedirectToAction(nameof(Index));
             }
             return View(orderType);
@@ -116,8 +125,8 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var orderType = await _uow.OrderTypes.FindAsync(id);
-            
+            var orderType = await _context.OrderTypes
+                .FirstOrDefaultAsync(m => m.Id == id);
             if (orderType == null)
             {
                 return NotFound();
@@ -131,10 +140,15 @@ namespace WebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            var orderType = _uow.OrderTypes.Remove(id);
-            await _uow.SaveChangesAsync();
-            
+            var orderType = await _context.OrderTypes.FindAsync(id);
+            _context.OrderTypes.Remove(orderType);
+            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
+        }
+
+        private bool OrderTypeExists(Guid id)
+        {
+            return _context.OrderTypes.Any(e => e.Id == id);
         }
     }
 }

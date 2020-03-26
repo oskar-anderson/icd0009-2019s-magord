@@ -19,13 +19,11 @@
             </div>
             <div class="form-group">
                 <label asp-for="PersonId" class="control-label"></label>
-                <input asp-for="PersonId" class="form-control" />
-                <span asp-validation-for="PersonId" class="text-danger"></span>
+                <select asp-for="PersonId" class ="form-control" asp-items="ViewBag.PersonId"></select>
             </div>
             <div class="form-group">
                 <label asp-for="ContactTypeId" class="control-label"></label>
-                <input asp-for="ContactTypeId" class="form-control" />
-                <span asp-validation-for="ContactTypeId" class="text-danger"></span>
+                <select asp-for="ContactTypeId" class ="form-control" asp-items="ViewBag.ContactTypeId"></select>
             </div>
             <div class="form-group">
                 <label asp-for="CreatedBy" class="control-label"></label>

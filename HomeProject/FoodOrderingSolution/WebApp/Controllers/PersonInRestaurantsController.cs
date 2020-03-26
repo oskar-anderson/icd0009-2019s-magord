@@ -2,30 +2,28 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Contracts.DAL.App;
-using Contracts.DAL.App.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using DAL.App.EF;
-using DAL.App.EF.Repositories;
 using Domain;
 
 namespace WebApp.Controllers
 {
     public class PersonInRestaurantsController : Controller
     {
-        private readonly IAppUnitOfWork _uow;
+        private readonly AppDbContext _context;
 
-        public PersonInRestaurantsController(IAppUnitOfWork uow)
+        public PersonInRestaurantsController(AppDbContext context)
         {
-            _uow = uow;
+            _context = context;
         }
 
         // GET: PersonInRestaurants
         public async Task<IActionResult> Index()
         {
-            return View(await _uow.PersonsInRestaurants.AllAsync());
+            var appDbContext = _context.PersonInRestaurants.Include(p => p.Person).Include(p => p.Restaurant);
+            return View(await appDbContext.ToListAsync());
         }
 
         // GET: PersonInRestaurants/Details/5
@@ -36,8 +34,10 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var personInRestaurant = await _uow.PersonsInRestaurants.FindAsync(id);
-            
+            var personInRestaurant = await _context.PersonInRestaurants
+                .Include(p => p.Person)
+                .Include(p => p.Restaurant)
+                .FirstOrDefaultAsync(m => m.Id == id);
             if (personInRestaurant == null)
             {
                 return NotFound();
@@ -49,6 +49,8 @@ namespace WebApp.Controllers
         // GET: PersonInRestaurants/Create
         public IActionResult Create()
         {
+            ViewData["PersonId"] = new SelectList(_context.Persons, "Id", "FirstName");
+            ViewData["RestaurantId"] = new SelectList(_context.Restaurants, "Id", "Address");
             return View();
         }
 
@@ -61,11 +63,13 @@ namespace WebApp.Controllers
         {
             if (ModelState.IsValid)
             {
-                //personInRestaurant.Id = Guid.NewGuid();
-                _uow.PersonsInRestaurants.Add(personInRestaurant);
-                await _uow.SaveChangesAsync();
+                personInRestaurant.Id = Guid.NewGuid();
+                _context.Add(personInRestaurant);
+                await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+            ViewData["PersonId"] = new SelectList(_context.Persons, "Id", "FirstName", personInRestaurant.PersonId);
+            ViewData["RestaurantId"] = new SelectList(_context.Restaurants, "Id", "Address", personInRestaurant.RestaurantId);
             return View(personInRestaurant);
         }
 
@@ -77,12 +81,13 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var personInRestaurant = await _uow.PersonsInRestaurants.FindAsync(id);
-            
+            var personInRestaurant = await _context.PersonInRestaurants.FindAsync(id);
             if (personInRestaurant == null)
             {
                 return NotFound();
             }
+            ViewData["PersonId"] = new SelectList(_context.Persons, "Id", "FirstName", personInRestaurant.PersonId);
+            ViewData["RestaurantId"] = new SelectList(_context.Restaurants, "Id", "Address", personInRestaurant.RestaurantId);
             return View(personInRestaurant);
         }
 
@@ -100,11 +105,26 @@ namespace WebApp.Controllers
 
             if (ModelState.IsValid)
             {
-                _uow.PersonsInRestaurants.Update(personInRestaurant);
-                await _uow.SaveChangesAsync();
-                
+                try
+                {
+                    _context.Update(personInRestaurant);
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!PersonInRestaurantExists(personInRestaurant.Id))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
                 return RedirectToAction(nameof(Index));
             }
+            ViewData["PersonId"] = new SelectList(_context.Persons, "Id", "FirstName", personInRestaurant.PersonId);
+            ViewData["RestaurantId"] = new SelectList(_context.Restaurants, "Id", "Address", personInRestaurant.RestaurantId);
             return View(personInRestaurant);
         }
 
@@ -116,8 +136,10 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var personInRestaurant = await _uow.PersonsInRestaurants.FindAsync(id);
-            
+            var personInRestaurant = await _context.PersonInRestaurants
+                .Include(p => p.Person)
+                .Include(p => p.Restaurant)
+                .FirstOrDefaultAsync(m => m.Id == id);
             if (personInRestaurant == null)
             {
                 return NotFound();
@@ -131,10 +153,15 @@ namespace WebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            var personInRestaurant = _uow.PersonsInRestaurants.Remove(id);
-            await _uow.SaveChangesAsync();
-            
+            var personInRestaurant = await _context.PersonInRestaurants.FindAsync(id);
+            _context.PersonInRestaurants.Remove(personInRestaurant);
+            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
+        }
+
+        private bool PersonInRestaurantExists(Guid id)
+        {
+            return _context.PersonInRestaurants.Any(e => e.Id == id);
         }
     }
 }

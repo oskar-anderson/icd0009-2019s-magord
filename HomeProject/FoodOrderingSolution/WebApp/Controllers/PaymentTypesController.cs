@@ -2,30 +2,27 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Contracts.DAL.App;
-using Contracts.DAL.App.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using DAL.App.EF;
-using DAL.App.EF.Repositories;
 using Domain;
 
 namespace WebApp.Controllers
 {
     public class PaymentTypesController : Controller
     {
-        private readonly IAppUnitOfWork _uow;
+        private readonly AppDbContext _context;
 
-        public PaymentTypesController(IAppUnitOfWork uow)
+        public PaymentTypesController(AppDbContext context)
         {
-            _uow = uow;
+            _context = context;
         }
 
         // GET: PaymentTypes
         public async Task<IActionResult> Index()
         {
-            return View(await _uow.PaymentTypes.AllAsync());
+            return View(await _context.PaymentTypes.ToListAsync());
         }
 
         // GET: PaymentTypes/Details/5
@@ -36,8 +33,8 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var paymentType = await _uow.PaymentTypes.FindAsync(id);
-            
+            var paymentType = await _context.PaymentTypes
+                .FirstOrDefaultAsync(m => m.Id == id);
             if (paymentType == null)
             {
                 return NotFound();
@@ -61,9 +58,9 @@ namespace WebApp.Controllers
         {
             if (ModelState.IsValid)
             {
-                //paymentType.Id = Guid.NewGuid();
-                _uow.PaymentTypes.Add(paymentType);
-                await _uow.SaveChangesAsync();
+                paymentType.Id = Guid.NewGuid();
+                _context.Add(paymentType);
+                await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
             return View(paymentType);
@@ -77,8 +74,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var paymentType = await _uow.PaymentTypes.FindAsync(id);
-            
+            var paymentType = await _context.PaymentTypes.FindAsync(id);
             if (paymentType == null)
             {
                 return NotFound();
@@ -100,9 +96,22 @@ namespace WebApp.Controllers
 
             if (ModelState.IsValid)
             {
-                _uow.PaymentTypes.Update(paymentType);
-                await _uow.SaveChangesAsync();
-                
+                try
+                {
+                    _context.Update(paymentType);
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!PaymentTypeExists(paymentType.Id))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
                 return RedirectToAction(nameof(Index));
             }
             return View(paymentType);
@@ -116,8 +125,8 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var paymentType = await _uow.PaymentTypes.FindAsync(id);
-            
+            var paymentType = await _context.PaymentTypes
+                .FirstOrDefaultAsync(m => m.Id == id);
             if (paymentType == null)
             {
                 return NotFound();
@@ -131,10 +140,15 @@ namespace WebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            var paymentType = _uow.PaymentTypes.Remove(id);
-            await _uow.SaveChangesAsync();
-            
+            var paymentType = await _context.PaymentTypes.FindAsync(id);
+            _context.PaymentTypes.Remove(paymentType);
+            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
+        }
+
+        private bool PaymentTypeExists(Guid id)
+        {
+            return _context.PaymentTypes.Any(e => e.Id == id);
         }
     }
 }

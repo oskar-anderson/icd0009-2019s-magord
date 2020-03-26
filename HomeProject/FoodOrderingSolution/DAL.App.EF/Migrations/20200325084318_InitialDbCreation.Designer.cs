@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DAL.App.EF.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20200318163129_InitialDbCreation")]
+    [Migration("20200325084318_InitialDbCreation")]
     partial class InitialDbCreation
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -42,17 +42,12 @@ namespace DAL.App.EF.Migrations
                         .HasColumnType("varchar(256) CHARACTER SET utf8mb4")
                         .HasMaxLength(256);
 
-                    b.Property<string>("TownId")
-                        .IsRequired()
-                        .HasColumnType("varchar(36) CHARACTER SET utf8mb4")
-                        .HasMaxLength(36);
-
-                    b.Property<Guid?>("TownId1")
+                    b.Property<Guid>("TownId")
                         .HasColumnType("char(36)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("TownId1");
+                    b.HasIndex("TownId");
 
                     b.ToTable("Areas");
                 });
@@ -63,11 +58,7 @@ namespace DAL.App.EF.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("char(36)");
 
-                    b.Property<string>("AppUserId")
-                        .HasColumnType("varchar(36) CHARACTER SET utf8mb4")
-                        .HasMaxLength(36);
-
-                    b.Property<Guid?>("AppUserId1")
+                    b.Property<Guid?>("AppUserId")
                         .HasColumnType("char(36)");
 
                     b.Property<DateTime>("ChangedAt")
@@ -85,20 +76,10 @@ namespace DAL.App.EF.Migrations
                     b.Property<int>("Number")
                         .HasColumnType("int");
 
-                    b.Property<string>("OrderId")
-                        .IsRequired()
-                        .HasColumnType("varchar(36) CHARACTER SET utf8mb4")
-                        .HasMaxLength(36);
-
-                    b.Property<Guid?>("OrderId1")
+                    b.Property<Guid>("OrderId")
                         .HasColumnType("char(36)");
 
-                    b.Property<string>("PersonId")
-                        .IsRequired()
-                        .HasColumnType("varchar(36) CHARACTER SET utf8mb4")
-                        .HasMaxLength(36);
-
-                    b.Property<Guid?>("PersonId1")
+                    b.Property<Guid>("PersonId")
                         .HasColumnType("char(36)");
 
                     b.Property<decimal>("Sum")
@@ -109,11 +90,11 @@ namespace DAL.App.EF.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AppUserId1");
+                    b.HasIndex("AppUserId");
 
-                    b.HasIndex("OrderId1");
+                    b.HasIndex("OrderId");
 
-                    b.HasIndex("PersonId1");
+                    b.HasIndex("PersonId");
 
                     b.ToTable("Bills");
                 });
@@ -168,12 +149,7 @@ namespace DAL.App.EF.Migrations
                     b.Property<string>("ChangedBy")
                         .HasColumnType("longtext CHARACTER SET utf8mb4");
 
-                    b.Property<string>("ContactTypeId")
-                        .IsRequired()
-                        .HasColumnType("varchar(36) CHARACTER SET utf8mb4")
-                        .HasMaxLength(36);
-
-                    b.Property<Guid?>("ContactTypeId1")
+                    b.Property<Guid>("ContactTypeId")
                         .HasColumnType("char(36)");
 
                     b.Property<DateTime>("CreatedAt")
@@ -187,19 +163,14 @@ namespace DAL.App.EF.Migrations
                         .HasColumnType("varchar(256) CHARACTER SET utf8mb4")
                         .HasMaxLength(256);
 
-                    b.Property<string>("PersonId")
-                        .IsRequired()
-                        .HasColumnType("varchar(36) CHARACTER SET utf8mb4")
-                        .HasMaxLength(36);
-
-                    b.Property<Guid?>("PersonId1")
+                    b.Property<Guid>("PersonId")
                         .HasColumnType("char(36)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ContactTypeId1");
+                    b.HasIndex("ContactTypeId");
 
-                    b.HasIndex("PersonId1");
+                    b.HasIndex("PersonId");
 
                     b.ToTable("Contacts");
                 });
@@ -291,12 +262,7 @@ namespace DAL.App.EF.Migrations
                         .HasColumnType("varchar(1024) CHARACTER SET utf8mb4")
                         .HasMaxLength(1024);
 
-                    b.Property<string>("FoodTypeId")
-                        .IsRequired()
-                        .HasColumnType("varchar(36) CHARACTER SET utf8mb4")
-                        .HasMaxLength(36);
-
-                    b.Property<Guid?>("FoodTypeId1")
+                    b.Property<Guid>("FoodTypeId")
                         .HasColumnType("char(36)");
 
                     b.Property<string>("Name")
@@ -309,7 +275,7 @@ namespace DAL.App.EF.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("FoodTypeId1");
+                    b.HasIndex("FoodTypeId");
 
                     b.ToTable("Foods");
                 });
@@ -406,11 +372,7 @@ namespace DAL.App.EF.Migrations
                     b.Property<string>("PasswordHash")
                         .HasColumnType("longtext CHARACTER SET utf8mb4");
 
-                    b.Property<string>("PersonId")
-                        .HasColumnType("varchar(36) CHARACTER SET utf8mb4")
-                        .HasMaxLength(36);
-
-                    b.Property<Guid?>("PersonId1")
+                    b.Property<Guid?>("PersonId")
                         .HasColumnType("char(36)");
 
                     b.Property<string>("PhoneNumber")
@@ -438,7 +400,7 @@ namespace DAL.App.EF.Migrations
                         .IsUnique()
                         .HasName("UserNameIndex");
 
-                    b.HasIndex("PersonId1");
+                    b.HasIndex("PersonId");
 
                     b.ToTable("AspNetUsers");
                 });
@@ -464,12 +426,7 @@ namespace DAL.App.EF.Migrations
                     b.Property<string>("CreatedBy")
                         .HasColumnType("longtext CHARACTER SET utf8mb4");
 
-                    b.Property<string>("FoodId")
-                        .IsRequired()
-                        .HasColumnType("varchar(36) CHARACTER SET utf8mb4")
-                        .HasMaxLength(36);
-
-                    b.Property<Guid?>("FoodId1")
+                    b.Property<Guid>("FoodId")
                         .HasColumnType("char(36)");
 
                     b.Property<string>("Name")
@@ -479,7 +436,7 @@ namespace DAL.App.EF.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("FoodId1");
+                    b.HasIndex("FoodId");
 
                     b.ToTable("Ingredients");
                 });
@@ -490,11 +447,7 @@ namespace DAL.App.EF.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("char(36)");
 
-                    b.Property<string>("AppUserId")
-                        .HasColumnType("varchar(36) CHARACTER SET utf8mb4")
-                        .HasMaxLength(36);
-
-                    b.Property<Guid?>("AppUserId1")
+                    b.Property<Guid?>("AppUserId")
                         .HasColumnType("char(36)");
 
                     b.Property<DateTime>("ChangedAt")
@@ -509,28 +462,13 @@ namespace DAL.App.EF.Migrations
                     b.Property<string>("CreatedBy")
                         .HasColumnType("longtext CHARACTER SET utf8mb4");
 
-                    b.Property<string>("DrinkId")
-                        .IsRequired()
-                        .HasColumnType("varchar(36) CHARACTER SET utf8mb4")
-                        .HasMaxLength(36);
-
-                    b.Property<Guid?>("DrinkId1")
+                    b.Property<Guid>("DrinkId")
                         .HasColumnType("char(36)");
 
-                    b.Property<string>("FoodId")
-                        .IsRequired()
-                        .HasColumnType("varchar(36) CHARACTER SET utf8mb4")
-                        .HasMaxLength(36);
-
-                    b.Property<Guid?>("FoodId1")
+                    b.Property<Guid>("FoodId")
                         .HasColumnType("char(36)");
 
-                    b.Property<string>("IngredientId")
-                        .IsRequired()
-                        .HasColumnType("varchar(36) CHARACTER SET utf8mb4")
-                        .HasMaxLength(36);
-
-                    b.Property<Guid?>("IngredientId1")
+                    b.Property<Guid>("IngredientId")
                         .HasColumnType("char(36)");
 
                     b.Property<int>("Number")
@@ -541,28 +479,13 @@ namespace DAL.App.EF.Migrations
                         .HasColumnType("varchar(256) CHARACTER SET utf8mb4")
                         .HasMaxLength(256);
 
-                    b.Property<string>("OrderTypeId")
-                        .IsRequired()
-                        .HasColumnType("varchar(36) CHARACTER SET utf8mb4")
-                        .HasMaxLength(36);
-
-                    b.Property<Guid?>("OrderTypeId1")
+                    b.Property<Guid>("OrderTypeId")
                         .HasColumnType("char(36)");
 
-                    b.Property<string>("PersonId")
-                        .IsRequired()
-                        .HasColumnType("varchar(36) CHARACTER SET utf8mb4")
-                        .HasMaxLength(36);
-
-                    b.Property<Guid?>("PersonId1")
+                    b.Property<Guid>("PersonId")
                         .HasColumnType("char(36)");
 
-                    b.Property<string>("RestaurantId")
-                        .IsRequired()
-                        .HasColumnType("varchar(36) CHARACTER SET utf8mb4")
-                        .HasMaxLength(36);
-
-                    b.Property<Guid?>("RestaurantId1")
+                    b.Property<Guid>("RestaurantId")
                         .HasColumnType("char(36)");
 
                     b.Property<DateTime>("TimeCreated")
@@ -570,19 +493,19 @@ namespace DAL.App.EF.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AppUserId1");
+                    b.HasIndex("AppUserId");
 
-                    b.HasIndex("DrinkId1");
+                    b.HasIndex("DrinkId");
 
-                    b.HasIndex("FoodId1");
+                    b.HasIndex("FoodId");
 
-                    b.HasIndex("IngredientId1");
+                    b.HasIndex("IngredientId");
 
-                    b.HasIndex("OrderTypeId1");
+                    b.HasIndex("OrderTypeId");
 
-                    b.HasIndex("PersonId1");
+                    b.HasIndex("PersonId");
 
-                    b.HasIndex("RestaurantId1");
+                    b.HasIndex("RestaurantId");
 
                     b.ToTable("Orders");
                 });
@@ -628,12 +551,7 @@ namespace DAL.App.EF.Migrations
                     b.Property<int>("Amount")
                         .HasColumnType("int");
 
-                    b.Property<string>("BillId")
-                        .IsRequired()
-                        .HasColumnType("varchar(36) CHARACTER SET utf8mb4")
-                        .HasMaxLength(36);
-
-                    b.Property<Guid?>("BillId1")
+                    b.Property<Guid>("BillId")
                         .HasColumnType("char(36)");
 
                     b.Property<DateTime>("ChangedAt")
@@ -648,20 +566,10 @@ namespace DAL.App.EF.Migrations
                     b.Property<string>("CreatedBy")
                         .HasColumnType("longtext CHARACTER SET utf8mb4");
 
-                    b.Property<string>("PaymentTypeId")
-                        .IsRequired()
-                        .HasColumnType("varchar(36) CHARACTER SET utf8mb4")
-                        .HasMaxLength(36);
-
-                    b.Property<Guid?>("PaymentTypeId1")
+                    b.Property<Guid>("PaymentTypeId")
                         .HasColumnType("char(36)");
 
-                    b.Property<string>("PersonId")
-                        .IsRequired()
-                        .HasColumnType("varchar(36) CHARACTER SET utf8mb4")
-                        .HasMaxLength(36);
-
-                    b.Property<Guid?>("PersonId1")
+                    b.Property<Guid>("PersonId")
                         .HasColumnType("char(36)");
 
                     b.Property<DateTime>("TimeMade")
@@ -669,11 +577,11 @@ namespace DAL.App.EF.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("BillId1");
+                    b.HasIndex("BillId");
 
-                    b.HasIndex("PaymentTypeId1");
+                    b.HasIndex("PaymentTypeId");
 
-                    b.HasIndex("PersonId1");
+                    b.HasIndex("PersonId");
 
                     b.ToTable("Payments");
                 });
@@ -767,20 +675,10 @@ namespace DAL.App.EF.Migrations
                     b.Property<DateTime>("From")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<string>("PersonId")
-                        .IsRequired()
-                        .HasColumnType("varchar(36) CHARACTER SET utf8mb4")
-                        .HasMaxLength(36);
-
-                    b.Property<Guid?>("PersonId1")
+                    b.Property<Guid>("PersonId")
                         .HasColumnType("char(36)");
 
-                    b.Property<string>("RestaurantId")
-                        .IsRequired()
-                        .HasColumnType("varchar(36) CHARACTER SET utf8mb4")
-                        .HasMaxLength(36);
-
-                    b.Property<Guid?>("RestaurantId1")
+                    b.Property<Guid>("RestaurantId")
                         .HasColumnType("char(36)");
 
                     b.Property<string>("Role")
@@ -793,9 +691,9 @@ namespace DAL.App.EF.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("PersonId1");
+                    b.HasIndex("PersonId");
 
-                    b.HasIndex("RestaurantId1");
+                    b.HasIndex("RestaurantId");
 
                     b.ToTable("PersonInRestaurants");
                 });
@@ -806,11 +704,7 @@ namespace DAL.App.EF.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("char(36)");
 
-                    b.Property<string>("CampaignId")
-                        .HasColumnType("varchar(36) CHARACTER SET utf8mb4")
-                        .HasMaxLength(36);
-
-                    b.Property<Guid?>("CampaignId1")
+                    b.Property<Guid?>("CampaignId")
                         .HasColumnType("char(36)");
 
                     b.Property<DateTime>("ChangedAt")
@@ -825,39 +719,19 @@ namespace DAL.App.EF.Migrations
                     b.Property<string>("CreatedBy")
                         .HasColumnType("longtext CHARACTER SET utf8mb4");
 
-                    b.Property<string>("DrinkId")
-                        .IsRequired()
-                        .HasColumnType("varchar(36) CHARACTER SET utf8mb4")
-                        .HasMaxLength(36);
-
-                    b.Property<Guid?>("DrinkId1")
+                    b.Property<Guid>("DrinkId")
                         .HasColumnType("char(36)");
 
-                    b.Property<string>("FoodId")
-                        .IsRequired()
-                        .HasColumnType("varchar(36) CHARACTER SET utf8mb4")
-                        .HasMaxLength(36);
-
-                    b.Property<Guid?>("FoodId1")
+                    b.Property<Guid>("FoodId")
                         .HasColumnType("char(36)");
 
                     b.Property<DateTime>("From")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<string>("IngredientId")
-                        .IsRequired()
-                        .HasColumnType("varchar(36) CHARACTER SET utf8mb4")
-                        .HasMaxLength(36);
-
-                    b.Property<Guid?>("IngredientId1")
+                    b.Property<Guid>("IngredientId")
                         .HasColumnType("char(36)");
 
-                    b.Property<string>("OrderId")
-                        .IsRequired()
-                        .HasColumnType("varchar(36) CHARACTER SET utf8mb4")
-                        .HasMaxLength(36);
-
-                    b.Property<Guid?>("OrderId1")
+                    b.Property<Guid>("OrderId")
                         .HasColumnType("char(36)");
 
                     b.Property<DateTime>("To")
@@ -868,15 +742,15 @@ namespace DAL.App.EF.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CampaignId1");
+                    b.HasIndex("CampaignId");
 
-                    b.HasIndex("DrinkId1");
+                    b.HasIndex("DrinkId");
 
-                    b.HasIndex("FoodId1");
+                    b.HasIndex("FoodId");
 
-                    b.HasIndex("IngredientId1");
+                    b.HasIndex("IngredientId");
 
-                    b.HasIndex("OrderId1");
+                    b.HasIndex("OrderId");
 
                     b.ToTable("Prices");
                 });
@@ -892,12 +766,7 @@ namespace DAL.App.EF.Migrations
                         .HasColumnType("varchar(512) CHARACTER SET utf8mb4")
                         .HasMaxLength(512);
 
-                    b.Property<string>("AreaId")
-                        .IsRequired()
-                        .HasColumnType("varchar(36) CHARACTER SET utf8mb4")
-                        .HasMaxLength(36);
-
-                    b.Property<Guid?>("AreaId1")
+                    b.Property<Guid>("AreaId")
                         .HasColumnType("char(36)");
 
                     b.Property<DateTime>("ChangedAt")
@@ -925,7 +794,7 @@ namespace DAL.App.EF.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AreaId1");
+                    b.HasIndex("AreaId");
 
                     b.ToTable("Restaurants");
                 });
@@ -1065,141 +934,187 @@ namespace DAL.App.EF.Migrations
                 {
                     b.HasOne("Domain.Town", "Town")
                         .WithMany("Areas")
-                        .HasForeignKey("TownId1");
+                        .HasForeignKey("TownId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Domain.Bill", b =>
                 {
                     b.HasOne("Domain.Identity.AppUser", "AppUser")
                         .WithMany("Bills")
-                        .HasForeignKey("AppUserId1");
+                        .HasForeignKey("AppUserId");
 
                     b.HasOne("Domain.Order", "Order")
                         .WithMany("Bills")
-                        .HasForeignKey("OrderId1");
+                        .HasForeignKey("OrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("Domain.Person", "Person")
                         .WithMany("Bills")
-                        .HasForeignKey("PersonId1");
+                        .HasForeignKey("PersonId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Domain.Contact", b =>
                 {
                     b.HasOne("Domain.ContactType", "ContactType")
                         .WithMany("Contacts")
-                        .HasForeignKey("ContactTypeId1");
+                        .HasForeignKey("ContactTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("Domain.Person", "Person")
                         .WithMany("Contacts")
-                        .HasForeignKey("PersonId1");
+                        .HasForeignKey("PersonId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Domain.Food", b =>
                 {
                     b.HasOne("Domain.FoodType", "FoodType")
                         .WithMany("Foods")
-                        .HasForeignKey("FoodTypeId1");
+                        .HasForeignKey("FoodTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Domain.Identity.AppUser", b =>
                 {
                     b.HasOne("Domain.Person", "Person")
                         .WithMany("AppUsers")
-                        .HasForeignKey("PersonId1");
+                        .HasForeignKey("PersonId");
                 });
 
             modelBuilder.Entity("Domain.Ingredient", b =>
                 {
                     b.HasOne("Domain.Food", "Food")
                         .WithMany("Ingredients")
-                        .HasForeignKey("FoodId1");
+                        .HasForeignKey("FoodId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Domain.Order", b =>
                 {
                     b.HasOne("Domain.Identity.AppUser", "AppUser")
                         .WithMany("Orders")
-                        .HasForeignKey("AppUserId1");
+                        .HasForeignKey("AppUserId");
 
                     b.HasOne("Domain.Drink", "Drink")
                         .WithMany("Orders")
-                        .HasForeignKey("DrinkId1");
+                        .HasForeignKey("DrinkId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("Domain.Food", "Food")
                         .WithMany("Orders")
-                        .HasForeignKey("FoodId1");
+                        .HasForeignKey("FoodId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("Domain.Ingredient", "Ingredient")
                         .WithMany("Orders")
-                        .HasForeignKey("IngredientId1");
+                        .HasForeignKey("IngredientId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("Domain.OrderType", "OrderType")
                         .WithMany("Orders")
-                        .HasForeignKey("OrderTypeId1");
+                        .HasForeignKey("OrderTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("Domain.Person", "Person")
                         .WithMany("Orders")
-                        .HasForeignKey("PersonId1");
+                        .HasForeignKey("PersonId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("Domain.Restaurant", "Restaurant")
                         .WithMany("Orders")
-                        .HasForeignKey("RestaurantId1");
+                        .HasForeignKey("RestaurantId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Domain.Payment", b =>
                 {
                     b.HasOne("Domain.Bill", "Bill")
                         .WithMany("Payments")
-                        .HasForeignKey("BillId1");
+                        .HasForeignKey("BillId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("Domain.PaymentType", "PaymentType")
                         .WithMany("Payments")
-                        .HasForeignKey("PaymentTypeId1");
+                        .HasForeignKey("PaymentTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("Domain.Person", "Person")
                         .WithMany("Payments")
-                        .HasForeignKey("PersonId1");
+                        .HasForeignKey("PersonId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Domain.PersonInRestaurant", b =>
                 {
                     b.HasOne("Domain.Person", "Person")
                         .WithMany("PersonInRestaurants")
-                        .HasForeignKey("PersonId1");
+                        .HasForeignKey("PersonId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("Domain.Restaurant", "Restaurant")
                         .WithMany("PersonInRestaurants")
-                        .HasForeignKey("RestaurantId1");
+                        .HasForeignKey("RestaurantId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Domain.Price", b =>
                 {
                     b.HasOne("Domain.Campaign", "Campaign")
                         .WithMany("Prices")
-                        .HasForeignKey("CampaignId1");
+                        .HasForeignKey("CampaignId");
 
                     b.HasOne("Domain.Drink", "Drink")
                         .WithMany("Prices")
-                        .HasForeignKey("DrinkId1");
+                        .HasForeignKey("DrinkId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("Domain.Food", "Food")
                         .WithMany("Prices")
-                        .HasForeignKey("FoodId1");
+                        .HasForeignKey("FoodId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("Domain.Ingredient", "Ingredient")
                         .WithMany("Prices")
-                        .HasForeignKey("IngredientId1");
+                        .HasForeignKey("IngredientId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("Domain.Order", "Order")
                         .WithMany("Prices")
-                        .HasForeignKey("OrderId1");
+                        .HasForeignKey("OrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Domain.Restaurant", b =>
                 {
                     b.HasOne("Domain.Area", "Area")
                         .WithMany("Restaurants")
-                        .HasForeignKey("AreaId1");
+                        .HasForeignKey("AreaId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>

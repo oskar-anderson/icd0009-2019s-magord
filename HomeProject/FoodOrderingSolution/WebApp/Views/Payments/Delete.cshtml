@@ -24,23 +24,23 @@
             @Html.DisplayFor(model => model.TimeMade)
         </dd>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.PersonId)
+            @Html.DisplayNameFor(model => model.Person)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.PersonId)
-        </dd>
+            @Html.DisplayFor(model => model.Person.FirstName)
+        </dd class>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.BillId)
+            @Html.DisplayNameFor(model => model.Bill)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.BillId)
-        </dd>
+            @Html.DisplayFor(model => model.Bill.Id)
+        </dd class>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.PaymentTypeId)
+            @Html.DisplayNameFor(model => model.PaymentType)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.PaymentTypeId)
-        </dd>
+            @Html.DisplayFor(model => model.PaymentType.Name)
+        </dd class>
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.CreatedBy)
         </dt>

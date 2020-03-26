@@ -19,13 +19,13 @@
                 @Html.DisplayNameFor(model => model.TimeMade)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.PersonId)
+                @Html.DisplayNameFor(model => model.Person)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.BillId)
+                @Html.DisplayNameFor(model => model.Bill)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.PaymentTypeId)
+                @Html.DisplayNameFor(model => model.PaymentType)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.CreatedBy)
@@ -52,13 +52,13 @@
                 @Html.DisplayFor(modelItem => item.TimeMade)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.PersonId)
+                @Html.DisplayFor(modelItem => item.Person.FirstName)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.BillId)
+                @Html.DisplayFor(modelItem => item.Bill.Id)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.PaymentTypeId)
+                @Html.DisplayFor(modelItem => item.PaymentType.Name)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.CreatedBy)

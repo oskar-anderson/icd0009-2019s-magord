@@ -29,13 +29,11 @@
             </div>
             <div class="form-group">
                 <label asp-for="PersonId" class="control-label"></label>
-                <input asp-for="PersonId" class="form-control" />
-                <span asp-validation-for="PersonId" class="text-danger"></span>
+                <select asp-for="PersonId" class ="form-control" asp-items="ViewBag.PersonId"></select>
             </div>
             <div class="form-group">
                 <label asp-for="RestaurantId" class="control-label"></label>
-                <input asp-for="RestaurantId" class="form-control" />
-                <span asp-validation-for="RestaurantId" class="text-danger"></span>
+                <select asp-for="RestaurantId" class ="form-control" asp-items="ViewBag.RestaurantId"></select>
             </div>
             <div class="form-group">
                 <label asp-for="CreatedBy" class="control-label"></label>

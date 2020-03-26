@@ -22,13 +22,13 @@
                 @Html.DisplayNameFor(model => model.Sum)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.OrderId)
+                @Html.DisplayNameFor(model => model.Order)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.AppUserId)
+                @Html.DisplayNameFor(model => model.AppUser)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.PersonId)
+                @Html.DisplayNameFor(model => model.Person)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.CreatedBy)
@@ -58,13 +58,13 @@
                 @Html.DisplayFor(modelItem => item.Sum)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.OrderId)
+                @Html.DisplayFor(modelItem => item.Order.OrderStatus)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.AppUserId)
+                @Html.DisplayFor(modelItem => item.AppUser.Id)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.PersonId)
+                @Html.DisplayFor(modelItem => item.Person.FirstName)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.CreatedBy)

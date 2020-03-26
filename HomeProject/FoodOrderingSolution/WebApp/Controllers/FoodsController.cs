@@ -2,30 +2,28 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Contracts.DAL.App;
-using Contracts.DAL.App.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using DAL.App.EF;
-using DAL.App.EF.Repositories;
 using Domain;
 
 namespace WebApp.Controllers
 {
     public class FoodsController : Controller
     {
-        private readonly IAppUnitOfWork _uow;
+        private readonly AppDbContext _context;
 
-        public FoodsController(IAppUnitOfWork uow)
+        public FoodsController(AppDbContext context)
         {
-            _uow = uow;
+            _context = context;
         }
 
         // GET: Foods
         public async Task<IActionResult> Index()
         {
-            return View(await _uow.Foods.AllAsync());
+            var appDbContext = _context.Foods.Include(f => f.FoodType);
+            return View(await appDbContext.ToListAsync());
         }
 
         // GET: Foods/Details/5
@@ -36,8 +34,9 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var food = await _uow.Foods.FindAsync();
-            
+            var food = await _context.Foods
+                .Include(f => f.FoodType)
+                .FirstOrDefaultAsync(m => m.Id == id);
             if (food == null)
             {
                 return NotFound();
@@ -49,6 +48,7 @@ namespace WebApp.Controllers
         // GET: Foods/Create
         public IActionResult Create()
         {
+            ViewData["FoodTypeId"] = new SelectList(_context.FoodTypes, "Id", "Name");
             return View();
         }
 
@@ -61,11 +61,12 @@ namespace WebApp.Controllers
         {
             if (ModelState.IsValid)
             {
-                //food.Id = Guid.NewGuid();
-                _uow.Foods.Add(food);
-                await _uow.SaveChangesAsync();
+                food.Id = Guid.NewGuid();
+                _context.Add(food);
+                await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+            ViewData["FoodTypeId"] = new SelectList(_context.FoodTypes, "Id", "Name", food.FoodTypeId);
             return View(food);
         }
 
@@ -77,12 +78,12 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var food = await _uow.Foods.FindAsync(id);
-            
+            var food = await _context.Foods.FindAsync(id);
             if (food == null)
             {
                 return NotFound();
             }
+            ViewData["FoodTypeId"] = new SelectList(_context.FoodTypes, "Id", "Name", food.FoodTypeId);
             return View(food);
         }
 
@@ -100,11 +101,25 @@ namespace WebApp.Controllers
 
             if (ModelState.IsValid)
             {
-                _uow.Foods.Update(food);
-                await _uow.SaveChangesAsync();
-                
+                try
+                {
+                    _context.Update(food);
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!FoodExists(food.Id))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
                 return RedirectToAction(nameof(Index));
             }
+            ViewData["FoodTypeId"] = new SelectList(_context.FoodTypes, "Id", "Name", food.FoodTypeId);
             return View(food);
         }
 
@@ -116,8 +131,9 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var food = await _uow.Foods.FindAsync(id);
-            
+            var food = await _context.Foods
+                .Include(f => f.FoodType)
+                .FirstOrDefaultAsync(m => m.Id == id);
             if (food == null)
             {
                 return NotFound();
@@ -131,10 +147,15 @@ namespace WebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            var food = _uow.Foods.Remove(id);
-            await _uow.SaveChangesAsync();
-            
+            var food = await _context.Foods.FindAsync(id);
+            _context.Foods.Remove(food);
+            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
+        }
+
+        private bool FoodExists(Guid id)
+        {
+            return _context.Foods.Any(e => e.Id == id);
         }
     }
 }

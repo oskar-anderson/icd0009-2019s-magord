@@ -22,25 +22,25 @@
                 @Html.DisplayNameFor(model => model.TimeCreated)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.FoodId)
+                @Html.DisplayNameFor(model => model.Food)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.IngredientId)
+                @Html.DisplayNameFor(model => model.Ingredient)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.DrinkId)
+                @Html.DisplayNameFor(model => model.Drink)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.RestaurantId)
+                @Html.DisplayNameFor(model => model.Restaurant)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.OrderTypeId)
+                @Html.DisplayNameFor(model => model.OrderType)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.AppUserId)
+                @Html.DisplayNameFor(model => model.AppUser)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.PersonId)
+                @Html.DisplayNameFor(model => model.Person)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.CreatedBy)
@@ -70,25 +70,25 @@
                 @Html.DisplayFor(modelItem => item.TimeCreated)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.FoodId)
+                @Html.DisplayFor(modelItem => item.Food.Name)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.IngredientId)
+                @Html.DisplayFor(modelItem => item.Ingredient.Name)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.DrinkId)
+                @Html.DisplayFor(modelItem => item.Drink.Name)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.RestaurantId)
+                @Html.DisplayFor(modelItem => item.Restaurant.Address)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.OrderTypeId)
+                @Html.DisplayFor(modelItem => item.OrderType.Name)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.AppUserId)
+                @Html.DisplayFor(modelItem => item.AppUser.Id)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.PersonId)
+                @Html.DisplayFor(modelItem => item.Person.FirstName)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.CreatedBy)

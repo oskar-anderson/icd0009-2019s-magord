@@ -25,7 +25,7 @@
                 @Html.DisplayNameFor(model => model.Size)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.FoodTypeId)
+                @Html.DisplayNameFor(model => model.FoodType)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.CreatedBy)
@@ -58,7 +58,7 @@
                 @Html.DisplayFor(modelItem => item.Size)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.FoodTypeId)
+                @Html.DisplayFor(modelItem => item.FoodType.Name)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.CreatedBy)

@@ -29,22 +29,22 @@
             @Html.DisplayFor(model => model.Sum)
         </dd>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.OrderId)
+            @Html.DisplayNameFor(model => model.Order)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.OrderId)
+            @Html.DisplayFor(model => model.Order.OrderStatus)
         </dd>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.AppUserId)
+            @Html.DisplayNameFor(model => model.AppUser)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.AppUserId)
+            @Html.DisplayFor(model => model.AppUser.Id)
         </dd>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.PersonId)
+            @Html.DisplayNameFor(model => model.Person)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.PersonId)
+            @Html.DisplayFor(model => model.Person.FirstName)
         </dd>
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.CreatedBy)

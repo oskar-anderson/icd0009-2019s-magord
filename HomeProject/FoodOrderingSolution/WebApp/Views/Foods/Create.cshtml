@@ -34,8 +34,7 @@
             </div>
             <div class="form-group">
                 <label asp-for="FoodTypeId" class="control-label"></label>
-                <input asp-for="FoodTypeId" class="form-control" />
-                <span asp-validation-for="FoodTypeId" class="text-danger"></span>
+                <select asp-for="FoodTypeId" class ="form-control" asp-items="ViewBag.FoodTypeId"></select>
             </div>
             <div class="form-group">
                 <label asp-for="CreatedBy" class="control-label"></label>

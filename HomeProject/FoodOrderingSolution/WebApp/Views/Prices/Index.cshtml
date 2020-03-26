@@ -22,19 +22,19 @@
                 @Html.DisplayNameFor(model => model.Value)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.IngredientId)
+                @Html.DisplayNameFor(model => model.Ingredient)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.FoodId)
+                @Html.DisplayNameFor(model => model.Food)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.DrinkId)
+                @Html.DisplayNameFor(model => model.Drink)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.OrderId)
+                @Html.DisplayNameFor(model => model.Order)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.CampaignId)
+                @Html.DisplayNameFor(model => model.Campaign)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.CreatedBy)
@@ -64,19 +64,19 @@
                 @Html.DisplayFor(modelItem => item.Value)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.IngredientId)
+                @Html.DisplayFor(modelItem => item.Ingredient.Name)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.FoodId)
+                @Html.DisplayFor(modelItem => item.Food.Name)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.DrinkId)
+                @Html.DisplayFor(modelItem => item.Drink.Name)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.OrderId)
+                @Html.DisplayFor(modelItem => item.Order.OrderStatus)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.CampaignId)
+                @Html.DisplayFor(modelItem => item.Campaign.Name)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.CreatedBy)

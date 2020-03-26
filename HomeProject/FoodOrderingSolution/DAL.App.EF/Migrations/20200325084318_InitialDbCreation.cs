@@ -193,18 +193,17 @@ namespace DAL.App.EF.Migrations
                     Name = table.Column<string>(maxLength: 256, nullable: false),
                     Amount = table.Column<int>(nullable: false),
                     Size = table.Column<int>(nullable: false),
-                    FoodTypeId = table.Column<string>(maxLength: 36, nullable: false),
-                    FoodTypeId1 = table.Column<Guid>(nullable: true)
+                    FoodTypeId = table.Column<Guid>(nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Foods", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Foods_FoodTypes_FoodTypeId1",
-                        column: x => x.FoodTypeId1,
+                        name: "FK_Foods_FoodTypes_FoodTypeId",
+                        column: x => x.FoodTypeId,
                         principalTable: "FoodTypes",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -226,15 +225,14 @@ namespace DAL.App.EF.Migrations
                     LockoutEnd = table.Column<DateTimeOffset>(nullable: true),
                     LockoutEnabled = table.Column<bool>(nullable: false),
                     AccessFailedCount = table.Column<int>(nullable: false),
-                    PersonId = table.Column<string>(maxLength: 36, nullable: true),
-                    PersonId1 = table.Column<Guid>(nullable: true)
+                    PersonId = table.Column<Guid>(nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AspNetUsers", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_AspNetUsers_Persons_PersonId1",
-                        column: x => x.PersonId1,
+                        name: "FK_AspNetUsers_Persons_PersonId",
+                        column: x => x.PersonId,
                         principalTable: "Persons",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
@@ -250,26 +248,24 @@ namespace DAL.App.EF.Migrations
                     ChangedBy = table.Column<string>(nullable: true),
                     ChangedAt = table.Column<DateTime>(nullable: false),
                     Name = table.Column<string>(maxLength: 256, nullable: false),
-                    PersonId = table.Column<string>(maxLength: 36, nullable: false),
-                    PersonId1 = table.Column<Guid>(nullable: true),
-                    ContactTypeId = table.Column<string>(maxLength: 36, nullable: false),
-                    ContactTypeId1 = table.Column<Guid>(nullable: true)
+                    PersonId = table.Column<Guid>(nullable: false),
+                    ContactTypeId = table.Column<Guid>(nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Contacts", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Contacts_ContactTypes_ContactTypeId1",
-                        column: x => x.ContactTypeId1,
+                        name: "FK_Contacts_ContactTypes_ContactTypeId",
+                        column: x => x.ContactTypeId,
                         principalTable: "ContactTypes",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Contacts_Persons_PersonId1",
-                        column: x => x.PersonId1,
+                        name: "FK_Contacts_Persons_PersonId",
+                        column: x => x.PersonId,
                         principalTable: "Persons",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -282,18 +278,17 @@ namespace DAL.App.EF.Migrations
                     ChangedBy = table.Column<string>(nullable: true),
                     ChangedAt = table.Column<DateTime>(nullable: false),
                     Name = table.Column<string>(maxLength: 256, nullable: false),
-                    TownId = table.Column<string>(maxLength: 36, nullable: false),
-                    TownId1 = table.Column<Guid>(nullable: true)
+                    TownId = table.Column<Guid>(nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Areas", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Areas_Towns_TownId1",
-                        column: x => x.TownId1,
+                        name: "FK_Areas_Towns_TownId",
+                        column: x => x.TownId,
                         principalTable: "Towns",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -307,18 +302,17 @@ namespace DAL.App.EF.Migrations
                     ChangedAt = table.Column<DateTime>(nullable: false),
                     Name = table.Column<string>(maxLength: 256, nullable: false),
                     Amount = table.Column<int>(nullable: false),
-                    FoodId = table.Column<string>(maxLength: 36, nullable: false),
-                    FoodId1 = table.Column<Guid>(nullable: true)
+                    FoodId = table.Column<Guid>(nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Ingredients", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Ingredients_Foods_FoodId1",
-                        column: x => x.FoodId1,
+                        name: "FK_Ingredients_Foods_FoodId",
+                        column: x => x.FoodId,
                         principalTable: "Foods",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -419,18 +413,17 @@ namespace DAL.App.EF.Migrations
                     Address = table.Column<string>(maxLength: 512, nullable: false),
                     OpenedFrom = table.Column<DateTime>(nullable: false),
                     ClosedFrom = table.Column<DateTime>(nullable: false),
-                    AreaId = table.Column<string>(maxLength: 36, nullable: false),
-                    AreaId1 = table.Column<Guid>(nullable: true)
+                    AreaId = table.Column<Guid>(nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Restaurants", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Restaurants_Areas_AreaId1",
-                        column: x => x.AreaId1,
+                        name: "FK_Restaurants_Areas_AreaId",
+                        column: x => x.AreaId,
                         principalTable: "Areas",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -445,66 +438,59 @@ namespace DAL.App.EF.Migrations
                     OrderStatus = table.Column<string>(maxLength: 256, nullable: false),
                     Number = table.Column<int>(nullable: false),
                     TimeCreated = table.Column<DateTime>(nullable: false),
-                    FoodId = table.Column<string>(maxLength: 36, nullable: false),
-                    FoodId1 = table.Column<Guid>(nullable: true),
-                    IngredientId = table.Column<string>(maxLength: 36, nullable: false),
-                    IngredientId1 = table.Column<Guid>(nullable: true),
-                    DrinkId = table.Column<string>(maxLength: 36, nullable: false),
-                    DrinkId1 = table.Column<Guid>(nullable: true),
-                    RestaurantId = table.Column<string>(maxLength: 36, nullable: false),
-                    RestaurantId1 = table.Column<Guid>(nullable: true),
-                    OrderTypeId = table.Column<string>(maxLength: 36, nullable: false),
-                    OrderTypeId1 = table.Column<Guid>(nullable: true),
-                    AppUserId = table.Column<string>(maxLength: 36, nullable: true),
-                    AppUserId1 = table.Column<Guid>(nullable: true),
-                    PersonId = table.Column<string>(maxLength: 36, nullable: false),
-                    PersonId1 = table.Column<Guid>(nullable: true)
+                    FoodId = table.Column<Guid>(nullable: false),
+                    IngredientId = table.Column<Guid>(nullable: false),
+                    DrinkId = table.Column<Guid>(nullable: false),
+                    RestaurantId = table.Column<Guid>(nullable: false),
+                    OrderTypeId = table.Column<Guid>(nullable: false),
+                    AppUserId = table.Column<Guid>(nullable: true),
+                    PersonId = table.Column<Guid>(nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Orders", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Orders_AspNetUsers_AppUserId1",
-                        column: x => x.AppUserId1,
+                        name: "FK_Orders_AspNetUsers_AppUserId",
+                        column: x => x.AppUserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_Orders_Drinks_DrinkId1",
-                        column: x => x.DrinkId1,
+                        name: "FK_Orders_Drinks_DrinkId",
+                        column: x => x.DrinkId,
                         principalTable: "Drinks",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Orders_Foods_FoodId1",
-                        column: x => x.FoodId1,
+                        name: "FK_Orders_Foods_FoodId",
+                        column: x => x.FoodId,
                         principalTable: "Foods",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Orders_Ingredients_IngredientId1",
-                        column: x => x.IngredientId1,
+                        name: "FK_Orders_Ingredients_IngredientId",
+                        column: x => x.IngredientId,
                         principalTable: "Ingredients",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Orders_OrderTypes_OrderTypeId1",
-                        column: x => x.OrderTypeId1,
+                        name: "FK_Orders_OrderTypes_OrderTypeId",
+                        column: x => x.OrderTypeId,
                         principalTable: "OrderTypes",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Orders_Persons_PersonId1",
-                        column: x => x.PersonId1,
+                        name: "FK_Orders_Persons_PersonId",
+                        column: x => x.PersonId,
                         principalTable: "Persons",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Orders_Restaurants_RestaurantId1",
-                        column: x => x.RestaurantId1,
+                        name: "FK_Orders_Restaurants_RestaurantId",
+                        column: x => x.RestaurantId,
                         principalTable: "Restaurants",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -519,26 +505,24 @@ namespace DAL.App.EF.Migrations
                     From = table.Column<DateTime>(nullable: false),
                     To = table.Column<DateTime>(nullable: false),
                     Role = table.Column<string>(maxLength: 256, nullable: false),
-                    PersonId = table.Column<string>(maxLength: 36, nullable: false),
-                    PersonId1 = table.Column<Guid>(nullable: true),
-                    RestaurantId = table.Column<string>(maxLength: 36, nullable: false),
-                    RestaurantId1 = table.Column<Guid>(nullable: true)
+                    PersonId = table.Column<Guid>(nullable: false),
+                    RestaurantId = table.Column<Guid>(nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_PersonInRestaurants", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_PersonInRestaurants_Persons_PersonId1",
-                        column: x => x.PersonId1,
+                        name: "FK_PersonInRestaurants_Persons_PersonId",
+                        column: x => x.PersonId,
                         principalTable: "Persons",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_PersonInRestaurants_Restaurants_RestaurantId1",
-                        column: x => x.RestaurantId1,
+                        name: "FK_PersonInRestaurants_Restaurants_RestaurantId",
+                        column: x => x.RestaurantId,
                         principalTable: "Restaurants",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -553,34 +537,31 @@ namespace DAL.App.EF.Migrations
                     TimeIssued = table.Column<DateTime>(nullable: false),
                     Number = table.Column<int>(nullable: false),
                     Sum = table.Column<decimal>(nullable: false),
-                    OrderId = table.Column<string>(maxLength: 36, nullable: false),
-                    OrderId1 = table.Column<Guid>(nullable: true),
-                    AppUserId = table.Column<string>(maxLength: 36, nullable: true),
-                    AppUserId1 = table.Column<Guid>(nullable: true),
-                    PersonId = table.Column<string>(maxLength: 36, nullable: false),
-                    PersonId1 = table.Column<Guid>(nullable: true)
+                    OrderId = table.Column<Guid>(nullable: false),
+                    AppUserId = table.Column<Guid>(nullable: true),
+                    PersonId = table.Column<Guid>(nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Bills", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Bills_AspNetUsers_AppUserId1",
-                        column: x => x.AppUserId1,
+                        name: "FK_Bills_AspNetUsers_AppUserId",
+                        column: x => x.AppUserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_Bills_Orders_OrderId1",
-                        column: x => x.OrderId1,
+                        name: "FK_Bills_Orders_OrderId",
+                        column: x => x.OrderId,
                         principalTable: "Orders",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Bills_Persons_PersonId1",
-                        column: x => x.PersonId1,
+                        name: "FK_Bills_Persons_PersonId",
+                        column: x => x.PersonId,
                         principalTable: "Persons",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -595,50 +576,45 @@ namespace DAL.App.EF.Migrations
                     From = table.Column<DateTime>(nullable: false),
                     To = table.Column<DateTime>(nullable: false),
                     Value = table.Column<decimal>(nullable: false),
-                    IngredientId = table.Column<string>(maxLength: 36, nullable: false),
-                    IngredientId1 = table.Column<Guid>(nullable: true),
-                    FoodId = table.Column<string>(maxLength: 36, nullable: false),
-                    FoodId1 = table.Column<Guid>(nullable: true),
-                    DrinkId = table.Column<string>(maxLength: 36, nullable: false),
-                    DrinkId1 = table.Column<Guid>(nullable: true),
-                    OrderId = table.Column<string>(maxLength: 36, nullable: false),
-                    OrderId1 = table.Column<Guid>(nullable: true),
-                    CampaignId = table.Column<string>(maxLength: 36, nullable: true),
-                    CampaignId1 = table.Column<Guid>(nullable: true)
+                    IngredientId = table.Column<Guid>(nullable: false),
+                    FoodId = table.Column<Guid>(nullable: false),
+                    DrinkId = table.Column<Guid>(nullable: false),
+                    OrderId = table.Column<Guid>(nullable: false),
+                    CampaignId = table.Column<Guid>(nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Prices", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Prices_Campaigns_CampaignId1",
-                        column: x => x.CampaignId1,
+                        name: "FK_Prices_Campaigns_CampaignId",
+                        column: x => x.CampaignId,
                         principalTable: "Campaigns",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_Prices_Drinks_DrinkId1",
-                        column: x => x.DrinkId1,
+                        name: "FK_Prices_Drinks_DrinkId",
+                        column: x => x.DrinkId,
                         principalTable: "Drinks",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Prices_Foods_FoodId1",
-                        column: x => x.FoodId1,
+                        name: "FK_Prices_Foods_FoodId",
+                        column: x => x.FoodId,
                         principalTable: "Foods",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Prices_Ingredients_IngredientId1",
-                        column: x => x.IngredientId1,
+                        name: "FK_Prices_Ingredients_IngredientId",
+                        column: x => x.IngredientId,
                         principalTable: "Ingredients",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Prices_Orders_OrderId1",
-                        column: x => x.OrderId1,
+                        name: "FK_Prices_Orders_OrderId",
+                        column: x => x.OrderId,
                         principalTable: "Orders",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -652,40 +628,37 @@ namespace DAL.App.EF.Migrations
                     ChangedAt = table.Column<DateTime>(nullable: false),
                     Amount = table.Column<int>(nullable: false),
                     TimeMade = table.Column<DateTime>(nullable: false),
-                    PersonId = table.Column<string>(maxLength: 36, nullable: false),
-                    PersonId1 = table.Column<Guid>(nullable: true),
-                    BillId = table.Column<string>(maxLength: 36, nullable: false),
-                    BillId1 = table.Column<Guid>(nullable: true),
-                    PaymentTypeId = table.Column<string>(maxLength: 36, nullable: false),
-                    PaymentTypeId1 = table.Column<Guid>(nullable: true)
+                    PersonId = table.Column<Guid>(nullable: false),
+                    BillId = table.Column<Guid>(nullable: false),
+                    PaymentTypeId = table.Column<Guid>(nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Payments", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Payments_Bills_BillId1",
-                        column: x => x.BillId1,
+                        name: "FK_Payments_Bills_BillId",
+                        column: x => x.BillId,
                         principalTable: "Bills",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Payments_PaymentTypes_PaymentTypeId1",
-                        column: x => x.PaymentTypeId1,
+                        name: "FK_Payments_PaymentTypes_PaymentTypeId",
+                        column: x => x.PaymentTypeId,
                         principalTable: "PaymentTypes",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Payments_Persons_PersonId1",
-                        column: x => x.PersonId1,
+                        name: "FK_Payments_Persons_PersonId",
+                        column: x => x.PersonId,
                         principalTable: "Persons",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Areas_TownId1",
+                name: "IX_Areas_TownId",
                 table: "Areas",
-                column: "TownId1");
+                column: "TownId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
@@ -725,134 +698,134 @@ namespace DAL.App.EF.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_AspNetUsers_PersonId1",
+                name: "IX_AspNetUsers_PersonId",
                 table: "AspNetUsers",
-                column: "PersonId1");
+                column: "PersonId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Bills_AppUserId1",
+                name: "IX_Bills_AppUserId",
                 table: "Bills",
-                column: "AppUserId1");
+                column: "AppUserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Bills_OrderId1",
+                name: "IX_Bills_OrderId",
                 table: "Bills",
-                column: "OrderId1");
+                column: "OrderId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Bills_PersonId1",
+                name: "IX_Bills_PersonId",
                 table: "Bills",
-                column: "PersonId1");
+                column: "PersonId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Contacts_ContactTypeId1",
+                name: "IX_Contacts_ContactTypeId",
                 table: "Contacts",
-                column: "ContactTypeId1");
+                column: "ContactTypeId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Contacts_PersonId1",
+                name: "IX_Contacts_PersonId",
                 table: "Contacts",
-                column: "PersonId1");
+                column: "PersonId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Foods_FoodTypeId1",
+                name: "IX_Foods_FoodTypeId",
                 table: "Foods",
-                column: "FoodTypeId1");
+                column: "FoodTypeId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Ingredients_FoodId1",
+                name: "IX_Ingredients_FoodId",
                 table: "Ingredients",
-                column: "FoodId1");
+                column: "FoodId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Orders_AppUserId1",
+                name: "IX_Orders_AppUserId",
                 table: "Orders",
-                column: "AppUserId1");
+                column: "AppUserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Orders_DrinkId1",
+                name: "IX_Orders_DrinkId",
                 table: "Orders",
-                column: "DrinkId1");
+                column: "DrinkId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Orders_FoodId1",
+                name: "IX_Orders_FoodId",
                 table: "Orders",
-                column: "FoodId1");
+                column: "FoodId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Orders_IngredientId1",
+                name: "IX_Orders_IngredientId",
                 table: "Orders",
-                column: "IngredientId1");
+                column: "IngredientId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Orders_OrderTypeId1",
+                name: "IX_Orders_OrderTypeId",
                 table: "Orders",
-                column: "OrderTypeId1");
+                column: "OrderTypeId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Orders_PersonId1",
+                name: "IX_Orders_PersonId",
                 table: "Orders",
-                column: "PersonId1");
+                column: "PersonId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Orders_RestaurantId1",
+                name: "IX_Orders_RestaurantId",
                 table: "Orders",
-                column: "RestaurantId1");
+                column: "RestaurantId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Payments_BillId1",
+                name: "IX_Payments_BillId",
                 table: "Payments",
-                column: "BillId1");
+                column: "BillId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Payments_PaymentTypeId1",
+                name: "IX_Payments_PaymentTypeId",
                 table: "Payments",
-                column: "PaymentTypeId1");
+                column: "PaymentTypeId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Payments_PersonId1",
+                name: "IX_Payments_PersonId",
                 table: "Payments",
-                column: "PersonId1");
+                column: "PersonId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_PersonInRestaurants_PersonId1",
+                name: "IX_PersonInRestaurants_PersonId",
                 table: "PersonInRestaurants",
-                column: "PersonId1");
+                column: "PersonId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_PersonInRestaurants_RestaurantId1",
+                name: "IX_PersonInRestaurants_RestaurantId",
                 table: "PersonInRestaurants",
-                column: "RestaurantId1");
+                column: "RestaurantId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Prices_CampaignId1",
+                name: "IX_Prices_CampaignId",
                 table: "Prices",
-                column: "CampaignId1");
+                column: "CampaignId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Prices_DrinkId1",
+                name: "IX_Prices_DrinkId",
                 table: "Prices",
-                column: "DrinkId1");
+                column: "DrinkId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Prices_FoodId1",
+                name: "IX_Prices_FoodId",
                 table: "Prices",
-                column: "FoodId1");
+                column: "FoodId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Prices_IngredientId1",
+                name: "IX_Prices_IngredientId",
                 table: "Prices",
-                column: "IngredientId1");
+                column: "IngredientId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Prices_OrderId1",
+                name: "IX_Prices_OrderId",
                 table: "Prices",
-                column: "OrderId1");
+                column: "OrderId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Restaurants_AreaId1",
+                name: "IX_Restaurants_AreaId",
                 table: "Restaurants",
-                column: "AreaId1");
+                column: "AreaId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

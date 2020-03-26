@@ -2,30 +2,28 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Contracts.DAL.App;
-using Contracts.DAL.App.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using DAL.App.EF;
-using DAL.App.EF.Repositories;
 using Domain;
 
 namespace WebApp.Controllers
 {
     public class ContactsController : Controller
     {
-        private readonly IAppUnitOfWork _uow;
+        private readonly AppDbContext _context;
 
-        public ContactsController(IAppUnitOfWork uow)
+        public ContactsController(AppDbContext context)
         {
-            _uow = uow;
+            _context = context;
         }
 
         // GET: Contacts
         public async Task<IActionResult> Index()
         {
-            return View(await _uow.Contacts.AllAsync());
+            var appDbContext = _context.Contacts.Include(c => c.ContactType).Include(c => c.Person);
+            return View(await appDbContext.ToListAsync());
         }
 
         // GET: Contacts/Details/5
@@ -36,8 +34,10 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var contact = await _uow.Contacts.FindAsync(id);
-            
+            var contact = await _context.Contacts
+                .Include(c => c.ContactType)
+                .Include(c => c.Person)
+                .FirstOrDefaultAsync(m => m.Id == id);
             if (contact == null)
             {
                 return NotFound();
@@ -49,6 +49,8 @@ namespace WebApp.Controllers
         // GET: Contacts/Create
         public IActionResult Create()
         {
+            ViewData["ContactTypeId"] = new SelectList(_context.ContactTypes, "Id", "Name");
+            ViewData["PersonId"] = new SelectList(_context.Persons, "Id", "FirstName");
             return View();
         }
 
@@ -61,11 +63,13 @@ namespace WebApp.Controllers
         {
             if (ModelState.IsValid)
             {
-                //contact.Id = Guid.NewGuid();
-                _uow.Contacts.Add(contact);
-                await _uow.SaveChangesAsync();
+                contact.Id = Guid.NewGuid();
+                _context.Add(contact);
+                await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+            ViewData["ContactTypeId"] = new SelectList(_context.ContactTypes, "Id", "Name", contact.ContactTypeId);
+            ViewData["PersonId"] = new SelectList(_context.Persons, "Id", "FirstName", contact.PersonId);
             return View(contact);
         }
 
@@ -77,12 +81,13 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var contact = await _uow.Contacts.FindAsync(id);
-            
+            var contact = await _context.Contacts.FindAsync(id);
             if (contact == null)
             {
                 return NotFound();
             }
+            ViewData["ContactTypeId"] = new SelectList(_context.ContactTypes, "Id", "Name", contact.ContactTypeId);
+            ViewData["PersonId"] = new SelectList(_context.Persons, "Id", "FirstName", contact.PersonId);
             return View(contact);
         }
 
@@ -100,10 +105,26 @@ namespace WebApp.Controllers
 
             if (ModelState.IsValid)
             {
-                _uow.Contacts.Update(contact);
-                await _uow.SaveChangesAsync();
+                try
+                {
+                    _context.Update(contact);
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!ContactExists(contact.Id))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
                 return RedirectToAction(nameof(Index));
             }
+            ViewData["ContactTypeId"] = new SelectList(_context.ContactTypes, "Id", "Name", contact.ContactTypeId);
+            ViewData["PersonId"] = new SelectList(_context.Persons, "Id", "FirstName", contact.PersonId);
             return View(contact);
         }
 
@@ -115,8 +136,10 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var contact = await _uow.Contacts.FindAsync(id);
-            
+            var contact = await _context.Contacts
+                .Include(c => c.ContactType)
+                .Include(c => c.Person)
+                .FirstOrDefaultAsync(m => m.Id == id);
             if (contact == null)
             {
                 return NotFound();
@@ -130,11 +153,15 @@ namespace WebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            var contact = _uow.Contacts.Remove(id);
-            await _uow.SaveChangesAsync();
-            
+            var contact = await _context.Contacts.FindAsync(id);
+            _context.Contacts.Remove(contact);
+            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
-        
+
+        private bool ContactExists(Guid id)
+        {
+            return _context.Contacts.Any(e => e.Id == id);
+        }
     }
 }

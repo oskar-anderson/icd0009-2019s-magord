@@ -18,17 +18,17 @@
             @Html.DisplayFor(model => model.Name)
         </dd>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.PersonId)
+            @Html.DisplayNameFor(model => model.Person)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.PersonId)
-        </dd>
+            @Html.DisplayFor(model => model.Person.FirstName)
+        </dd class>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.ContactTypeId)
+            @Html.DisplayNameFor(model => model.ContactType)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ContactTypeId)
-        </dd>
+            @Html.DisplayFor(model => model.ContactType.Name)
+        </dd class>
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.CreatedBy)
         </dt>

@@ -2,30 +2,27 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Contracts.DAL.App;
-using Contracts.DAL.App.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using DAL.App.EF;
-using DAL.App.EF.Repositories;
 using Domain;
 
 namespace WebApp.Controllers
 {
     public class DrinksController : Controller
     {
-        private readonly IAppUnitOfWork _uow;
+        private readonly AppDbContext _context;
 
-        public DrinksController(IAppUnitOfWork uow)
+        public DrinksController(AppDbContext context)
         {
-            _uow = uow;
+            _context = context;
         }
 
         // GET: Drinks
         public async Task<IActionResult> Index()
         {
-            return View(await _uow.Drinks.AllAsync());
+            return View(await _context.Drinks.ToListAsync());
         }
 
         // GET: Drinks/Details/5
@@ -36,8 +33,8 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var drink = await _uow.Drinks.FindAsync();
-            
+            var drink = await _context.Drinks
+                .FirstOrDefaultAsync(m => m.Id == id);
             if (drink == null)
             {
                 return NotFound();
@@ -61,9 +58,9 @@ namespace WebApp.Controllers
         {
             if (ModelState.IsValid)
             {
-                //drink.Id = Guid.NewGuid();
-                _uow.Drinks.Add(drink);
-                await _uow.SaveChangesAsync();
+                drink.Id = Guid.NewGuid();
+                _context.Add(drink);
+                await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
             return View(drink);
@@ -77,8 +74,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var drink = await _uow.Drinks.FindAsync(id);
-            
+            var drink = await _context.Drinks.FindAsync(id);
             if (drink == null)
             {
                 return NotFound();
@@ -100,9 +96,22 @@ namespace WebApp.Controllers
 
             if (ModelState.IsValid)
             {
-                _uow.Drinks.Update(drink);
-                await _uow.SaveChangesAsync();
-                
+                try
+                {
+                    _context.Update(drink);
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!DrinkExists(drink.Id))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
                 return RedirectToAction(nameof(Index));
             }
             return View(drink);
@@ -116,8 +125,8 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var drink = await _uow.Drinks.FindAsync(id);
-            
+            var drink = await _context.Drinks
+                .FirstOrDefaultAsync(m => m.Id == id);
             if (drink == null)
             {
                 return NotFound();
@@ -131,10 +140,15 @@ namespace WebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            var drink = _uow.Drinks.Remove(id);
-            await _uow.SaveChangesAsync();
-            
+            var drink = await _context.Drinks.FindAsync(id);
+            _context.Drinks.Remove(drink);
+            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
+        }
+
+        private bool DrinkExists(Guid id)
+        {
+            return _context.Drinks.Any(e => e.Id == id);
         }
     }
 }

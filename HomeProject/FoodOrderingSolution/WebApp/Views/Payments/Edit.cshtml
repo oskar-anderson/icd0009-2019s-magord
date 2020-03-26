@@ -24,17 +24,17 @@
             </div>
             <div class="form-group">
                 <label asp-for="PersonId" class="control-label"></label>
-                <input asp-for="PersonId" class="form-control" />
+                <select asp-for="PersonId" class="form-control" asp-items="ViewBag.PersonId"></select>
                 <span asp-validation-for="PersonId" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="BillId" class="control-label"></label>
-                <input asp-for="BillId" class="form-control" />
+                <select asp-for="BillId" class="form-control" asp-items="ViewBag.BillId"></select>
                 <span asp-validation-for="BillId" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="PaymentTypeId" class="control-label"></label>
-                <input asp-for="PaymentTypeId" class="form-control" />
+                <select asp-for="PaymentTypeId" class="form-control" asp-items="ViewBag.PaymentTypeId"></select>
                 <span asp-validation-for="PaymentTypeId" class="text-danger"></span>
             </div>
             <input type="hidden" asp-for="Id" />

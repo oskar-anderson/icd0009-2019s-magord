@@ -2,30 +2,27 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Contracts.DAL.App;
-using Contracts.DAL.App.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using DAL.App.EF;
-using DAL.App.EF.Repositories;
 using Domain;
 
 namespace WebApp.Controllers
 {
     public class CampaignsController : Controller
     {
-        private readonly IAppUnitOfWork _uow;
+        private readonly AppDbContext _context;
 
-        public CampaignsController(IAppUnitOfWork uow)
+        public CampaignsController(AppDbContext context)
         {
-            _uow = uow;
+            _context = context;
         }
 
         // GET: Campaigns
         public async Task<IActionResult> Index()
         {
-            return View(await _uow.Campaigns.AllAsync());
+            return View(await _context.Campaigns.ToListAsync());
         }
 
         // GET: Campaigns/Details/5
@@ -36,8 +33,8 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var campaign = await _uow.Campaigns.FindAsync(id);
-            
+            var campaign = await _context.Campaigns
+                .FirstOrDefaultAsync(m => m.Id == id);
             if (campaign == null)
             {
                 return NotFound();
@@ -61,9 +58,9 @@ namespace WebApp.Controllers
         {
             if (ModelState.IsValid)
             {
-                //campaign.Id = Guid.NewGuid();
-                _uow.Campaigns.Add(campaign);
-                await _uow.SaveChangesAsync();
+                campaign.Id = Guid.NewGuid();
+                _context.Add(campaign);
+                await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
             return View(campaign);
@@ -77,8 +74,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var campaign = await _uow.Campaigns.FindAsync(id);
-            
+            var campaign = await _context.Campaigns.FindAsync(id);
             if (campaign == null)
             {
                 return NotFound();
@@ -100,8 +96,22 @@ namespace WebApp.Controllers
 
             if (ModelState.IsValid)
             {
-                _uow.Campaigns.Update(campaign);
-                await _uow.SaveChangesAsync();
+                try
+                {
+                    _context.Update(campaign);
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!CampaignExists(campaign.Id))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
                 return RedirectToAction(nameof(Index));
             }
             return View(campaign);
@@ -115,8 +125,8 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var campaign = await _uow.Campaigns.FindAsync(id);
-            
+            var campaign = await _context.Campaigns
+                .FirstOrDefaultAsync(m => m.Id == id);
             if (campaign == null)
             {
                 return NotFound();
@@ -130,11 +140,15 @@ namespace WebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            var campaign = _uow.Campaigns.Remove(id);
-            await _uow.SaveChangesAsync();
-            
+            var campaign = await _context.Campaigns.FindAsync(id);
+            _context.Campaigns.Remove(campaign);
+            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
-        
+
+        private bool CampaignExists(Guid id)
+        {
+            return _context.Campaigns.Any(e => e.Id == id);
+        }
     }
 }

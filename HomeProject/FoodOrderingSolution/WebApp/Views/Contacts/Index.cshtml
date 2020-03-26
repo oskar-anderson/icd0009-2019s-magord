@@ -16,10 +16,10 @@
                 @Html.DisplayNameFor(model => model.Name)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.PersonId)
+                @Html.DisplayNameFor(model => model.Person)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.ContactTypeId)
+                @Html.DisplayNameFor(model => model.ContactType)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.CreatedBy)
@@ -43,10 +43,10 @@
                 @Html.DisplayFor(modelItem => item.Name)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.PersonId)
+                @Html.DisplayFor(modelItem => item.Person.FirstName)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.ContactTypeId)
+                @Html.DisplayFor(modelItem => item.ContactType.Name)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.CreatedBy)

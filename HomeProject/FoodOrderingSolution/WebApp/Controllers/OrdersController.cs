@@ -2,30 +2,28 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Contracts.DAL.App;
-using Contracts.DAL.App.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using DAL.App.EF;
-using DAL.App.EF.Repositories;
 using Domain;
 
 namespace WebApp.Controllers
 {
     public class OrdersController : Controller
     {
-        private readonly IAppUnitOfWork _uow;
+        private readonly AppDbContext _context;
 
-        public OrdersController(IAppUnitOfWork uow)
+        public OrdersController(AppDbContext context)
         {
-            _uow = uow;
+            _context = context;
         }
 
         // GET: Orders
         public async Task<IActionResult> Index()
         {
-            return View(await _uow.Orders.AllAsync());
+            var appDbContext = _context.Orders.Include(o => o.AppUser).Include(o => o.Drink).Include(o => o.Food).Include(o => o.Ingredient).Include(o => o.OrderType).Include(o => o.Person).Include(o => o.Restaurant);
+            return View(await appDbContext.ToListAsync());
         }
 
         // GET: Orders/Details/5
@@ -36,8 +34,15 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var order = await _uow.Orders.FindAsync(id);
-            
+            var order = await _context.Orders
+                .Include(o => o.AppUser)
+                .Include(o => o.Drink)
+                .Include(o => o.Food)
+                .Include(o => o.Ingredient)
+                .Include(o => o.OrderType)
+                .Include(o => o.Person)
+                .Include(o => o.Restaurant)
+                .FirstOrDefaultAsync(m => m.Id == id);
             if (order == null)
             {
                 return NotFound();
@@ -49,6 +54,13 @@ namespace WebApp.Controllers
         // GET: Orders/Create
         public IActionResult Create()
         {
+            ViewData["AppUserId"] = new SelectList(_context.Users, "Id", "Id");
+            ViewData["DrinkId"] = new SelectList(_context.Drinks, "Id", "Name");
+            ViewData["FoodId"] = new SelectList(_context.Foods, "Id", "Name");
+            ViewData["IngredientId"] = new SelectList(_context.Ingredients, "Id", "Name");
+            ViewData["OrderTypeId"] = new SelectList(_context.OrderTypes, "Id", "Name");
+            ViewData["PersonId"] = new SelectList(_context.Persons, "Id", "FirstName");
+            ViewData["RestaurantId"] = new SelectList(_context.Restaurants, "Id", "Address");
             return View();
         }
 
@@ -61,11 +73,18 @@ namespace WebApp.Controllers
         {
             if (ModelState.IsValid)
             {
-                //order.Id = Guid.NewGuid();
-                _uow.Orders.Add(order);
-                await _uow.SaveChangesAsync();
+                order.Id = Guid.NewGuid();
+                _context.Add(order);
+                await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+            ViewData["AppUserId"] = new SelectList(_context.Users, "Id", "Id", order.AppUserId);
+            ViewData["DrinkId"] = new SelectList(_context.Drinks, "Id", "Name", order.DrinkId);
+            ViewData["FoodId"] = new SelectList(_context.Foods, "Id", "Name", order.FoodId);
+            ViewData["IngredientId"] = new SelectList(_context.Ingredients, "Id", "Name", order.IngredientId);
+            ViewData["OrderTypeId"] = new SelectList(_context.OrderTypes, "Id", "Name", order.OrderTypeId);
+            ViewData["PersonId"] = new SelectList(_context.Persons, "Id", "FirstName", order.PersonId);
+            ViewData["RestaurantId"] = new SelectList(_context.Restaurants, "Id", "Address", order.RestaurantId);
             return View(order);
         }
 
@@ -77,12 +96,18 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var order = await _uow.Orders.FindAsync(id);
-            
+            var order = await _context.Orders.FindAsync(id);
             if (order == null)
             {
                 return NotFound();
             }
+            ViewData["AppUserId"] = new SelectList(_context.Users, "Id", "Id", order.AppUserId);
+            ViewData["DrinkId"] = new SelectList(_context.Drinks, "Id", "Name", order.DrinkId);
+            ViewData["FoodId"] = new SelectList(_context.Foods, "Id", "Name", order.FoodId);
+            ViewData["IngredientId"] = new SelectList(_context.Ingredients, "Id", "Name", order.IngredientId);
+            ViewData["OrderTypeId"] = new SelectList(_context.OrderTypes, "Id", "Name", order.OrderTypeId);
+            ViewData["PersonId"] = new SelectList(_context.Persons, "Id", "FirstName", order.PersonId);
+            ViewData["RestaurantId"] = new SelectList(_context.Restaurants, "Id", "Address", order.RestaurantId);
             return View(order);
         }
 
@@ -100,11 +125,31 @@ namespace WebApp.Controllers
 
             if (ModelState.IsValid)
             {
-                _uow.Orders.Update(order);
-                await _uow.SaveChangesAsync();
-                
+                try
+                {
+                    _context.Update(order);
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!OrderExists(order.Id))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
                 return RedirectToAction(nameof(Index));
             }
+            ViewData["AppUserId"] = new SelectList(_context.Users, "Id", "Id", order.AppUserId);
+            ViewData["DrinkId"] = new SelectList(_context.Drinks, "Id", "Name", order.DrinkId);
+            ViewData["FoodId"] = new SelectList(_context.Foods, "Id", "Name", order.FoodId);
+            ViewData["IngredientId"] = new SelectList(_context.Ingredients, "Id", "Name", order.IngredientId);
+            ViewData["OrderTypeId"] = new SelectList(_context.OrderTypes, "Id", "Name", order.OrderTypeId);
+            ViewData["PersonId"] = new SelectList(_context.Persons, "Id", "FirstName", order.PersonId);
+            ViewData["RestaurantId"] = new SelectList(_context.Restaurants, "Id", "Address", order.RestaurantId);
             return View(order);
         }
 
@@ -116,8 +161,15 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var order = await _uow.Orders.FindAsync(id);
-            
+            var order = await _context.Orders
+                .Include(o => o.AppUser)
+                .Include(o => o.Drink)
+                .Include(o => o.Food)
+                .Include(o => o.Ingredient)
+                .Include(o => o.OrderType)
+                .Include(o => o.Person)
+                .Include(o => o.Restaurant)
+                .FirstOrDefaultAsync(m => m.Id == id);
             if (order == null)
             {
                 return NotFound();
@@ -131,10 +183,15 @@ namespace WebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            var order = _uow.Orders.Remove(id);
-            await _uow.SaveChangesAsync();
-            
+            var order = await _context.Orders.FindAsync(id);
+            _context.Orders.Remove(order);
+            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
+        }
+
+        private bool OrderExists(Guid id)
+        {
+            return _context.Orders.Any(e => e.Id == id);
         }
     }
 }
