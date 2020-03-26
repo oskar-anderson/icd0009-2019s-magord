@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using DAL.App.EF;
 using Domain;
+using PublicApi.DTO.v1;
 
 namespace WebApp.ApiControllers
 {
@@ -23,17 +24,29 @@ namespace WebApp.ApiControllers
 
         // GET: api/Areas
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Area>>> GetAreas()
+        public async Task<ActionResult<IEnumerable<AreaDTO>>> GetAreas()
         {
-            return await _context.Areas.ToListAsync();
+            return await _context.Areas.Select(a => new AreaDTO()
+            {
+                Id = a.Id,
+                Name = a.Name,
+                TownId = a.TownId,
+                RestaurantCount = a.Restaurants.Count
+            }).ToListAsync();
         }
 
         // GET: api/Areas/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Area>> GetArea(Guid id)
+        public async Task<ActionResult<AreaDTO>> GetArea(Guid id)
         {
-            var area = await _context.Areas.FindAsync(id);
-
+            var area = await _context.Areas.Select(a => new AreaDTO()
+            {
+                Id = a.Id, 
+                Name = a.Name, 
+                TownId = a.TownId, 
+                RestaurantCount = a.Restaurants.Count
+            }).FirstOrDefaultAsync(a => a.Id == id);
+            
             if (area == null)
             {
                 return NotFound();
@@ -78,8 +91,12 @@ namespace WebApp.ApiControllers
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see https://aka.ms/RazorPagesCRUD.
         [HttpPost]
-        public async Task<ActionResult<Area>> PostArea(Area area)
+        public async Task<ActionResult<Area>> PostArea(AreaCreateDTO areaCreateDTO)
         {
+            var area = new Area()
+            {
+                Name = areaCreateDTO.Name
+            };
             _context.Areas.Add(area);
             await _context.SaveChangesAsync();
 

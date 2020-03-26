@@ -2,28 +2,30 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Contracts.DAL.App;
+using Contracts.DAL.App.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using DAL.App.EF;
+using DAL.App.EF.Repositories;
 using Domain;
 
 namespace WebApp.Controllers
 {
     public class BillsController : Controller
     {
-        private readonly AppDbContext _context;
+        private readonly IAppUnitOfWork _uow;
 
-        public BillsController(AppDbContext context)
+        public BillsController(IAppUnitOfWork uow)
         {
-            _context = context;
+            _uow = uow;
         }
 
         // GET: Bills
         public async Task<IActionResult> Index()
         {
-            var appDbContext = _context.Bills.Include(b => b.AppUser).Include(b => b.Order).Include(b => b.Person);
-            return View(await appDbContext.ToListAsync());
+            return View(await _uow.Bills.AllAsync());
         }
 
         // GET: Bills/Details/5
@@ -33,12 +35,9 @@ namespace WebApp.Controllers
             {
                 return NotFound();
             }
-
-            var bill = await _context.Bills
-                .Include(b => b.AppUser)
-                .Include(b => b.Order)
-                .Include(b => b.Person)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            
+            var bill = await _uow.Bills.FindAsync(id);
+            
             if (bill == null)
             {
                 return NotFound();
@@ -50,9 +49,6 @@ namespace WebApp.Controllers
         // GET: Bills/Create
         public IActionResult Create()
         {
-            ViewData["AppUserId"] = new SelectList(_context.Users, "Id", "Id");
-            ViewData["OrderId"] = new SelectList(_context.Orders, "Id", "OrderStatus");
-            ViewData["PersonId"] = new SelectList(_context.Persons, "Id", "FirstName");
             return View();
         }
 
@@ -65,14 +61,11 @@ namespace WebApp.Controllers
         {
             if (ModelState.IsValid)
             {
-                bill.Id = Guid.NewGuid();
-                _context.Add(bill);
-                await _context.SaveChangesAsync();
+                //bill.Id = Guid.NewGuid();
+                _uow.Bills.Add(bill);
+                await _uow.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["AppUserId"] = new SelectList(_context.Users, "Id", "Id", bill.AppUserId);
-            ViewData["OrderId"] = new SelectList(_context.Orders, "Id", "OrderStatus", bill.OrderId);
-            ViewData["PersonId"] = new SelectList(_context.Persons, "Id", "FirstName", bill.PersonId);
             return View(bill);
         }
 
@@ -84,14 +77,12 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var bill = await _context.Bills.FindAsync(id);
+            var bill = await _uow.Bills.FindAsync(id);
+            
             if (bill == null)
             {
                 return NotFound();
             }
-            ViewData["AppUserId"] = new SelectList(_context.Users, "Id", "Id", bill.AppUserId);
-            ViewData["OrderId"] = new SelectList(_context.Orders, "Id", "OrderStatus", bill.OrderId);
-            ViewData["PersonId"] = new SelectList(_context.Persons, "Id", "FirstName", bill.PersonId);
             return View(bill);
         }
 
@@ -109,27 +100,10 @@ namespace WebApp.Controllers
 
             if (ModelState.IsValid)
             {
-                try
-                {
-                    _context.Update(bill);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!BillExists(bill.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
+                _uow.Bills.Update(bill);
+                await _uow.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["AppUserId"] = new SelectList(_context.Users, "Id", "Id", bill.AppUserId);
-            ViewData["OrderId"] = new SelectList(_context.Orders, "Id", "OrderStatus", bill.OrderId);
-            ViewData["PersonId"] = new SelectList(_context.Persons, "Id", "FirstName", bill.PersonId);
             return View(bill);
         }
 
@@ -141,11 +115,8 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var bill = await _context.Bills
-                .Include(b => b.AppUser)
-                .Include(b => b.Order)
-                .Include(b => b.Person)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var bill = await _uow.Bills.FindAsync(id);
+            
             if (bill == null)
             {
                 return NotFound();
@@ -159,15 +130,10 @@ namespace WebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            var bill = await _context.Bills.FindAsync(id);
-            _context.Bills.Remove(bill);
-            await _context.SaveChangesAsync();
+            var bill = _uow.Bills.Remove(id);
+            await _uow.SaveChangesAsync();
+            
             return RedirectToAction(nameof(Index));
-        }
-
-        private bool BillExists(Guid id)
-        {
-            return _context.Bills.Any(e => e.Id == id);
         }
     }
 }

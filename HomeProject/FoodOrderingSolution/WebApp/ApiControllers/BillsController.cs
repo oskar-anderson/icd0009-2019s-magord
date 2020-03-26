@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using DAL.App.EF;
 using Domain;
+using PublicApi.DTO.v1;
 
 namespace WebApp.ApiControllers
 {
@@ -23,16 +24,34 @@ namespace WebApp.ApiControllers
 
         // GET: api/Bills
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Bill>>> GetBills()
+        public async Task<ActionResult<IEnumerable<BillDTO>>> GetBills()
         {
-            return await _context.Bills.ToListAsync();
+            return await _context.Bills.Select(b => new BillDTO()
+            {
+                Id = b.Id,
+                TimeIssued = b.TimeIssued,
+                Number = b.Number,
+                Sum = b.Sum,
+                OrderId = b.OrderId,
+                AppUserId = b.AppUserId,
+                PersonId = b.PersonId
+            }).ToListAsync();
         }
 
         // GET: api/Bills/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Bill>> GetBill(Guid id)
+        public async Task<ActionResult<BillDTO>> GetBill(Guid id)
         {
-            var bill = await _context.Bills.FindAsync(id);
+            var bill = await _context.Bills.Select(b => new BillDTO()
+            {
+                Id = b.Id,
+                TimeIssued = b.TimeIssued,
+                Number = b.Number,
+                Sum = b.Sum,
+                OrderId = b.OrderId,
+                AppUserId = b.AppUserId,
+                PersonId = b.PersonId
+            }).FirstOrDefaultAsync(b => b.Id == id);
 
             if (bill == null)
             {

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using DAL.Base;
 
@@ -12,7 +13,7 @@ namespace Domain
 
         public ICollection<Restaurant>? Restaurants { get; set; }
 
-        [MaxLength(36)] public string TownId { get; set; } = default!;
+        public Guid TownId { get; set; } = default!;
         public Town? Town { get; set; }
     }
 }

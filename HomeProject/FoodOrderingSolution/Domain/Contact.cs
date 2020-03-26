@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 using DAL.Base;
 
 namespace Domain
@@ -7,10 +8,10 @@ namespace Domain
     {
         [MaxLength(256)] [MinLength(1)] public string Name { get; set; } = default!;
         
-        [MaxLength(36)] public string PersonId { get; set; } = default!;
+        public Guid PersonId { get; set; } = default!;
         public Person? Person { get; set; }
         
-        [MaxLength(36)] public string ContactTypeId { get; set; } = default!;
+        public Guid ContactTypeId { get; set; } = default!;
         public ContactType? ContactType { get; set; }
 
 

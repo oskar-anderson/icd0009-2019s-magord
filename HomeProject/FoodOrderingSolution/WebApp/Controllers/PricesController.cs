@@ -2,28 +2,30 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Contracts.DAL.App;
+using Contracts.DAL.App.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using DAL.App.EF;
+using DAL.App.EF.Repositories;
 using Domain;
 
 namespace WebApp.Controllers
 {
     public class PricesController : Controller
     {
-        private readonly AppDbContext _context;
+        private readonly IAppUnitOfWork _uow;
 
-        public PricesController(AppDbContext context)
+        public PricesController(IAppUnitOfWork uow)
         {
-            _context = context;
+            _uow = uow;
         }
 
         // GET: Prices
         public async Task<IActionResult> Index()
         {
-            var appDbContext = _context.Prices.Include(p => p.Campaign).Include(p => p.Drink).Include(p => p.Food).Include(p => p.Ingredient).Include(p => p.Order);
-            return View(await appDbContext.ToListAsync());
+            return View(await _uow.Prices.AllAsync());
         }
 
         // GET: Prices/Details/5
@@ -34,13 +36,8 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var price = await _context.Prices
-                .Include(p => p.Campaign)
-                .Include(p => p.Drink)
-                .Include(p => p.Food)
-                .Include(p => p.Ingredient)
-                .Include(p => p.Order)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var price = await _uow.Prices.FindAsync(id);
+            
             if (price == null)
             {
                 return NotFound();
@@ -52,11 +49,6 @@ namespace WebApp.Controllers
         // GET: Prices/Create
         public IActionResult Create()
         {
-            ViewData["CampaignId"] = new SelectList(_context.Campaigns, "Id", "Name");
-            ViewData["DrinkId"] = new SelectList(_context.Drinks, "Id", "Name");
-            ViewData["FoodId"] = new SelectList(_context.Foods, "Id", "Name");
-            ViewData["IngredientId"] = new SelectList(_context.Ingredients, "Id", "Name");
-            ViewData["OrderId"] = new SelectList(_context.Orders, "Id", "OrderStatus");
             return View();
         }
 
@@ -69,16 +61,11 @@ namespace WebApp.Controllers
         {
             if (ModelState.IsValid)
             {
-                price.Id = Guid.NewGuid();
-                _context.Add(price);
-                await _context.SaveChangesAsync();
+                //price.Id = Guid.NewGuid();
+                _uow.Prices.Add(price);
+                await _uow.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["CampaignId"] = new SelectList(_context.Campaigns, "Id", "Name", price.CampaignId);
-            ViewData["DrinkId"] = new SelectList(_context.Drinks, "Id", "Name", price.DrinkId);
-            ViewData["FoodId"] = new SelectList(_context.Foods, "Id", "Name", price.FoodId);
-            ViewData["IngredientId"] = new SelectList(_context.Ingredients, "Id", "Name", price.IngredientId);
-            ViewData["OrderId"] = new SelectList(_context.Orders, "Id", "OrderStatus", price.OrderId);
             return View(price);
         }
 
@@ -90,16 +77,12 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var price = await _context.Prices.FindAsync(id);
+            var price = await _uow.Prices.FindAsync(id);
+            
             if (price == null)
             {
                 return NotFound();
             }
-            ViewData["CampaignId"] = new SelectList(_context.Campaigns, "Id", "Name", price.CampaignId);
-            ViewData["DrinkId"] = new SelectList(_context.Drinks, "Id", "Name", price.DrinkId);
-            ViewData["FoodId"] = new SelectList(_context.Foods, "Id", "Name", price.FoodId);
-            ViewData["IngredientId"] = new SelectList(_context.Ingredients, "Id", "Name", price.IngredientId);
-            ViewData["OrderId"] = new SelectList(_context.Orders, "Id", "OrderStatus", price.OrderId);
             return View(price);
         }
 
@@ -117,29 +100,11 @@ namespace WebApp.Controllers
 
             if (ModelState.IsValid)
             {
-                try
-                {
-                    _context.Update(price);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!PriceExists(price.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
+                _uow.Prices.Update(price);
+                await _uow.SaveChangesAsync();
+                
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["CampaignId"] = new SelectList(_context.Campaigns, "Id", "Name", price.CampaignId);
-            ViewData["DrinkId"] = new SelectList(_context.Drinks, "Id", "Name", price.DrinkId);
-            ViewData["FoodId"] = new SelectList(_context.Foods, "Id", "Name", price.FoodId);
-            ViewData["IngredientId"] = new SelectList(_context.Ingredients, "Id", "Name", price.IngredientId);
-            ViewData["OrderId"] = new SelectList(_context.Orders, "Id", "OrderStatus", price.OrderId);
             return View(price);
         }
 
@@ -151,13 +116,8 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var price = await _context.Prices
-                .Include(p => p.Campaign)
-                .Include(p => p.Drink)
-                .Include(p => p.Food)
-                .Include(p => p.Ingredient)
-                .Include(p => p.Order)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var price = await _uow.Prices.FindAsync(id);
+            
             if (price == null)
             {
                 return NotFound();
@@ -171,15 +131,10 @@ namespace WebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            var price = await _context.Prices.FindAsync(id);
-            _context.Prices.Remove(price);
-            await _context.SaveChangesAsync();
+            var price = _uow.Prices.Remove(id);
+            await _uow.SaveChangesAsync();
+            
             return RedirectToAction(nameof(Index));
-        }
-
-        private bool PriceExists(Guid id)
-        {
-            return _context.Prices.Any(e => e.Id == id);
         }
     }
 }

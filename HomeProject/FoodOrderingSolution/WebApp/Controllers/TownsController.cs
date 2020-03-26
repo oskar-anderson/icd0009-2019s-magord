@@ -2,27 +2,30 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Contracts.DAL.App;
+using Contracts.DAL.App.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using DAL.App.EF;
+using DAL.App.EF.Repositories;
 using Domain;
 
 namespace WebApp.Controllers
 {
     public class TownsController : Controller
     {
-        private readonly AppDbContext _context;
+        private readonly IAppUnitOfWork _uow;
 
-        public TownsController(AppDbContext context)
+        public TownsController(IAppUnitOfWork uow)
         {
-            _context = context;
+            _uow = uow;
         }
 
         // GET: Towns
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Towns.ToListAsync());
+            return View(await _uow.Towns.AllAsync());
         }
 
         // GET: Towns/Details/5
@@ -33,8 +36,8 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var town = await _context.Towns
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var town = await _uow.Towns.FindAsync(id);
+            
             if (town == null)
             {
                 return NotFound();
@@ -58,9 +61,9 @@ namespace WebApp.Controllers
         {
             if (ModelState.IsValid)
             {
-                town.Id = Guid.NewGuid();
-                _context.Add(town);
-                await _context.SaveChangesAsync();
+                //town.Id = Guid.NewGuid();
+                _uow.Towns.Add(town);
+                await _uow.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
             return View(town);
@@ -74,7 +77,8 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var town = await _context.Towns.FindAsync(id);
+            var town = await _uow.Towns.FindAsync(id);
+            
             if (town == null)
             {
                 return NotFound();
@@ -96,22 +100,9 @@ namespace WebApp.Controllers
 
             if (ModelState.IsValid)
             {
-                try
-                {
-                    _context.Update(town);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!TownExists(town.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
+                _uow.Towns.Update(town);
+                await _uow.SaveChangesAsync();
+                
                 return RedirectToAction(nameof(Index));
             }
             return View(town);
@@ -125,8 +116,8 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var town = await _context.Towns
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var town = await _uow.Towns.FindAsync(id);
+            
             if (town == null)
             {
                 return NotFound();
@@ -140,15 +131,10 @@ namespace WebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            var town = await _context.Towns.FindAsync(id);
-            _context.Towns.Remove(town);
-            await _context.SaveChangesAsync();
+            var town = _uow.Towns.Remove(id);
+            await _uow.SaveChangesAsync();
+            
             return RedirectToAction(nameof(Index));
-        }
-
-        private bool TownExists(Guid id)
-        {
-            return _context.Towns.Any(e => e.Id == id);
         }
     }
 }

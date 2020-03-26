@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using DAL.Base;
 
@@ -10,7 +11,7 @@ namespace Domain
 
         public int Amount { get; set; } = default!;
 
-        [MaxLength(36)] public string FoodId { get; set; } = default!;
+        public Guid FoodId { get; set; } = default!;
         public Food? Food { get; set; }
 
         public ICollection<Price>? Prices { get; set; }

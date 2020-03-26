@@ -15,7 +15,7 @@ namespace Domain
 
         public DateTime ClosedFrom { get; set; } = default!;
 
-        [MaxLength(36)] public string AreaId { get; set; } = default!;
+        public Guid AreaId { get; set; } = default!;
         public Area? Area { get; set; }
 
         public ICollection<PersonInRestaurant>? PersonInRestaurants { get; set; }

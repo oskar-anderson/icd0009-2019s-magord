@@ -2,28 +2,30 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Contracts.DAL.App;
+using Contracts.DAL.App.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using DAL.App.EF;
+using DAL.App.EF.Repositories;
 using Domain;
 
 namespace WebApp.Controllers
 {
     public class PaymentsController : Controller
     {
-        private readonly AppDbContext _context;
+        private readonly IAppUnitOfWork _uow;
 
-        public PaymentsController(AppDbContext context)
+        public PaymentsController(IAppUnitOfWork uow)
         {
-            _context = context;
+            _uow = uow;
         }
 
         // GET: Payments
         public async Task<IActionResult> Index()
         {
-            var appDbContext = _context.Payments.Include(p => p.Bill).Include(p => p.PaymentType).Include(p => p.Person);
-            return View(await appDbContext.ToListAsync());
+            return View(await _uow.Payments.AllAsync());
         }
 
         // GET: Payments/Details/5
@@ -34,11 +36,8 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var payment = await _context.Payments
-                .Include(p => p.Bill)
-                .Include(p => p.PaymentType)
-                .Include(p => p.Person)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var payment = await _uow.Payments.FindAsync(id);
+            
             if (payment == null)
             {
                 return NotFound();
@@ -50,9 +49,6 @@ namespace WebApp.Controllers
         // GET: Payments/Create
         public IActionResult Create()
         {
-            ViewData["BillId"] = new SelectList(_context.Bills, "Id", "Id");
-            ViewData["PaymentTypeId"] = new SelectList(_context.PaymentTypes, "Id", "Name");
-            ViewData["PersonId"] = new SelectList(_context.Persons, "Id", "FirstName");
             return View();
         }
 
@@ -65,14 +61,11 @@ namespace WebApp.Controllers
         {
             if (ModelState.IsValid)
             {
-                payment.Id = Guid.NewGuid();
-                _context.Add(payment);
-                await _context.SaveChangesAsync();
+                //payment.Id = Guid.NewGuid();
+                _uow.Payments.Add(payment);
+                await _uow.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["BillId"] = new SelectList(_context.Bills, "Id", "Id", payment.BillId);
-            ViewData["PaymentTypeId"] = new SelectList(_context.PaymentTypes, "Id", "Name", payment.PaymentTypeId);
-            ViewData["PersonId"] = new SelectList(_context.Persons, "Id", "FirstName", payment.PersonId);
             return View(payment);
         }
 
@@ -84,14 +77,12 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var payment = await _context.Payments.FindAsync(id);
+            var payment = await _uow.Payments.FindAsync(id);
+            
             if (payment == null)
             {
                 return NotFound();
             }
-            ViewData["BillId"] = new SelectList(_context.Bills, "Id", "Id", payment.BillId);
-            ViewData["PaymentTypeId"] = new SelectList(_context.PaymentTypes, "Id", "Name", payment.PaymentTypeId);
-            ViewData["PersonId"] = new SelectList(_context.Persons, "Id", "FirstName", payment.PersonId);
             return View(payment);
         }
 
@@ -109,27 +100,11 @@ namespace WebApp.Controllers
 
             if (ModelState.IsValid)
             {
-                try
-                {
-                    _context.Update(payment);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!PaymentExists(payment.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
+                _uow.Payments.Update(payment);
+                await _uow.SaveChangesAsync();
+                
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["BillId"] = new SelectList(_context.Bills, "Id", "Id", payment.BillId);
-            ViewData["PaymentTypeId"] = new SelectList(_context.PaymentTypes, "Id", "Name", payment.PaymentTypeId);
-            ViewData["PersonId"] = new SelectList(_context.Persons, "Id", "FirstName", payment.PersonId);
             return View(payment);
         }
 
@@ -141,11 +116,8 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var payment = await _context.Payments
-                .Include(p => p.Bill)
-                .Include(p => p.PaymentType)
-                .Include(p => p.Person)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var payment = await _uow.Payments.FindAsync(id);
+            
             if (payment == null)
             {
                 return NotFound();
@@ -159,15 +131,10 @@ namespace WebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            var payment = await _context.Payments.FindAsync(id);
-            _context.Payments.Remove(payment);
-            await _context.SaveChangesAsync();
+            var payment = _uow.Payments.Remove(id);
+            await _uow.SaveChangesAsync();
+            
             return RedirectToAction(nameof(Index));
-        }
-
-        private bool PaymentExists(Guid id)
-        {
-            return _context.Payments.Any(e => e.Id == id);
         }
     }
 }

@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using DAL.App.EF;
 using Domain;
+using PublicApi.DTO.v1;
 
 namespace WebApp.ApiControllers
 {
@@ -23,16 +24,33 @@ namespace WebApp.ApiControllers
 
         // GET: api/Persons
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Person>>> GetPersons()
+        public async Task<ActionResult<IEnumerable<PersonDTO>>> GetPersons()
         {
-            return await _context.Persons.ToListAsync();
+            return await _context.Persons.Select(p => new PersonDTO()
+            {
+                Id = p.Id, 
+                FirstName = p.FirstName, 
+                LastName = p.LastName, 
+                Sex = p.Sex,
+                DateOfBirth = p.DateOfBirth, 
+                ContactCount = p.Contacts.Count
+            }).ToListAsync();
         }
 
         // GET: api/Persons/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Person>> GetPerson(Guid id)
+        public async Task<ActionResult<PersonDTO>> GetPerson(Guid id)
         {
-            var person = await _context.Persons.FindAsync(id);
+            var person = await _context.Persons
+                .Select(p => new PersonDTO()
+                {
+                    Id = p.Id, 
+                    FirstName = p.FirstName, 
+                    LastName = p.LastName, 
+                    Sex = p.Sex, 
+                    DateOfBirth = p.DateOfBirth, 
+                    ContactCount = p.Contacts.Count
+                }).FirstOrDefaultAsync(p => p.Id == id);
 
             if (person == null)
             {

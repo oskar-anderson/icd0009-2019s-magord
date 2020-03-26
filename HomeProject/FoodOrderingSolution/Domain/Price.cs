@@ -12,19 +12,19 @@ namespace Domain
         
         public decimal Value { get; set; } = default!;
 
-        [MaxLength(36)] public string IngredientId { get; set; } = default!;
+        public Guid IngredientId { get; set; } = default!;
         public Ingredient? Ingredient { get; set; }
 
-        [MaxLength(36)] public string FoodId { get; set; } = default!;
+        public Guid FoodId { get; set; } = default!;
         public Food? Food { get; set; }
         
-        [MaxLength(36)] public string DrinkId { get; set; } = default!;
+        public Guid DrinkId { get; set; } = default!;
         public Drink? Drink { get; set; }
         
-        [MaxLength(36)] public string OrderId { get; set; } = default!;
+        public Guid OrderId { get; set; } = default!;
         public Order? Order { get; set; }
         
-        [MaxLength(36)] public string? CampaignId { get; set; }
+        public Guid? CampaignId { get; set; }
         public Campaign? Campaign { get; set; }
         
     }

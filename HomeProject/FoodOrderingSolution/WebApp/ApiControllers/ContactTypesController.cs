@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using DAL.App.EF;
 using Domain;
+using PublicApi.DTO.v1;
 
 namespace WebApp.ApiControllers
 {
@@ -23,16 +24,24 @@ namespace WebApp.ApiControllers
 
         // GET: api/ContactTypes
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<ContactType>>> GetContactTypes()
+        public async Task<ActionResult<IEnumerable<ContactTypeDTO>>> GetContactTypes()
         {
-            return await _context.ContactTypes.ToListAsync();
+            return await _context.ContactTypes.Select(ct => new ContactTypeDTO()
+            {
+                Id = ct.Id,
+                Name = ct.Name
+            }).ToListAsync();
         }
 
         // GET: api/ContactTypes/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<ContactType>> GetContactType(Guid id)
+        public async Task<ActionResult<ContactTypeDTO>> GetContactType(Guid id)
         {
-            var contactType = await _context.ContactTypes.FindAsync(id);
+            var contactType = await _context.ContactTypes.Select(ct => new ContactTypeDTO()
+            {
+                Id = ct.Id,
+                Name = ct.Name
+            }).FirstOrDefaultAsync(ct => ct.Id == id);
 
             if (contactType == null)
             {

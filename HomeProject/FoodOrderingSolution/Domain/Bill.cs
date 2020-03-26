@@ -14,13 +14,13 @@ namespace Domain
 
         public decimal Sum { get; set; } = default!;
         
-        [MaxLength(36)] public string OrderId { get; set; } = default!;
+        public Guid OrderId { get; set; } = default!;
         public Order? Order { get; set; }
         
-        [MaxLength(36)] public string? AppUserId { get; set; }
+        public Guid? AppUserId { get; set; }
         public AppUser? AppUser { get; set; }
         
-        [MaxLength(36)] public string PersonId { get; set; } = default!;
+        public Guid PersonId { get; set; } = default!;
         public Person? Person { get; set; }
 
         public ICollection<Payment>? Payments { get; set; }

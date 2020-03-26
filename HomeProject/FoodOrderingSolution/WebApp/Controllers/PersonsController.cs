@@ -2,27 +2,30 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Contracts.DAL.App;
+using Contracts.DAL.App.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using DAL.App.EF;
+using DAL.App.EF.Repositories;
 using Domain;
 
 namespace WebApp.Controllers
 {
     public class PersonsController : Controller
     {
-        private readonly AppDbContext _context;
+        private readonly IAppUnitOfWork _uow;
 
-        public PersonsController(AppDbContext context)
+        public PersonsController(IAppUnitOfWork uow)
         {
-            _context = context;
+            _uow = uow;
         }
 
         // GET: Persons
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Persons.ToListAsync());
+            return View(await _uow.Persons.AllAsync());
         }
 
         // GET: Persons/Details/5
@@ -33,8 +36,8 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var person = await _context.Persons
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var person = await _uow.Persons.FindAsync(id);
+            
             if (person == null)
             {
                 return NotFound();
@@ -58,9 +61,9 @@ namespace WebApp.Controllers
         {
             if (ModelState.IsValid)
             {
-                person.Id = Guid.NewGuid();
-                _context.Add(person);
-                await _context.SaveChangesAsync();
+                //person.Id = Guid.NewGuid();
+                _uow.Persons.Add(person);
+                await _uow.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
             return View(person);
@@ -74,7 +77,8 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var person = await _context.Persons.FindAsync(id);
+            var person = await _uow.Persons.FindAsync(id);
+            
             if (person == null)
             {
                 return NotFound();
@@ -96,22 +100,9 @@ namespace WebApp.Controllers
 
             if (ModelState.IsValid)
             {
-                try
-                {
-                    _context.Update(person);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!PersonExists(person.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
+                _uow.Persons.Update(person);
+                await _uow.SaveChangesAsync();
+                
                 return RedirectToAction(nameof(Index));
             }
             return View(person);
@@ -125,8 +116,8 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var person = await _context.Persons
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var person = await _uow.Persons.FindAsync(id);
+            
             if (person == null)
             {
                 return NotFound();
@@ -140,15 +131,10 @@ namespace WebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            var person = await _context.Persons.FindAsync(id);
-            _context.Persons.Remove(person);
-            await _context.SaveChangesAsync();
+            var person = _uow.Persons.Remove(id);
+            await _uow.SaveChangesAsync();
+            
             return RedirectToAction(nameof(Index));
-        }
-
-        private bool PersonExists(Guid id)
-        {
-            return _context.Persons.Any(e => e.Id == id);
         }
     }
 }
