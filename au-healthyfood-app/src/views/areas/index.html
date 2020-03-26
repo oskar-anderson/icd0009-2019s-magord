@@ -1,0 +1,35 @@
+<template>
+    <h1>Index</h1>
+
+<p>
+    <a route-href="route: areas-create; params.bind: {}">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Name
+            </th>
+            <th>
+                RestaurantCount
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr repeat.for="area of _areas">
+            <td>
+                ${area.name}
+            </td>
+            <td>
+                ${area.restaurantCount}
+            </td>
+            <td>
+                <a route-href="route: areas-edit; params.bind: { id: area.id }">Edit</a> |
+                <a route-href="route: areas-details; params.bind: { id: area.id }">Details</a> |
+                <a route-href="route: areas-delete; params.bind: { id: area.id }">Delete</a>
+            </td>
+        </tr>
+    </tbody>
+</table>
+</template>
