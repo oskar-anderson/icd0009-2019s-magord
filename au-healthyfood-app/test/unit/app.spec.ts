@@ -3,7 +3,7 @@ import {StageComponent} from 'aurelia-testing';
 import {PLATFORM} from 'aurelia-pal';
 
 describe('Stage App Component', () => {
-  let component;
+  let component: any;
 
   beforeEach(() => {
     component = StageComponent
@@ -18,7 +18,7 @@ describe('Stage App Component', () => {
       const view = component.element;
       expect(view.textContent.trim()).toBe('Hello World!');
       done();
-    }).catch(e => {
+    }).catch((e: any) => {
       fail(e);
       done();
     });
