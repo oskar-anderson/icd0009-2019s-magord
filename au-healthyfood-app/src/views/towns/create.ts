@@ -1,14 +1,14 @@
 import { autoinject } from 'aurelia-framework';
 import { RouteConfig, NavigationInstruction, Router } from 'aurelia-router';
-import { AreaService } from 'service/area-service';
-import { IArea } from 'domain/IArea';
+import { TownService } from 'service/town-service';
+import { ITown } from 'domain/ITown';
 
 @autoinject
 export class TownsCreate {
 
-    _name = ""
+    _name = "";
 
-    constructor(private areaService: AreaService, private router: Router) {
+    constructor(private townService: TownService, private router: Router) {
 
     }
 
@@ -22,11 +22,11 @@ export class TownsCreate {
 
     onSubmit(event: Event) {
         console.log(event);
-        this.areaService
-            .createArea({ name: this._name, restaurantCount: 0, id: '' })
+        this.townService
+            .createTown({ name: this._name, areaCount: 0, id: '' })
             .then((resp) => {
                 console.log('redirect?', resp);
-                this.router.navigateToRoute('areas-index', {});
+                this.router.navigateToRoute('towns-index', {});
             });
 
         event.preventDefault();

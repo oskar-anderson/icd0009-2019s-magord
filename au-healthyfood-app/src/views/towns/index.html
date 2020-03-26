@@ -1,3 +1,35 @@
 <template>
-    Towns index
+    <h1>Index</h1>
+
+<p>
+    <a route-href="route: towns-create; params.bind: {}">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Name
+            </th>
+            <th>
+                AreaCount
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr repeat.for="town of _towns">
+            <td>
+                ${town.name}
+            </td>
+            <td>
+                ${town.areaCount}
+            </td>
+            <td>
+                <a route-href="route: towns-edit; params.bind: { id: town.id }">Edit</a> |
+                <a route-href="route: towns-details; params.bind: { id: town.id }">Details</a> |
+                <a route-href="route: towns-delete; params.bind: { id: town.id }">Delete</a>
+            </td>
+        </tr>
+    </tbody>
+</table>
 </template>

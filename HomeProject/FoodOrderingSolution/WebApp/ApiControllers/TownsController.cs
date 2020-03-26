@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using DAL.App.EF;
 using Domain;
+using PublicApi.DTO.v1;
 
 namespace WebApp.ApiControllers
 {
@@ -23,16 +24,26 @@ namespace WebApp.ApiControllers
 
         // GET: api/Towns
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Town>>> GetTowns()
+        public async Task<ActionResult<IEnumerable<TownDTO>>> GetTowns()
         {
-            return await _context.Towns.ToListAsync();
+            return await _context.Towns.Select(t => new TownDTO()
+            {
+                Id = t.Id,
+                Name = t.Name,
+                AreaCount = t.Areas.Count
+            }).ToListAsync();
         }
 
         // GET: api/Towns/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Town>> GetTown(Guid id)
+        public async Task<ActionResult<TownDTO>> GetTown(Guid id)
         {
-            var town = await _context.Towns.FindAsync(id);
+            var town = await _context.Towns.Select(t => new TownDTO()
+            {
+                Id = t.Id,
+                Name = t.Name,
+                AreaCount = t.Areas.Count
+            }).FirstOrDefaultAsync(t => t.Id == id);
 
             if (town == null)
             {
@@ -78,8 +89,12 @@ namespace WebApp.ApiControllers
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see https://aka.ms/RazorPagesCRUD.
         [HttpPost]
-        public async Task<ActionResult<Town>> PostTown(Town town)
+        public async Task<ActionResult<Town>> PostTown(TownCreateDTO townCreateDTO)
         {
+            var town = new Town()
+            {
+                Name = townCreateDTO.Name
+            };
             _context.Towns.Add(town);
             await _context.SaveChangesAsync();
 

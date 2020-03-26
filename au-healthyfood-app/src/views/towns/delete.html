@@ -1,0 +1,31 @@
+<template>
+
+
+    <h1>Delete</h1>
+
+    <h3>Are you sure you want to delete this?</h3>
+    <div>
+        <h4>Town</h4>
+        <hr />
+        <dl class="row">
+            <dt class="col-sm-2">
+                Name
+            </dt>
+            <dd class="col-sm-10">
+                ${_town.name}
+            </dd>
+            <dt class="col-sm-2">
+                AreaCount
+            </dt>
+            <dd class="col-sm-10">
+                ${_town.areaCount}
+            </dd>
+        </dl>
+
+        <form submit.trigger="onSubmit($event)">
+            <input type="submit" value="Delete" class="btn btn-danger" /> |
+            <a route-href="route: towns-index; params.bind: { }">Back to List</a>
+        </form>
+
+    </div>
+</template>

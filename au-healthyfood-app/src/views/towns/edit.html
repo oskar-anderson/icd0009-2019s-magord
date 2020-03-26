@@ -2,14 +2,14 @@
 
     <h1>Edit</h1>
 
-    <h4>Area</h4>
+    <h4>Town</h4>
     <hr />
     <div class="row">
         <div class="col-md-4">
             <form submit.trigger="onSubmit($event)">
                 <div class="form-group">
                     <label class="control-label" for="Name">Name</label>
-                    <input class="form-control" type="text" id="Name" maxlength="256" value.bind="_area.name" />
+                    <input class="form-control" type="text" id="Name" maxlength="256" value.bind="_town.name" />
                 </div>
 
                 <div class="form-group">
@@ -20,7 +20,7 @@
     </div>
 
     <div>
-        <a route-href="route: areas-index; params.bind: { }">Back to List</a>
+        <a route-href="route: towns-index; params.bind: { }">Back to List</a>
     </div>
 
 </template>

@@ -24,7 +24,7 @@ export class App {
             { route: ['areas/delete/:id'], name: 'areas-delete', moduleId: PLATFORM.moduleName('views/areas/delete'), nav: false, title: 'Areas Delete' },
             { route: ['areas/create'], name: 'areas-create', moduleId: PLATFORM.moduleName('views/areas/create'), nav: false, title: 'Areas Create' },
 
-            
+            /*
             {route: ['bills', 'bills/index'], name: 'bills-index', moduleId: PLATFORM.moduleName('views/bills/index'), nav: true, title: 'Bills'},
             {route: ['bills/details/:id'], name: 'bills-details', moduleId: PLATFORM.moduleName('views/bills/details'), nav: false, title: 'Bills details'},
             { route: ['bills/edit/:id'], name: 'bills-edit', moduleId: PLATFORM.moduleName('views/bills/edit'), nav: false, title: 'Bills Edit' },
@@ -136,9 +136,9 @@ export class App {
             { route: ['restaurants/delete/:id'], name: 'restaurants-delete', moduleId: PLATFORM.moduleName('views/restaurants/delete'), nav: false, title: 'Restaurants Delete' },
             { route: ['restaurants/create'], name: 'restaurants-create', moduleId: PLATFORM.moduleName('views/restaurants/create'), nav: false, title: 'Restaurants Create' },
 
-
+            */
             {route: ['towns', 'towns/index'], name: 'towns-index', moduleId: PLATFORM.moduleName('views/towns/index'), nav: true, title: 'Towns'},
-            {route: ['towns/details/:id'], name: 'towns-details', moduleId: PLATFORM.moduleName('views/towns/details'), nav: false, title: 'Towns details'},
+            {route: ['towns/details/:id'], name: 'towns-details', moduleId: PLATFORM.moduleName('views/towns/details'), nav: false, title: 'Towns Details'},
             { route: ['towns/edit/:id'], name: 'towns-edit', moduleId: PLATFORM.moduleName('views/towns/edit'), nav: false, title: 'Towns Edit' },
             { route: ['towns/delete/:id'], name: 'towns-delete', moduleId: PLATFORM.moduleName('views/towns/delete'), nav: false, title: 'Towns Delete' },
             { route: ['towns/create'], name: 'towns-create', moduleId: PLATFORM.moduleName('views/towns/create'), nav: false, title: 'Towns Create' }

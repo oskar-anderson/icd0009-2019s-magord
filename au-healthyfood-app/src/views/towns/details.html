@@ -2,25 +2,25 @@
     <h1>Details</h1>
 
     <div>
-        <h4>Area</h4>
+        <h4>Town</h4>
         <hr />
         <dl class="row">
             <dt class="col-sm-2">
                 Name
             </dt>
             <dd class="col-sm-10">
-                ${_area.name}
+                ${_town.name}
             </dd>
             <dt class="col-sm-2">
-                RestaurantCount
+                AreaCount
             </dt>
             <dd class="col-sm-10">
-                ${_area.restarurantCount}
+                ${_town.areaCount}
             </dd>
         </dl>
     </div>
     <div>
-        <a route-href="route: areas-edit; params.bind: { id: _area.id }">Edit</a> |
-        <a route-href="route: areas-index; params.bind: { }">Back to List</a>
+        <a route-href="route: towns-edit; params.bind: { id: _town.id }">Edit</a> |
+        <a route-href="route: towns-index; params.bind: { }">Back to List</a>
     </div>
 </template>
