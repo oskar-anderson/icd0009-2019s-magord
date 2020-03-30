@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Contracts.DAL.App;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -15,66 +16,64 @@ namespace WebApp.ApiControllers
     [ApiController]
     public class AreasController : ControllerBase
     {
-        private readonly AppDbContext _context;
+        private readonly IAppUnitOfWork _uow;
 
-        public AreasController(AppDbContext context)
+        public AreasController(IAppUnitOfWork uow)
         {
-            _context = context;
+            _uow = uow;
         }
 
         // GET: api/Areas
         [HttpGet]
         public async Task<ActionResult<IEnumerable<AreaDTO>>> GetAreas()
         {
-            return await _context.Areas.Select(a => new AreaDTO()
-            {
-                Id = a.Id,
-                Name = a.Name,
-                TownId = a.TownId,
-                RestaurantCount = a.Restaurants.Count
-            }).ToListAsync();
+            var areaDTOs = await _uow.Areas.DTOAllAsync();
+            
+            return Ok(areaDTOs);
+
         }
 
         // GET: api/Areas/5
         [HttpGet("{id}")]
         public async Task<ActionResult<AreaDTO>> GetArea(Guid id)
         {
-            var area = await _context.Areas.Select(a => new AreaDTO()
-            {
-                Id = a.Id, 
-                Name = a.Name, 
-                TownId = a.TownId, 
-                RestaurantCount = a.Restaurants.Count
-            }).FirstOrDefaultAsync(a => a.Id == id);
+            var area = await _uow.Areas.DTOFirstOrDefaultAsync(id);
             
             if (area == null)
             {
                 return NotFound();
             }
 
-            return area;
+            return Ok(area);
         }
 
         // PUT: api/Areas/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see https://aka.ms/RazorPagesCRUD.
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutArea(Guid id, Area area)
+        public async Task<IActionResult> PutArea(Guid id, AreaEditDTO areaEditDTO)
         {
-            if (id != area.Id)
+            if (id != areaEditDTO.Id)
             {
                 return BadRequest();
             }
 
-            _context.Entry(area).State = EntityState.Modified;
+            var area = await _uow.Areas.FirstOrDefaultAsync(areaEditDTO.Id);
+            if (area == null)
+            {
+                return BadRequest();
+            }
 
+            area.Name = areaEditDTO.Name;
+            _uow.Areas.Update(area);
+            
             try
             {
-                await _context.SaveChangesAsync();
+                await _uow.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!AreaExists(id))
+                if (!await _uow.Areas.ExistsAsync(id))
                 {
                     return NotFound();
                 }
@@ -93,13 +92,15 @@ namespace WebApp.ApiControllers
         [HttpPost]
         public async Task<ActionResult<Area>> PostArea(AreaCreateDTO areaCreateDTO)
         {
-            var area = new Area()
+            var area = new Area
             {
-                Name = areaCreateDTO.Name
+                Id = areaCreateDTO.Id,
+                Name = areaCreateDTO.Name,
             };
-            _context.Areas.Add(area);
-            await _context.SaveChangesAsync();
-
+            
+            _uow.Areas.Add(area);
+            await _uow.SaveChangesAsync();
+            
             return CreatedAtAction("GetArea", new { id = area.Id }, area);
         }
 
@@ -107,21 +108,17 @@ namespace WebApp.ApiControllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<Area>> DeleteArea(Guid id)
         {
-            var area = await _context.Areas.FindAsync(id);
+            var area = await _uow.Areas.FirstOrDefaultAsync(id);
+            
             if (area == null)
             {
                 return NotFound();
             }
 
-            _context.Areas.Remove(area);
-            await _context.SaveChangesAsync();
+            _uow.Areas.Remove(area);
+            await _uow.SaveChangesAsync();
 
-            return area;
-        }
-
-        private bool AreaExists(Guid id)
-        {
-            return _context.Areas.Any(e => e.Id == id);
+            return Ok(area);
         }
     }
 }

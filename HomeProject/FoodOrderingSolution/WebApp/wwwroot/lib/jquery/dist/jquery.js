@@ -3813,7 +3813,7 @@ var rerrorNames = /^(Eval|Internal|Range|Reference|Syntax|Type|URI)Error$/;
 jQuery.Deferred.exceptionHook = function( error, stack ) {
 
 	// Support: IE 8 - 9 only
-	// Console exists when dev tools are open, which can happen at any time
+	// Console ExistsAsync when dev tools are open, which can happen at any time
 	if ( window.console && window.console.warn && error && rerrorNames.test( error.name ) ) {
 		window.console.warn( "jQuery.Deferred exception: " + error.message, error.stack, stack );
 	}
@@ -4118,7 +4118,7 @@ Data.prototype = {
 			} else {
 				key = camelCase( key );
 
-				// If a key with the spaces exists, use it.
+				// If a key with the spaces ExistsAsync, use it.
 				// Otherwise, create an array by matching non-whitespace
 				key = key in cache ?
 					[ key ] :
@@ -6533,7 +6533,7 @@ jQuery.extend( {
 			val = hooks.get( elem, true, extra );
 		}
 
-		// Otherwise, if a way to get the computed value exists, use that
+		// Otherwise, if a way to get the computed value ExistsAsync, use that
 		if ( val === undefined ) {
 			val = curCSS( elem, name, styles );
 		}
@@ -6736,7 +6736,7 @@ Tween.propHooks = {
 			var result;
 
 			// Use a property on the element directly when it is not a DOM element,
-			// or when there is no matching style property that exists.
+			// or when there is no matching style property that ExistsAsync.
 			if ( tween.elem.nodeType !== 1 ||
 				tween.elem[ tween.prop ] != null && tween.elem.style[ tween.prop ] == null ) {
 				return tween.elem[ tween.prop ];
@@ -9228,7 +9228,7 @@ jQuery.extend( {
 
 			completed = true;
 
-			// Clear timeout if it exists
+			// Clear timeout if it ExistsAsync
 			if ( timeoutTimer ) {
 				window.clearTimeout( timeoutTimer );
 			}

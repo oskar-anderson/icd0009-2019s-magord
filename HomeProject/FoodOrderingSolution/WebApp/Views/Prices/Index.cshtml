@@ -64,19 +64,19 @@
                 @Html.DisplayFor(modelItem => item.Value)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Ingredient.Name)
+                @Html.DisplayFor(modelItem => item.Ingredient!.Name)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Food.Name)
+                @Html.DisplayFor(modelItem => item.Food!.Name)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Drink.Name)
+                @Html.DisplayFor(modelItem => item.Drink!.Name)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Order.OrderStatus)
+                @Html.DisplayFor(modelItem => item.Order!.OrderStatus)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Campaign.Name)
+                @Html.DisplayFor(modelItem => item.Campaign!.Name)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.CreatedBy)

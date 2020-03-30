@@ -1,10 +1,20 @@
-﻿using Contracts.DAL.Base.Repositories;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using Contracts.DAL.Base.Repositories;
 using Domain;
+using PublicApi.DTO.v1;
 
 namespace Contracts.DAL.App.Repositories
 {
     public interface IAreaRepository : IBaseRepository<Area>
     {
-        // add  custom methods here!
+        Task<Area> FirstOrDefaultAsync(Guid id);
+        Task<bool> ExistsAsync(Guid id);
+        Task DeleteAsync(Guid id);
+        
+        Task<IEnumerable<AreaDTO>> DTOAllAsync();
+        Task<AreaDTO> DTOFirstOrDefaultAsync(Guid id);
+
     }
 }

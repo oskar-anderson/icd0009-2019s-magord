@@ -24,10 +24,10 @@ namespace WebApp.Areas.Identity.Pages.Account.Manage
         }
 
         [TempData]
-        public string[] RecoveryCodes { get; set; }
+        public string[] RecoveryCodes { get; set; } = default!;
 
         [TempData]
-        public string StatusMessage { get; set; }
+        public string StatusMessage { get; set; } = default!;
 
         public async Task<IActionResult> OnGetAsync()
         {

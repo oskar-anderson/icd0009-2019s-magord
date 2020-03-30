@@ -38,7 +38,7 @@ dotnet aspnet-codegenerator controller -name RestaurantsController   -actions -m
 dotnet aspnet-codegenerator controller -name TownsController   -actions -m Town    -dc AppDbContext -outDir Controllers --useDefaultLayout --useAsyncActions --referenceScriptLibraries -f
 ~~~
 
-Generate Identity UI
+Generate Identity UI (inside WebApp)
 ~~~
 dotnet aspnet-codegenerator identity -dc DAL.App.EF.AppDbContext  -f  
 ~~~

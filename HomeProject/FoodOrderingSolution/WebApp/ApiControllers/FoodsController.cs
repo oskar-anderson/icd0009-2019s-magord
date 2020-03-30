@@ -2,11 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Contracts.DAL.App;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using DAL.App.EF;
 using Domain;
+using PublicApi.DTO.v1.FoodDTOs;
 
 namespace WebApp.ApiControllers
 {
@@ -14,54 +16,67 @@ namespace WebApp.ApiControllers
     [ApiController]
     public class FoodsController : ControllerBase
     {
-        private readonly AppDbContext _context;
+        private readonly IAppUnitOfWork _uow;
 
-        public FoodsController(AppDbContext context)
+        public FoodsController(IAppUnitOfWork uow)
         {
-            _context = context;
+            _uow = uow;
         }
 
         // GET: api/Foods
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Food>>> GetFoods()
+        public async Task<ActionResult<IEnumerable<FoodDTO>>> GetFoods()
         {
-            return await _context.Foods.ToListAsync();
+            var foodDTOs = await _uow.Foods.DTOAllAsync();
+            
+            return Ok(foodDTOs);
         }
 
         // GET: api/Foods/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Food>> GetFood(Guid id)
+        public async Task<ActionResult<FoodDTO>> GetFood(Guid id)
         {
-            var food = await _context.Foods.FindAsync(id);
+            var food = await _uow.Foods.DTOFirstOrDefaultAsync(id);
 
             if (food == null)
             {
                 return NotFound();
             }
 
-            return food;
+            return Ok(food);
         }
 
         // PUT: api/Foods/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see https://aka.ms/RazorPagesCRUD.
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutFood(Guid id, Food food)
+        public async Task<IActionResult> PutFood(Guid id, FoodEditDTO foodEditDTO)
         {
-            if (id != food.Id)
+            if (id != foodEditDTO.Id)
             {
                 return BadRequest();
             }
 
-            _context.Entry(food).State = EntityState.Modified;
+            var food = await _uow.Foods.FirstOrDefaultAsync(foodEditDTO.Id);
+            if (food == null)
+            {
+                return BadRequest();
+            }
+
+            food.Description = foodEditDTO.Description;
+            food.Name = foodEditDTO.Name;
+            food.Amount = foodEditDTO.Amount;
+            food.Size = foodEditDTO.Size;
+            
+            _uow.Foods.Update(food);
 
             try
             {
-                await _context.SaveChangesAsync();
+                await _uow.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!FoodExists(id))
+                if (!await _uow.Foods.ExistsAsync(id))
                 {
                     return NotFound();
                 }
@@ -78,10 +93,19 @@ namespace WebApp.ApiControllers
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see https://aka.ms/RazorPagesCRUD.
         [HttpPost]
-        public async Task<ActionResult<Food>> PostFood(Food food)
+        public async Task<ActionResult<Food>> PostFood(FoodCreateDTO foodCreateDTO)
         {
-            _context.Foods.Add(food);
-            await _context.SaveChangesAsync();
+            var food = new Food
+            {
+                Id = foodCreateDTO.Id,
+                Name = foodCreateDTO.Name,
+                Description  = foodCreateDTO.Description,
+                Amount = foodCreateDTO.Amount,
+                Size = foodCreateDTO.Size
+            };
+            
+            _uow.Foods.Add(food);
+            await _uow.SaveChangesAsync();
 
             return CreatedAtAction("GetFood", new { id = food.Id }, food);
         }
@@ -90,21 +114,16 @@ namespace WebApp.ApiControllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<Food>> DeleteFood(Guid id)
         {
-            var food = await _context.Foods.FindAsync(id);
+            var food = await _uow.Foods.FirstOrDefaultAsync(id);
             if (food == null)
             {
                 return NotFound();
             }
 
-            _context.Foods.Remove(food);
-            await _context.SaveChangesAsync();
+            _uow.Foods.Remove(food);
+            await _uow.SaveChangesAsync();
 
-            return food;
-        }
-
-        private bool FoodExists(Guid id)
-        {
-            return _context.Foods.Any(e => e.Id == id);
+            return Ok(food);
         }
     }
 }

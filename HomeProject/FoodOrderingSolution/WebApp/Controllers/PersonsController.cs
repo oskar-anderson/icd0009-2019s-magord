@@ -3,12 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Contracts.DAL.App;
-using Contracts.DAL.App.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using DAL.App.EF;
-using DAL.App.EF.Repositories;
 using Domain;
 
 namespace WebApp.Controllers
@@ -25,7 +23,8 @@ namespace WebApp.Controllers
         // GET: Persons
         public async Task<IActionResult> Index()
         {
-            return View(await _uow.Persons.AllAsync());
+            var persons = await _uow.Persons.AllAsync();
+            return View(persons);
         }
 
         // GET: Persons/Details/5
@@ -36,8 +35,8 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var person = await _uow.Persons.FindAsync(id);
-            
+            var person = await _uow.Persons.FirstOrDefaultAsync(id.Value);
+
             if (person == null)
             {
                 return NotFound();
@@ -57,7 +56,7 @@ namespace WebApp.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("FirstName,LastName,Sex,DateOfBirth,Id,CreatedBy,CreatedAt,ChangedBy,ChangedAt")] Person person)
+        public async Task<IActionResult> Create( Person person)
         {
             if (ModelState.IsValid)
             {
@@ -77,8 +76,8 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var person = await _uow.Persons.FindAsync(id);
-            
+            var person = await _uow.Persons.FirstOrDefaultAsync(id.Value);
+
             if (person == null)
             {
                 return NotFound();
@@ -91,7 +90,7 @@ namespace WebApp.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("FirstName,LastName,Sex,DateOfBirth,Id,CreatedBy,CreatedAt,ChangedBy,ChangedAt")] Person person)
+        public async Task<IActionResult> Edit(Guid id, Person person)
         {
             if (id != person.Id)
             {
@@ -100,9 +99,22 @@ namespace WebApp.Controllers
 
             if (ModelState.IsValid)
             {
-                _uow.Persons.Update(person);
-                await _uow.SaveChangesAsync();
-                
+                try
+                {
+                    _uow.Persons.Update(person);
+                    await _uow.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!await _uow.Persons.ExistsAsync(person.Id))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
                 return RedirectToAction(nameof(Index));
             }
             return View(person);
@@ -116,8 +128,8 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var person = await _uow.Persons.FindAsync(id);
-            
+            var person = await _uow.Persons.FirstOrDefaultAsync(id.Value);
+
             if (person == null)
             {
                 return NotFound();
@@ -131,9 +143,8 @@ namespace WebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            var person = _uow.Persons.Remove(id);
+            await _uow.Persons.DeleteAsync(id);
             await _uow.SaveChangesAsync();
-            
             return RedirectToAction(nameof(Index));
         }
     }

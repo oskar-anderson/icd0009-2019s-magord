@@ -2,11 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Contracts.DAL.App;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using DAL.App.EF;
 using Domain;
+using PublicApi.DTO.v1.PriceDTOs;
 
 namespace WebApp.ApiControllers
 {
@@ -14,54 +16,66 @@ namespace WebApp.ApiControllers
     [ApiController]
     public class PricesController : ControllerBase
     {
-        private readonly AppDbContext _context;
+        private readonly IAppUnitOfWork _uow;
 
-        public PricesController(AppDbContext context)
+        public PricesController(IAppUnitOfWork uow)
         {
-            _context = context;
+            _uow = uow;
         }
 
         // GET: api/Prices
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Price>>> GetPrices()
+        public async Task<ActionResult<IEnumerable<PriceDTO>>> GetPrices()
         {
-            return await _context.Prices.ToListAsync();
+            var priceDTOs = await _uow.Prices.DTOAllAsync();
+            
+            return Ok(priceDTOs);
         }
 
         // GET: api/Prices/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Price>> GetPrice(Guid id)
+        public async Task<ActionResult<PriceDTO>> GetPrice(Guid id)
         {
-            var price = await _context.Prices.FindAsync(id);
+            var price = await _uow.Prices.DTOFirstOrDefaultAsync(id);
 
             if (price == null)
             {
                 return NotFound();
             }
 
-            return price;
+            return Ok(price);
         }
 
         // PUT: api/Prices/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see https://aka.ms/RazorPagesCRUD.
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutPrice(Guid id, Price price)
+        public async Task<IActionResult> PutPrice(Guid id, PriceEditDTO priceEditDTO)
         {
-            if (id != price.Id)
+            if (id != priceEditDTO.Id)
             {
                 return BadRequest();
             }
 
-            _context.Entry(price).State = EntityState.Modified;
+            var price = await _uow.Prices.FirstOrDefaultAsync(priceEditDTO.Id);
+            if (price == null)
+            {
+                return BadRequest();
+            }
+
+            price.From = priceEditDTO.From;
+            price.To = priceEditDTO.To;
+            price.Value = priceEditDTO.Value;
+            
+            _uow.Prices.Update(price);
 
             try
             {
-                await _context.SaveChangesAsync();
+                await _uow.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!PriceExists(id))
+                if (await _uow.Prices.ExistsAsync(id))
                 {
                     return NotFound();
                 }
@@ -78,10 +92,18 @@ namespace WebApp.ApiControllers
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see https://aka.ms/RazorPagesCRUD.
         [HttpPost]
-        public async Task<ActionResult<Price>> PostPrice(Price price)
+        public async Task<ActionResult<Price>> PostPrice(PriceCreateDTO priceCreateDTO)
         {
-            _context.Prices.Add(price);
-            await _context.SaveChangesAsync();
+            var price = new Price
+            {
+                Id = priceCreateDTO.Id,
+                From = priceCreateDTO.From,
+                To = priceCreateDTO.To,
+                Value = priceCreateDTO.Value,
+            };
+            
+            _uow.Prices.Add(price);
+            await _uow.SaveChangesAsync();
 
             return CreatedAtAction("GetPrice", new { id = price.Id }, price);
         }
@@ -90,21 +112,16 @@ namespace WebApp.ApiControllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<Price>> DeletePrice(Guid id)
         {
-            var price = await _context.Prices.FindAsync(id);
+            var price = await _uow.Prices.FirstOrDefaultAsync(id);
             if (price == null)
             {
                 return NotFound();
             }
 
-            _context.Prices.Remove(price);
-            await _context.SaveChangesAsync();
+            _uow.Prices.Remove(price);
+            await _uow.SaveChangesAsync();
 
-            return price;
-        }
-
-        private bool PriceExists(Guid id)
-        {
-            return _context.Prices.Any(e => e.Id == id);
+            return Ok(price);
         }
     }
 }

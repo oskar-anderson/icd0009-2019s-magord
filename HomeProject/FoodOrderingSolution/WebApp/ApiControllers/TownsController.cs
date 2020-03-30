@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Contracts.DAL.App;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -15,64 +16,64 @@ namespace WebApp.ApiControllers
     [ApiController]
     public class TownsController : ControllerBase
     {
-        private readonly AppDbContext _context;
+        private readonly IAppUnitOfWork _uow;
 
-        public TownsController(AppDbContext context)
+        public TownsController(IAppUnitOfWork uow)
         {
-            _context = context;
+            _uow = uow;
         }
 
         // GET: api/Towns
         [HttpGet]
         public async Task<ActionResult<IEnumerable<TownDTO>>> GetTowns()
         {
-            return await _context.Towns.Select(t => new TownDTO()
-            {
-                Id = t.Id,
-                Name = t.Name,
-                AreaCount = t.Areas.Count
-            }).ToListAsync();
+            var townDTOs = await _uow.Towns.DTOAllAsync();
+
+            return Ok(townDTOs);
         }
 
         // GET: api/Towns/5
         [HttpGet("{id}")]
         public async Task<ActionResult<TownDTO>> GetTown(Guid id)
         {
-            var town = await _context.Towns.Select(t => new TownDTO()
-            {
-                Id = t.Id,
-                Name = t.Name,
-                AreaCount = t.Areas.Count
-            }).FirstOrDefaultAsync(t => t.Id == id);
-
+            var town = await _uow.Towns.DTOFirstOrDefaultAsync(id);
+            
             if (town == null)
             {
                 return NotFound();
             }
 
-            return town;
+            return Ok(town);
         }
 
         // PUT: api/Towns/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see https://aka.ms/RazorPagesCRUD.
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutTown(Guid id, Town town)
+        public async Task<IActionResult> PutTown(Guid id, TownEditDTO townEditDTO)
         {
-            if (id != town.Id)
+            if (id != townEditDTO.Id)
             {
                 return BadRequest();
             }
 
-            _context.Entry(town).State = EntityState.Modified;
+            var town = await _uow.Towns.FirstOrDefaultAsync(townEditDTO.Id);
+            if (town == null)
+            {
+                return BadRequest();
+            }
+            
+            town.Name = townEditDTO.Name;
+            
+            _uow.Towns.Update(town);
 
             try
             {
-                await _context.SaveChangesAsync();
+                await _uow.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!TownExists(id))
+                if (!await _uow.Towns.ExistsAsync(town.Id))
                 {
                     return NotFound();
                 }
@@ -93,10 +94,12 @@ namespace WebApp.ApiControllers
         {
             var town = new Town()
             {
+                Id = townCreateDTO.Id,
                 Name = townCreateDTO.Name
             };
-            _context.Towns.Add(town);
-            await _context.SaveChangesAsync();
+            
+            _uow.Towns.Add(town);
+            await _uow.SaveChangesAsync();
 
             return CreatedAtAction("GetTown", new { id = town.Id }, town);
         }
@@ -105,21 +108,16 @@ namespace WebApp.ApiControllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<Town>> DeleteTown(Guid id)
         {
-            var town = await _context.Towns.FindAsync(id);
+            var town = await _uow.Towns.FindAsync(id);
             if (town == null)
             {
                 return NotFound();
             }
 
-            _context.Towns.Remove(town);
-            await _context.SaveChangesAsync();
+            _uow.Towns.Remove(town);
+            await _uow.SaveChangesAsync();
 
             return town;
-        }
-
-        private bool TownExists(Guid id)
-        {
-            return _context.Towns.Any(e => e.Id == id);
         }
     }
 }

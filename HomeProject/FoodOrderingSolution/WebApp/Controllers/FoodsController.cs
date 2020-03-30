@@ -3,12 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Contracts.DAL.App;
-using Contracts.DAL.App.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using DAL.App.EF;
-using DAL.App.EF.Repositories;
 using Domain;
 
 namespace WebApp.Controllers
@@ -25,7 +23,8 @@ namespace WebApp.Controllers
         // GET: Foods
         public async Task<IActionResult> Index()
         {
-            return View(await _uow.Foods.AllAsync());
+            var foods = await _uow.Foods.AllAsync();
+            return View(foods);
         }
 
         // GET: Foods/Details/5
@@ -36,8 +35,8 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var food = await _uow.Foods.FindAsync();
-            
+            var food = await _uow.Foods.FirstOrDefaultAsync(id.Value);
+
             if (food == null)
             {
                 return NotFound();
@@ -57,7 +56,7 @@ namespace WebApp.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Description,Name,Amount,Size,FoodTypeId,Id,CreatedBy,CreatedAt,ChangedBy,ChangedAt")] Food food)
+        public async Task<IActionResult> Create(Food food)
         {
             if (ModelState.IsValid)
             {
@@ -77,8 +76,8 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var food = await _uow.Foods.FindAsync(id);
-            
+            var food = await _uow.Foods.FirstOrDefaultAsync(id.Value);
+
             if (food == null)
             {
                 return NotFound();
@@ -91,7 +90,7 @@ namespace WebApp.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("Description,Name,Amount,Size,FoodTypeId,Id,CreatedBy,CreatedAt,ChangedBy,ChangedAt")] Food food)
+        public async Task<IActionResult> Edit(Guid id, Food food)
         {
             if (id != food.Id)
             {
@@ -100,9 +99,22 @@ namespace WebApp.Controllers
 
             if (ModelState.IsValid)
             {
-                _uow.Foods.Update(food);
-                await _uow.SaveChangesAsync();
-                
+                try
+                {
+                    _uow.Foods.Update(food);
+                    await _uow.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!await _uow.Contacts.ExistsAsync(food.Id))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
                 return RedirectToAction(nameof(Index));
             }
             return View(food);
@@ -116,8 +128,8 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var food = await _uow.Foods.FindAsync(id);
-            
+            var food = await _uow.Foods.FirstOrDefaultAsync(id.Value);
+
             if (food == null)
             {
                 return NotFound();
@@ -131,9 +143,8 @@ namespace WebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            var food = _uow.Foods.Remove(id);
+            await _uow.Foods.DeleteAsync(id);
             await _uow.SaveChangesAsync();
-            
             return RedirectToAction(nameof(Index));
         }
     }

@@ -750,7 +750,7 @@ $.extend( $.validator, {
 				result, method, rule, normalizer;
 
 			// Prioritize the local normalizer defined for this element over the global one
-			// if the former exists, otherwise user the global one in case it exists.
+			// if the former ExistsAsync, otherwise user the global one in case it ExistsAsync.
 			if ( typeof rules.normalizer === "function" ) {
 				normalizer = rules.normalizer;
 			} else if (	typeof this.settings.normalizer === "function" ) {

@@ -2,56 +2,45 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Contracts.DAL.App;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using DAL.App.EF;
 using Domain;
+using Extensions;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using PublicApi.DTO.v1;
 
 namespace WebApp.ApiControllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class BillsController : ControllerBase
     {
-        private readonly AppDbContext _context;
+        private readonly IAppUnitOfWork _uow;
 
-        public BillsController(AppDbContext context)
+        public BillsController(IAppUnitOfWork uow)
         {
-            _context = context;
+            _uow = uow;
         }
 
         // GET: api/Bills
         [HttpGet]
         public async Task<ActionResult<IEnumerable<BillDTO>>> GetBills()
         {
-            return await _context.Bills.Select(b => new BillDTO()
-            {
-                Id = b.Id,
-                TimeIssued = b.TimeIssued,
-                Number = b.Number,
-                Sum = b.Sum,
-                OrderId = b.OrderId,
-                AppUserId = b.AppUserId,
-                PersonId = b.PersonId
-            }).ToListAsync();
+            var billDTOs = await _uow.Bills.DTOAllAsync(User.UserGuidId());
+
+            return Ok(billDTOs);
         }
 
         // GET: api/Bills/5
         [HttpGet("{id}")]
         public async Task<ActionResult<BillDTO>> GetBill(Guid id)
         {
-            var bill = await _context.Bills.Select(b => new BillDTO()
-            {
-                Id = b.Id,
-                TimeIssued = b.TimeIssued,
-                Number = b.Number,
-                Sum = b.Sum,
-                OrderId = b.OrderId,
-                AppUserId = b.AppUserId,
-                PersonId = b.PersonId
-            }).FirstOrDefaultAsync(b => b.Id == id);
+            var bill = await _uow.Bills.DTOFirstOrDefaultAsync(id, User.UserGuidId());
 
             if (bill == null)
             {
@@ -65,22 +54,32 @@ namespace WebApp.ApiControllers
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see https://aka.ms/RazorPagesCRUD.
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutBill(Guid id, Bill bill)
+        public async Task<IActionResult> PutBill(Guid id, BillEditDTO billEditDTO)
         {
-            if (id != bill.Id)
+            if (id != billEditDTO.Id)
             {
                 return BadRequest();
             }
 
-            _context.Entry(bill).State = EntityState.Modified;
-
+            var bill = await _uow.Bills.FirstOrDefaultAsync(billEditDTO.Id, User.UserGuidId());
+            if (bill == null)
+            {
+                return BadRequest();
+            }
+            
+            bill.TimeIssued = billEditDTO.TimeIssued;
+            bill.Number = billEditDTO.Number;
+            bill.Sum = billEditDTO.Sum;
+            
+            _uow.Bills.Update(bill);
+            
             try
             {
-                await _context.SaveChangesAsync();
+                await _uow.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!BillExists(id))
+                if (!await _uow.Bills.ExistsAsync(id, User.UserGuidId()))
                 {
                     return NotFound();
                 }
@@ -97,11 +96,19 @@ namespace WebApp.ApiControllers
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see https://aka.ms/RazorPagesCRUD.
         [HttpPost]
-        public async Task<ActionResult<Bill>> PostBill(Bill bill)
+        public async Task<ActionResult<Bill>> PostBill(BillCreateDTO billCreateDTO)
         {
-            _context.Bills.Add(bill);
-            await _context.SaveChangesAsync();
+            var bill = new Bill
+            {
+                AppUserId = User.UserGuidId(),
+                TimeIssued = billCreateDTO.TimeIssued,
+                Number = billCreateDTO.Number,
+                Sum = billCreateDTO.Sum
+            };
 
+            _uow.Bills.Add(bill);
+            await _uow.SaveChangesAsync();
+            
             return CreatedAtAction("GetBill", new { id = bill.Id }, bill);
         }
 
@@ -109,21 +116,17 @@ namespace WebApp.ApiControllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<Bill>> DeleteBill(Guid id)
         {
-            var bill = await _context.Bills.FindAsync(id);
+            var bill = await _uow.Bills.FirstOrDefaultAsync(id, User.UserGuidId());
             if (bill == null)
             {
                 return NotFound();
             }
 
-            _context.Bills.Remove(bill);
-            await _context.SaveChangesAsync();
+            _uow.Bills.Remove(bill);
+            await _uow.SaveChangesAsync();
 
-            return bill;
-        }
+            return Ok(bill);
 
-        private bool BillExists(Guid id)
-        {
-            return _context.Bills.Any(e => e.Id == id);
         }
     }
 }

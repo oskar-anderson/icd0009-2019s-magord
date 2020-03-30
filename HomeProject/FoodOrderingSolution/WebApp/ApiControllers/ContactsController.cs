@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Contracts.DAL.App;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -15,66 +16,65 @@ namespace WebApp.ApiControllers
     [ApiController]
     public class ContactsController : ControllerBase
     {
-        private readonly AppDbContext _context;
+        private readonly IAppUnitOfWork _uow;
 
-        public ContactsController(AppDbContext context)
+        public ContactsController(IAppUnitOfWork uow)
         {
-            _context = context;
+            _uow = uow;
         }
 
         // GET: api/Contacts
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ContactDTO>>> GetContacts()
         {
-            return await _context.Contacts.Select(c => new ContactDTO()
-            {
-                Id = c.Id,
-                PersonId = c.PersonId,
-                ContactTypeId = c.ContactTypeId,
-                Name = c.Name
-            }).ToListAsync();
+            var contactDTO = await _uow.Contacts.DTOAllAsync();
+            
+            return Ok(contactDTO);
         }
 
         // GET: api/Contacts/5
         [HttpGet("{id}")]
         public async Task<ActionResult<ContactDTO>> GetContact(Guid id)
         {
-            var contact = await _context.Contacts.Select(c => new ContactDTO()
-            {
-                Id = c.Id,
-                PersonId = c.PersonId,
-                ContactTypeId = c.ContactTypeId,
-                Name = c.Name
-            }).FirstOrDefaultAsync(c => c.Id == id);
+            var contact = await _uow.Contacts.DTOFirstOrDefaultAsync(id);
 
             if (contact == null)
             {
                 return NotFound();
             }
 
-            return contact;
+            return Ok(contact);
         }
 
         // PUT: api/Contacts/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see https://aka.ms/RazorPagesCRUD.
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutContact(Guid id, Contact contact)
+        public async Task<IActionResult> PutContact(Guid id, ContactEditDTO contactEditDTO)
         {
-            if (id != contact.Id)
+            if (id != contactEditDTO.Id)
             {
                 return BadRequest();
             }
 
-            _context.Entry(contact).State = EntityState.Modified;
+            var contact = await _uow.Contacts.FirstOrDefaultAsync(contactEditDTO.Id);
+            
+            if (contact == null)
+            {
+                return BadRequest();
+            }
+
+            contact.Name = contactEditDTO.Name;
+            
+            _uow.Contacts.Update(contact);
 
             try
             {
-                await _context.SaveChangesAsync();
+                await _uow.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!ContactExists(id))
+                if (!await _uow.Contacts.ExistsAsync(id))
                 {
                     return NotFound();
                 }
@@ -91,10 +91,16 @@ namespace WebApp.ApiControllers
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see https://aka.ms/RazorPagesCRUD.
         [HttpPost]
-        public async Task<ActionResult<Contact>> PostContact(Contact contact)
+        public async Task<ActionResult<Contact>> PostContact(ContactCreateDTO contactCreateDTO)
         {
-            _context.Contacts.Add(contact);
-            await _context.SaveChangesAsync();
+            var contact = new Contact
+            {
+                Id = contactCreateDTO.Id,
+                Name = contactCreateDTO.Name,
+            };
+            
+            _uow.Contacts.Add(contact);
+            await _uow.SaveChangesAsync();
 
             return CreatedAtAction("GetContact", new { id = contact.Id }, contact);
         }
@@ -103,21 +109,16 @@ namespace WebApp.ApiControllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<Contact>> DeleteContact(Guid id)
         {
-            var contact = await _context.Contacts.FindAsync(id);
+            var contact = await _uow.Contacts.FirstOrDefaultAsync(id);
             if (contact == null)
             {
                 return NotFound();
             }
 
-            _context.Contacts.Remove(contact);
-            await _context.SaveChangesAsync();
+            _uow.Contacts.Remove(contact);
+            await _uow.SaveChangesAsync();
 
-            return contact;
-        }
-
-        private bool ContactExists(Guid id)
-        {
-            return _context.Contacts.Any(e => e.Id == id);
+            return Ok(contact);
         }
     }
 }

@@ -3,13 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Contracts.DAL.App;
-using Contracts.DAL.App.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using DAL.App.EF;
-using DAL.App.EF.Repositories;
 using Domain;
+using Extensions;
 
 namespace WebApp.Controllers
 {
@@ -25,7 +24,8 @@ namespace WebApp.Controllers
         // GET: Campaigns
         public async Task<IActionResult> Index()
         {
-            return View(await _uow.Campaigns.AllAsync());
+            var campaigns = await _uow.Campaigns.AllAsync();
+            return View(campaigns);
         }
 
         // GET: Campaigns/Details/5
@@ -36,7 +36,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var campaign = await _uow.Campaigns.FindAsync(id);
+            var campaign = await _uow.Campaigns.FirstOrDefaultAsync(id.Value);
             
             if (campaign == null)
             {
@@ -57,11 +57,10 @@ namespace WebApp.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("From,To,Name,Comment,Id,CreatedBy,CreatedAt,ChangedBy,ChangedAt")] Campaign campaign)
+        public async Task<IActionResult> Create(Campaign campaign)
         {
             if (ModelState.IsValid)
             {
-                //campaign.Id = Guid.NewGuid();
                 _uow.Campaigns.Add(campaign);
                 await _uow.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -77,7 +76,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var campaign = await _uow.Campaigns.FindAsync(id);
+            var campaign = await _uow.Campaigns.FirstOrDefaultAsync(id.Value);
             
             if (campaign == null)
             {
@@ -91,7 +90,7 @@ namespace WebApp.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("From,To,Name,Comment,Id,CreatedBy,CreatedAt,ChangedBy,ChangedAt")] Campaign campaign)
+        public async Task<IActionResult> Edit(Guid id, Campaign campaign)
         {
             if (id != campaign.Id)
             {
@@ -100,8 +99,22 @@ namespace WebApp.Controllers
 
             if (ModelState.IsValid)
             {
-                _uow.Campaigns.Update(campaign);
-                await _uow.SaveChangesAsync();
+                try
+                {
+                    _uow.Campaigns.Update(campaign);
+                    await _uow.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (await _uow.Campaigns.ExistsAsync(campaign.Id))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
                 return RedirectToAction(nameof(Index));
             }
             return View(campaign);
@@ -115,8 +128,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var campaign = await _uow.Campaigns.FindAsync(id);
-            
+            var campaign = await _uow.Campaigns.FirstOrDefaultAsync(id.Value);
             if (campaign == null)
             {
                 return NotFound();
@@ -130,11 +142,10 @@ namespace WebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            var campaign = _uow.Campaigns.Remove(id);
+            await _uow.Campaigns.DeleteAsync(id);
             await _uow.SaveChangesAsync();
             
             return RedirectToAction(nameof(Index));
         }
-        
     }
 }

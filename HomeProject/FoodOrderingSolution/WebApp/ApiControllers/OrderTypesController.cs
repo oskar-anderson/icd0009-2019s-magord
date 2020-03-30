@@ -2,11 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Contracts.DAL.App;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using DAL.App.EF;
 using Domain;
+using PublicApi.DTO.v1.OrderTypeDTOs;
 
 namespace WebApp.ApiControllers
 {
@@ -14,54 +16,65 @@ namespace WebApp.ApiControllers
     [ApiController]
     public class OrderTypesController : ControllerBase
     {
-        private readonly AppDbContext _context;
+        private readonly IAppUnitOfWork _uow;
 
-        public OrderTypesController(AppDbContext context)
+        public OrderTypesController(IAppUnitOfWork uow)
         {
-            _context = context;
+            _uow = uow;
         }
 
         // GET: api/OrderTypes
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<OrderType>>> GetOrderTypes()
+        public async Task<ActionResult<IEnumerable<OrderTypeDTO>>> GetOrderTypes()
         {
-            return await _context.OrderTypes.ToListAsync();
+            var orderTypeDTOs = await _uow.OrderTypes.DTOAllAsync();
+            
+            return Ok(orderTypeDTOs);
         }
 
         // GET: api/OrderTypes/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<OrderType>> GetOrderType(Guid id)
+        public async Task<ActionResult<OrderTypeDTO>> GetOrderType(Guid id)
         {
-            var orderType = await _context.OrderTypes.FindAsync(id);
+            var orderType = await _uow.OrderTypes.DTOFirstOrDefaultAsync(id);
 
             if (orderType == null)
             {
                 return NotFound();
             }
 
-            return orderType;
+            return Ok(orderType);
         }
 
         // PUT: api/OrderTypes/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see https://aka.ms/RazorPagesCRUD.
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutOrderType(Guid id, OrderType orderType)
+        public async Task<IActionResult> PutOrderType(Guid id, OrderTypeEditDTO orderTypeEditDTO)
         {
-            if (id != orderType.Id)
+            if (id != orderTypeEditDTO.Id)
             {
                 return BadRequest();
             }
 
-            _context.Entry(orderType).State = EntityState.Modified;
+            var orderType = await _uow.OrderTypes.FirstOrDefaultAsync(orderTypeEditDTO.Id);
+            if (orderType == null)
+            {
+                return BadRequest();
+            }
+            
+            orderType.Name = orderTypeEditDTO.Name;
+            orderType.Comment = orderTypeEditDTO.Comment;
+            
+            _uow.OrderTypes.Update(orderType);
 
             try
             {
-                await _context.SaveChangesAsync();
+                await _uow.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!OrderTypeExists(id))
+                if (!await _uow.OrderTypes.ExistsAsync(id))
                 {
                     return NotFound();
                 }
@@ -78,10 +91,17 @@ namespace WebApp.ApiControllers
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see https://aka.ms/RazorPagesCRUD.
         [HttpPost]
-        public async Task<ActionResult<OrderType>> PostOrderType(OrderType orderType)
+        public async Task<ActionResult<OrderType>> PostOrderType(OrderTypeCreateDTO orderTypeCreateDTO)
         {
-            _context.OrderTypes.Add(orderType);
-            await _context.SaveChangesAsync();
+            var orderType = new OrderType
+            {
+                Id = orderTypeCreateDTO.Id,
+                Name = orderTypeCreateDTO.Name,
+                Comment = orderTypeCreateDTO.Comment
+            };
+            
+            _uow.OrderTypes.Add(orderType);
+            await _uow.SaveChangesAsync();
 
             return CreatedAtAction("GetOrderType", new { id = orderType.Id }, orderType);
         }
@@ -90,21 +110,16 @@ namespace WebApp.ApiControllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<OrderType>> DeleteOrderType(Guid id)
         {
-            var orderType = await _context.OrderTypes.FindAsync(id);
+            var orderType = await _uow.OrderTypes.FirstOrDefaultAsync(id);
             if (orderType == null)
             {
                 return NotFound();
             }
 
-            _context.OrderTypes.Remove(orderType);
-            await _context.SaveChangesAsync();
+            _uow.OrderTypes.Remove(orderType);
+            await _uow.SaveChangesAsync();
 
-            return orderType;
-        }
-
-        private bool OrderTypeExists(Guid id)
-        {
-            return _context.OrderTypes.Any(e => e.Id == id);
+            return Ok(orderType);
         }
     }
 }

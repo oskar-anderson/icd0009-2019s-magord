@@ -2,11 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Contracts.DAL.App;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using DAL.App.EF;
 using Domain;
+using PublicApi.DTO.v1.IngredientDTOs;
 
 namespace WebApp.ApiControllers
 {
@@ -14,54 +16,65 @@ namespace WebApp.ApiControllers
     [ApiController]
     public class IngredientsController : ControllerBase
     {
-        private readonly AppDbContext _context;
+        private readonly IAppUnitOfWork _uow;
 
-        public IngredientsController(AppDbContext context)
+        public IngredientsController(IAppUnitOfWork uow)
         {
-            _context = context;
+            _uow = uow;
         }
 
         // GET: api/Ingredients
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Ingredient>>> GetIngredients()
+        public async Task<ActionResult<IEnumerable<IngredientDTO>>> GetIngredients()
         {
-            return await _context.Ingredients.ToListAsync();
+            var ingredientDTOs = await _uow.Ingredients.DTOAllAsync();
+            
+            return Ok(ingredientDTOs);
         }
 
         // GET: api/Ingredients/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Ingredient>> GetIngredient(Guid id)
+        public async Task<ActionResult<IngredientDTO>> GetIngredient(Guid id)
         {
-            var ingredient = await _context.Ingredients.FindAsync(id);
+            var ingredient = await _uow.Ingredients.DTOFirstOrDefaultAsync(id);
 
             if (ingredient == null)
             {
                 return NotFound();
             }
 
-            return ingredient;
+            return Ok(ingredient);
         }
 
         // PUT: api/Ingredients/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see https://aka.ms/RazorPagesCRUD.
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutIngredient(Guid id, Ingredient ingredient)
+        public async Task<IActionResult> PutIngredient(Guid id, IngredientEditDTO ingredientEditDTO)
         {
-            if (id != ingredient.Id)
+            if (id != ingredientEditDTO.Id)
             {
                 return BadRequest();
             }
 
-            _context.Entry(ingredient).State = EntityState.Modified;
+            var ingredient = await _uow.Ingredients.FirstOrDefaultAsync(ingredientEditDTO.Id);
+            if (ingredient == null)
+            {
+                return BadRequest();
+            }
+            
+            ingredient.Name = ingredientEditDTO.Name;
+            ingredient.Amount = ingredientEditDTO.Amount;
+            
+            _uow.Ingredients.Update(ingredient);
 
             try
             {
-                await _context.SaveChangesAsync();
+                await _uow.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!IngredientExists(id))
+                if (!await _uow.Ingredients.ExistsAsync(id))
                 {
                     return NotFound();
                 }
@@ -78,10 +91,17 @@ namespace WebApp.ApiControllers
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see https://aka.ms/RazorPagesCRUD.
         [HttpPost]
-        public async Task<ActionResult<Ingredient>> PostIngredient(Ingredient ingredient)
+        public async Task<ActionResult<Ingredient>> PostIngredient(IngredientCreateDTO ingredientCreateDTO)
         {
-            _context.Ingredients.Add(ingredient);
-            await _context.SaveChangesAsync();
+            var ingredient = new Ingredient
+            {
+                Id = ingredientCreateDTO.Id,
+                Amount = ingredientCreateDTO.Amount,
+                Name = ingredientCreateDTO.Name,
+            };
+            
+            _uow.Ingredients.Add(ingredient);
+            await _uow.SaveChangesAsync();
 
             return CreatedAtAction("GetIngredient", new { id = ingredient.Id }, ingredient);
         }
@@ -90,21 +110,16 @@ namespace WebApp.ApiControllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<Ingredient>> DeleteIngredient(Guid id)
         {
-            var ingredient = await _context.Ingredients.FindAsync(id);
+            var ingredient = await _uow.Ingredients.FirstOrDefaultAsync(id);
             if (ingredient == null)
             {
                 return NotFound();
             }
 
-            _context.Ingredients.Remove(ingredient);
-            await _context.SaveChangesAsync();
+            _uow.Ingredients.Remove(ingredient);
+            await _uow.SaveChangesAsync();
 
-            return ingredient;
-        }
-
-        private bool IngredientExists(Guid id)
-        {
-            return _context.Ingredients.Any(e => e.Id == id);
+            return Ok(ingredient);
         }
     }
 }

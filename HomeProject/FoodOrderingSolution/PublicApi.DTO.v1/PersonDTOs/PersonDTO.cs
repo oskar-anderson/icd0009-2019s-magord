@@ -10,6 +10,5 @@ namespace PublicApi.DTO.v1
         [MaxLength(128)] [MinLength(1)] public string LastName { get; set; } = default!;
         public char Sex { get; set; } = default!;
         public DateTime DateOfBirth { get; set; } = default!;
-        public int ContactCount { get; set; }
     }
 }

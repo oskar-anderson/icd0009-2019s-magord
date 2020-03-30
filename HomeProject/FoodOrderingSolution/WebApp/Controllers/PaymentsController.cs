@@ -3,12 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Contracts.DAL.App;
-using Contracts.DAL.App.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using DAL.App.EF;
-using DAL.App.EF.Repositories;
 using Domain;
 
 namespace WebApp.Controllers
@@ -25,7 +23,8 @@ namespace WebApp.Controllers
         // GET: Payments
         public async Task<IActionResult> Index()
         {
-            return View(await _uow.Payments.AllAsync());
+            var payments = await _uow.Payments.AllAsync();
+            return View(payments);
         }
 
         // GET: Payments/Details/5
@@ -36,8 +35,8 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var payment = await _uow.Payments.FindAsync(id);
-            
+            var payment = await _uow.Payments.FirstOrDefaultAsync(id.Value);
+
             if (payment == null)
             {
                 return NotFound();
@@ -57,7 +56,7 @@ namespace WebApp.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Amount,TimeMade,PersonId,BillId,PaymentTypeId,Id,CreatedBy,CreatedAt,ChangedBy,ChangedAt")] Payment payment)
+        public async Task<IActionResult> Create(Payment payment)
         {
             if (ModelState.IsValid)
             {
@@ -77,8 +76,8 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var payment = await _uow.Payments.FindAsync(id);
-            
+            var payment = await _uow.Payments.FirstOrDefaultAsync(id.Value);
+
             if (payment == null)
             {
                 return NotFound();
@@ -91,7 +90,7 @@ namespace WebApp.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("Amount,TimeMade,PersonId,BillId,PaymentTypeId,Id,CreatedBy,CreatedAt,ChangedBy,ChangedAt")] Payment payment)
+        public async Task<IActionResult> Edit(Guid id, Payment payment)
         {
             if (id != payment.Id)
             {
@@ -100,9 +99,22 @@ namespace WebApp.Controllers
 
             if (ModelState.IsValid)
             {
-                _uow.Payments.Update(payment);
-                await _uow.SaveChangesAsync();
-                
+                try
+                {
+                    _uow.Payments.Update(payment);
+                    await _uow.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!await _uow.Contacts.ExistsAsync(payment.Id))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
                 return RedirectToAction(nameof(Index));
             }
             return View(payment);
@@ -116,8 +128,8 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var payment = await _uow.Payments.FindAsync(id);
-            
+            var payment = await _uow.Payments.FirstOrDefaultAsync(id.Value);
+
             if (payment == null)
             {
                 return NotFound();
@@ -131,9 +143,8 @@ namespace WebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            var payment = _uow.Payments.Remove(id);
+            await _uow.Payments.DeleteAsync(id);
             await _uow.SaveChangesAsync();
-            
             return RedirectToAction(nameof(Index));
         }
     }

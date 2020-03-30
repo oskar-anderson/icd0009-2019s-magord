@@ -2,11 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Contracts.DAL.App;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using DAL.App.EF;
 using Domain;
+using PublicApi.DTO.v1.RestaurantDTOs;
 
 namespace WebApp.ApiControllers
 {
@@ -14,54 +16,67 @@ namespace WebApp.ApiControllers
     [ApiController]
     public class RestaurantsController : ControllerBase
     {
-        private readonly AppDbContext _context;
+        private readonly IAppUnitOfWork _uow;
 
-        public RestaurantsController(AppDbContext context)
+        public RestaurantsController(IAppUnitOfWork uow)
         {
-            _context = context;
+            _uow = uow;
         }
 
         // GET: api/Restaurants
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Restaurant>>> GetRestaurants()
+        public async Task<ActionResult<IEnumerable<RestaurantDTO>>> GetRestaurants()
         {
-            return await _context.Restaurants.ToListAsync();
+            var restaurantDTOs = await _uow.Restaurants.DTOAllAsync();
+            
+            return Ok(restaurantDTOs);
         }
 
         // GET: api/Restaurants/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Restaurant>> GetRestaurant(Guid id)
+        public async Task<ActionResult<RestaurantDTO>> GetRestaurant(Guid id)
         {
-            var restaurant = await _context.Restaurants.FindAsync(id);
+            var restaurant = await _uow.Restaurants.DTOFirstOrDefaultAsync(id);
 
             if (restaurant == null)
             {
                 return NotFound();
             }
 
-            return restaurant;
+            return Ok(restaurant);
         }
 
         // PUT: api/Restaurants/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see https://aka.ms/RazorPagesCRUD.
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutRestaurant(Guid id, Restaurant restaurant)
+        public async Task<IActionResult> PutRestaurant(Guid id, RestaurantEditDTO restaurantEditDTO)
         {
-            if (id != restaurant.Id)
+            if (id != restaurantEditDTO.Id)
             {
                 return BadRequest();
             }
 
-            _context.Entry(restaurant).State = EntityState.Modified;
+            var restaurant = await _uow.Restaurants.FirstOrDefaultAsync(restaurantEditDTO.Id);
+            if (restaurant == null)
+            {
+                return BadRequest();
+            }
+
+            restaurant.Name = restaurantEditDTO.Name;
+            restaurant.Address = restaurantEditDTO.Address;
+            restaurant.OpenedFrom = restaurantEditDTO.OpenedFrom;
+            restaurant.ClosedFrom = restaurantEditDTO.ClosedFrom;
+            
+            _uow.Restaurants.Update(restaurant);
 
             try
             {
-                await _context.SaveChangesAsync();
+                await _uow.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!RestaurantExists(id))
+                if (!await _uow.Restaurants.ExistsAsync(id))
                 {
                     return NotFound();
                 }
@@ -78,10 +93,19 @@ namespace WebApp.ApiControllers
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see https://aka.ms/RazorPagesCRUD.
         [HttpPost]
-        public async Task<ActionResult<Restaurant>> PostRestaurant(Restaurant restaurant)
+        public async Task<ActionResult<Restaurant>> PostRestaurant(RestaurantCreateDTO restaurantCreateDTO)
         {
-            _context.Restaurants.Add(restaurant);
-            await _context.SaveChangesAsync();
+            var restaurant = new Restaurant
+            {
+                Id = restaurantCreateDTO.Id,
+                Name = restaurantCreateDTO.Name,
+                Address = restaurantCreateDTO.Address,
+                OpenedFrom = restaurantCreateDTO.OpenedFrom,
+                ClosedFrom = restaurantCreateDTO.ClosedFrom
+            };
+            
+            _uow.Restaurants.Add(restaurant);
+            await _uow.SaveChangesAsync();
 
             return CreatedAtAction("GetRestaurant", new { id = restaurant.Id }, restaurant);
         }
@@ -90,21 +114,16 @@ namespace WebApp.ApiControllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<Restaurant>> DeleteRestaurant(Guid id)
         {
-            var restaurant = await _context.Restaurants.FindAsync(id);
+            var restaurant = await _uow.Restaurants.FirstOrDefaultAsync(id);
             if (restaurant == null)
             {
                 return NotFound();
             }
 
-            _context.Restaurants.Remove(restaurant);
-            await _context.SaveChangesAsync();
+            _uow.Restaurants.Remove(restaurant);
+            await _uow.SaveChangesAsync();
 
-            return restaurant;
-        }
-
-        private bool RestaurantExists(Guid id)
-        {
-            return _context.Restaurants.Any(e => e.Id == id);
+            return Ok(restaurant);
         }
     }
 }

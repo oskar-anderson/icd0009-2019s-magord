@@ -3,12 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Contracts.DAL.App;
-using Contracts.DAL.App.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using DAL.App.EF;
-using DAL.App.EF.Repositories;
 using Domain;
 
 namespace WebApp.Controllers
@@ -25,7 +23,8 @@ namespace WebApp.Controllers
         // GET: Towns
         public async Task<IActionResult> Index()
         {
-            return View(await _uow.Towns.AllAsync());
+            var towns = await _uow.Towns.AllAsync();
+            return View(towns);
         }
 
         // GET: Towns/Details/5
@@ -36,8 +35,8 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var town = await _uow.Towns.FindAsync(id);
-            
+            var town = await _uow.Towns.FirstOrDefaultAsync(id.Value);
+
             if (town == null)
             {
                 return NotFound();
@@ -57,7 +56,7 @@ namespace WebApp.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Name,Id,CreatedBy,CreatedAt,ChangedBy,ChangedAt")] Town town)
+        public async Task<IActionResult> Create(Town town)
         {
             if (ModelState.IsValid)
             {
@@ -77,8 +76,8 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var town = await _uow.Towns.FindAsync(id);
-            
+            var town = await _uow.Towns.FirstOrDefaultAsync(id.Value);
+
             if (town == null)
             {
                 return NotFound();
@@ -91,7 +90,7 @@ namespace WebApp.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("Name,Id,CreatedBy,CreatedAt,ChangedBy,ChangedAt")] Town town)
+        public async Task<IActionResult> Edit(Guid id, Town town)
         {
             if (id != town.Id)
             {
@@ -100,9 +99,22 @@ namespace WebApp.Controllers
 
             if (ModelState.IsValid)
             {
-                _uow.Towns.Update(town);
-                await _uow.SaveChangesAsync();
-                
+                try
+                {
+                    _uow.Towns.Update(town);
+                    await _uow.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!await _uow.Towns.ExistsAsync(town.Id))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
                 return RedirectToAction(nameof(Index));
             }
             return View(town);
@@ -116,8 +128,8 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var town = await _uow.Towns.FindAsync(id);
-            
+            var town = await _uow.Towns.FirstOrDefaultAsync(id.Value);
+
             if (town == null)
             {
                 return NotFound();
@@ -131,9 +143,8 @@ namespace WebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            var town = _uow.Towns.Remove(id);
+            await _uow.Towns.DeleteAsync(id);
             await _uow.SaveChangesAsync();
-            
             return RedirectToAction(nameof(Index));
         }
     }

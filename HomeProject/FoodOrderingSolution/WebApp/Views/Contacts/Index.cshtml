@@ -43,10 +43,10 @@
                 @Html.DisplayFor(modelItem => item.Name)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Person.FirstName)
+                @Html.DisplayFor(modelItem => item.Person!.FirstName)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.ContactType.Name)
+                @Html.DisplayFor(modelItem => item.ContactType!.Name)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.CreatedBy)

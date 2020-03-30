@@ -3,13 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Contracts.DAL.App;
-using Contracts.DAL.App.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using DAL.App.EF;
-using DAL.App.EF.Repositories;
 using Domain;
+using Extensions;
 
 namespace WebApp.Controllers
 {
@@ -25,7 +24,8 @@ namespace WebApp.Controllers
         // GET: Areas
         public async Task<IActionResult> Index()
         {
-            return View(await _uow.Areas.AllAsync());
+            var areas = await _uow.Areas.AllAsync();
+            return View(areas);
         }
 
         // GET: Areas/Details/5
@@ -36,7 +36,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var area = await _uow.Areas.FindAsync(id);
+            var area = await _uow.Areas.FirstOrDefaultAsync(id.Value);
             
             if (area == null)
             {
@@ -57,11 +57,10 @@ namespace WebApp.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Name,TownId,Id,CreatedBy,CreatedAt,ChangedBy,ChangedAt")] Area area)
+        public async Task<IActionResult> Create(Area area)
         {
             if (ModelState.IsValid)
             {
-                //area.Id = Guid.NewGuid();
                 _uow.Areas.Add(area);
                 await _uow.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -77,8 +76,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var area = await _uow.Areas.FindAsync(id);
-            
+            var area = await _uow.Areas.FirstOrDefaultAsync(id.Value);
             if (area == null)
             {
                 return NotFound();
@@ -91,7 +89,7 @@ namespace WebApp.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("Name,TownId,Id,CreatedBy,CreatedAt,ChangedBy,ChangedAt")] Area area)
+        public async Task<IActionResult> Edit(Guid id, Area area)
         {
             if (id != area.Id)
             {
@@ -100,9 +98,22 @@ namespace WebApp.Controllers
 
             if (ModelState.IsValid)
             {
-                _uow.Areas.Update(area);
-                await _uow.SaveChangesAsync();
-                    
+                try
+                {
+                    _uow.Areas.Update(area);
+                    await _uow.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!await _uow.Areas.ExistsAsync(area.Id))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
                 return RedirectToAction(nameof(Index));
             }
             return View(area);
@@ -116,13 +127,12 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var area = await _uow.Areas.FindAsync(id);
+            var area = await _uow.Areas.FirstOrDefaultAsync(id.Value);
             
             if (area == null)
             {
                 return NotFound();
             }
-
             return View(area);
         }
 
@@ -131,11 +141,9 @@ namespace WebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            var area = _uow.Areas.Remove(id);
+            await _uow.Areas.DeleteAsync(id);
             await _uow.SaveChangesAsync();
-            
             return RedirectToAction(nameof(Index));
         }
-        
     }
 }

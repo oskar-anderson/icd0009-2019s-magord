@@ -3,16 +3,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Contracts.DAL.App;
-using Contracts.DAL.App.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using DAL.App.EF;
-using DAL.App.EF.Repositories;
 using Domain;
+using Extensions;
+using Microsoft.AspNetCore.Authorization;
 
 namespace WebApp.Controllers
 {
+    [Authorize]
     public class OrdersController : Controller
     {
         private readonly IAppUnitOfWork _uow;
@@ -25,7 +26,8 @@ namespace WebApp.Controllers
         // GET: Orders
         public async Task<IActionResult> Index()
         {
-            return View(await _uow.Orders.AllAsync());
+            var orders = await _uow.Orders.AllAsync(User.UserGuidId());
+            return View(orders);
         }
 
         // GET: Orders/Details/5
@@ -36,7 +38,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var order = await _uow.Orders.FindAsync(id);
+            var order = await _uow.Orders.FirstOrDefaultAsync(id.Value, User.UserGuidId());
             
             if (order == null)
             {
@@ -57,8 +59,10 @@ namespace WebApp.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("OrderStatus,Number,TimeCreated,FoodId,IngredientId,DrinkId,RestaurantId,OrderTypeId,AppUserId,PersonId,Id,CreatedBy,CreatedAt,ChangedBy,ChangedAt")] Order order)
+        public async Task<IActionResult> Create(Order order)
         {
+            order.AppUserId = User.UserGuidId();
+            
             if (ModelState.IsValid)
             {
                 //order.Id = Guid.NewGuid();
@@ -77,7 +81,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var order = await _uow.Orders.FindAsync(id);
+            var order = await _uow.Orders.FirstOrDefaultAsync(id.Value, User.UserGuidId());
             
             if (order == null)
             {
@@ -91,8 +95,10 @@ namespace WebApp.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("OrderStatus,Number,TimeCreated,FoodId,IngredientId,DrinkId,RestaurantId,OrderTypeId,AppUserId,PersonId,Id,CreatedBy,CreatedAt,ChangedBy,ChangedAt")] Order order)
+        public async Task<IActionResult> Edit(Guid id, Order order)
         {
+            order.AppUserId = User.UserGuidId();
+            
             if (id != order.Id)
             {
                 return NotFound();
@@ -100,9 +106,22 @@ namespace WebApp.Controllers
 
             if (ModelState.IsValid)
             {
-                _uow.Orders.Update(order);
-                await _uow.SaveChangesAsync();
-                
+                try
+                {
+                    _uow.Orders.Update(order);
+                    await _uow.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (! await _uow.Orders.ExistsAsync(order.Id, User.UserGuidId()))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
                 return RedirectToAction(nameof(Index));
             }
             return View(order);
@@ -116,7 +135,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var order = await _uow.Orders.FindAsync(id);
+            var order = await _uow.Orders.FirstOrDefaultAsync(id.Value, User.UserGuidId());
             
             if (order == null)
             {
@@ -131,9 +150,8 @@ namespace WebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            var order = _uow.Orders.Remove(id);
+            await _uow.Orders.DeleteAsync(id, User.UserGuidId());
             await _uow.SaveChangesAsync();
-            
             return RedirectToAction(nameof(Index));
         }
     }

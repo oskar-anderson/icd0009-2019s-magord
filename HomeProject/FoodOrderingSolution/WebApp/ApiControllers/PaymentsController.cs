@@ -2,11 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Contracts.DAL.App;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using DAL.App.EF;
 using Domain;
+using PublicApi.DTO.v1.PaymentDTOs;
 
 namespace WebApp.ApiControllers
 {
@@ -14,54 +16,64 @@ namespace WebApp.ApiControllers
     [ApiController]
     public class PaymentsController : ControllerBase
     {
-        private readonly AppDbContext _context;
+        private readonly IAppUnitOfWork _uow;
 
-        public PaymentsController(AppDbContext context)
+        public PaymentsController(IAppUnitOfWork uow)
         {
-            _context = context;
+            _uow = uow;
         }
 
         // GET: api/Payments
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Payment>>> GetPayments()
+        public async Task<ActionResult<IEnumerable<PaymentDTO>>> GetPayments()
         {
-            return await _context.Payments.ToListAsync();
+            var paymentDTOs = await _uow.Payments.DTOAllAsync();
+            
+            return Ok(paymentDTOs);
         }
 
         // GET: api/Payments/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Payment>> GetPayment(Guid id)
+        public async Task<ActionResult<PaymentDTO>> GetPayment(Guid id)
         {
-            var payment = await _context.Payments.FindAsync(id);
+            var payment = await _uow.Payments.DTOFirstOrDefaultAsync(id);
 
             if (payment == null)
             {
                 return NotFound();
             }
 
-            return payment;
+            return Ok(payment);
         }
 
         // PUT: api/Payments/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see https://aka.ms/RazorPagesCRUD.
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutPayment(Guid id, Payment payment)
+        public async Task<IActionResult> PutPayment(Guid id, PaymentEditDTO paymentEditDTO)
         {
-            if (id != payment.Id)
+            if (id != paymentEditDTO.Id)
             {
                 return BadRequest();
             }
 
-            _context.Entry(payment).State = EntityState.Modified;
+            var payment = await _uow.Payments.FirstOrDefaultAsync(paymentEditDTO.Id);
+            if (payment == null)
+            {
+                return BadRequest();
+            }
+
+            payment.Amount = paymentEditDTO.Amount;
+            
+            _uow.Payments.Update(payment);
 
             try
             {
-                await _context.SaveChangesAsync();
+                await _uow.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!PaymentExists(id))
+                if (!await _uow.Payments.ExistsAsync(id))
                 {
                     return NotFound();
                 }
@@ -78,10 +90,17 @@ namespace WebApp.ApiControllers
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see https://aka.ms/RazorPagesCRUD.
         [HttpPost]
-        public async Task<ActionResult<Payment>> PostPayment(Payment payment)
+        public async Task<ActionResult<Payment>> PostPayment(PaymentCreateDTO paymentCreateDTO)
         {
-            _context.Payments.Add(payment);
-            await _context.SaveChangesAsync();
+            var payment = new Payment
+            {
+                Id = paymentCreateDTO.Id,
+                Amount = paymentCreateDTO.Amount,
+                TimeMade = paymentCreateDTO.TimeMade
+            };
+            
+            _uow.Payments.Add(payment);
+            await _uow.SaveChangesAsync();
 
             return CreatedAtAction("GetPayment", new { id = payment.Id }, payment);
         }
@@ -90,21 +109,16 @@ namespace WebApp.ApiControllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<Payment>> DeletePayment(Guid id)
         {
-            var payment = await _context.Payments.FindAsync(id);
+            var payment = await _uow.Payments.FirstOrDefaultAsync(id);
             if (payment == null)
             {
                 return NotFound();
             }
 
-            _context.Payments.Remove(payment);
-            await _context.SaveChangesAsync();
+            _uow.Payments.Remove(payment);
+            await _uow.SaveChangesAsync();
 
-            return payment;
-        }
-
-        private bool PaymentExists(Guid id)
-        {
-            return _context.Payments.Any(e => e.Id == id);
+            return Ok(payment);
         }
     }
 }

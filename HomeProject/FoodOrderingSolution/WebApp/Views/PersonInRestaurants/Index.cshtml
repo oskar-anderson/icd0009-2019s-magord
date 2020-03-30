@@ -55,10 +55,10 @@
                 @Html.DisplayFor(modelItem => item.Role)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Person.FirstName)
+                @Html.DisplayFor(modelItem => item.Person!.FirstName)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Restaurant.Address)
+                @Html.DisplayFor(modelItem => item.Restaurant!.Address)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.CreatedBy)

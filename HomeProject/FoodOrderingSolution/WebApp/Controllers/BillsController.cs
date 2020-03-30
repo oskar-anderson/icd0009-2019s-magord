@@ -3,16 +3,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Contracts.DAL.App;
-using Contracts.DAL.App.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using DAL.App.EF;
-using DAL.App.EF.Repositories;
 using Domain;
+using Extensions;
+using Microsoft.AspNetCore.Authorization;
 
 namespace WebApp.Controllers
 {
+    [Authorize]
     public class BillsController : Controller
     {
         private readonly IAppUnitOfWork _uow;
@@ -25,7 +26,8 @@ namespace WebApp.Controllers
         // GET: Bills
         public async Task<IActionResult> Index()
         {
-            return View(await _uow.Bills.AllAsync());
+            var bills = await _uow.Bills.AllAsync(User.UserGuidId());
+            return View(bills);
         }
 
         // GET: Bills/Details/5
@@ -35,8 +37,8 @@ namespace WebApp.Controllers
             {
                 return NotFound();
             }
-            
-            var bill = await _uow.Bills.FindAsync(id);
+
+            var bill = await _uow.Bills.FirstOrDefaultAsync(id.Value, User.UserGuidId());
             
             if (bill == null)
             {
@@ -57,11 +59,10 @@ namespace WebApp.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("TimeIssued,Number,Sum,OrderId,AppUserId,PersonId,Id,CreatedBy,CreatedAt,ChangedBy,ChangedAt")] Bill bill)
+        public async Task<IActionResult> Create(Bill bill)
         {
             if (ModelState.IsValid)
             {
-                //bill.Id = Guid.NewGuid();
                 _uow.Bills.Add(bill);
                 await _uow.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -77,8 +78,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var bill = await _uow.Bills.FindAsync(id);
-            
+            var bill = await _uow.Bills.FirstOrDefaultAsync(id.Value, User.UserGuidId());
             if (bill == null)
             {
                 return NotFound();
@@ -91,8 +91,10 @@ namespace WebApp.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("TimeIssued,Number,Sum,OrderId,AppUserId,PersonId,Id,CreatedBy,CreatedAt,ChangedBy,ChangedAt")] Bill bill)
+        public async Task<IActionResult> Edit(Guid id, Bill bill)
         {
+            bill.AppUserId = User.UserGuidId();
+            
             if (id != bill.Id)
             {
                 return NotFound();
@@ -100,8 +102,22 @@ namespace WebApp.Controllers
 
             if (ModelState.IsValid)
             {
-                _uow.Bills.Update(bill);
-                await _uow.SaveChangesAsync();
+                try
+                {
+                    _uow.Bills.Update(bill);
+                    await _uow.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (await _uow.Bills.ExistsAsync(bill.Id, User.UserGuidId()))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
                 return RedirectToAction(nameof(Index));
             }
             return View(bill);
@@ -115,7 +131,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var bill = await _uow.Bills.FindAsync(id);
+            var bill = await _uow.Bills.FirstOrDefaultAsync(id.Value, User.UserGuidId());
             
             if (bill == null)
             {
@@ -130,9 +146,9 @@ namespace WebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            var bill = _uow.Bills.Remove(id);
+            await _uow.Bills.DeleteAsync(id, User.UserGuidId());
             await _uow.SaveChangesAsync();
-            
+
             return RedirectToAction(nameof(Index));
         }
     }

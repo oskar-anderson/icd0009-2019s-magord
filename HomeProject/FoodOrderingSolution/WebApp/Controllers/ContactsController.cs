@@ -3,12 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Contracts.DAL.App;
-using Contracts.DAL.App.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using DAL.App.EF;
-using DAL.App.EF.Repositories;
 using Domain;
 
 namespace WebApp.Controllers
@@ -25,7 +23,8 @@ namespace WebApp.Controllers
         // GET: Contacts
         public async Task<IActionResult> Index()
         {
-            return View(await _uow.Contacts.AllAsync());
+            var contacts = await _uow.Contacts.AllAsync();
+            return View(contacts);
         }
 
         // GET: Contacts/Details/5
@@ -36,8 +35,8 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var contact = await _uow.Contacts.FindAsync(id);
-            
+            var contact = await _uow.Contacts.FirstOrDefaultAsync(id.Value);
+
             if (contact == null)
             {
                 return NotFound();
@@ -57,7 +56,7 @@ namespace WebApp.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Name,PersonId,ContactTypeId,Id,CreatedBy,CreatedAt,ChangedBy,ChangedAt")] Contact contact)
+        public async Task<IActionResult> Create(Contact contact)
         {
             if (ModelState.IsValid)
             {
@@ -77,7 +76,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var contact = await _uow.Contacts.FindAsync(id);
+            var contact = await _uow.Contacts.FirstOrDefaultAsync(id.Value);
             
             if (contact == null)
             {
@@ -91,7 +90,7 @@ namespace WebApp.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("Name,PersonId,ContactTypeId,Id,CreatedBy,CreatedAt,ChangedBy,ChangedAt")] Contact contact)
+        public async Task<IActionResult> Edit(Guid id, Contact contact)
         {
             if (id != contact.Id)
             {
@@ -100,8 +99,22 @@ namespace WebApp.Controllers
 
             if (ModelState.IsValid)
             {
-                _uow.Contacts.Update(contact);
-                await _uow.SaveChangesAsync();
+                try
+                {
+                    _uow.Contacts.Update(contact);
+                    await _uow.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!await _uow.Contacts.ExistsAsync(contact.Id))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
                 return RedirectToAction(nameof(Index));
             }
             return View(contact);
@@ -115,7 +128,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var contact = await _uow.Contacts.FindAsync(id);
+            var contact = await _uow.Contacts.FirstOrDefaultAsync(id.Value);
             
             if (contact == null)
             {
@@ -130,11 +143,9 @@ namespace WebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            var contact = _uow.Contacts.Remove(id);
+            await _uow.Contacts.DeleteAsync(id);
             await _uow.SaveChangesAsync();
-            
             return RedirectToAction(nameof(Index));
         }
-        
     }
 }

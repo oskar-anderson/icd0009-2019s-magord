@@ -3,12 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Contracts.DAL.App;
-using Contracts.DAL.App.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using DAL.App.EF;
-using DAL.App.EF.Repositories;
 using Domain;
 
 namespace WebApp.Controllers
@@ -25,7 +23,8 @@ namespace WebApp.Controllers
         // GET: Ingredients
         public async Task<IActionResult> Index()
         {
-            return View(await _uow.Ingredients.AllAsync());
+            var ingredients = await _uow.Ingredients.AllAsync();
+            return View(ingredients);
         }
 
         // GET: Ingredients/Details/5
@@ -36,8 +35,8 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var ingredient = await _uow.Ingredients.FindAsync(id);
-            
+            var ingredient = await _uow.Ingredients.FirstOrDefaultAsync(id.Value);
+
             if (ingredient == null)
             {
                 return NotFound();
@@ -57,7 +56,7 @@ namespace WebApp.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Name,Amount,FoodId,Id,CreatedBy,CreatedAt,ChangedBy,ChangedAt")] Ingredient ingredient)
+        public async Task<IActionResult> Create(Ingredient ingredient)
         {
             if (ModelState.IsValid)
             {
@@ -66,6 +65,7 @@ namespace WebApp.Controllers
                 await _uow.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+            
             return View(ingredient);
         }
 
@@ -77,8 +77,8 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var ingredient = await _uow.Ingredients.FindAsync(id);
-            
+            var ingredient = await _uow.Ingredients.FirstOrDefaultAsync(id.Value);
+
             if (ingredient == null)
             {
                 return NotFound();
@@ -91,7 +91,7 @@ namespace WebApp.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("Name,Amount,FoodId,Id,CreatedBy,CreatedAt,ChangedBy,ChangedAt")] Ingredient ingredient)
+        public async Task<IActionResult> Edit(Guid id, Ingredient ingredient)
         {
             if (id != ingredient.Id)
             {
@@ -100,9 +100,22 @@ namespace WebApp.Controllers
 
             if (ModelState.IsValid)
             {
-                _uow.Ingredients.Update(ingredient);
-                await _uow.SaveChangesAsync();
-                
+                try
+                {
+                    _uow.Ingredients.Update(ingredient);
+                    await _uow.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!await _uow.Ingredients.ExistsAsync(ingredient.Id))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
                 return RedirectToAction(nameof(Index));
             }
             return View(ingredient);
@@ -116,8 +129,8 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var ingredient = await _uow.Ingredients.FindAsync(id);
-            
+            var ingredient = await _uow.Ingredients.FirstOrDefaultAsync(id.Value);
+
             if (ingredient == null)
             {
                 return NotFound();
@@ -131,9 +144,8 @@ namespace WebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            var ingredient = _uow.Ingredients.Remove(id);
+            await _uow.Ingredients.DeleteAsync(id);
             await _uow.SaveChangesAsync();
-            
             return RedirectToAction(nameof(Index));
         }
     }

@@ -2,11 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Contracts.DAL.App;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using DAL.App.EF;
 using Domain;
+using PublicApi.DTO.v1.DrinkDTOs;
 
 namespace WebApp.ApiControllers
 {
@@ -14,54 +16,66 @@ namespace WebApp.ApiControllers
     [ApiController]
     public class DrinksController : ControllerBase
     {
-        private readonly AppDbContext _context;
+        private readonly IAppUnitOfWork _uow;
 
-        public DrinksController(AppDbContext context)
+        public DrinksController(IAppUnitOfWork uow)
         {
-            _context = context;
+            _uow = uow;
         }
 
         // GET: api/Drinks
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Drink>>> GetDrinks()
+        public async Task<ActionResult<IEnumerable<DrinkDTO>>> GetDrinks()
         {
-            return await _context.Drinks.ToListAsync();
+            var drinkDTOs = await _uow.Drinks.DTOAllAsync();
+            
+            return Ok(drinkDTOs);
         }
 
         // GET: api/Drinks/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Drink>> GetDrink(Guid id)
+        public async Task<ActionResult<DrinkDTO>> GetDrink(Guid id)
         {
-            var drink = await _context.Drinks.FindAsync(id);
+            var drink = await _uow.Drinks.DTOFirstOrDefaultAsync(id);
 
             if (drink == null)
             {
                 return NotFound();
             }
 
-            return drink;
+            return Ok(drink);
         }
 
         // PUT: api/Drinks/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see https://aka.ms/RazorPagesCRUD.
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutDrink(Guid id, Drink drink)
+        public async Task<IActionResult> PutDrink(Guid id, DrinkEditDTO drinkEditDTO)
         {
-            if (id != drink.Id)
+            if (id != drinkEditDTO.Id)
             {
                 return BadRequest();
             }
 
-            _context.Entry(drink).State = EntityState.Modified;
+            var drink = await _uow.Drinks.FirstOrDefaultAsync(drinkEditDTO.Id);
+            if (drink == null)
+            {
+                return BadRequest();
+            }
+
+            drink.Size = drinkEditDTO.Size;
+            drink.Name = drinkEditDTO.Name;
+            drink.Amount = drinkEditDTO.Amount;
+
+            _uow.Drinks.Update(drink);
 
             try
             {
-                await _context.SaveChangesAsync();
+                await _uow.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!DrinkExists(id))
+                if (!await _uow.Drinks.ExistsAsync(id))
                 {
                     return NotFound();
                 }
@@ -78,10 +92,18 @@ namespace WebApp.ApiControllers
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see https://aka.ms/RazorPagesCRUD.
         [HttpPost]
-        public async Task<ActionResult<Drink>> PostDrink(Drink drink)
+        public async Task<ActionResult<Drink>> PostDrink(DrinkCreateDTO drinkCreateDTO)
         {
-            _context.Drinks.Add(drink);
-            await _context.SaveChangesAsync();
+            var drink = new Drink
+            {
+                Id = drinkCreateDTO.Id,
+                Size = drinkCreateDTO.Size,
+                Amount = drinkCreateDTO.Amount,
+                Name = drinkCreateDTO.Name,
+            };
+            
+            _uow.Drinks.Add(drink);
+            await _uow.SaveChangesAsync();
 
             return CreatedAtAction("GetDrink", new { id = drink.Id }, drink);
         }
@@ -90,21 +112,16 @@ namespace WebApp.ApiControllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<Drink>> DeleteDrink(Guid id)
         {
-            var drink = await _context.Drinks.FindAsync(id);
+            var drink = await _uow.Drinks.FirstOrDefaultAsync(id);
             if (drink == null)
             {
                 return NotFound();
             }
 
-            _context.Drinks.Remove(drink);
-            await _context.SaveChangesAsync();
+            _uow.Drinks.Remove(drink);
+            await _uow.SaveChangesAsync();
 
-            return drink;
-        }
-
-        private bool DrinkExists(Guid id)
-        {
-            return _context.Drinks.Any(e => e.Id == id);
+            return Ok(drink);
         }
     }
 }

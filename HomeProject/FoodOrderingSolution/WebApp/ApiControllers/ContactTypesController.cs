@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Contracts.DAL.App;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -15,62 +16,64 @@ namespace WebApp.ApiControllers
     [ApiController]
     public class ContactTypesController : ControllerBase
     {
-        private readonly AppDbContext _context;
+        private readonly IAppUnitOfWork _uow;
 
-        public ContactTypesController(AppDbContext context)
+        public ContactTypesController(IAppUnitOfWork uow)
         {
-            _context = context;
+            _uow = uow;
         }
 
         // GET: api/ContactTypes
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ContactTypeDTO>>> GetContactTypes()
         {
-            return await _context.ContactTypes.Select(ct => new ContactTypeDTO()
-            {
-                Id = ct.Id,
-                Name = ct.Name
-            }).ToListAsync();
+            var contactTypeDTOs = await _uow.ContactTypes.DTOAllAsync();
+            
+            return Ok(contactTypeDTOs);
         }
 
         // GET: api/ContactTypes/5
         [HttpGet("{id}")]
         public async Task<ActionResult<ContactTypeDTO>> GetContactType(Guid id)
         {
-            var contactType = await _context.ContactTypes.Select(ct => new ContactTypeDTO()
-            {
-                Id = ct.Id,
-                Name = ct.Name
-            }).FirstOrDefaultAsync(ct => ct.Id == id);
+            var contactType = await _uow.ContactTypes.DTOFirstOrDefaultAsync(id);
 
             if (contactType == null)
             {
                 return NotFound();
             }
 
-            return contactType;
+            return Ok(contactType);
         }
 
         // PUT: api/ContactTypes/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see https://aka.ms/RazorPagesCRUD.
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutContactType(Guid id, ContactType contactType)
+        public async Task<IActionResult> PutContactType(Guid id, ContactTypeEditDTO contactTypeEditDTO)
         {
-            if (id != contactType.Id)
+            if (id != contactTypeEditDTO.Id)
             {
                 return BadRequest();
             }
 
-            _context.Entry(contactType).State = EntityState.Modified;
+            var contactType = await _uow.ContactTypes.FirstOrDefaultAsync(contactTypeEditDTO.Id);
+            if (contactType == null)
+            {
+                return BadRequest();
+            }
+
+            contactType.Name = contactTypeEditDTO.Name;
+            
+            _uow.ContactTypes.Update(contactType);
 
             try
             {
-                await _context.SaveChangesAsync();
+                await _uow.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!ContactTypeExists(id))
+                if (!await _uow.ContactTypes.ExistsAsync(id))
                 {
                     return NotFound();
                 }
@@ -87,10 +90,16 @@ namespace WebApp.ApiControllers
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see https://aka.ms/RazorPagesCRUD.
         [HttpPost]
-        public async Task<ActionResult<ContactType>> PostContactType(ContactType contactType)
+        public async Task<ActionResult<ContactType>> PostContactType(ContactTypeCreateDTO contactTypeCreateDTO)
         {
-            _context.ContactTypes.Add(contactType);
-            await _context.SaveChangesAsync();
+            var contactType = new ContactType
+            {
+                Id = contactTypeCreateDTO.Id,
+                Name = contactTypeCreateDTO.Name,
+            };
+            
+            _uow.ContactTypes.Add(contactType);
+            await _uow.SaveChangesAsync();
 
             return CreatedAtAction("GetContactType", new { id = contactType.Id }, contactType);
         }
@@ -99,21 +108,16 @@ namespace WebApp.ApiControllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<ContactType>> DeleteContactType(Guid id)
         {
-            var contactType = await _context.ContactTypes.FindAsync(id);
+            var contactType = await _uow.ContactTypes.FirstOrDefaultAsync(id);
             if (contactType == null)
             {
                 return NotFound();
             }
 
-            _context.ContactTypes.Remove(contactType);
-            await _context.SaveChangesAsync();
+            _uow.ContactTypes.Remove(contactType);
+            await _uow.SaveChangesAsync();
 
-            return contactType;
-        }
-
-        private bool ContactTypeExists(Guid id)
-        {
-            return _context.ContactTypes.Any(e => e.Id == id);
+            return Ok(contactType);
         }
     }
 }

@@ -2,11 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Contracts.DAL.App;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using DAL.App.EF;
 using Domain;
+using PublicApi.DTO.v1.PersonInRestaurantDTOs;
 
 namespace WebApp.ApiControllers
 {
@@ -14,54 +16,66 @@ namespace WebApp.ApiControllers
     [ApiController]
     public class PersonInRestaurantsController : ControllerBase
     {
-        private readonly AppDbContext _context;
+        private readonly IAppUnitOfWork _uow;
 
-        public PersonInRestaurantsController(AppDbContext context)
+        public PersonInRestaurantsController(IAppUnitOfWork uow)
         {
-            _context = context;
+            _uow = uow;
         }
 
         // GET: api/PersonInRestaurants
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<PersonInRestaurant>>> GetPersonInRestaurants()
+        public async Task<ActionResult<IEnumerable<PersonInRestaurantDTO>>> GetPersonInRestaurants()
         {
-            return await _context.PersonInRestaurants.ToListAsync();
+            var personInRestaurantDTOs = await _uow.PersonsInRestaurants.DTOAllAsync();
+            
+            return Ok(personInRestaurantDTOs);
         }
 
         // GET: api/PersonInRestaurants/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<PersonInRestaurant>> GetPersonInRestaurant(Guid id)
+        public async Task<ActionResult<PersonInRestaurantDTO>> GetPersonInRestaurant(Guid id)
         {
-            var personInRestaurant = await _context.PersonInRestaurants.FindAsync(id);
+            var personInRestaurant = await _uow.PersonsInRestaurants.DTOFirstOrDefaultAsync(id);
 
             if (personInRestaurant == null)
             {
                 return NotFound();
             }
 
-            return personInRestaurant;
+            return Ok(personInRestaurant);
         }
 
         // PUT: api/PersonInRestaurants/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see https://aka.ms/RazorPagesCRUD.
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutPersonInRestaurant(Guid id, PersonInRestaurant personInRestaurant)
+        public async Task<IActionResult> PutPersonInRestaurant(Guid id, PersonInRestaurantEditDTO personInRestaurantEditDTO)
         {
-            if (id != personInRestaurant.Id)
+            if (id != personInRestaurantEditDTO.Id)
             {
                 return BadRequest();
             }
 
-            _context.Entry(personInRestaurant).State = EntityState.Modified;
+            var personInRestaurant = await _uow.PersonsInRestaurants.FirstOrDefaultAsync(personInRestaurantEditDTO.Id);
+            if (personInRestaurant == null)
+            {
+                return BadRequest();
+            }
+
+            personInRestaurant.From = personInRestaurantEditDTO.From;
+            personInRestaurant.To = personInRestaurantEditDTO.To;
+            personInRestaurant.Role = personInRestaurantEditDTO.Role;
+
+            _uow.PersonsInRestaurants.Update(personInRestaurant);
 
             try
             {
-                await _context.SaveChangesAsync();
+                await _uow.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!PersonInRestaurantExists(id))
+                if (!await _uow.PersonsInRestaurants.ExistsAsync(id))
                 {
                     return NotFound();
                 }
@@ -78,10 +92,18 @@ namespace WebApp.ApiControllers
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see https://aka.ms/RazorPagesCRUD.
         [HttpPost]
-        public async Task<ActionResult<PersonInRestaurant>> PostPersonInRestaurant(PersonInRestaurant personInRestaurant)
+        public async Task<ActionResult<PersonInRestaurant>> PostPersonInRestaurant(PersonInRestaurantCreateDTO personInRestaurantCreateDTO)
         {
-            _context.PersonInRestaurants.Add(personInRestaurant);
-            await _context.SaveChangesAsync();
+            var personInRestaurant = new PersonInRestaurant
+            {
+                Id = personInRestaurantCreateDTO.Id,
+                From = personInRestaurantCreateDTO.From,
+                To = personInRestaurantCreateDTO.To,
+                Role = personInRestaurantCreateDTO.Role
+            };
+            
+            _uow.PersonsInRestaurants.Add(personInRestaurant);
+            await _uow.SaveChangesAsync();
 
             return CreatedAtAction("GetPersonInRestaurant", new { id = personInRestaurant.Id }, personInRestaurant);
         }
@@ -90,21 +112,16 @@ namespace WebApp.ApiControllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<PersonInRestaurant>> DeletePersonInRestaurant(Guid id)
         {
-            var personInRestaurant = await _context.PersonInRestaurants.FindAsync(id);
+            var personInRestaurant = await _uow.PersonsInRestaurants.FirstOrDefaultAsync(id);
             if (personInRestaurant == null)
             {
                 return NotFound();
             }
 
-            _context.PersonInRestaurants.Remove(personInRestaurant);
-            await _context.SaveChangesAsync();
+            _uow.PersonsInRestaurants.Remove(personInRestaurant);
+            await _uow.SaveChangesAsync();
 
-            return personInRestaurant;
-        }
-
-        private bool PersonInRestaurantExists(Guid id)
-        {
-            return _context.PersonInRestaurants.Any(e => e.Id == id);
+            return Ok(personInRestaurant);
         }
     }
 }

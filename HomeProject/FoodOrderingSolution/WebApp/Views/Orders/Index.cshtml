@@ -70,25 +70,25 @@
                 @Html.DisplayFor(modelItem => item.TimeCreated)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Food.Name)
+                @Html.DisplayFor(modelItem => item.Food!.Name)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Ingredient.Name)
+                @Html.DisplayFor(modelItem => item.Ingredient!.Name)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Drink.Name)
+                @Html.DisplayFor(modelItem => item.Drink!.Name)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Restaurant.Address)
+                @Html.DisplayFor(modelItem => item.Restaurant!.Address)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.OrderType.Name)
+                @Html.DisplayFor(modelItem => item.OrderType!.Name)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.AppUser.Id)
+                @Html.DisplayFor(modelItem => item.AppUser!.Id)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Person.FirstName)
+                @Html.DisplayFor(modelItem => item.Person!.FirstName)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.CreatedBy)

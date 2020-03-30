@@ -2,11 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Contracts.DAL.App;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using DAL.App.EF;
 using Domain;
+using PublicApi.DTO.v1.PaymentTypeDTOs;
 
 namespace WebApp.ApiControllers
 {
@@ -14,54 +16,64 @@ namespace WebApp.ApiControllers
     [ApiController]
     public class PaymentTypesController : ControllerBase
     {
-        private readonly AppDbContext _context;
+        private readonly IAppUnitOfWork _uow;
 
-        public PaymentTypesController(AppDbContext context)
+        public PaymentTypesController(IAppUnitOfWork uow)
         {
-            _context = context;
+            _uow = uow;
         }
 
         // GET: api/PaymentTypes
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<PaymentType>>> GetPaymentTypes()
+        public async Task<ActionResult<IEnumerable<PaymentTypeDTO>>> GetPaymentTypes()
         {
-            return await _context.PaymentTypes.ToListAsync();
+            var paymentTypeDTOs = await _uow.PaymentTypes.DTOAllAsync();
+            
+            return Ok(paymentTypeDTOs);
         }
 
         // GET: api/PaymentTypes/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<PaymentType>> GetPaymentType(Guid id)
+        public async Task<ActionResult<PaymentTypeDTO>> GetPaymentType(Guid id)
         {
-            var paymentType = await _context.PaymentTypes.FindAsync(id);
+            var paymentType = await _uow.PaymentTypes.DTOFirstOrDefaultAsync(id);
 
             if (paymentType == null)
             {
                 return NotFound();
             }
 
-            return paymentType;
+            return Ok(paymentType);
         }
 
         // PUT: api/PaymentTypes/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see https://aka.ms/RazorPagesCRUD.
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutPaymentType(Guid id, PaymentType paymentType)
+        public async Task<IActionResult> PutPaymentType(Guid id, PaymentTypeEditDTO paymentTypeEditDTO)
         {
-            if (id != paymentType.Id)
+            if (id != paymentTypeEditDTO.Id)
             {
                 return BadRequest();
             }
 
-            _context.Entry(paymentType).State = EntityState.Modified;
+            var paymentType = await _uow.PaymentTypes.FirstOrDefaultAsync(paymentTypeEditDTO.Id);
+            if (paymentType == null)
+            {
+                return BadRequest();
+            }
+
+            paymentType.Name = paymentTypeEditDTO.Name;
+            
+            _uow.PaymentTypes.Update(paymentType);
 
             try
             {
-                await _context.SaveChangesAsync();
+                await _uow.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!PaymentTypeExists(id))
+                if (!await _uow.PaymentTypes.ExistsAsync(id))
                 {
                     return NotFound();
                 }
@@ -78,11 +90,17 @@ namespace WebApp.ApiControllers
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see https://aka.ms/RazorPagesCRUD.
         [HttpPost]
-        public async Task<ActionResult<PaymentType>> PostPaymentType(PaymentType paymentType)
+        public async Task<ActionResult<PaymentType>> PostPaymentType(PaymentTypeCreateDTO paymentTypeCreateDTO)
         {
-            _context.PaymentTypes.Add(paymentType);
-            await _context.SaveChangesAsync();
-
+            var paymentType = new PaymentType
+            {
+                Id = paymentTypeCreateDTO.Id,
+                Name = paymentTypeCreateDTO.Name,
+            };
+            
+            _uow.PaymentTypes.Add(paymentType);
+            await _uow.SaveChangesAsync();
+            
             return CreatedAtAction("GetPaymentType", new { id = paymentType.Id }, paymentType);
         }
 
@@ -90,21 +108,16 @@ namespace WebApp.ApiControllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<PaymentType>> DeletePaymentType(Guid id)
         {
-            var paymentType = await _context.PaymentTypes.FindAsync(id);
+            var paymentType = await _uow.PaymentTypes.FirstOrDefaultAsync(id);
             if (paymentType == null)
             {
                 return NotFound();
             }
 
-            _context.PaymentTypes.Remove(paymentType);
-            await _context.SaveChangesAsync();
+            _uow.PaymentTypes.Remove(paymentType);
+            await _uow.SaveChangesAsync();
 
-            return paymentType;
-        }
-
-        private bool PaymentTypeExists(Guid id)
-        {
-            return _context.PaymentTypes.Any(e => e.Id == id);
+            return Ok(paymentType);
         }
     }
 }
