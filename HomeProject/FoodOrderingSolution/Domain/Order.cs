@@ -12,7 +12,7 @@ namespace Domain
 
         public int Number { get; set; } = default!;
 
-        public DateTime TimeCreated { get; set; } = default!;
+        public string TimeCreated { get; set; } = default!;
 
         public Guid FoodId { get; set; } = default!;
         public Food? Food { get; set; }

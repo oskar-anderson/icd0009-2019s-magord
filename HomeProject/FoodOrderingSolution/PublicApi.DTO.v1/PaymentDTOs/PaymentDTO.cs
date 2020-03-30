@@ -8,7 +8,7 @@ namespace PublicApi.DTO.v1.PaymentDTOs
         
         public int Amount { get; set; } = default!;
 
-        public DateTime TimeMade { get; set; } = default!;
+        public string TimeMade { get; set; } = default!;
 
         public Guid PersonId { get; set; } = default!;
         

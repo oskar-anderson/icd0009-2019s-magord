@@ -9,6 +9,6 @@ namespace PublicApi.DTO.v1
         [MaxLength(128)] [MinLength(1)] public string FirstName { get; set; } = default!;
         [MaxLength(128)] [MinLength(1)] public string LastName { get; set; } = default!;
         public char Sex { get; set; } = default!;
-        public DateTime DateOfBirth { get; set; } = default!;
+        public string DateOfBirth { get; set; } = default!;
     }
 }

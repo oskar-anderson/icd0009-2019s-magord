@@ -6,9 +6,9 @@ namespace Domain
 {
     public class Price : DomainEntity
     {
-        public DateTime From { get; set; } = default!;
+        public string From { get; set; } = default!;
 
-        public DateTime To { get; set; } = default!;
+        public string To { get; set; } = default!;
         
         public decimal Value { get; set; } = default!;
 

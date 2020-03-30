@@ -13,7 +13,7 @@ namespace Domain
 
         public char Sex { get; set; } = default!;
 
-        public DateTime DateOfBirth { get; set; } = default!;
+        public string DateOfBirth { get; set; } = default!;
 
         public ICollection<PersonInRestaurant>? PersonInRestaurants { get; set; }
 

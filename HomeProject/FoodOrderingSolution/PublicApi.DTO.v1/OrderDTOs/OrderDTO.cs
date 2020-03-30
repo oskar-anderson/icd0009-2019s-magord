@@ -11,7 +11,7 @@ namespace PublicApi.DTO.v1.OrderDTOs
 
         public int Number { get; set; } = default!;
 
-        public DateTime TimeCreated { get; set; } = default!;
+        public string TimeCreated { get; set; } = default!;
 
         public Guid FoodId { get; set; } = default!;
         

@@ -8,7 +8,7 @@ namespace Domain
 {
     public class Bill : DomainEntity
     {
-        public DateTime TimeIssued { get; set; } = default!;
+        public string TimeIssued { get; set; } = default!;
         
         public int Number { get; set; } = default!;
 
