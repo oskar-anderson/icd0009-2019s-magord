@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using DAL.App.EF;
 using Domain;
 using PublicApi.DTO.v1;
+using PublicApi.DTO.v1.AreaDTOs;
 
 namespace WebApp.ApiControllers
 {

@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DAL.App.EF.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20200330203221_InitialDbCreation")]
+    [Migration("20200401124813_InitialDbCreation")]
     partial class InitialDbCreation
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -232,8 +232,8 @@ namespace DAL.App.EF.Migrations
                         .HasColumnType("varchar(256) CHARACTER SET utf8mb4")
                         .HasMaxLength(256);
 
-                    b.Property<int>("Size")
-                        .HasColumnType("int");
+                    b.Property<float>("Size")
+                        .HasColumnType("float");
 
                     b.HasKey("Id");
 
@@ -273,8 +273,8 @@ namespace DAL.App.EF.Migrations
                         .HasColumnType("varchar(256) CHARACTER SET utf8mb4")
                         .HasMaxLength(256);
 
-                    b.Property<int>("Size")
-                        .HasColumnType("int");
+                    b.Property<float>("Size")
+                        .HasColumnType("float");
 
                     b.HasKey("Id");
 

@@ -73,5 +73,10 @@ namespace DAL.Base.EF.Repositories
         {
             return Remove(Find(id));
         }
+        
+        public async Task<bool> ExistsAsync(TKey id)
+        {
+            return await RepoDbSet.AnyAsync(i => id.Equals(i.Id));
+        }
     }
 }

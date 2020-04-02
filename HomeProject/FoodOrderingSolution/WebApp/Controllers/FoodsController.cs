@@ -46,8 +46,9 @@ namespace WebApp.Controllers
         }
 
         // GET: Foods/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
+            ViewData["FoodTypeId"] = new SelectList(await _uow.FoodTypes.AllAsync(), nameof(FoodType.Id), nameof(FoodType.Name));
             return View();
         }
 
@@ -65,6 +66,7 @@ namespace WebApp.Controllers
                 await _uow.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+            ViewData["FoodTypeId"] = new SelectList(await _uow.FoodTypes.AllAsync(), nameof(FoodType.Id), nameof(FoodType.Name), food.FoodTypeId);
             return View(food);
         }
 
@@ -82,6 +84,7 @@ namespace WebApp.Controllers
             {
                 return NotFound();
             }
+            ViewData["FoodTypeId"] = new SelectList(await _uow.FoodTypes.AllAsync(), nameof(FoodType.Id), nameof(FoodType.Name), food.FoodTypeId);
             return View(food);
         }
 
@@ -117,6 +120,7 @@ namespace WebApp.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
+            ViewData["FoodTypeId"] = new SelectList(await _uow.FoodTypes.AllAsync(), nameof(FoodType.Id), nameof(FoodType.Name), food.FoodTypeId);
             return View(food);
         }
 

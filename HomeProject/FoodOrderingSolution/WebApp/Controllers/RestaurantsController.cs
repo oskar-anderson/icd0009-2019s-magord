@@ -46,8 +46,9 @@ namespace WebApp.Controllers
         }
 
         // GET: Restaurants/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
+            ViewData["AreaId"] = new SelectList(await _uow.Areas.AllAsync(), nameof(Area.Id), nameof(Area.Name));
             return View();
         }
 
@@ -65,6 +66,7 @@ namespace WebApp.Controllers
                 await _uow.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+            ViewData["AreaId"] = new SelectList(await _uow.Areas.AllAsync(), nameof(Area.Id), nameof(Area.Name), restaurant.AreaId);
             return View(restaurant);
         }
 
@@ -82,6 +84,7 @@ namespace WebApp.Controllers
             {
                 return NotFound();
             }
+            ViewData["AreaId"] = new SelectList(await _uow.Areas.AllAsync(), nameof(Area.Id), nameof(Area.Name), restaurant.AreaId);
             return View(restaurant);
         }
 
@@ -117,6 +120,7 @@ namespace WebApp.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
+            ViewData["AreaId"] = new SelectList(await _uow.Areas.AllAsync(), nameof(Area.Id), nameof(Area.Name), restaurant.AreaId);
             return View(restaurant);
         }
 

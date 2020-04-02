@@ -46,8 +46,13 @@ namespace WebApp.Controllers
         }
 
         // GET: Prices/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
+            ViewData["CampaignId"] = new SelectList(await _uow.Campaigns.AllAsync(), nameof(Campaign.Id), nameof(Campaign.Name));
+            ViewData["DrinkId"] = new SelectList(await _uow.Drinks.AllAsync(), nameof(Drink.Id), nameof(Drink.Name));
+            ViewData["FoodId"] = new SelectList(await _uow.Foods.AllAsync(), nameof(Food.Id), nameof(Food.Name));
+            ViewData["IngredientId"] = new SelectList(await _uow.Ingredients.AllAsync(), nameof(Ingredient.Id), nameof(Ingredient.Name));
+            ViewData["OrderId"] = new SelectList(await _uow.Orders.AllAsync(), nameof(Order.Id), nameof(Order.Number));
             return View();
         }
 
@@ -65,6 +70,11 @@ namespace WebApp.Controllers
                 await _uow.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+            ViewData["CampaignId"] = new SelectList(await _uow.Campaigns.AllAsync(), nameof(Campaign.Id), nameof(Campaign.Name), price.CampaignId);
+            ViewData["DrinkId"] = new SelectList(await _uow.Drinks.AllAsync(), nameof(Drink.Id), nameof(Drink.Name), price.DrinkId);
+            ViewData["FoodId"] = new SelectList(await _uow.Foods.AllAsync(), nameof(Food.Id), nameof(Food.Name),price.FoodId);
+            ViewData["IngredientId"] = new SelectList(await _uow.Ingredients.AllAsync(), nameof(Ingredient.Id), nameof(Ingredient.Name), price.IngredientId);
+            ViewData["OrderId"] = new SelectList(await _uow.Orders.AllAsync(), nameof(Order.Id), nameof(Order.Number), price.OrderId);
             return View(price);
         }
 
@@ -82,6 +92,11 @@ namespace WebApp.Controllers
             {
                 return NotFound();
             }
+            ViewData["CampaignId"] = new SelectList(await _uow.Campaigns.AllAsync(), nameof(Campaign.Id), nameof(Campaign.Name), price.CampaignId);
+            ViewData["DrinkId"] = new SelectList(await _uow.Drinks.AllAsync(), nameof(Drink.Id), nameof(Drink.Name), price.DrinkId);
+            ViewData["FoodId"] = new SelectList(await _uow.Foods.AllAsync(), nameof(Food.Id), nameof(Food.Name),price.FoodId);
+            ViewData["IngredientId"] = new SelectList(await _uow.Ingredients.AllAsync(), nameof(Ingredient.Id), nameof(Ingredient.Name), price.IngredientId);
+            ViewData["OrderId"] = new SelectList(await _uow.Orders.AllAsync(), nameof(Order.Id), nameof(Order.Number), price.OrderId);
             return View(price);
         }
 
@@ -117,6 +132,11 @@ namespace WebApp.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
+            ViewData["CampaignId"] = new SelectList(await _uow.Campaigns.AllAsync(), nameof(Campaign.Id), nameof(Campaign.Name), price.CampaignId);
+            ViewData["DrinkId"] = new SelectList(await _uow.Drinks.AllAsync(), nameof(Drink.Id), nameof(Drink.Name), price.DrinkId);
+            ViewData["FoodId"] = new SelectList(await _uow.Foods.AllAsync(), nameof(Food.Id), nameof(Food.Name),price.FoodId);
+            ViewData["IngredientId"] = new SelectList(await _uow.Ingredients.AllAsync(), nameof(Ingredient.Id), nameof(Ingredient.Name), price.IngredientId);
+            ViewData["OrderId"] = new SelectList(await _uow.Orders.AllAsync(), nameof(Order.Id), nameof(Order.Number), price.OrderId);
             return View(price);
         }
 

@@ -20,18 +20,11 @@ namespace DAL.App.EF.Repositories
 
         public async Task<FoodType> FirstOrDefaultAsync(Guid id)
         {
-            var query = RepoDbSet.Where(a => a.Id == id).AsQueryable();
+            var query = RepoDbSet.Where(f => f.Id == id).AsQueryable();
             
             return await query.FirstOrDefaultAsync();
         }
-
-        public async Task<bool> ExistsAsync(Guid id)
-        {
-            {
-                return await RepoDbSet.AnyAsync(a => a.Id == id);
-            }
-        }
-
+        
         public async Task DeleteAsync(Guid id)
         {
             var foodType = await FirstOrDefaultAsync(id);
@@ -44,22 +37,22 @@ namespace DAL.App.EF.Repositories
             var query = RepoDbSet.AsQueryable();
             
             return await query
-                .Select(c => new FoodTypeDTO()
+                .Select(f => new FoodTypeDTO()
                 {
-                    Id = c.Id,
-                    Name = c.Name,
+                    Id = f.Id,
+                    Name = f.Name,
                 })
                 .ToListAsync();
         }
 
         public async Task<FoodTypeDTO> DTOFirstOrDefaultAsync(Guid id)
         {
-            var query = RepoDbSet.Where(c => c.Id == id).AsQueryable();
+            var query = RepoDbSet.Where(f => f.Id == id).AsQueryable();
 
-            var foodTypeDTO = await query.Select(c => new FoodTypeDTO()
+            var foodTypeDTO = await query.Select(f => new FoodTypeDTO()
             {
-                Id = c.Id,
-                Name = c.Name,
+                Id = f.Id,
+                Name = f.Name,
             }).FirstOrDefaultAsync();
 
             return foodTypeDTO;

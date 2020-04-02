@@ -19,17 +19,11 @@ namespace DAL.App.EF.Repositories
         
         public async Task<Town> FirstOrDefaultAsync(Guid id)
         {
-            var query = RepoDbSet.Where(a => a.Id == id).AsQueryable();
+            var query = RepoDbSet.Where(t => t.Id == id).AsQueryable();
             
             return await query.FirstOrDefaultAsync();
         }
-
-        public async Task<bool> ExistsAsync(Guid id)
-        {
-            {
-                return await RepoDbSet.AnyAsync(a => a.Id == id);
-            }
-        }
+        
         public async Task DeleteAsync(Guid id)
         {
             var town = await FirstOrDefaultAsync(id);

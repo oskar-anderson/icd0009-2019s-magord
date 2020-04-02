@@ -7,6 +7,7 @@ using DAL.Base.EF.Repositories;
 using Domain;
 using Microsoft.EntityFrameworkCore;
 using PublicApi.DTO.v1;
+using PublicApi.DTO.v1.AreaDTOs;
 
 namespace DAL.App.EF.Repositories
 {
@@ -16,19 +17,26 @@ namespace DAL.App.EF.Repositories
         {
         }
 
-        public async Task<Area> FirstOrDefaultAsync(Guid id)
+        public new async Task<IEnumerable<Area>>  AllAsync()
         {
-            var query = RepoDbSet.Where(a => a.Id == id).AsQueryable();
-            
-            return await query.FirstOrDefaultAsync();
+            var query = RepoDbSet
+                .Include(a => a.Town)
+                .AsQueryable();
+
+            return await query.ToListAsync();
         }
 
-        public async Task<bool> ExistsAsync(Guid id)
+
+        public async Task<Area> FirstOrDefaultAsync(Guid id)
         {
-            {
-                return await RepoDbSet.AnyAsync(a => a.Id == id);
-            }
+            var query = RepoDbSet
+                .Include(a => a.Town)
+                .Where(a => a.Id == id)
+                .AsQueryable();
+
+            return await query.FirstOrDefaultAsync();
         }
+        
 
         public async Task DeleteAsync(Guid id)
         {
@@ -36,11 +44,11 @@ namespace DAL.App.EF.Repositories
             base.Remove(area);
         }
         
-        
-        
         public async Task<IEnumerable<AreaDTO>> DTOAllAsync()
         {
-            var query = RepoDbSet.AsQueryable();
+            var query = RepoDbSet
+                .Include(a => a.Town)
+                .AsQueryable();
             
             return await query
                 .Select(a => new AreaDTO()
@@ -48,7 +56,13 @@ namespace DAL.App.EF.Repositories
                     Id = a.Id,
                     Name = a.Name,
                     TownId = a.TownId,
-                    RestaurantCount = a.Restaurants!.Count
+                    RestaurantCount = a.Restaurants!.Count,
+                    Town = new TownDTO()
+                    {
+                        Id = a.Town!.Id,
+                        AreaCount = a.Town.Areas!.Count,
+                        Name = a.Town.Name
+                    }
                 })
                 .ToListAsync();
         }
@@ -62,7 +76,13 @@ namespace DAL.App.EF.Repositories
                 Id = a.Id,
                 Name = a.Name,
                 TownId = a.TownId,
-                RestaurantCount = a.Restaurants!.Count
+                RestaurantCount = a.Restaurants!.Count,
+                Town = new TownDTO()
+                {
+                    Id = a.Town!.Id,
+                    AreaCount = a.Town.Areas!.Count,
+                    Name = a.Town.Name
+                }
             }).FirstOrDefaultAsync();
 
             return areaDTO;

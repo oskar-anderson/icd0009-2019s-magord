@@ -46,8 +46,11 @@ namespace WebApp.Controllers
         }
 
         // GET: Payments/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
+            ViewData["BillId"] = new SelectList(await _uow.Bills.AllAsync(), nameof(Bill.Id), nameof(Bill.Sum));
+            ViewData["PaymentTypeId"] = new SelectList(await _uow.PaymentTypes.AllAsync(), nameof(PaymentType.Id), nameof(PaymentType.Name));
+            ViewData["PersonId"] = new SelectList(await _uow.Persons.AllAsync(), nameof(Person.Id), nameof(Person.FirstName));
             return View();
         }
 
@@ -65,6 +68,9 @@ namespace WebApp.Controllers
                 await _uow.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+            ViewData["BillId"] = new SelectList(await _uow.Bills.AllAsync(), nameof(Bill.Id), nameof(Bill.Sum),payment.BillId);
+            ViewData["PaymentTypeId"] = new SelectList(await _uow.PaymentTypes.AllAsync(), nameof(PaymentType.Id), nameof(PaymentType.Name), payment.PaymentTypeId);
+            ViewData["PersonId"] = new SelectList(await _uow.Persons.AllAsync(), nameof(Person.Id), nameof(Person.FirstName), payment.PersonId);
             return View(payment);
         }
 
@@ -82,6 +88,9 @@ namespace WebApp.Controllers
             {
                 return NotFound();
             }
+            ViewData["BillId"] = new SelectList(await _uow.Bills.AllAsync(), nameof(Bill.Id), nameof(Bill.Sum),payment.BillId);
+            ViewData["PaymentTypeId"] = new SelectList(await _uow.PaymentTypes.AllAsync(), nameof(PaymentType.Id), nameof(PaymentType.Name), payment.PaymentTypeId);
+            ViewData["PersonId"] = new SelectList(await _uow.Persons.AllAsync(), nameof(Person.Id), nameof(Person.FirstName), payment.PersonId);
             return View(payment);
         }
 
@@ -117,6 +126,9 @@ namespace WebApp.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
+            ViewData["BillId"] = new SelectList(await _uow.Bills.AllAsync(), nameof(Bill.Id), nameof(Bill.Sum),payment.BillId);
+            ViewData["PaymentTypeId"] = new SelectList(await _uow.PaymentTypes.AllAsync(), nameof(PaymentType.Id), nameof(PaymentType.Name), payment.PaymentTypeId);
+            ViewData["PersonId"] = new SelectList(await _uow.Persons.AllAsync(), nameof(Person.Id), nameof(Person.FirstName), payment.PersonId);
             return View(payment);
         }
 

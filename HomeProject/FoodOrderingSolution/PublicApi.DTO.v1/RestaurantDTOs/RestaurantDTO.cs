@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using PublicApi.DTO.v1.AreaDTOs;
 
 namespace PublicApi.DTO.v1.RestaurantDTOs
 {
@@ -17,6 +18,7 @@ namespace PublicApi.DTO.v1.RestaurantDTOs
         public string ClosedFrom { get; set; } = default!;
 
         public Guid AreaId { get; set; } = default!;
+        public AreaDTO Area { get; set; } = default!;
 
     }
 }

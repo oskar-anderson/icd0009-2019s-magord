@@ -14,7 +14,7 @@ namespace Domain
 
         public int Amount { get; set; } = default!;
 
-        public int Size { get; set; } = default!;
+        public float Size { get; set; } = default!;
         
         public Guid FoodTypeId { get; set; } = default!;
         public FoodType? FoodType { get; set; }

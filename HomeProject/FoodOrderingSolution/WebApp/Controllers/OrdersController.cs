@@ -49,8 +49,14 @@ namespace WebApp.Controllers
         }
 
         // GET: Orders/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
+            ViewData["DrinkId"] = new SelectList(await _uow.Drinks.AllAsync(), nameof(Drink.Id), nameof(Drink.Name));
+            ViewData["FoodId"] = new SelectList(await _uow.Foods.AllAsync(), nameof(Food.Id), nameof(Food.Name));
+            ViewData["IngredientId"] = new SelectList(await _uow.Ingredients.AllAsync(), nameof(Ingredient.Id), nameof(Ingredient.Name));
+            ViewData["OrderTypeId"] = new SelectList(await _uow.OrderTypes.AllAsync(), nameof(OrderType.Id), nameof(OrderType.Name));
+            ViewData["PersonId"] = new SelectList(await _uow.Persons.AllAsync(), nameof(Person.Id), nameof(Person.FirstName));
+            ViewData["RestaurantId"] = new SelectList(await _uow.Restaurants.AllAsync(), nameof(Restaurant.Id), nameof(Restaurant.Name));
             return View();
         }
 
@@ -70,6 +76,12 @@ namespace WebApp.Controllers
                 await _uow.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+            ViewData["DrinkId"] = new SelectList(await _uow.Drinks.AllAsync(), nameof(Drink.Id), nameof(Drink.Name), order.DrinkId);
+            ViewData["FoodId"] = new SelectList(await _uow.Foods.AllAsync(), nameof(Food.Id), nameof(Food.Name), order.FoodId);
+            ViewData["IngredientId"] = new SelectList(await _uow.Ingredients.AllAsync(), nameof(Ingredient.Id), nameof(Ingredient.Name), order.IngredientId);
+            ViewData["OrderTypeId"] = new SelectList(await _uow.OrderTypes.AllAsync(), nameof(OrderType.Id), nameof(OrderType.Name), order.OrderTypeId);
+            ViewData["PersonId"] = new SelectList(await _uow.Persons.AllAsync(), nameof(Person.Id), nameof(Person.FirstName), order.PersonId);
+            ViewData["RestaurantId"] = new SelectList(await _uow.Restaurants.AllAsync(), nameof(Restaurant.Id), nameof(Restaurant.Name), order.RestaurantId);
             return View(order);
         }
 
@@ -87,6 +99,12 @@ namespace WebApp.Controllers
             {
                 return NotFound();
             }
+            ViewData["DrinkId"] = new SelectList(await _uow.Drinks.AllAsync(), nameof(Drink.Id), nameof(Drink.Name), order.DrinkId);
+            ViewData["FoodId"] = new SelectList(await _uow.Foods.AllAsync(), nameof(Food.Id), nameof(Food.Name), order.FoodId);
+            ViewData["IngredientId"] = new SelectList(await _uow.Ingredients.AllAsync(), nameof(Ingredient.Id), nameof(Ingredient.Name), order.IngredientId);
+            ViewData["OrderTypeId"] = new SelectList(await _uow.OrderTypes.AllAsync(), nameof(OrderType.Id), nameof(OrderType.Name), order.OrderTypeId);
+            ViewData["PersonId"] = new SelectList(await _uow.Persons.AllAsync(), nameof(Person.Id), nameof(Person.FirstName), order.PersonId);
+            ViewData["RestaurantId"] = new SelectList(await _uow.Restaurants.AllAsync(), nameof(Restaurant.Id), nameof(Restaurant.Name), order.RestaurantId);
             return View(order);
         }
 
@@ -124,6 +142,12 @@ namespace WebApp.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
+            ViewData["DrinkId"] = new SelectList(await _uow.Drinks.AllAsync(), nameof(Drink.Id), nameof(Drink.Name), order.DrinkId);
+            ViewData["FoodId"] = new SelectList(await _uow.Foods.AllAsync(), nameof(Food.Id), nameof(Food.Name), order.FoodId);
+            ViewData["IngredientId"] = new SelectList(await _uow.Ingredients.AllAsync(), nameof(Ingredient.Id), nameof(Ingredient.Name), order.IngredientId);
+            ViewData["OrderTypeId"] = new SelectList(await _uow.OrderTypes.AllAsync(), nameof(OrderType.Id), nameof(OrderType.Name), order.OrderTypeId);
+            ViewData["PersonId"] = new SelectList(await _uow.Persons.AllAsync(), nameof(Person.Id), nameof(Person.FirstName), order.PersonId);
+            ViewData["RestaurantId"] = new SelectList(await _uow.Restaurants.AllAsync(), nameof(Restaurant.Id), nameof(Restaurant.Name), order.RestaurantId);
             return View(order);
         }
 

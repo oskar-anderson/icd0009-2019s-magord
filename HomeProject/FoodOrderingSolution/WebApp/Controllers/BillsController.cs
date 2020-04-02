@@ -49,8 +49,10 @@ namespace WebApp.Controllers
         }
 
         // GET: Bills/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
+            ViewData["OrderId"] = new SelectList(await _uow.Orders.AllAsync(), nameof(Order.Id), nameof(Order.Number));
+            ViewData["PersonId"] = new SelectList(await _uow.Persons.AllAsync(), nameof(Person.Id), nameof(Person.FirstName));
             return View();
         }
 
@@ -67,6 +69,8 @@ namespace WebApp.Controllers
                 await _uow.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+            ViewData["OrderId"] = new SelectList(await _uow.Orders.AllAsync(), nameof(Order.Id), nameof(Order.Number), bill.OrderId);
+            ViewData["PersonId"] = new SelectList(await _uow.Persons.AllAsync(), nameof(Person.Id), nameof(Person.FirstName), bill.PersonId);
             return View(bill);
         }
 
@@ -83,6 +87,8 @@ namespace WebApp.Controllers
             {
                 return NotFound();
             }
+            ViewData["OrderId"] = new SelectList(await _uow.Orders.AllAsync(), nameof(Order.Id), nameof(Order.Number), bill.OrderId);
+            ViewData["PersonId"] = new SelectList(await _uow.Persons.AllAsync(), nameof(Person.Id), nameof(Person.FirstName), bill.PersonId);
             return View(bill);
         }
 
@@ -120,6 +126,8 @@ namespace WebApp.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
+            ViewData["OrderId"] = new SelectList(await _uow.Orders.AllAsync(), nameof(Order.Id), nameof(Order.Number), bill.OrderId);
+            ViewData["PersonId"] = new SelectList(await _uow.Persons.AllAsync(), nameof(Person.Id), nameof(Person.FirstName), bill.PersonId);
             return View(bill);
         }
 

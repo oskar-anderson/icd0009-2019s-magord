@@ -47,8 +47,9 @@ namespace WebApp.Controllers
         }
 
         // GET: Areas/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
+            ViewData["TownId"] = new SelectList(await _uow.Towns.AllAsync(), nameof(Town.Id), nameof(Town.Name));
             return View();
         }
 
@@ -65,6 +66,7 @@ namespace WebApp.Controllers
                 await _uow.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+            ViewData["TownId"] = new SelectList(await _uow.Towns.AllAsync(), nameof(Town.Id), nameof(Town.Name), area.TownId);
             return View(area);
         }
 
@@ -81,6 +83,7 @@ namespace WebApp.Controllers
             {
                 return NotFound();
             }
+            ViewData["TownId"] = new SelectList(await _uow.Towns.AllAsync(), nameof(Town.Id), nameof(Town.Name), area.TownId);
             return View(area);
         }
 
@@ -116,6 +119,7 @@ namespace WebApp.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
+            ViewData["TownId"] = new SelectList(await _uow.Towns.AllAsync(), nameof(Town.Id), nameof(Town.Name), area.TownId);
             return View(area);
         }
 

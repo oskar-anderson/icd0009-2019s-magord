@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Contracts.DAL.Base.Repositories;
 using Domain;
 using PublicApi.DTO.v1;
+using PublicApi.DTO.v1.AreaDTOs;
 
 namespace Contracts.DAL.App.Repositories
 {

@@ -20,18 +20,11 @@ namespace DAL.App.EF.Repositories
 
         public async Task<Person> FirstOrDefaultAsync(Guid id)
         {
-            var query = RepoDbSet.Where(a => a.Id == id).AsQueryable();
+            var query = RepoDbSet.Where(p => p.Id == id).AsQueryable();
             
             return await query.FirstOrDefaultAsync();
         }
-
-        public async Task<bool> ExistsAsync(Guid id)
-        {
-            {
-                return await RepoDbSet.AnyAsync(a => a.Id == id);
-            }
-        }
-
+        
         public async Task DeleteAsync(Guid id)
         {
             var person = await FirstOrDefaultAsync(id);
@@ -44,28 +37,28 @@ namespace DAL.App.EF.Repositories
             var query = RepoDbSet.AsQueryable();
             
             return await query
-                .Select(c => new PersonDTO()
+                .Select(p => new PersonDTO()
                 {
-                    Id = c.Id,
-                    FirstName = c.FirstName,
-                    LastName = c.LastName,
-                    Sex = c.Sex,
-                    DateOfBirth = c.DateOfBirth
+                    Id = p.Id,
+                    FirstName = p.FirstName,
+                    LastName = p.LastName,
+                    Sex = p.Sex,
+                    DateOfBirth = p.DateOfBirth
                 })
                 .ToListAsync();
         }
 
         public async Task<PersonDTO> DTOFirstOrDefaultAsync(Guid id)
         {
-            var query = RepoDbSet.Where(c => c.Id == id).AsQueryable();
+            var query = RepoDbSet.Where(p => p.Id == id).AsQueryable();
 
-            var personDTO = await query.Select(c => new PersonDTO()
+            var personDTO = await query.Select(p => new PersonDTO()
             {
-                Id = c.Id,
-                FirstName = c.FirstName,
-                LastName = c.LastName,
-                Sex = c.Sex,
-                DateOfBirth = c.DateOfBirth
+                Id = p.Id,
+                FirstName = p.FirstName,
+                LastName = p.LastName,
+                Sex = p.Sex,
+                DateOfBirth = p.DateOfBirth
             }).FirstOrDefaultAsync();
 
             return personDTO;

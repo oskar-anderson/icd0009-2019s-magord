@@ -230,8 +230,8 @@ namespace DAL.App.EF.Migrations
                         .HasColumnType("varchar(256) CHARACTER SET utf8mb4")
                         .HasMaxLength(256);
 
-                    b.Property<int>("Size")
-                        .HasColumnType("int");
+                    b.Property<float>("Size")
+                        .HasColumnType("float");
 
                     b.HasKey("Id");
 
@@ -271,8 +271,8 @@ namespace DAL.App.EF.Migrations
                         .HasColumnType("varchar(256) CHARACTER SET utf8mb4")
                         .HasMaxLength(256);
 
-                    b.Property<int>("Size")
-                        .HasColumnType("int");
+                    b.Property<float>("Size")
+                        .HasColumnType("float");
 
                     b.HasKey("Id");
 

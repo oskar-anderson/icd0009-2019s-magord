@@ -10,7 +10,10 @@ namespace PublicApi.DTO.v1
         [MaxLength(256)] [MinLength(1)] public string Name { get; set; } = default!;
         
         public Guid PersonId { get; set; } = default!;
+        public PersonDTO Person { get; set; } = default!;
+        
         public Guid ContactTypeId { get; set; } = default!;
+        public ContactTypeDTO ContactType { get; set; } = default!;
         
     }
 }

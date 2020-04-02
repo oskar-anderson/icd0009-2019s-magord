@@ -46,8 +46,10 @@ namespace WebApp.Controllers
         }
 
         // GET: Contacts/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
+            ViewData["ContactTypeId"] = new SelectList(await _uow.ContactTypes.AllAsync(), nameof(ContactType.Id), nameof(ContactType.Name));
+            ViewData["PersonId"] = new SelectList(await _uow.Persons.AllAsync(), nameof(Person.Id), nameof(Person.FirstName));
             return View();
         }
 
@@ -65,6 +67,8 @@ namespace WebApp.Controllers
                 await _uow.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+            ViewData["ContactTypeId"] = new SelectList(await _uow.ContactTypes.AllAsync(), nameof(ContactType.Id), nameof(ContactType.Name), contact.ContactTypeId);
+            ViewData["PersonId"] = new SelectList(await _uow.Persons.AllAsync(), nameof(Person.Id), nameof(Person.FirstName), contact.PersonId);
             return View(contact);
         }
 
@@ -82,6 +86,8 @@ namespace WebApp.Controllers
             {
                 return NotFound();
             }
+            ViewData["ContactTypeId"] = new SelectList(await _uow.ContactTypes.AllAsync(), nameof(ContactType.Id), nameof(ContactType.Name), contact.ContactTypeId);
+            ViewData["PersonId"] = new SelectList(await _uow.Persons.AllAsync(), nameof(Person.Id), nameof(Person.FirstName), contact.PersonId);
             return View(contact);
         }
 
@@ -117,6 +123,8 @@ namespace WebApp.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
+            ViewData["ContactTypeId"] = new SelectList(await _uow.ContactTypes.AllAsync(), nameof(ContactType.Id), nameof(ContactType.Name), contact.ContactTypeId);
+            ViewData["PersonId"] = new SelectList(await _uow.Persons.AllAsync(), nameof(Person.Id), nameof(Person.FirstName), contact.PersonId);
             return View(contact);
         }
 

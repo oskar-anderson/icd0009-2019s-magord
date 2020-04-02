@@ -7,6 +7,7 @@ using DAL.Base.EF.Repositories;
 using Domain;
 using Microsoft.EntityFrameworkCore;
 using PublicApi.DTO.v1.FoodDTOs;
+using PublicApi.DTO.v1.FoodTypeDTOs;
 
 namespace DAL.App.EF.Repositories
 {
@@ -16,58 +17,74 @@ namespace DAL.App.EF.Repositories
         {
         }
         
-       
-
+        
+        public new async Task<IEnumerable<Food>> AllAsync()
+        {
+            var query = RepoDbSet
+                .Include(f => f.FoodType)
+                .AsQueryable();
+            
+            return await query.ToListAsync();
+        }
+        
         public async Task<Food> FirstOrDefaultAsync(Guid id)
         {
-            var query = RepoDbSet.Where(a => a.Id == id).AsQueryable();
+            var query = RepoDbSet
+                .Include(f => f.FoodType)
+                .Where(f => f.Id == id).AsQueryable();
             
             return await query.FirstOrDefaultAsync();
         }
-
-        public async Task<bool> ExistsAsync(Guid id)
-        {
-            {
-                return await RepoDbSet.AnyAsync(a => a.Id == id);
-            }
-        }
-
+        
         public async Task DeleteAsync(Guid id)
         {
             var food = await FirstOrDefaultAsync(id);
             base.Remove(food);
         }
         
-        
         public async Task<IEnumerable<FoodDTO>> DTOAllAsync()
         {
-            var query = RepoDbSet.AsQueryable();
+            var query = RepoDbSet
+                .Include(f => f.FoodType)
+                .AsQueryable();
             
             return await query
-                .Select(c => new FoodDTO()
+                .Select(f => new FoodDTO()
                 {
-                    Id = c.Id,
-                    Description = c.Description,
-                    Size = c.Size,
-                    Name = c.Name,
-                    Amount = c.Amount,
-                    FoodTypeId = c.FoodTypeId
+                    Id = f.Id,
+                    Description = f.Description,
+                    Size = f.Size,
+                    Name = f.Name,
+                    Amount = f.Amount,
+                    FoodTypeId = f.FoodTypeId,
+                    FoodType = new FoodTypeDTO()
+                    {
+                        Id = f.FoodType!.Id,
+                        Name = f.FoodType.Name
+                    }
                 })
                 .ToListAsync();
         }
 
         public async Task<FoodDTO> DTOFirstOrDefaultAsync(Guid id)
         {
-            var query = RepoDbSet.Where(c => c.Id == id).AsQueryable();
+            var query = RepoDbSet
+                .Include(f => f.FoodType)
+                .Where(f => f.Id == id).AsQueryable();
 
-            var foodDTO = await query.Select(c => new FoodDTO()
+            var foodDTO = await query.Select(f => new FoodDTO()
             {
-                Id = c.Id,
-                Description = c.Description,
-                Size = c.Size,
-                Name = c.Name,
-                Amount = c.Amount,
-                FoodTypeId = c.FoodTypeId
+                Id = f.Id,
+                Description = f.Description,
+                Size = f.Size,
+                Name = f.Name,
+                Amount = f.Amount,
+                FoodTypeId = f.FoodTypeId,
+                FoodType = new FoodTypeDTO()
+                {
+                    Id = f.FoodType!.Id,
+                    Name = f.FoodType.Name
+                }
             }).FirstOrDefaultAsync();
 
             return foodDTO;

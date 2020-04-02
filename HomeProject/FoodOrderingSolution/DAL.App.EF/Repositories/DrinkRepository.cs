@@ -24,14 +24,7 @@ namespace DAL.App.EF.Repositories
             
             return await query.FirstOrDefaultAsync();
         }
-
-        public async Task<bool> ExistsAsync(Guid id)
-        {
-            {
-                return await RepoDbSet.AnyAsync(a => a.Id == id);
-            }
-        }
-
+        
         public async Task DeleteAsync(Guid id)
         {
             var drink = await FirstOrDefaultAsync(id);
@@ -44,26 +37,26 @@ namespace DAL.App.EF.Repositories
             var query = RepoDbSet.AsQueryable();
             
             return await query
-                .Select(c => new DrinkDTO()
+                .Select(d => new DrinkDTO()
                 {
-                    Id = c.Id,
-                    Size = c.Size,
-                    Name = c.Name,
-                    Amount = c.Amount
+                    Id = d.Id,
+                    Size = d.Size,
+                    Name = d.Name,
+                    Amount = d.Amount
                 })
                 .ToListAsync();
         }
 
         public async Task<DrinkDTO> DTOFirstOrDefaultAsync(Guid id)
         {
-            var query = RepoDbSet.Where(c => c.Id == id).AsQueryable();
+            var query = RepoDbSet.Where(d => d.Id == id).AsQueryable();
 
-            var drinkDTO = await query.Select(c => new DrinkDTO()
+            var drinkDTO = await query.Select(d => new DrinkDTO()
             {
-                Id = c.Id,
-                Size = c.Size,
-                Name = c.Name,
-                Amount = c.Amount
+                Id = d.Id,
+                Size = d.Size,
+                Name = d.Name,
+                Amount = d.Amount
             }).FirstOrDefaultAsync();
 
             return drinkDTO;

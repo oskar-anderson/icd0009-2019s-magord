@@ -7,7 +7,7 @@ namespace Domain
 {
     public class Drink : DomainEntity
     {
-        public int Size { get; set; } = default!;
+        public float Size { get; set; } = default!;
 
         [MaxLength(256)] [MinLength(1)] public string Name { get; set; } = default!;
 

@@ -24,19 +24,11 @@ namespace DAL.App.EF.Repositories
             return await query.FirstOrDefaultAsync();
         }
 
-        public async Task<bool> ExistsAsync(Guid id)
-        {
-            {
-                return await RepoDbSet.AnyAsync(c => c.Id == id);
-            }
-        }
-
         public async Task DeleteAsync(Guid id)
         {
             var area = await FirstOrDefaultAsync(id);
             base.Remove(area);
         }
-        
         
         
         public async Task<IEnumerable<CampaignDTO>> DTOAllAsync()

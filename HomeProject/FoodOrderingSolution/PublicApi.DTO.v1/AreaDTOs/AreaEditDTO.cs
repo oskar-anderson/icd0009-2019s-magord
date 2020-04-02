@@ -1,7 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace PublicApi.DTO.v1
+namespace PublicApi.DTO.v1.AreaDTOs
 {
     public class AreaEditDTO
     {

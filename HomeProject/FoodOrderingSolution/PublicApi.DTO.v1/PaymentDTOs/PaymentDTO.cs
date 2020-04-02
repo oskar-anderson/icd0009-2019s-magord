@@ -1,4 +1,5 @@
 ﻿using System;
+using PublicApi.DTO.v1.PaymentTypeDTOs;
 
 namespace PublicApi.DTO.v1.PaymentDTOs
 {
@@ -11,10 +12,13 @@ namespace PublicApi.DTO.v1.PaymentDTOs
         public string TimeMade { get; set; } = default!;
 
         public Guid PersonId { get; set; } = default!;
+        public PersonDTO Person { get; set; } = default!;
         
         public Guid BillId { get; set; } = default!;
+        public BillDTO Bill { get; set; } = default!;
         
         public Guid PaymentTypeId { get; set; } = default!;
+        public PaymentTypeDTO PaymentType { get; set; } = default!;
         
     }
 }

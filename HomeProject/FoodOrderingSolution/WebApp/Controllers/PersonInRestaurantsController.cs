@@ -46,8 +46,10 @@ namespace WebApp.Controllers
         }
 
         // GET: PersonInRestaurants/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
+            ViewData["PersonId"] = new SelectList(await _uow.Persons.AllAsync(), nameof(Person.Id), nameof(Person.FirstName));
+            ViewData["RestaurantId"] = new SelectList(await _uow.Restaurants.AllAsync(), nameof(Restaurant.Id), nameof(Restaurant.Name));
             return View();
         }
 
@@ -65,6 +67,8 @@ namespace WebApp.Controllers
                 await _uow.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+            ViewData["PersonId"] = new SelectList(await _uow.Persons.AllAsync(), nameof(Person.Id), nameof(Person.FirstName), personInRestaurant.PersonId);
+            ViewData["RestaurantId"] = new SelectList(await _uow.Restaurants.AllAsync(), nameof(Restaurant.Id), nameof(Restaurant.Name), personInRestaurant.RestaurantId);
             return View(personInRestaurant);
         }
 
@@ -82,6 +86,8 @@ namespace WebApp.Controllers
             {
                 return NotFound();
             }
+            ViewData["PersonId"] = new SelectList(await _uow.Persons.AllAsync(), nameof(Person.Id), nameof(Person.FirstName), personInRestaurant.PersonId);
+            ViewData["RestaurantId"] = new SelectList(await _uow.Restaurants.AllAsync(), nameof(Restaurant.Id), nameof(Restaurant.Name), personInRestaurant.RestaurantId);
             return View(personInRestaurant);
         }
 
@@ -117,6 +123,8 @@ namespace WebApp.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
+            ViewData["PersonId"] = new SelectList(await _uow.Persons.AllAsync(), nameof(Person.Id), nameof(Person.FirstName), personInRestaurant.PersonId);
+            ViewData["RestaurantId"] = new SelectList(await _uow.Restaurants.AllAsync(), nameof(Restaurant.Id), nameof(Restaurant.Name), personInRestaurant.RestaurantId);
             return View(personInRestaurant);
         }
 

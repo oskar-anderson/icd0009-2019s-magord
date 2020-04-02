@@ -20,18 +20,11 @@ namespace DAL.App.EF.Repositories
 
         public async Task<OrderType> FirstOrDefaultAsync(Guid id)
         {
-            var query = RepoDbSet.Where(a => a.Id == id).AsQueryable();
+            var query = RepoDbSet.Where(o => o.Id == id).AsQueryable();
             
             return await query.FirstOrDefaultAsync();
         }
-
-        public async Task<bool> ExistsAsync(Guid id)
-        {
-            {
-                return await RepoDbSet.AnyAsync(a => a.Id == id);
-            }
-        }
-
+        
         public async Task DeleteAsync(Guid id)
         {
             var orderType = await FirstOrDefaultAsync(id);
@@ -44,24 +37,24 @@ namespace DAL.App.EF.Repositories
             var query = RepoDbSet.AsQueryable();
             
             return await query
-                .Select(c => new OrderTypeDTO()
+                .Select(o => new OrderTypeDTO()
                 {
-                    Id = c.Id,
-                    Name = c.Name,
-                    Comment = c.Comment
+                    Id = o.Id,
+                    Name = o.Name,
+                    Comment = o.Comment
                 })
                 .ToListAsync();
         }
 
         public async Task<OrderTypeDTO> DTOFirstOrDefaultAsync(Guid id)
         {
-            var query = RepoDbSet.Where(c => c.Id == id).AsQueryable();
+            var query = RepoDbSet.Where(o => o.Id == id).AsQueryable();
 
-            var orderTypeDTO = await query.Select(c => new OrderTypeDTO()
+            var orderTypeDTO = await query.Select(o => new OrderTypeDTO()
             {
-                Id = c.Id,
-                Name = c.Name,
-                Comment = c.Comment
+                Id = o.Id,
+                Name = o.Name,
+                Comment = o.Comment
             }).FirstOrDefaultAsync();
 
             return orderTypeDTO;

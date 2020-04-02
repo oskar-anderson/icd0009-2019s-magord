@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using PublicApi.DTO.v1.FoodDTOs;
 
 namespace PublicApi.DTO.v1.IngredientDTOs
 {
@@ -13,5 +14,6 @@ namespace PublicApi.DTO.v1.IngredientDTOs
         public int Amount { get; set; } = default!;
 
         public Guid FoodId { get; set; } = default!;
+        public FoodDTO Food { get; set; } = default!;
     }
 }

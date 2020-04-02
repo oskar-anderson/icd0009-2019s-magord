@@ -66,7 +66,7 @@ namespace DAL.App.EF.Migrations
                     CreatedAt = table.Column<DateTime>(nullable: false),
                     ChangedBy = table.Column<string>(nullable: true),
                     ChangedAt = table.Column<DateTime>(nullable: false),
-                    Size = table.Column<int>(nullable: false),
+                    Size = table.Column<float>(nullable: false),
                     Name = table.Column<string>(maxLength: 256, nullable: false),
                     Amount = table.Column<int>(nullable: false)
                 },
@@ -192,7 +192,7 @@ namespace DAL.App.EF.Migrations
                     Description = table.Column<string>(maxLength: 1024, nullable: true),
                     Name = table.Column<string>(maxLength: 256, nullable: false),
                     Amount = table.Column<int>(nullable: false),
-                    Size = table.Column<int>(nullable: false),
+                    Size = table.Column<float>(nullable: false),
                     FoodTypeId = table.Column<Guid>(nullable: false)
                 },
                 constraints: table =>

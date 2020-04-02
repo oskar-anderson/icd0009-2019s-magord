@@ -14,6 +14,6 @@ namespace PublicApi.DTO.v1.FoodDTOs
 
         public int Amount { get; set; } = default!;
 
-        public int Size { get; set; } = default!;
+        public float Size { get; set; } = default!;
     }
 }
