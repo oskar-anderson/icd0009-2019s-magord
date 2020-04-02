@@ -115,12 +115,13 @@ namespace WebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(Guid id, Order order)
         {
-            order.AppUserId = User.UserGuidId();
-            
             if (id != order.Id)
             {
                 return NotFound();
             }
+            
+            order.AppUserId = User.UserGuidId();
+
 
             if (ModelState.IsValid)
             {

@@ -63,6 +63,8 @@ namespace WebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Bill bill)
         {
+            bill.AppUserId = User.UserGuidId();
+            
             if (ModelState.IsValid)
             {
                 _uow.Bills.Add(bill);
@@ -99,12 +101,12 @@ namespace WebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(Guid id, Bill bill)
         {
-            bill.AppUserId = User.UserGuidId();
-            
             if (id != bill.Id)
             {
                 return NotFound();
             }
+
+            bill.AppUserId = User.UserGuidId();
 
             if (ModelState.IsValid)
             {
