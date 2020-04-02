@@ -1,5 +1,10 @@
 <template>
 
+    <require from="../../components/alert"></require>
+
+    <alert alert-data.bind="_alert"></alert>
+
+
     <h1>Create</h1>
     <h4>Area</h4>
     <hr />
@@ -10,6 +15,14 @@
                     <label class="control-label" for="Name">Name</label>
                     <input class="form-control" type="text" id="Name" maxlength="256" value.bind="_name" />
                 </div>
+
+                <div class="form-group">
+                    <label class="control-label" for="TownId">Town</label>
+                    <select class="form-control" data-val="true", type="text" id="TownId" maxlength="256" value.bind="_townId">
+                    <option repeat.for="town of _towns">${town.name}</option>
+                    </select>
+                </div>
+                
 
                 <div class="form-group">
                     <input type="submit" value="Create" class="btn btn-primary" />

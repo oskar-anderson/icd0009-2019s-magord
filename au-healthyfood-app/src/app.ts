@@ -1,3 +1,4 @@
+import { AppState } from './state/app-state';
 import { autoinject, PLATFORM } from 'aurelia-framework';
 import {RouterConfiguration, Router} from 'aurelia-router';
 
@@ -5,7 +6,7 @@ import {RouterConfiguration, Router} from 'aurelia-router';
 export class App {
     router?: Router;
 
-    constructor() {
+    constructor(private appState: AppState) {
 
     }
 
@@ -18,10 +19,14 @@ export class App {
         config.map([
             {route: ['', 'home', 'home/index'], name: 'home', moduleId: PLATFORM.moduleName('views/home/index'), nav: true, title: 'Home'},
 
+            { route: ['account/login'], name: 'account-login', moduleId: PLATFORM.moduleName('views/account/login'), nav: false, title: 'Login' },
+            { route: ['account/register'], name: 'account-register', moduleId: PLATFORM.moduleName('views/account/register'), nav: false, title: 'Register' },
+
+
             {route: ['areas', 'areas/index'], name: 'areas-index', moduleId: PLATFORM.moduleName('views/areas/index'), nav: true, title: 'Areas'},
-            {route: ['areas/details/:id'], name: 'areas-details', moduleId: PLATFORM.moduleName('views/areas/details'), nav: false, title: 'Areas details'},
-            { route: ['areas/edit/:id'], name: 'areas-edit', moduleId: PLATFORM.moduleName('views/areas/edit'), nav: false, title: 'Areas Edit' },
-            { route: ['areas/delete/:id'], name: 'areas-delete', moduleId: PLATFORM.moduleName('views/areas/delete'), nav: false, title: 'Areas Delete' },
+            {route: ['areas/details/:id?'], name: 'areas-details', moduleId: PLATFORM.moduleName('views/areas/details'), nav: false, title: 'Areas details'},
+            { route: ['areas/edit/:id?'], name: 'areas-edit', moduleId: PLATFORM.moduleName('views/areas/edit'), nav: false, title: 'Areas Edit' },
+            { route: ['areas/delete/:id?'], name: 'areas-delete', moduleId: PLATFORM.moduleName('views/areas/delete'), nav: false, title: 'Areas Delete' },
             { route: ['areas/create'], name: 'areas-create', moduleId: PLATFORM.moduleName('views/areas/create'), nav: false, title: 'Areas Create' },
 
             /*
@@ -52,13 +57,16 @@ export class App {
             { route: ['contacttypes/delete/:id'], name: 'contacttypes-delete', moduleId: PLATFORM.moduleName('views/contacttypes/delete'), nav: false, title: 'Contact Types Delete' },
             { route: ['contacttypes/create'], name: 'contacttypes-create', moduleId: PLATFORM.moduleName('views/contacttypes/create'), nav: false, title: 'Contact Types Create' },
 
+            */
+
 
             {route: ['drinks', 'drinks/index'], name: 'drinks-index', moduleId: PLATFORM.moduleName('views/drinks/index'), nav: true, title: 'Drinks'},
-            {route: ['drinks/details/:id'], name: 'drinks-details', moduleId: PLATFORM.moduleName('views/drinks/details'), nav: false, title: 'Drinks details'},
-            { route: ['drinks/edit/:id'], name: 'drinks-edit', moduleId: PLATFORM.moduleName('views/drinks/edit'), nav: false, title: 'Drinks Edit' },
-            { route: ['drinks/delete/:id'], name: 'drinks-delete', moduleId: PLATFORM.moduleName('views/drinks/delete'), nav: false, title: 'Drinks Delete' },
+            {route: ['drinks/details/:id?'], name: 'drinks-details', moduleId: PLATFORM.moduleName('views/drinks/details'), nav: false, title: 'Drinks details'},
+            { route: ['drinks/edit/:id?'], name: 'drinks-edit', moduleId: PLATFORM.moduleName('views/drinks/edit'), nav: false, title: 'Drinks Edit' },
+            { route: ['drinks/delete/:id?'], name: 'drinks-delete', moduleId: PLATFORM.moduleName('views/drinks/delete'), nav: false, title: 'Drinks Delete' },
             { route: ['drinks/create'], name: 'drinks-create', moduleId: PLATFORM.moduleName('views/drinks/create'), nav: false, title: 'Drinks Create' },
 
+            /*
 
             {route: ['foods', 'foods/index'], name: 'foods-index', moduleId: PLATFORM.moduleName('views/foods/index'), nav: true, title: 'Foods'},
             {route: ['foods/details/:id'], name: 'foods-details', moduleId: PLATFORM.moduleName('views/drinks/details'), nav: false, title: 'Foods details'},
@@ -114,14 +122,15 @@ export class App {
             { route: ['personinrestaurants/edit/:id'], name: 'personinrestaurants-edit', moduleId: PLATFORM.moduleName('views/personinrestaurants/edit'), nav: false, title: 'Person In Restaurants Edit' },
             { route: ['personinrestaurants/delete/:id'], name: 'personinrestaurants-delete', moduleId: PLATFORM.moduleName('views/personinrestaurants/delete'), nav: false, title: 'Person In Restaurants Delete' },
             { route: ['personinrestaurants/create'], name: 'personinrestaurants-create', moduleId: PLATFORM.moduleName('views/personinrestaurants/create'), nav: false, title: 'Person In Restaurants Create' },
-
+            
+            */
 
             {route: ['persons', 'persons/index'], name: 'persons-index', moduleId: PLATFORM.moduleName('views/persons/index'), nav: true, title: 'Persons'},
-            {route: ['persons/details/:id'], name: 'persons-details', moduleId: PLATFORM.moduleName('views/persons/details'), nav: false, title: 'Persons details'},
-            { route: ['persons/edit/:id'], name: 'persons-edit', moduleId: PLATFORM.moduleName('views/persons/edit'), nav: false, title: 'Persons Edit' },
-            { route: ['persons/delete/:id'], name: 'persons-delete', moduleId: PLATFORM.moduleName('views/persons/delete'), nav: false, title: 'Persons Delete' },
+            {route: ['persons/details/:id?'], name: 'persons-details', moduleId: PLATFORM.moduleName('views/persons/details'), nav: false, title: 'Persons details'},
+            { route: ['persons/edit/:id?'], name: 'persons-edit', moduleId: PLATFORM.moduleName('views/persons/edit'), nav: false, title: 'Persons Edit' },
+            { route: ['persons/delete/:id?'], name: 'persons-delete', moduleId: PLATFORM.moduleName('views/persons/delete'), nav: false, title: 'Persons Delete' },
             { route: ['persons/create'], name: 'persons-create', moduleId: PLATFORM.moduleName('views/persons/create'), nav: false, title: 'Persons Create' },
-
+            /*
 
             {route: ['prices', 'prices/index'], name: 'prices-index', moduleId: PLATFORM.moduleName('views/prices/index'), nav: true, title: 'Prices'},
             {route: ['prices/details/:id'], name: 'prices-details', moduleId: PLATFORM.moduleName('views/prices/details'), nav: false, title: 'Prices details'},
@@ -146,6 +155,11 @@ export class App {
         );
 
         config.mapUnknownRoutes('views/home/index');
+    }
+
+    logoutOnClick(){
+        this.appState.jwt = null;
+        this.router!.navigateToRoute('account-login');
     }
 
 }

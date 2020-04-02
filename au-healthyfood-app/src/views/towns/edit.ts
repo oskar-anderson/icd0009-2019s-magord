@@ -1,12 +1,16 @@
 import { autoinject } from 'aurelia-framework';
 import { RouteConfig, NavigationInstruction, Router } from 'aurelia-router';
 import { TownService } from 'service/town-service';
-import { ITown } from 'domain/ITown';
+import { ITown } from 'domain/ITown/ITown';
+import { IAlertData } from 'types/IAlertData';
+import { AlertType } from 'types/AlertType';
+
 
 @autoinject
 export class TownsEdit {
 
-    private _town: ITown | null = null;
+    private _alert: IAlertData | null = null;
+    private _town?: ITown;
 
     constructor(private townService: TownService, private router: Router) {
     }
@@ -18,7 +22,20 @@ export class TownsEdit {
         console.log(params);
         if (params.id && typeof (params.id) == 'string') {
             this.townService.getTown(params.id).then(
-                data => this._town = data
+                response => {
+                    if (response.statusCode >= 200 && response.statusCode < 300) {
+                        this._alert = null;
+                        this._town = response.data!;
+                    } else {
+                        // show error message
+                        this._alert = {
+                            message: response.statusCode.toString() + ' - ' + response.errorMessage,
+                            type: AlertType.Danger,
+                            dismissable: true,
+                        }
+                    }
+                }
+
             );
         }
     }
@@ -27,10 +44,22 @@ export class TownsEdit {
         console.log(event);
         this.townService
             .updateTown(this._town!)
-            .then((resp) => {
-                console.log('redirect?', resp);
-                this.router.navigateToRoute('towns-index', {});
-            });
+            .then(
+                response => {
+                    if (response.statusCode >= 200 && response.statusCode < 300) {
+                        this._alert = null;
+                        this.router.navigateToRoute('towns-index', {});
+                    } else {
+                        // show error message
+                        this._alert = {
+                            message: response.statusCode.toString() + ' - ' + response.errorMessage,
+                            type: AlertType.Danger,
+                            dismissable: true,
+                        }
+                    }
+                }
+            );
+
 
         event.preventDefault();
     }

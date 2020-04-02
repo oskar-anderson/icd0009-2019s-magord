@@ -1,5 +1,11 @@
 <template>
-    <h1>Index</h1>
+
+    <require from="../../components/alert"></require>
+
+    <alert alert-data.bind="_alert"></alert>
+
+
+    <h1>Areas Index</h1>
 
 <p>
     <a route-href="route: areas-create; params.bind: {}">Create New</a>
@@ -9,6 +15,9 @@
         <tr>
             <th>
                 Name
+            </th>
+            <th>
+                Town
             </th>
             <th>
                 RestaurantCount
@@ -21,6 +30,9 @@
             <td>
                 ${area.name}
             </td>
+            <th>
+                ${area.town.name}
+            </th>
             <td>
                 ${area.restaurantCount}
             </td>

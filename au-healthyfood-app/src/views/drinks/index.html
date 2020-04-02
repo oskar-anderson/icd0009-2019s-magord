@@ -1,3 +1,46 @@
 <template>
-    Drinks index
+
+    <require from="../../components/alert"></require>
+
+    <alert alert-data.bind="_alert"></alert>
+
+
+    <h1>Drinks Index</h1>
+
+<p>
+    <a route-href="route: drinks-create; params.bind: {}">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Name
+            </th>
+            <th>
+                Size
+            </th>
+            <th>
+                Amount
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr repeat.for="drink of _drinks">
+            <td>
+                ${drink.name}
+            </td>
+            <td>
+                ${drink.size}
+            </td>
+            <td>
+                ${drink.amount}
+            </td>
+            <td>
+                <a route-href="route: drinks-edit; params.bind: { id: drink.id }">Edit</a> |
+                <a route-href="route: drinks-details; params.bind: { id: drink.id }">Details</a> |
+                <a route-href="route: drinks-delete; params.bind: { id: drink.id }">Delete</a>
+            </td>
+        </tr>
+    </tbody>
+</table>
 </template>

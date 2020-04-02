@@ -1,5 +1,9 @@
 <template>
 
+    <require from="../../components/alert"></require>
+
+    <alert alert-data.bind="_alert"></alert>
+
 
     <h1>Delete</h1>
 
@@ -13,6 +17,12 @@
             </dt>
             <dd class="col-sm-10">
                 ${_area.name}
+            </dd>
+            <dt class="col-sm-2">
+                TownId
+            </dt>
+            <dd class="col-sm-10">
+                ${_area.town.name}
             </dd>
             <dt class="col-sm-2">
                 RestaurantCount

@@ -1,0 +1,53 @@
+import { autoinject } from 'aurelia-framework';
+import { RouteConfig, NavigationInstruction, Router } from 'aurelia-router';
+import { DrinkService } from 'service/drink-service';
+import { IAlertData } from 'types/IAlertData';
+import { AlertType } from 'types/AlertType';
+
+
+@autoinject
+export class DrinksCreate {
+
+    private _alert: IAlertData | null = null;
+
+    _name = "";
+    _amount = "";
+    _size = "";
+
+    constructor(private drinkService: DrinkService, private router: Router) {
+
+    }
+
+    attached() {
+
+    }
+
+    activate(params: any, routeConfig: RouteConfig, navigationInstruction: NavigationInstruction) {
+
+    }
+
+    onSubmit(event: Event) {
+        console.log(event);
+        this.drinkService
+        .createDrink({ name: this._name, amount: Number(this._amount), size: Number(this._size) })
+        .then(
+            response => {
+                if (response.statusCode >= 200 && response.statusCode < 300) {
+                    this._alert = null;
+                    this.router.navigateToRoute('drinks-index', {});
+                } else {
+                    // show error message
+                    this._alert = {
+                        message: response.statusCode.toString() + ' - ' + response.errorMessage,
+                        type: AlertType.Danger,
+                        dismissable: true,
+                    }
+                }
+            }   
+        );
+
+
+        event.preventDefault();
+    }
+
+}

@@ -1,0 +1,44 @@
+<template>
+
+    <require from="../../components/alert"></require>
+
+    <alert alert-data.bind="_alert"></alert>
+
+
+    <h1>Details</h1>
+
+    <div>
+        <h4>Person</h4>
+        <hr />
+        <dl class="row">
+            <dt class="col-sm-2">
+                FirstName
+            </dt>
+            <dd class="col-sm-10">
+                ${_person.firstName}
+            </dd>
+            <dt class="col-sm-2">
+                LastName
+            </dt>
+            <dd class="col-sm-10">
+                ${_person.lastName}
+            </dd>
+            <dt class="col-sm-2">
+                Sex
+            </dt>
+            <dd class="col-sm-10">
+                ${_person.sex}
+            </dd>
+            <dt class="col-sm-2">
+                DateOfBirth
+            </dt>
+            <dd class="col-sm-10">
+                ${_person.dateOfBirth}
+            </dd>
+        </dl>
+    </div>
+    <div>
+        <a route-href="route: persons-edit; params.bind: { id: person.id }">Edit</a> |
+        <a route-href="route: persons-index; params.bind: { }">Back to List</a>
+    </div>
+</template>

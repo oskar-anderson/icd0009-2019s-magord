@@ -1,76 +1,160 @@
-import { ITown } from './../domain/ITown';
 import { autoinject } from 'aurelia-framework';
 import { HttpClient } from 'aurelia-fetch-client';
+import { AppState } from 'state/app-state';
+import { IFetchResponse } from 'types/IFetchResponse';
+import { ITown } from 'domain/ITown/ITown';
+import { ITownCreate } from 'domain/ITown/ITownCreate';
+import { ITownEdit } from 'domain/ITown/ITownEdit';
+
 
 @autoinject
 export class TownService {
-    constructor(private httpClient: HttpClient) {
-
+    constructor(private appState: AppState, private httpClient: HttpClient) {
+        this.httpClient.baseUrl = this.appState.baseUrl;
     }
 
-    private readonly _baseUrl = 'https://localhost:5001/api/Towns'
+    private readonly _baseUrl = 'Towns'
 
-    getTowns(): Promise<ITown[]> {
-        return this.httpClient
-            .fetch(this._baseUrl, { cache: "no-store" })
-            .then(response => response.json())
-            .then((data: ITown[]) => data)
-            .catch(reason => {
-                console.error(reason);
-                return [];
+    async getTowns(): Promise<IFetchResponse<ITown[]>> {
+        try {
+            const response = await this.httpClient
+                .fetch(this._baseUrl, {
+                    cache: "no-store",
+                });
+            // happy case
+            if (response.status >= 200 && response.status < 300) {
+                const data = (await response.json()) as ITown[];
+                console.log(data);
+                return {
+                    statusCode: response.status,
+                    data: data
+                }
+            }
+            // something went wrong
+            return {
+                statusCode: response.status,
+                errorMessage: response.statusText
+            }
+
+        } catch (reason) {
+            return {
+                statusCode: 0,
+                errorMessage: JSON.stringify(reason)
+            }
+        }
+    }
+
+
+    async getTown(id: string): Promise<IFetchResponse<ITown>> {
+        try {
+            const response = await this.httpClient
+                .fetch(this._baseUrl + '/' + id, {
+                    cache: "no-store",
+                });
+
+            if (response.status >= 200 && response.status < 300) {
+                const data = (await response.json()) as ITown;
+                return {
+                    statusCode: response.status,
+                    data: data
+                }
+            }
+
+            return {
+                statusCode: response.status,
+                errorMessage: response.statusText
+            }
+
+        } catch (reason) {
+            return {
+                statusCode: 0,
+                errorMessage: JSON.stringify(reason)
+            }
+        }
+    }
+
+
+    async createTown(town: ITownCreate): Promise<IFetchResponse<string>> {
+        try {
+            const response = await this.httpClient
+                .post(this._baseUrl, JSON.stringify(town), {
+                    cache: 'no-store',
+                })
+
+            if (response.status >= 200 && response.status < 300) {
+                console.log('response', response);
+                return {
+                    statusCode: response.status
+                    // no data
+                }
+            }
+
+            return {
+                statusCode: response.status,
+                errorMessage: response.statusText
+            }
+        }
+        catch (reason) {
+            return {
+                statusCode: 0,
+                errorMessage: JSON.stringify(reason)
+            }
+        }
+    }
+
+
+    async updateTown(town: ITownEdit): Promise<IFetchResponse<string>> {
+        try {
+            const response = await this.httpClient
+                .put(this._baseUrl + '/' + town.id, JSON.stringify(town), {
+                    cache: 'no-store',
+                });
+
+            if (response.status >= 200 && response.status < 300) {
+                return {
+                    statusCode: response.status
+                    // no data
+                }
+            }
+            return {
+                statusCode: response.status,
+                errorMessage: response.statusText
+            }
+        }
+        catch (reason) {
+            return {
+                statusCode: 0,
+                errorMessage: JSON.stringify(reason)
+            }
+        }
+    }
+
+
+    async deleteTown(id: string): Promise<IFetchResponse<string>> {
+
+        try {
+            const response = await this.httpClient
+            .delete(this._baseUrl + '/' + id, null, {
+                cache: 'no-store',
             });
-    }
 
-    getTown(id: string): Promise<ITown | null> {
-        return this.httpClient
-            .fetch(this._baseUrl + '/' + id, { cache: "no-store" })
-            .then(response => response.json())
-            .then((data: ITown) => data)
-            .catch(reason => {
-                console.error(reason);
-                return null;
-            });
-    }
-
-    createTown(town: ITown): Promise<string> {
-        return this.httpClient.post(this._baseUrl, JSON.stringify(town), {
-            cache: 'no-store'
-        }).then(
-            response => {
-                console.log('createTown response', response);
-                return response.statusText;
+            if (response.status >= 200 && response.status < 300) {
+                return {
+                    statusCode: response.status
+                    // no data
+                }
             }
-        ).catch(reason => {
-            console.error(reason);
-            return JSON.stringify(reason);
-        });
+            return {
+                statusCode: response.status,
+                errorMessage: response.statusText
+            }
+        }
+        catch (reason) {
+            return {
+                statusCode: 0,
+                errorMessage: JSON.stringify(reason)
+            }
+        }
     }
 
-    updateTown(town: ITown): Promise<string> {
-        return this.httpClient.put(this._baseUrl + '/' + town.id, JSON.stringify(town), {
-            cache: 'no-store'
-        }).then(
-            response => {
-                console.log('updateTown response', response);
-                return response.statusText;
-            }
-        ).catch(reason => {
-            console.error(reason);
-            return JSON.stringify(reason);
-        });
-    }
-
-    deleteTown(town: ITown): Promise<string> {
-        return this.httpClient.delete(this._baseUrl + '/' + town.id, JSON.stringify(town), {
-            cache: 'no-store'
-        }).then(
-            response => {
-                console.log('deletetown response', response);
-                return response.statusText;
-            }
-        ).catch(reason => {
-            console.error(reason);
-            return JSON.stringify(reason);
-        });
-    }
 }

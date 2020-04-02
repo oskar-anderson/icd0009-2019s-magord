@@ -1,4 +1,10 @@
 <template>
+
+    <require from="../../components/alert"></require>
+
+    <alert alert-data.bind="_alert"></alert>
+
+
     <h1>Details</h1>
 
     <div>
@@ -12,10 +18,16 @@
                 ${_area.name}
             </dd>
             <dt class="col-sm-2">
+                Town
+            </dt>
+            <dd class="col-sm-10">
+                ${_area.town.name}
+            </dd>
+            <dt class="col-sm-2">
                 RestaurantCount
             </dt>
             <dd class="col-sm-10">
-                ${_area.restarurantCount}
+                ${_area.restaurantCount}
             </dd>
         </dl>
     </div>

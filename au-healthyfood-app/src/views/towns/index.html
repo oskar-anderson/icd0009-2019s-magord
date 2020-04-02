@@ -1,5 +1,11 @@
 <template>
-    <h1>Index</h1>
+
+    <require from="../../components/alert"></require>
+
+    <alert alert-data.bind="_alert"></alert>
+
+
+    <h1>Towns Index</h1>
 
 <p>
     <a route-href="route: towns-create; params.bind: {}">Create New</a>
