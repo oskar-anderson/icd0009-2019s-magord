@@ -66,6 +66,7 @@ namespace WebApp.ApiControllers
             person.FirstName = personEditDTO.FirstName;
             person.LastName = personEditDTO.LastName;
             person.Sex = personEditDTO.Sex;
+            person.DateOfBirth = personEditDTO.DateOfBirth;
             
             _uow.Persons.Update(person);
 

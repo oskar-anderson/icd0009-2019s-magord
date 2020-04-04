@@ -22,14 +22,15 @@ export class App {
             { route: ['account/login'], name: 'account-login', moduleId: PLATFORM.moduleName('views/account/login'), nav: false, title: 'Login' },
             { route: ['account/register'], name: 'account-register', moduleId: PLATFORM.moduleName('views/account/register'), nav: false, title: 'Register' },
 
-
+            /*
+            
             {route: ['areas', 'areas/index'], name: 'areas-index', moduleId: PLATFORM.moduleName('views/areas/index'), nav: true, title: 'Areas'},
             {route: ['areas/details/:id?'], name: 'areas-details', moduleId: PLATFORM.moduleName('views/areas/details'), nav: false, title: 'Areas details'},
             { route: ['areas/edit/:id?'], name: 'areas-edit', moduleId: PLATFORM.moduleName('views/areas/edit'), nav: false, title: 'Areas Edit' },
             { route: ['areas/delete/:id?'], name: 'areas-delete', moduleId: PLATFORM.moduleName('views/areas/delete'), nav: false, title: 'Areas Delete' },
             { route: ['areas/create'], name: 'areas-create', moduleId: PLATFORM.moduleName('views/areas/create'), nav: false, title: 'Areas Create' },
 
-            /*
+
             {route: ['bills', 'bills/index'], name: 'bills-index', moduleId: PLATFORM.moduleName('views/bills/index'), nav: true, title: 'Bills'},
             {route: ['bills/details/:id'], name: 'bills-details', moduleId: PLATFORM.moduleName('views/bills/details'), nav: false, title: 'Bills details'},
             { route: ['bills/edit/:id'], name: 'bills-edit', moduleId: PLATFORM.moduleName('views/bills/edit'), nav: false, title: 'Bills Edit' },
