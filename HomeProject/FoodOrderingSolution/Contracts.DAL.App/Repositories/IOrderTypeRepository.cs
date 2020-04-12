@@ -9,12 +9,12 @@ namespace Contracts.DAL.App.Repositories
 {
     public interface IOrderTypeRepository : IBaseRepository<OrderType>
     {
-        Task<OrderType> FirstOrDefaultAsync(Guid id);
-        Task<bool> ExistsAsync(Guid id);
-        Task DeleteAsync(Guid id);
+        Task<IEnumerable<OrderType>> AllAsync(Guid? userId = null);
+        Task<OrderType> FirstOrDefaultAsync(Guid id, Guid? userId = null);
+        Task<bool> ExistsAsync(Guid id, Guid? userId = null);
+        Task DeleteAsync(Guid id, Guid? userId = null);
         
-        
-        Task<IEnumerable<OrderTypeDTO>> DTOAllAsync();
-        Task<OrderTypeDTO> DTOFirstOrDefaultAsync(Guid id);
+        Task<IEnumerable<OrderTypeDTO>> DTOAllAsync(Guid? userId = null);
+        Task<OrderTypeDTO> DTOFirstOrDefaultAsync(Guid id, Guid? userId = null);
     }
 }

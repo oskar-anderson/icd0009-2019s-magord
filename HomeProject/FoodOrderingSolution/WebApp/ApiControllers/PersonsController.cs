@@ -8,12 +8,16 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using DAL.App.EF;
 using Domain;
+using Extensions;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using PublicApi.DTO.v1;
 
 namespace WebApp.ApiControllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class PersonsController : ControllerBase
     {
         private readonly IAppUnitOfWork _uow;
@@ -27,7 +31,7 @@ namespace WebApp.ApiControllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<PersonDTO>>> GetPersons()
         {
-            var personDTOs = await _uow.Persons.DTOAllAsync();
+            var personDTOs = await _uow.Persons.DTOAllAsync(User.UserGuidId());
             
             return Ok(personDTOs);
         }
@@ -36,7 +40,7 @@ namespace WebApp.ApiControllers
         [HttpGet("{id}")]
         public async Task<ActionResult<PersonDTO>> GetPerson(Guid id)
         {
-            var person = await _uow.Persons.DTOFirstOrDefaultAsync(id);
+            var person = await _uow.Persons.DTOFirstOrDefaultAsync(id, User.UserGuidId());
 
             if (person == null)
             {
@@ -57,7 +61,7 @@ namespace WebApp.ApiControllers
                 return BadRequest();
             }
 
-            var person = await _uow.Persons.FirstOrDefaultAsync(personEditDTO.Id);
+            var person = await _uow.Persons.FirstOrDefaultAsync(personEditDTO.Id, User.UserGuidId());
             if (person == null)
             {
                 return BadRequest();
@@ -76,7 +80,7 @@ namespace WebApp.ApiControllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!await _uow.Persons.ExistsAsync(id))
+                if (!await _uow.Persons.ExistsAsync(id, User.UserGuidId()))
                 {
                     return NotFound();
                 }
@@ -98,6 +102,7 @@ namespace WebApp.ApiControllers
             var person = new Person
             {
                 Id = personCreateDTO.Id,
+                AppUserId = User.UserGuidId(),
                 FirstName = personCreateDTO.FirstName,
                 LastName = personCreateDTO.LastName,
                 Sex = personCreateDTO.Sex,

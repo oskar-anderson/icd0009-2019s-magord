@@ -16,25 +16,56 @@ namespace DAL.App.EF.Repositories
         {
         }
         
+        public async Task<IEnumerable<Drink>> AllAsync(Guid? userId = null)
+        {
+            
+            if (userId == null)
+            {
+                return await base.AllAsync();
+            }
+
+            return await RepoDbSet.Where(o => o.AppUserId == userId).ToListAsync();
+        }
+
+        
         
 
-        public async Task<Drink> FirstOrDefaultAsync(Guid id)
+        public async Task<Drink> FirstOrDefaultAsync(Guid id, Guid? userId = null)
         {
             var query = RepoDbSet.Where(a => a.Id == id).AsQueryable();
+            if (userId != null)
+            {
+                query = query.Where(a => a.AppUserId == userId);
+            }
             
             return await query.FirstOrDefaultAsync();
         }
         
-        public async Task DeleteAsync(Guid id)
+        public async Task<bool> ExistsAsync(Guid id, Guid? userId = null)
         {
-            var drink = await FirstOrDefaultAsync(id);
-            base.Remove(drink);
+            if (userId == null)
+            {
+                return await RepoDbSet.AnyAsync(a => a.Id == id);
+            }
+
+            return await RepoDbSet.AnyAsync(a => a.Id == id && a.AppUserId == userId);
         }
         
+        public async Task DeleteAsync(Guid id, Guid? userId = null)
+        {
+            var drink = await FirstOrDefaultAsync(id, userId);
+            base.Remove(drink);
+        }
+
         
-        public async Task<IEnumerable<DrinkDTO>> DTOAllAsync()
+        
+        public async Task<IEnumerable<DrinkDTO>> DTOAllAsync(Guid? userId = null)
         {
             var query = RepoDbSet.AsQueryable();
+            if (userId != null)
+            {
+                query = query.Where(o => o.AppUserId == userId);
+            }
             
             return await query
                 .Select(d => new DrinkDTO()
@@ -47,9 +78,14 @@ namespace DAL.App.EF.Repositories
                 .ToListAsync();
         }
 
-        public async Task<DrinkDTO> DTOFirstOrDefaultAsync(Guid id)
+        public async Task<DrinkDTO> DTOFirstOrDefaultAsync(Guid id, Guid? userId = null)
         {
             var query = RepoDbSet.Where(d => d.Id == id).AsQueryable();
+            if (userId != null)
+            {
+                query = query.Where(a => a.AppUserId == userId);
+            }
+
 
             var drinkDTO = await query.Select(d => new DrinkDTO()
             {

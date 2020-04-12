@@ -8,12 +8,16 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using DAL.App.EF;
 using Domain;
+using Extensions;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using PublicApi.DTO.v1.FoodTypeDTOs;
 
 namespace WebApp.ApiControllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class FoodTypesController : ControllerBase
     {
         private readonly IAppUnitOfWork _uow;
@@ -27,7 +31,7 @@ namespace WebApp.ApiControllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<FoodTypeDTO>>> GetFoodTypes()
         {
-            var foodTypeDTOs = await _uow.FoodTypes.DTOAllAsync();
+            var foodTypeDTOs = await _uow.FoodTypes.DTOAllAsync(User.UserGuidId());
             
             return Ok(foodTypeDTOs);
         }
@@ -36,7 +40,7 @@ namespace WebApp.ApiControllers
         [HttpGet("{id}")]
         public async Task<ActionResult<FoodTypeDTO>> GetFoodType(Guid id)
         {
-            var foodType = await _uow.FoodTypes.DTOFirstOrDefaultAsync(id);
+            var foodType = await _uow.FoodTypes.DTOFirstOrDefaultAsync(id, User.UserGuidId());
 
             if (foodType == null)
             {
@@ -57,7 +61,7 @@ namespace WebApp.ApiControllers
                 return BadRequest();
             }
 
-            var foodType = await _uow.FoodTypes.FirstOrDefaultAsync(foodTypeEditDTO.Id);
+            var foodType = await _uow.FoodTypes.FirstOrDefaultAsync(foodTypeEditDTO.Id, User.UserGuidId());
             if (foodType == null)
             {
                 return BadRequest();
@@ -73,7 +77,7 @@ namespace WebApp.ApiControllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!await _uow.FoodTypes.ExistsAsync(id))
+                if (!await _uow.FoodTypes.ExistsAsync(id, User.UserGuidId()))
                 {
                     return NotFound();
                 }
@@ -95,6 +99,7 @@ namespace WebApp.ApiControllers
             var foodType = new FoodType
             {
                 Id = foodTypeCreateDTO.Id,
+                AppUserId = User.UserGuidId(),
                 Name = foodTypeCreateDTO.Name,
             };
             

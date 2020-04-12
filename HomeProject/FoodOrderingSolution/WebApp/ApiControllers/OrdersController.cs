@@ -99,6 +99,7 @@ namespace WebApp.ApiControllers
         {
             var order = new Order
             {
+                Id = orderCreateDTO.Id,
                 AppUserId = User.UserGuidId(),
                 OrderStatus = orderCreateDTO.OrderStatus,
                 Number = orderCreateDTO.Number,

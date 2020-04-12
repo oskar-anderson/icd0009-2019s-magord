@@ -8,12 +8,16 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using DAL.App.EF;
 using Domain;
+using Extensions;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using PublicApi.DTO.v1.OrderTypeDTOs;
 
 namespace WebApp.ApiControllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class OrderTypesController : ControllerBase
     {
         private readonly IAppUnitOfWork _uow;
@@ -27,7 +31,7 @@ namespace WebApp.ApiControllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<OrderTypeDTO>>> GetOrderTypes()
         {
-            var orderTypeDTOs = await _uow.OrderTypes.DTOAllAsync();
+            var orderTypeDTOs = await _uow.OrderTypes.DTOAllAsync(User.UserGuidId());
             
             return Ok(orderTypeDTOs);
         }
@@ -36,7 +40,7 @@ namespace WebApp.ApiControllers
         [HttpGet("{id}")]
         public async Task<ActionResult<OrderTypeDTO>> GetOrderType(Guid id)
         {
-            var orderType = await _uow.OrderTypes.DTOFirstOrDefaultAsync(id);
+            var orderType = await _uow.OrderTypes.DTOFirstOrDefaultAsync(id, User.UserGuidId());
 
             if (orderType == null)
             {
@@ -57,7 +61,7 @@ namespace WebApp.ApiControllers
                 return BadRequest();
             }
 
-            var orderType = await _uow.OrderTypes.FirstOrDefaultAsync(orderTypeEditDTO.Id);
+            var orderType = await _uow.OrderTypes.FirstOrDefaultAsync(orderTypeEditDTO.Id, User.UserGuidId());
             if (orderType == null)
             {
                 return BadRequest();
@@ -74,7 +78,7 @@ namespace WebApp.ApiControllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!await _uow.OrderTypes.ExistsAsync(id))
+                if (!await _uow.OrderTypes.ExistsAsync(id, User.UserGuidId()))
                 {
                     return NotFound();
                 }
@@ -96,6 +100,7 @@ namespace WebApp.ApiControllers
             var orderType = new OrderType
             {
                 Id = orderTypeCreateDTO.Id,
+                AppUserId = User.UserGuidId(),
                 Name = orderTypeCreateDTO.Name,
                 Comment = orderTypeCreateDTO.Comment
             };

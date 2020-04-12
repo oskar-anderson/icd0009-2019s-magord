@@ -97,6 +97,7 @@ namespace WebApp.ApiControllers
             {
                 Id = areaCreateDTO.Id,
                 Name = areaCreateDTO.Name,
+                TownId = areaCreateDTO.TownId
             };
             
             _uow.Areas.Add(area);

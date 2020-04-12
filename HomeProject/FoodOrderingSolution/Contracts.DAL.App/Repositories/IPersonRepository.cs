@@ -9,12 +9,12 @@ namespace Contracts.DAL.App.Repositories
 {
     public interface IPersonRepository : IBaseRepository<Person>
     {
-        Task<Person> FirstOrDefaultAsync(Guid id);
-        Task<bool> ExistsAsync(Guid id);
-        Task DeleteAsync(Guid id);
+        Task<IEnumerable<Person>> AllAsync(Guid? userId = null);
+        Task<Person> FirstOrDefaultAsync(Guid id, Guid? userId = null);
+        Task<bool> ExistsAsync(Guid id, Guid? userId = null);
+        Task DeleteAsync(Guid id, Guid? userId = null);
         
-        
-        Task<IEnumerable<PersonDTO>> DTOAllAsync();
-        Task<PersonDTO> DTOFirstOrDefaultAsync(Guid id);
+        Task<IEnumerable<PersonDTO>> DTOAllAsync(Guid? userId = null);
+        Task<PersonDTO> DTOFirstOrDefaultAsync(Guid id, Guid? userId = null);
     }
 }

@@ -8,12 +8,16 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using DAL.App.EF;
 using Domain;
+using Extensions;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using PublicApi.DTO.v1.DrinkDTOs;
 
 namespace WebApp.ApiControllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class DrinksController : ControllerBase
     {
         private readonly IAppUnitOfWork _uow;
@@ -27,7 +31,7 @@ namespace WebApp.ApiControllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<DrinkDTO>>> GetDrinks()
         {
-            var drinkDTOs = await _uow.Drinks.DTOAllAsync();
+            var drinkDTOs = await _uow.Drinks.DTOAllAsync(User.UserGuidId());
             
             return Ok(drinkDTOs);
         }
@@ -36,7 +40,7 @@ namespace WebApp.ApiControllers
         [HttpGet("{id}")]
         public async Task<ActionResult<DrinkDTO>> GetDrink(Guid id)
         {
-            var drink = await _uow.Drinks.DTOFirstOrDefaultAsync(id);
+            var drink = await _uow.Drinks.DTOFirstOrDefaultAsync(id, User.UserGuidId());
 
             if (drink == null)
             {
@@ -57,7 +61,7 @@ namespace WebApp.ApiControllers
                 return BadRequest();
             }
 
-            var drink = await _uow.Drinks.FirstOrDefaultAsync(drinkEditDTO.Id);
+            var drink = await _uow.Drinks.FirstOrDefaultAsync(drinkEditDTO.Id, User.UserGuidId());
             if (drink == null)
             {
                 return BadRequest();
@@ -75,7 +79,7 @@ namespace WebApp.ApiControllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!await _uow.Drinks.ExistsAsync(id))
+                if (!await _uow.Drinks.ExistsAsync(id, User.UserGuidId()))
                 {
                     return NotFound();
                 }
@@ -97,6 +101,7 @@ namespace WebApp.ApiControllers
             var drink = new Drink
             {
                 Id = drinkCreateDTO.Id,
+                AppUserId = User.UserGuidId(),
                 Size = drinkCreateDTO.Size,
                 Amount = drinkCreateDTO.Amount,
                 Name = drinkCreateDTO.Name,

@@ -1,7 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using Contracts.DAL.Base;
 using DAL.Base;
+using Domain.Identity;
 
 namespace Domain
 {
@@ -16,5 +18,8 @@ namespace Domain
         public ICollection<Price>? Prices { get; set; }
 
         public ICollection<Order>? Orders { get; set; }
+        
+        public Guid? AppUserId { get; set; }
+        public AppUser? AppUser { get; set; }
     }
 }

@@ -47,7 +47,7 @@ namespace WebApp.ApiControllers
                 return NotFound();
             }
 
-            return bill;
+            return Ok(bill);
         }
 
         // PUT: api/Bills/5
@@ -100,6 +100,7 @@ namespace WebApp.ApiControllers
         {
             var bill = new Bill
             {
+                Id = billCreateDTO.Id,
                 AppUserId = User.UserGuidId(),
                 TimeIssued = billCreateDTO.TimeIssued,
                 Number = billCreateDTO.Number,

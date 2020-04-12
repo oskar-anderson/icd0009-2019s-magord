@@ -16,25 +16,52 @@ namespace DAL.App.EF.Repositories
         {
         }
         
-        
+        public async Task<IEnumerable<FoodType>> AllAsync(Guid? userId = null)
+        {
+            if (userId == null)
+            {
+                return await base.AllAsync();
+            }
 
-        public async Task<FoodType> FirstOrDefaultAsync(Guid id)
+            return await RepoDbSet.Where(o => o.AppUserId == userId).ToListAsync();
+        }
+        
+        public async Task<FoodType> FirstOrDefaultAsync(Guid id, Guid? userId = null)
         {
             var query = RepoDbSet.Where(f => f.Id == id).AsQueryable();
-            
+            if (userId != null)
+            {
+                query = query.Where(a => a.AppUserId == userId);
+            }
+
             return await query.FirstOrDefaultAsync();
         }
         
-        public async Task DeleteAsync(Guid id)
+        public async Task<bool> ExistsAsync(Guid id, Guid? userId = null)
         {
-            var foodType = await FirstOrDefaultAsync(id);
+            if (userId == null)
+            {
+                return await RepoDbSet.AnyAsync(a => a.Id == id);
+            }
+
+            return await RepoDbSet.AnyAsync(a => a.Id == id && a.AppUserId == userId);
+        }
+
+        
+        public async Task DeleteAsync(Guid id, Guid? userId = null)
+        {
+            var foodType = await FirstOrDefaultAsync(id, userId);
             base.Remove(foodType);
         }
         
-        
-        public async Task<IEnumerable<FoodTypeDTO>> DTOAllAsync()
+        public async Task<IEnumerable<FoodTypeDTO>> DTOAllAsync(Guid? userId = null)
         {
             var query = RepoDbSet.AsQueryable();
+            if (userId != null)
+            {
+                query = query.Where(o => o.AppUserId == userId);
+            }
+
             
             return await query
                 .Select(f => new FoodTypeDTO()
@@ -45,9 +72,14 @@ namespace DAL.App.EF.Repositories
                 .ToListAsync();
         }
 
-        public async Task<FoodTypeDTO> DTOFirstOrDefaultAsync(Guid id)
+        public async Task<FoodTypeDTO> DTOFirstOrDefaultAsync(Guid id, Guid? userId = null)
         {
             var query = RepoDbSet.Where(f => f.Id == id).AsQueryable();
+            if (userId != null)
+            {
+                query = query.Where(a => a.AppUserId == userId);
+            }
+
 
             var foodTypeDTO = await query.Select(f => new FoodTypeDTO()
             {

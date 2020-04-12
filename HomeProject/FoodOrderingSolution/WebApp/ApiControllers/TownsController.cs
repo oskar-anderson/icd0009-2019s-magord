@@ -8,12 +8,16 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using DAL.App.EF;
 using Domain;
+using Extensions;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using PublicApi.DTO.v1;
 
 namespace WebApp.ApiControllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class TownsController : ControllerBase
     {
         private readonly IAppUnitOfWork _uow;
@@ -27,7 +31,7 @@ namespace WebApp.ApiControllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<TownDTO>>> GetTowns()
         {
-            var townDTOs = await _uow.Towns.DTOAllAsync();
+            var townDTOs = await _uow.Towns.DTOAllAsync(User.UserGuidId());
 
             return Ok(townDTOs);
         }
@@ -36,7 +40,7 @@ namespace WebApp.ApiControllers
         [HttpGet("{id}")]
         public async Task<ActionResult<TownDTO>> GetTown(Guid id)
         {
-            var town = await _uow.Towns.DTOFirstOrDefaultAsync(id);
+            var town = await _uow.Towns.DTOFirstOrDefaultAsync(id, User.UserGuidId());
             
             if (town == null)
             {
@@ -57,7 +61,7 @@ namespace WebApp.ApiControllers
                 return BadRequest();
             }
 
-            var town = await _uow.Towns.FirstOrDefaultAsync(townEditDTO.Id);
+            var town = await _uow.Towns.FirstOrDefaultAsync(townEditDTO.Id, User.UserGuidId());
             if (town == null)
             {
                 return BadRequest();
@@ -73,7 +77,7 @@ namespace WebApp.ApiControllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!await _uow.Towns.ExistsAsync(town.Id))
+                if (!await _uow.Towns.ExistsAsync(town.Id, User.UserGuidId()))
                 {
                     return NotFound();
                 }
@@ -95,6 +99,7 @@ namespace WebApp.ApiControllers
             var town = new Town()
             {
                 Id = townCreateDTO.Id,
+                AppUserId = User.UserGuidId(),
                 Name = townCreateDTO.Name
             };
             

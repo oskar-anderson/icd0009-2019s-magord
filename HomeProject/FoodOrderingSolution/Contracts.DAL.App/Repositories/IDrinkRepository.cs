@@ -9,12 +9,12 @@ namespace Contracts.DAL.App.Repositories
 {
     public interface IDrinkRepository : IBaseRepository<Drink>
     {
-        Task<Drink> FirstOrDefaultAsync(Guid id);
-        Task<bool> ExistsAsync(Guid id);
-        Task DeleteAsync(Guid id);
+        Task<IEnumerable<Drink>> AllAsync(Guid? userId = null);
+        Task<Drink> FirstOrDefaultAsync(Guid id, Guid? userId = null);
+        Task<bool> ExistsAsync(Guid id, Guid? userId = null);
+        Task DeleteAsync(Guid id, Guid? userId = null);
         
-        
-        Task<IEnumerable<DrinkDTO>> DTOAllAsync();
-        Task<DrinkDTO> DTOFirstOrDefaultAsync(Guid id);
+        Task<IEnumerable<DrinkDTO>> DTOAllAsync(Guid? userId = null);
+        Task<DrinkDTO> DTOFirstOrDefaultAsync(Guid id, Guid? userId = null);
     }
 }
