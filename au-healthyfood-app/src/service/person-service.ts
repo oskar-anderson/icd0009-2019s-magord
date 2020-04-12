@@ -19,6 +19,9 @@ export class PersonService {
             const response = await this.httpClient
                 .fetch(this._baseUrl, {
                     cache: "no-store",
+                    headers: {
+                        authorization: "Bearer " + this.appState.jwt
+                    }
                 });
             // happy case
             if (response.status >= 200 && response.status < 300) {
@@ -49,6 +52,9 @@ export class PersonService {
             const response = await this.httpClient
                 .fetch(this._baseUrl + '/' + id, {
                     cache: "no-store",
+                    headers: {
+                        authorization: "Bearer " + this.appState.jwt
+                    }
                 });
 
             if (response.status >= 200 && response.status < 300) {
@@ -77,6 +83,9 @@ export class PersonService {
             const response = await this.httpClient
                 .post(this._baseUrl, JSON.stringify(person), {
                     cache: 'no-store',
+                    headers: {
+                        authorization: "Bearer " + this.appState.jwt
+                    }
                 })
 
             if (response.status >= 200 && response.status < 300) {
@@ -105,6 +114,9 @@ export class PersonService {
             const response = await this.httpClient
                 .put(this._baseUrl + '/' + person.id, JSON.stringify(person), {
                     cache: 'no-store',
+                    headers: {
+                        authorization: "Bearer " + this.appState.jwt
+                    }
                 });
 
             if (response.status >= 200 && response.status < 300) {
@@ -132,6 +144,9 @@ export class PersonService {
             const response = await this.httpClient
             .delete(this._baseUrl + '/' + id, null, {
                 cache: 'no-store',
+                headers: {
+                    authorization: "Bearer " + this.appState.jwt
+                }
             });
 
             if (response.status >= 200 && response.status < 300) {

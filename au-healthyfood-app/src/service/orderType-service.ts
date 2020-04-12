@@ -3,20 +3,24 @@ import { HttpClient } from 'aurelia-fetch-client';
 import { AppState } from 'state/app-state';
 import { IFetchResponse } from 'types/IFetchResponse';
 
-import { IArea } from 'domain/IArea/IArea';
-import { IAreaEdit } from './../domain/IArea/IAreaEdit';
-import { IAreaCreate } from './../domain/IArea/IAreaCreate';
+import { IOrderType } from './../domain/IOrderType/IOrderType';
+import { IOrderTypeCreate } from 'domain/IOrderType/IOrderTypeCreate';
+import { IOrderTypeEdit } from 'domain/IOrderType/IOrderTypeEdit';
+
+
+
+
 
 
 @autoinject
-export class AreaService {
+export class OrderTypeService {
     constructor(private appState: AppState, private httpClient: HttpClient) {
         this.httpClient.baseUrl = this.appState.baseUrl;
     }
 
-    private readonly _baseUrl = 'Areas';
+    private readonly _baseUrl = 'Ordertypes'
 
-    async getAreas(): Promise<IFetchResponse<IArea[]>> {
+    async getOrderTypes(): Promise<IFetchResponse<IOrderType[]>> {
         try {
             const response = await this.httpClient
                 .fetch(this._baseUrl, {
@@ -27,14 +31,13 @@ export class AreaService {
                 });
             // happy case
             if (response.status >= 200 && response.status < 300) {
-                const data = (await response.json()) as IArea[];
+                const data = (await response.json()) as IOrderType[];
                 console.log(data);
                 return {
                     statusCode: response.status,
                     data: data
                 }
             }
-
             // something went wrong
             return {
                 statusCode: response.status,
@@ -50,7 +53,7 @@ export class AreaService {
     }
 
 
-    async getArea(id: string): Promise<IFetchResponse<IArea>> {
+    async getOrderType(id: string): Promise<IFetchResponse<IOrderType>> {
         try {
             const response = await this.httpClient
                 .fetch(this._baseUrl + '/' + id, {
@@ -61,7 +64,7 @@ export class AreaService {
                 });
 
             if (response.status >= 200 && response.status < 300) {
-                const data = (await response.json()) as IArea;
+                const data = (await response.json()) as IOrderType;
                 return {
                     statusCode: response.status,
                     data: data
@@ -82,10 +85,10 @@ export class AreaService {
     }
 
 
-    async createArea(area: IAreaCreate): Promise<IFetchResponse<string>> {
+    async createOrderType(orderType: IOrderTypeCreate): Promise<IFetchResponse<string>> {
         try {
             const response = await this.httpClient
-                .post(this._baseUrl, JSON.stringify(area), {
+                .post(this._baseUrl, JSON.stringify(orderType), {
                     cache: 'no-store',
                     headers: {
                         authorization: "Bearer " + this.appState.jwt
@@ -114,10 +117,10 @@ export class AreaService {
     }
 
 
-    async updateArea(area: IAreaEdit): Promise<IFetchResponse<string>> {
+    async updateOrderType(orderType: IOrderTypeEdit): Promise<IFetchResponse<string>> {
         try {
             const response = await this.httpClient
-                .put(this._baseUrl + '/' + area.id, JSON.stringify(area), {
+                .put(this._baseUrl + '/' + orderType.id, JSON.stringify(orderType), {
                     cache: 'no-store',
                     headers: {
                         authorization: "Bearer " + this.appState.jwt
@@ -144,15 +147,15 @@ export class AreaService {
     }
 
 
-    async deleteArea(id: string): Promise<IFetchResponse<string>> {
+    async deleteOrderType(id: string): Promise<IFetchResponse<string>> {
 
         try {
             const response = await this.httpClient
             .delete(this._baseUrl + '/' + id, null, {
                 cache: 'no-store',
                 headers: {
-                        authorization: "Bearer " + this.appState.jwt
-                    }
+                    authorization: "Bearer " + this.appState.jwt
+                }
             });
 
             if (response.status >= 200 && response.status < 300) {

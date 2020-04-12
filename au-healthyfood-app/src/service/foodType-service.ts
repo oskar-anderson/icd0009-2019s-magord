@@ -3,20 +3,24 @@ import { HttpClient } from 'aurelia-fetch-client';
 import { AppState } from 'state/app-state';
 import { IFetchResponse } from 'types/IFetchResponse';
 
-import { IArea } from 'domain/IArea/IArea';
-import { IAreaEdit } from './../domain/IArea/IAreaEdit';
-import { IAreaCreate } from './../domain/IArea/IAreaCreate';
+import { IFoodType } from './../domain/IFoodType/IFoodType';
+import { IFoodTypeCreate } from 'domain/IFoodType/IFoodTypeCreate';
+import { IFoodTypeEdit } from 'domain/IFoodType/IFoodTypeEdit';
+
+
+
+
 
 
 @autoinject
-export class AreaService {
+export class FoodTypeService {
     constructor(private appState: AppState, private httpClient: HttpClient) {
         this.httpClient.baseUrl = this.appState.baseUrl;
     }
 
-    private readonly _baseUrl = 'Areas';
+    private readonly _baseUrl = 'Foodtypes'
 
-    async getAreas(): Promise<IFetchResponse<IArea[]>> {
+    async getFoodTypes(): Promise<IFetchResponse<IFoodType[]>> {
         try {
             const response = await this.httpClient
                 .fetch(this._baseUrl, {
@@ -27,14 +31,13 @@ export class AreaService {
                 });
             // happy case
             if (response.status >= 200 && response.status < 300) {
-                const data = (await response.json()) as IArea[];
+                const data = (await response.json()) as IFoodType[];
                 console.log(data);
                 return {
                     statusCode: response.status,
                     data: data
                 }
             }
-
             // something went wrong
             return {
                 statusCode: response.status,
@@ -50,7 +53,7 @@ export class AreaService {
     }
 
 
-    async getArea(id: string): Promise<IFetchResponse<IArea>> {
+    async getFoodType(id: string): Promise<IFetchResponse<IFoodType>> {
         try {
             const response = await this.httpClient
                 .fetch(this._baseUrl + '/' + id, {
@@ -61,7 +64,7 @@ export class AreaService {
                 });
 
             if (response.status >= 200 && response.status < 300) {
-                const data = (await response.json()) as IArea;
+                const data = (await response.json()) as IFoodType;
                 return {
                     statusCode: response.status,
                     data: data
@@ -82,10 +85,10 @@ export class AreaService {
     }
 
 
-    async createArea(area: IAreaCreate): Promise<IFetchResponse<string>> {
+    async createFoodType(foodType: IFoodTypeCreate): Promise<IFetchResponse<string>> {
         try {
             const response = await this.httpClient
-                .post(this._baseUrl, JSON.stringify(area), {
+                .post(this._baseUrl, JSON.stringify(foodType), {
                     cache: 'no-store',
                     headers: {
                         authorization: "Bearer " + this.appState.jwt
@@ -114,10 +117,10 @@ export class AreaService {
     }
 
 
-    async updateArea(area: IAreaEdit): Promise<IFetchResponse<string>> {
+    async updateFoodType(foodType: IFoodTypeEdit): Promise<IFetchResponse<string>> {
         try {
             const response = await this.httpClient
-                .put(this._baseUrl + '/' + area.id, JSON.stringify(area), {
+                .put(this._baseUrl + '/' + foodType.id, JSON.stringify(foodType), {
                     cache: 'no-store',
                     headers: {
                         authorization: "Bearer " + this.appState.jwt
@@ -144,15 +147,15 @@ export class AreaService {
     }
 
 
-    async deleteArea(id: string): Promise<IFetchResponse<string>> {
+    async deleteFoodType(id: string): Promise<IFetchResponse<string>> {
 
         try {
             const response = await this.httpClient
             .delete(this._baseUrl + '/' + id, null, {
                 cache: 'no-store',
                 headers: {
-                        authorization: "Bearer " + this.appState.jwt
-                    }
+                    authorization: "Bearer " + this.appState.jwt
+                }
             });
 
             if (response.status >= 200 && response.status < 300) {

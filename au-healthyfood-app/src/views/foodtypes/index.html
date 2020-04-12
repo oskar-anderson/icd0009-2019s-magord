@@ -1,3 +1,34 @@
 <template>
-    FoodTypes index
+
+    <require from="../../components/alert"></require>
+
+    <alert alert-data.bind="_alert"></alert>
+
+
+    <h1>Food types Index</h1>
+
+<p>
+    <a route-href="route: foodtypes-create; params.bind: {}">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Name
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr repeat.for="foodType of _foodTypes">
+            <td>
+                ${foodType.name}
+            </td>
+            <td>
+                <a route-href="route: foodtypes-edit; params.bind: { id: foodType.id }">Edit</a> |
+                <a route-href="route: foodtypes-details; params.bind: { id: foodType.id }">Details</a> |
+                <a route-href="route: foodtypes-delete; params.bind: { id: foodType.id }">Delete</a>
+            </td>
+        </tr>
+    </tbody>
+</table>
 </template>

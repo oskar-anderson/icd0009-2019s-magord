@@ -24,12 +24,18 @@
                     <ul if.bind="appState.jwt != null" class="navbar-nav">
                         <li class="nav-item">
                             <a class="nav-link text-dark"
+                                route-href="route: account-manage; params.bind: {}">Account</a>
+                        </li>
+                    </ul>
+
+                    <ul if.bind="appState.jwt != null" class="navbar-nav">
+                        <li class="nav-item">
+                            <a class="nav-link text-dark"
                                 href="#" click.delegate="logoutOnClick()">Logout</a>
                         </li>
                     </ul>
 
-                    <ul class="navbar-nav flex-grow-1">
-
+                    <ul if.bind="appState.jwt != null" class="navbar-nav flex-grow-1">
                         <li repeat.for='nav of router.navigation' class="nav-item ${nav.isActive ? 'active' : ''}">
                             <a class="nav-link text-dark" href.bind="nav.href">${nav.title}</a>
                         </li>
