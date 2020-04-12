@@ -213,6 +213,9 @@ namespace DAL.App.EF.Migrations
                     b.Property<int>("Amount")
                         .HasColumnType("int");
 
+                    b.Property<Guid?>("AppUserId")
+                        .HasColumnType("char(36)");
+
                     b.Property<DateTime>("ChangedAt")
                         .HasColumnType("datetime(6)");
 
@@ -234,6 +237,8 @@ namespace DAL.App.EF.Migrations
                         .HasColumnType("float");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("AppUserId");
 
                     b.ToTable("Drinks");
                 });
@@ -287,6 +292,9 @@ namespace DAL.App.EF.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("char(36)");
 
+                    b.Property<Guid?>("AppUserId")
+                        .HasColumnType("char(36)");
+
                     b.Property<DateTime>("ChangedAt")
                         .HasColumnType("datetime(6)");
 
@@ -305,6 +313,8 @@ namespace DAL.App.EF.Migrations
                         .HasMaxLength(256);
 
                     b.HasKey("Id");
+
+                    b.HasIndex("AppUserId");
 
                     b.ToTable("FoodTypes");
                 });
@@ -373,9 +383,6 @@ namespace DAL.App.EF.Migrations
                     b.Property<string>("PasswordHash")
                         .HasColumnType("longtext CHARACTER SET utf8mb4");
 
-                    b.Property<Guid?>("PersonId")
-                        .HasColumnType("char(36)");
-
                     b.Property<string>("PhoneNumber")
                         .HasColumnType("longtext CHARACTER SET utf8mb4");
 
@@ -400,8 +407,6 @@ namespace DAL.App.EF.Migrations
                     b.HasIndex("NormalizedUserName")
                         .IsUnique()
                         .HasName("UserNameIndex");
-
-                    b.HasIndex("PersonId");
 
                     b.ToTable("AspNetUsers");
                 });
@@ -518,6 +523,9 @@ namespace DAL.App.EF.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("char(36)");
 
+                    b.Property<Guid?>("AppUserId")
+                        .HasColumnType("char(36)");
+
                     b.Property<DateTime>("ChangedAt")
                         .HasColumnType("datetime(6)");
 
@@ -540,6 +548,8 @@ namespace DAL.App.EF.Migrations
                         .HasMaxLength(256);
 
                     b.HasKey("Id");
+
+                    b.HasIndex("AppUserId");
 
                     b.ToTable("OrderTypes");
                 });
@@ -623,6 +633,9 @@ namespace DAL.App.EF.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("char(36)");
 
+                    b.Property<Guid?>("AppUserId")
+                        .HasColumnType("char(36)");
+
                     b.Property<DateTime>("ChangedAt")
                         .HasColumnType("datetime(6)");
 
@@ -654,6 +667,8 @@ namespace DAL.App.EF.Migrations
                         .HasColumnType("varchar(1) CHARACTER SET utf8mb4");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("AppUserId");
 
                     b.ToTable("Persons");
                 });
@@ -815,6 +830,9 @@ namespace DAL.App.EF.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("char(36)");
 
+                    b.Property<Guid?>("AppUserId")
+                        .HasColumnType("char(36)");
+
                     b.Property<DateTime>("ChangedAt")
                         .HasColumnType("datetime(6)");
 
@@ -833,6 +851,8 @@ namespace DAL.App.EF.Migrations
                         .HasMaxLength(256);
 
                     b.HasKey("Id");
+
+                    b.HasIndex("AppUserId");
 
                     b.ToTable("Towns");
                 });
@@ -980,6 +1000,14 @@ namespace DAL.App.EF.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("Domain.Drink", b =>
+                {
+                    b.HasOne("Domain.Identity.AppUser", "AppUser")
+                        .WithMany()
+                        .HasForeignKey("AppUserId")
+                        .OnDelete(DeleteBehavior.Restrict);
+                });
+
             modelBuilder.Entity("Domain.Food", b =>
                 {
                     b.HasOne("Domain.FoodType", "FoodType")
@@ -989,11 +1017,11 @@ namespace DAL.App.EF.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Domain.Identity.AppUser", b =>
+            modelBuilder.Entity("Domain.FoodType", b =>
                 {
-                    b.HasOne("Domain.Person", "Person")
-                        .WithMany("AppUsers")
-                        .HasForeignKey("PersonId")
+                    b.HasOne("Domain.Identity.AppUser", "AppUser")
+                        .WithMany()
+                        .HasForeignKey("AppUserId")
                         .OnDelete(DeleteBehavior.Restrict);
                 });
 
@@ -1050,6 +1078,14 @@ namespace DAL.App.EF.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("Domain.OrderType", b =>
+                {
+                    b.HasOne("Domain.Identity.AppUser", "AppUser")
+                        .WithMany()
+                        .HasForeignKey("AppUserId")
+                        .OnDelete(DeleteBehavior.Restrict);
+                });
+
             modelBuilder.Entity("Domain.Payment", b =>
                 {
                     b.HasOne("Domain.Bill", "Bill")
@@ -1069,6 +1105,14 @@ namespace DAL.App.EF.Migrations
                         .HasForeignKey("PersonId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("Domain.Person", b =>
+                {
+                    b.HasOne("Domain.Identity.AppUser", "AppUser")
+                        .WithMany("Persons")
+                        .HasForeignKey("AppUserId")
+                        .OnDelete(DeleteBehavior.Restrict);
                 });
 
             modelBuilder.Entity("Domain.PersonInRestaurant", b =>
@@ -1125,6 +1169,14 @@ namespace DAL.App.EF.Migrations
                         .HasForeignKey("AreaId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("Domain.Town", b =>
+                {
+                    b.HasOne("Domain.Identity.AppUser", "AppUser")
+                        .WithMany()
+                        .HasForeignKey("AppUserId")
+                        .OnDelete(DeleteBehavior.Restrict);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>

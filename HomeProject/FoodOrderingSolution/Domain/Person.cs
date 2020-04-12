@@ -23,8 +23,12 @@ namespace Domain
 
         public ICollection<Bill>? Bills { get; set; }
 
-        public ICollection<AppUser>? AppUsers { get; set; }
+        //public ICollection<AppUser>? AppUsers { get; set; }
 
+        public Guid? AppUserId { get; set; }
+        public AppUser? AppUser { get; set; }
+        
         public ICollection<Contact>? Contacts { get; set; }
+        
     }
 }

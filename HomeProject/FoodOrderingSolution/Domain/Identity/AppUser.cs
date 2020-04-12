@@ -8,8 +8,10 @@ namespace Domain.Identity
 {
     public class AppUser : IdentityUser<Guid>
     {
-        public Guid? PersonId { get; set; }
-        public Person? Person { get; set; }
+        //public Guid? PersonId { get; set; }
+        //public Person? Person { get; set; }
+        
+        public ICollection<Person>? Persons { get; set; }
 
         public ICollection<Order>? Orders { get; set; }
 
