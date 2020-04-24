@@ -3,48 +3,52 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Contracts.DAL.App.Repositories;
+using DAL.Base.EF.Mappers;
 using DAL.Base.EF.Repositories;
-using Domain;
 using Microsoft.EntityFrameworkCore;
-using PublicApi.DTO.v1;
-using PublicApi.DTO.v1.PersonInRestaurantDTOs;
-using PublicApi.DTO.v1.RestaurantDTOs;
 
 namespace DAL.App.EF.Repositories
 {
-    public class PersonInRestaurantRepository : EFBaseRepository<PersonInRestaurant, AppDbContext>, IPersonInRestaurantRepository
+    public class PersonInRestaurantRepository : EFBaseRepository<AppDbContext, Domain.PersonInRestaurant, DAL.App.DTO.PersonInRestaurant>, IPersonInRestaurantRepository
     {
-        public PersonInRestaurantRepository(AppDbContext dbContext) : base(dbContext)
+        public PersonInRestaurantRepository(AppDbContext dbContext) : base(dbContext,
+            new BaseDALMapper<Domain.PersonInRestaurant, DAL.App.DTO.PersonInRestaurant>())
         {
         }
         
-        public new async Task<IEnumerable<PersonInRestaurant>> AllAsync()
+        public new async Task<IEnumerable<DAL.App.DTO.PersonInRestaurant>> AllAsync()
         {
             var query = RepoDbSet
                 .Include(p => p.Person)
                 .Include(p => p.Restaurant)
                 .AsQueryable();
             
-            return await query.ToListAsync();
+            return (await query.ToListAsync()).Select(domainEntity => Mapper.Map(domainEntity));
         }
 
         
-        public async Task<PersonInRestaurant> FirstOrDefaultAsync(Guid id)
+        public async Task<DAL.App.DTO.PersonInRestaurant> FirstOrDefaultAsync(Guid id)
         {
             var query = RepoDbSet
                 .Include(p => p.Person)
                 .Include(p => p.Restaurant)
                 .Where(p => p.Id == id).AsQueryable();
             
-            return await query.FirstOrDefaultAsync();
+            return Mapper.Map(await query.FirstOrDefaultAsync());
         }
-        
+
+        public async Task<bool> ExistsAsync(Guid id)
+        {
+            return await RepoDbSet.AnyAsync(a => a.Id == id);
+        }
+
         public async Task DeleteAsync(Guid id)
         {
             var personInRestaurant = await FirstOrDefaultAsync(id);
             base.Remove(personInRestaurant);
         }
         
+        /*
         public async Task<IEnumerable<PersonInRestaurantDTO>> DTOAllAsync()
         {
             var query = RepoDbSet
@@ -118,5 +122,6 @@ namespace DAL.App.EF.Repositories
 
             return personInRestaurantDTO;
         }
+        */
     }
 }

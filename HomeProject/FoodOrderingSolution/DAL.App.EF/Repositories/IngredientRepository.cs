@@ -3,47 +3,52 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Contracts.DAL.App.Repositories;
+using DAL.Base.EF.Mappers;
 using DAL.Base.EF.Repositories;
-using Domain;
 using Microsoft.EntityFrameworkCore;
-using PublicApi.DTO.v1.FoodDTOs;
-using PublicApi.DTO.v1.IngredientDTOs;
+
 
 namespace DAL.App.EF.Repositories
 {
-    public class IngredientRepository : EFBaseRepository<Ingredient, AppDbContext>, IIngredientRepository
+    public class IngredientRepository : EFBaseRepository<AppDbContext, Domain.Ingredient, DAL.App.DTO.Ingredient>, IIngredientRepository
     {
-        public IngredientRepository(AppDbContext dbContext) : base(dbContext)
+        public IngredientRepository(AppDbContext dbContext) : base(dbContext,
+            new BaseDALMapper<Domain.Ingredient, DAL.App.DTO.Ingredient>())
         {
         }
         
         
-        public new async Task<IEnumerable<Ingredient>> AllAsync()
+        public new async Task<IEnumerable<DAL.App.DTO.Ingredient>> AllAsync()
         {
             var query = RepoDbSet
                 .Include(i => i.Food)
                 .AsQueryable();
             
-            return await query.ToListAsync();
+            return (await query.ToListAsync()).Select(domainEntity => Mapper.Map(domainEntity));
         }
 
         
-        public async Task<Ingredient> FirstOrDefaultAsync(Guid id)
+        public async Task<DAL.App.DTO.Ingredient> FirstOrDefaultAsync(Guid id)
         {
             var query = RepoDbSet
                 .Include(i => i.Food)
                 .Where(i => i.Id == id).AsQueryable();
             
-            return await query.FirstOrDefaultAsync();
+            return Mapper.Map(await query.FirstOrDefaultAsync());
         }
-        
+
+        public async Task<bool> ExistsAsync(Guid id)
+        {
+            return await RepoDbSet.AnyAsync(a => a.Id == id);
+        }
+
         public async Task DeleteAsync(Guid id)
         {
             var ingredient = await FirstOrDefaultAsync(id);
             base.Remove(ingredient);
         }
         
-        
+        /*
         public async Task<IEnumerable<IngredientDTO>> DTOAllAsync()
         {
             var query = RepoDbSet
@@ -95,5 +100,6 @@ namespace DAL.App.EF.Repositories
 
             return ingredientDTO;
         }
+        */
     }
 }

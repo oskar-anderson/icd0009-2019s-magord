@@ -5,28 +5,34 @@ using System.Threading.Tasks;
 
 namespace Contracts.DAL.Base.Repositories
 {
-    public interface IBaseRepository<TEntity> : IBaseRepository<TEntity, Guid>
-    where TEntity: class, IDomainEntity<Guid>, new()
+    public interface IBaseRepository<TDALEntity> : IBaseRepository<Guid, TDALEntity>
+        where TDALEntity : class, IDomainBaseEntity<Guid>, new()
     {
     }
-    
-    public interface IBaseRepository<TEntity, TKey>
-        where TEntity: class, IDomainEntity<TKey>, new()
-        where TKey: struct, IComparable
+
+    public interface IBaseRepository<TKey, TDALEntity>
+        where TDALEntity : class, IDomainBaseEntity<TKey>, new()
+        where TKey : IEquatable<TKey>
     {
         // CRUD
-        IEnumerable<TEntity> All();
-        Task<IEnumerable<TEntity>> AllAsync();
-        
+        IEnumerable<TDALEntity> All();
+        Task<IEnumerable<TDALEntity>> AllAsync();
+
+
         // TODO: would be nice to implement these predicates
         //IEnumerable<TEntity> Get(Expression<Func<TEntity, bool>>? filter = null);
         //Task<IEnumerable<TEntity>> GetAsync(Expression<Func<TEntity, bool>>? filter = null);
-        
-        TEntity Find(params object[] id);
-        Task<TEntity> FindAsync(params object[] id);
-        TEntity Add(TEntity entity);
-        TEntity Update(TEntity entity);
-        TEntity Remove(TEntity entity);
-        TEntity Remove(params object[] id);
+
+        TDALEntity Find(params object[] id);
+        Task<TDALEntity> FindAsync(params object[] id);
+        TDALEntity Add(TDALEntity entity);
+        TDALEntity Update(TDALEntity entity);
+        TDALEntity Remove(TDALEntity entity);
+        TDALEntity Remove(params object[] id);
+
+
+
+        //Task<IEnumerable<TDALEntity>> GetAllAsync(object? userId = null, bool noTracking = true);
+        //Task<TDALEntity> FirstOrDefaultAsync(object? userId = null, bool noTracking = true);
     }
 }

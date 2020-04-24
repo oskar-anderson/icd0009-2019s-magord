@@ -8,4 +8,8 @@
       <PackageReference Include="System.ComponentModel.Annotations" Version="4.7.0" />
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\BLL.App.DTO\BLL.App.DTO.csproj" />
+    </ItemGroup>
+
 </Project>

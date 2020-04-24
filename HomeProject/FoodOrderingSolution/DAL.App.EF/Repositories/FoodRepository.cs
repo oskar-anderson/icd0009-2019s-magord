@@ -3,45 +3,52 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Contracts.DAL.App.Repositories;
+using DAL.Base.EF.Mappers;
 using DAL.Base.EF.Repositories;
 using Domain;
 using Microsoft.EntityFrameworkCore;
-using PublicApi.DTO.v1.FoodDTOs;
-using PublicApi.DTO.v1.FoodTypeDTOs;
+
 
 namespace DAL.App.EF.Repositories
 {
-    public class FoodRepository : EFBaseRepository<Food, AppDbContext>, IFoodRepository
+    public class FoodRepository : EFBaseRepository<AppDbContext, Domain.Food, DAL.App.DTO.Food>, IFoodRepository
     {
-        public FoodRepository(AppDbContext dbContext) : base(dbContext)
+        public FoodRepository(AppDbContext dbContext) : base(dbContext,
+            new BaseDALMapper<Domain.Food, DAL.App.DTO.Food>())
         {
         }
         
         
-        public new async Task<IEnumerable<Food>> AllAsync()
+        public new async Task<IEnumerable<DAL.App.DTO.Food>> AllAsync()
         {
             var query = RepoDbSet
                 .Include(f => f.FoodType)
                 .AsQueryable();
             
-            return await query.ToListAsync();
+            return (await query.ToListAsync()).Select(domainEntity => Mapper.Map(domainEntity));
         }
         
-        public async Task<Food> FirstOrDefaultAsync(Guid id)
+        public async Task<DAL.App.DTO.Food> FirstOrDefaultAsync(Guid id)
         {
             var query = RepoDbSet
                 .Include(f => f.FoodType)
                 .Where(f => f.Id == id).AsQueryable();
             
-            return await query.FirstOrDefaultAsync();
+            return Mapper.Map(await query.FirstOrDefaultAsync());
         }
-        
+
+        public async Task<bool> ExistsAsync(Guid id)
+        {
+            return await RepoDbSet.AnyAsync(a => a.Id == id);
+        }
+
         public async Task DeleteAsync(Guid id)
         {
             var food = await FirstOrDefaultAsync(id);
             base.Remove(food);
         }
         
+        /*
         public async Task<IEnumerable<FoodDTO>> DTOAllAsync()
         {
             var query = RepoDbSet
@@ -88,6 +95,6 @@ namespace DAL.App.EF.Repositories
             }).FirstOrDefaultAsync();
 
             return foodDTO;
-        }
+        }*/
     }
 }

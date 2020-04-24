@@ -2,28 +2,32 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using BLL.App.DTO;
+using Contracts.BLL.App;
 using Contracts.DAL.App;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using DAL.App.EF;
-using Domain;
+using Extensions;
+using Microsoft.AspNetCore.Authorization;
 
 namespace WebApp.Controllers
 {
+    [Authorize]
     public class TownsController : Controller
     {
-        private readonly IAppUnitOfWork _uow;
+        private readonly IAppBLL _bll;
 
-        public TownsController(IAppUnitOfWork uow)
+        public TownsController(IAppBLL bll)
         {
-            _uow = uow;
+            _bll = bll;
         }
 
         // GET: Towns
         public async Task<IActionResult> Index()
         {
-            var towns = await _uow.Towns.AllAsync();
+            var towns = await _bll.Towns.AllAsync(User.UserGuidId());
             return View(towns);
         }
 
@@ -35,7 +39,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var town = await _uow.Towns.FirstOrDefaultAsync(id.Value);
+            var town = await _bll.Towns.FirstOrDefaultAsync(id.Value, User.UserGuidId());
 
             if (town == null)
             {
@@ -56,13 +60,15 @@ namespace WebApp.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(Town town)
+        public async Task<IActionResult> Create(BLL.App.DTO.Town town)
         {
+            town.AppUserId = User.UserGuidId();
+            
             if (ModelState.IsValid)
             {
                 //town.Id = Guid.NewGuid();
-                _uow.Towns.Add(town);
-                await _uow.SaveChangesAsync();
+                _bll.Towns.Add(town);
+                await _bll.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
             return View(town);
@@ -76,7 +82,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var town = await _uow.Towns.FirstOrDefaultAsync(id.Value);
+            var town = await _bll.Towns.FirstOrDefaultAsync(id.Value, User.UserGuidId());
 
             if (town == null)
             {
@@ -92,6 +98,8 @@ namespace WebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(Guid id, Town town)
         {
+            town.AppUserId = User.UserGuidId();
+            
             if (id != town.Id)
             {
                 return NotFound();
@@ -101,12 +109,12 @@ namespace WebApp.Controllers
             {
                 try
                 {
-                    _uow.Towns.Update(town);
-                    await _uow.SaveChangesAsync();
+                    _bll.Towns.Update(town);
+                    await _bll.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!await _uow.Towns.ExistsAsync(town.Id))
+                    if (!await _bll.Towns.ExistsAsync(town.Id))
                     {
                         return NotFound();
                     }
@@ -128,7 +136,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var town = await _uow.Towns.FirstOrDefaultAsync(id.Value);
+            var town = await _bll.Towns.FirstOrDefaultAsync(id.Value);
 
             if (town == null)
             {
@@ -143,8 +151,8 @@ namespace WebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            await _uow.Towns.DeleteAsync(id);
-            await _uow.SaveChangesAsync();
+            await _bll.Towns.DeleteAsync(id);
+            await _bll.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
     }

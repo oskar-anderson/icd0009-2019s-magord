@@ -1,12 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using Contracts.DAL.Base;
 using DAL.Base;
 using Domain.Identity;
 
 namespace Domain
 {
-    public class Order : DomainEntity
+    public class Order : Order<Guid, AppUser>, IDomainEntityBaseMetadata, IDomainEntityUser<AppUser>
+    {
+        
+    }
+
+    public class Order<TKey, TUser> : DomainEntityBaseMetadata<TKey>, IDomainEntityUser<TKey, TUser>
+        where TKey : IEquatable<TKey>
+        where TUser : AppUser<TKey>
     {
         [MaxLength(256)] [MinLength(1)] public string OrderStatus { get; set; } = default!;
 
@@ -14,25 +22,25 @@ namespace Domain
 
         public string TimeCreated { get; set; } = default!;
 
-        public Guid FoodId { get; set; } = default!;
+        public TKey FoodId { get; set; } = default!;
         public Food? Food { get; set; }
 
-        public Guid IngredientId { get; set; } = default!;
+        public TKey IngredientId { get; set; } = default!;
         public Ingredient? Ingredient { get; set; }
 
-        public Guid DrinkId { get; set; } = default!;
+        public TKey DrinkId { get; set; } = default!;
         public Drink? Drink { get; set; }
         
-        public Guid RestaurantId { get; set; } = default!;
+        public TKey RestaurantId { get; set; } = default!;
         public Restaurant? Restaurant { get; set; }
         
-        public Guid OrderTypeId { get; set; } = default!;
+        public TKey OrderTypeId { get; set; } = default!;
         public OrderType? OrderType { get; set; }
+
+        public TKey AppUserId { get; set; } = default!;
+        public TUser? AppUser { get; set; }
         
-        public Guid? AppUserId { get; set; }
-        public AppUser? AppUser { get; set; }
-        
-        public Guid PersonId { get; set; } = default!;
+        public TKey PersonId { get; set; } = default!;
         public Person? Person { get; set; }
 
         public ICollection<Price>? Prices { get; set; }

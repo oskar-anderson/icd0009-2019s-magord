@@ -3,39 +3,43 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Contracts.DAL.App.Repositories;
+using DAL.Base.EF.Mappers;
 using DAL.Base.EF.Repositories;
-using Domain;
 using Microsoft.EntityFrameworkCore;
-using PublicApi.DTO.v1;
-using PublicApi.DTO.v1.AreaDTOs;
-using PublicApi.DTO.v1.RestaurantDTOs;
+
 
 namespace DAL.App.EF.Repositories
 {
-    public class RestaurantRepository : EFBaseRepository<Restaurant, AppDbContext>, IRestaurantRepository
+    public class RestaurantRepository : EFBaseRepository<AppDbContext, Domain.Restaurant, DAL.App.DTO.Restaurant>, IRestaurantRepository
     {
-        public RestaurantRepository(AppDbContext dbContext) : base(dbContext)
+        public RestaurantRepository(AppDbContext dbContext) : base(dbContext,
+            new BaseDALMapper<Domain.Restaurant, DAL.App.DTO.Restaurant>())
         {
         }
         
-        public new async Task<IEnumerable<Restaurant>> AllAsync()
+        public new async Task<IEnumerable<DAL.App.DTO.Restaurant>> AllAsync()
         {
             var query = RepoDbSet
                 .Include(r => r.Area)
                 .AsQueryable();
             
-            return await query.ToListAsync();
+            return (await query.ToListAsync()).Select(domainEntity => Mapper.Map(domainEntity));
         }
 
         
-        public async Task<Restaurant> FirstOrDefaultAsync(Guid id)
+        public async Task<DAL.App.DTO.Restaurant> FirstOrDefaultAsync(Guid id)
         {
             var query = RepoDbSet
                 .Include(r => r.Area)
                 .Where(r => r.Id == id)
                 .AsQueryable();
             
-            return await query.FirstOrDefaultAsync();
+            return Mapper.Map(await query.FirstOrDefaultAsync());
+        }
+
+        public async Task<bool> ExistsAsync(Guid id)
+        {
+            return await RepoDbSet.AnyAsync(a => a.Id == id);
         }
         
         public async Task DeleteAsync(Guid id)
@@ -44,6 +48,7 @@ namespace DAL.App.EF.Repositories
             base.Remove(restaurant);
         }
         
+        /*
         public async Task<IEnumerable<RestaurantDTO>> DTOAllAsync()
         {
             var query = RepoDbSet
@@ -96,5 +101,6 @@ namespace DAL.App.EF.Repositories
 
             return restaurantDTO;
         }
+        */
     }
 }

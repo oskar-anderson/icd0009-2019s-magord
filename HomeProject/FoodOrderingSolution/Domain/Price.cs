@@ -1,10 +1,16 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using Contracts.DAL.Base;
 using DAL.Base;
 
 namespace Domain
 {
-    public class Price : DomainEntity
+    public class Price : Price<Guid>, IDomainEntityBaseMetadata
+    {
+    }
+    
+    public class Price<TKey> : DomainEntityBaseMetadata<TKey>
+        where TKey : IEquatable<TKey>
     {
         public string From { get; set; } = default!;
 
@@ -12,19 +18,19 @@ namespace Domain
         
         public decimal Value { get; set; } = default!;
 
-        public Guid IngredientId { get; set; } = default!;
+        public TKey IngredientId { get; set; } = default!;
         public Ingredient? Ingredient { get; set; }
 
-        public Guid FoodId { get; set; } = default!;
+        public TKey FoodId { get; set; } = default!;
         public Food? Food { get; set; }
         
-        public Guid DrinkId { get; set; } = default!;
+        public TKey DrinkId { get; set; } = default!;
         public Drink? Drink { get; set; }
         
-        public Guid OrderId { get; set; } = default!;
+        public TKey OrderId { get; set; } = default!;
         public Order? Order { get; set; }
-        
-        public Guid? CampaignId { get; set; }
+
+        public TKey CampaignId { get; set; } = default!;
         public Campaign? Campaign { get; set; }
         
     }

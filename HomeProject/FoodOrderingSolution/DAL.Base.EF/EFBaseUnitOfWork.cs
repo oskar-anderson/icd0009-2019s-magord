@@ -6,22 +6,22 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DAL.Base.EF
 {
-    public class EFBaseUnitOfWork<TDbContext> : BaseUnitOfWork, IBaseUnitOfWork
+    public class EFBaseUnitOfWork<TDbContext> : BaseUnitOfWork
     where TDbContext: DbContext
     {
-        protected TDbContext UOWDbContext;
+        protected readonly TDbContext UOWDbContext;
 
         public EFBaseUnitOfWork(TDbContext uowDbContext)
         {
             UOWDbContext = uowDbContext;
         }
 
-        public int SaveChanges()
+        public override int SaveChanges()
         {
             return UOWDbContext.SaveChanges();
         }
 
-        public async Task<int> SaveChangesAsync()
+        public override async Task<int> SaveChangesAsync()
         {
             return await UOWDbContext.SaveChangesAsync();
         }

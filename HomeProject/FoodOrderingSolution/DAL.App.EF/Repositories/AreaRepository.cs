@@ -3,40 +3,45 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Contracts.DAL.App.Repositories;
+using DAL.Base.EF.Mappers;
 using DAL.Base.EF.Repositories;
-using Domain;
 using Microsoft.EntityFrameworkCore;
-using PublicApi.DTO.v1;
-using PublicApi.DTO.v1.AreaDTOs;
+
 
 namespace DAL.App.EF.Repositories
 {
-    public class AreaRepository : EFBaseRepository<Area, AppDbContext>, IAreaRepository
+    public class AreaRepository : EFBaseRepository<AppDbContext, Domain.Area, DAL.App.DTO.Area>, IAreaRepository
     {
-        public AreaRepository(AppDbContext dbContext) : base(dbContext)
+        public AreaRepository(AppDbContext dbContext) : base(dbContext,
+            new BaseDALMapper<Domain.Area, DAL.App.DTO.Area>())
         {
         }
 
-        public new async Task<IEnumerable<Area>>  AllAsync()
+        public new async Task<IEnumerable<DAL.App.DTO.Area>>  AllAsync()
         {
             var query = RepoDbSet
                 .Include(a => a.Town)
                 .AsQueryable();
 
-            return await query.ToListAsync();
+            return (await query.ToListAsync()).Select(domainEntity => Mapper.Map(domainEntity));
         }
 
 
-        public async Task<Area> FirstOrDefaultAsync(Guid id)
+        public async Task<DAL.App.DTO.Area> FirstOrDefaultAsync(Guid id)
         {
             var query = RepoDbSet
                 .Include(a => a.Town)
                 .Where(a => a.Id == id)
                 .AsQueryable();
 
-            return await query.FirstOrDefaultAsync();
+            return Mapper.Map(await query.FirstOrDefaultAsync());
         }
-        
+
+        public async Task<bool> ExistsAsync(Guid id)
+        {
+            return await RepoDbSet.AnyAsync(a => a.Id == id);
+        }
+
 
         public async Task DeleteAsync(Guid id)
         {
@@ -44,6 +49,7 @@ namespace DAL.App.EF.Repositories
             base.Remove(area);
         }
         
+        /*
         public async Task<IEnumerable<AreaDTO>> DTOAllAsync()
         {
             var query = RepoDbSet

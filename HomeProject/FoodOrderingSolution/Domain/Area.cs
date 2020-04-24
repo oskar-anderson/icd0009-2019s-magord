@@ -1,11 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using Contracts.DAL.Base;
 using DAL.Base;
 
 namespace Domain
 {
-    public class Area : DomainEntity
+    public class Area : Area<Guid>, IDomainEntityBaseMetadata
+    {
+    }
+    
+    public class Area<TKey> : DomainEntityBaseMetadata<TKey>
+        where TKey : IEquatable<TKey>
     {
         // If can be null then -> public string? Name { get; set; }
         // If cannot be null then -> public string Name { get; set; } = default!;
@@ -13,7 +19,7 @@ namespace Domain
 
         public ICollection<Restaurant>? Restaurants { get; set; }
 
-        public Guid TownId { get; set; } = default!;
+        public TKey TownId { get; set; } = default!;
         public Town? Town { get; set; }
     }
 }

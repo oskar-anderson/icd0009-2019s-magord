@@ -3,25 +3,38 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Contracts.DAL.App.Repositories;
+using DAL.Base.EF.Mappers;
 using DAL.Base.EF.Repositories;
-using Domain;
 using Microsoft.EntityFrameworkCore;
-using PublicApi.DTO.v1;
-using PublicApi.DTO.v1.CampaignDTOs;
+
 
 namespace DAL.App.EF.Repositories
 {
-    public class CampaignRepository : EFBaseRepository<Campaign, AppDbContext>, ICampaignRepository
+    public class CampaignRepository : EFBaseRepository<AppDbContext, Domain.Campaign, DAL.App.DTO.Campaign>, ICampaignRepository
     {
-        public CampaignRepository(AppDbContext dbContext) : base(dbContext)
+        public CampaignRepository(AppDbContext dbContext) : base(dbContext,
+            new BaseDALMapper<Domain.Campaign, DAL.App.DTO.Campaign>())
         {
         }
         
-        public async Task<Campaign> FirstOrDefaultAsync(Guid id)
+        public new async Task<IEnumerable<DAL.App.DTO.Campaign>> AllAsync()
+        {
+            var query = RepoDbSet
+                .AsQueryable();
+            
+            return (await query.ToListAsync()).Select(domainEntity => Mapper.Map(domainEntity));
+        }
+        
+        public async Task<DAL.App.DTO.Campaign> FirstOrDefaultAsync(Guid id)
         {
             var query = RepoDbSet.Where(c => c.Id == id).AsQueryable();
             
-            return await query.FirstOrDefaultAsync();
+            return Mapper.Map(await query.FirstOrDefaultAsync());
+        }
+
+        public async Task<bool> ExistsAsync(Guid id)
+        {
+            return await RepoDbSet.AnyAsync(a => a.Id == id);
         }
 
         public async Task DeleteAsync(Guid id)
@@ -30,7 +43,7 @@ namespace DAL.App.EF.Repositories
             base.Remove(area);
         }
         
-        
+        /*
         public async Task<IEnumerable<CampaignDTO>> DTOAllAsync()
         {
             var query = RepoDbSet.AsQueryable();
@@ -62,5 +75,6 @@ namespace DAL.App.EF.Repositories
 
             return campaignDTO;
         }
+        */
     }
 }

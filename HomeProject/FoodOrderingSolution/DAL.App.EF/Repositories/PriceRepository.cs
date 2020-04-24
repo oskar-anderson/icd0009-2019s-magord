@@ -3,26 +3,21 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Contracts.DAL.App.Repositories;
+using DAL.Base.EF.Mappers;
 using DAL.Base.EF.Repositories;
-using Domain;
 using Microsoft.EntityFrameworkCore;
-using PublicApi.DTO.v1.CampaignDTOs;
-using PublicApi.DTO.v1.DrinkDTOs;
-using PublicApi.DTO.v1.FoodDTOs;
-using PublicApi.DTO.v1.IngredientDTOs;
-using PublicApi.DTO.v1.OrderDTOs;
-using PublicApi.DTO.v1.PriceDTOs;
 
 namespace DAL.App.EF.Repositories
 {
-    public class PriceRepository : EFBaseRepository<Price, AppDbContext>, IPriceRepository
+    public class PriceRepository : EFBaseRepository<AppDbContext, Domain.Price, DAL.App.DTO.Price>, IPriceRepository
     {
-        public PriceRepository(AppDbContext dbContext) : base(dbContext)
+        public PriceRepository(AppDbContext dbContext) : base(dbContext,
+            new BaseDALMapper<Domain.Price, DAL.App.DTO.Price>())
         {
         }
         
         
-        public  new async Task<IEnumerable<Price>> AllAsync()
+        public new async Task<IEnumerable<DAL.App.DTO.Price>> AllAsync()
         {
             var query = RepoDbSet
                 .Include(p => p.Campaign)
@@ -32,11 +27,11 @@ namespace DAL.App.EF.Repositories
                 .Include(p => p.Food)
                 .AsQueryable();
             
-            return await query.ToListAsync();
+            return (await query.ToListAsync()).Select(domainEntity => Mapper.Map(domainEntity));
         }
         
 
-        public async Task<Price> FirstOrDefaultAsync(Guid id)
+        public async Task<DAL.App.DTO.Price> FirstOrDefaultAsync(Guid id)
         {
             var query = RepoDbSet
                 .Include(p => p.Campaign)
@@ -44,9 +39,15 @@ namespace DAL.App.EF.Repositories
                 .Include(p => p.Order)
                 .Include(p => p.Drink)
                 .Include(p => p.Food)
-                .Where(p => p.Id == id).AsQueryable();
+                .Where(p => p.Id == id)
+                .AsQueryable();
             
-            return await query.FirstOrDefaultAsync();
+            return Mapper.Map(await query.FirstOrDefaultAsync());
+        }
+
+        public async Task<bool> ExistsAsync(Guid id)
+        {
+            return await RepoDbSet.AnyAsync(a => a.Id == id);
         }
 
         public async Task DeleteAsync(Guid id)
@@ -55,7 +56,7 @@ namespace DAL.App.EF.Repositories
             base.Remove(price);
         }
         
-        
+        /*
         public async Task<IEnumerable<PriceDTO>> DTOAllAsync()
         {
             var query = RepoDbSet
@@ -197,5 +198,6 @@ namespace DAL.App.EF.Repositories
 
             return priceDTO;
         }
+        */
     }
 }

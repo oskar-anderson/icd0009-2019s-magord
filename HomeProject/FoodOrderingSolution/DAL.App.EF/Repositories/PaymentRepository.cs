@@ -3,23 +3,22 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Contracts.DAL.App.Repositories;
+using DAL.Base.EF.Mappers;
 using DAL.Base.EF.Repositories;
-using Domain;
 using Microsoft.EntityFrameworkCore;
-using PublicApi.DTO.v1;
-using PublicApi.DTO.v1.PaymentDTOs;
-using PublicApi.DTO.v1.PaymentTypeDTOs;
+
 
 namespace DAL.App.EF.Repositories
 {
-    public class PaymentRepository : EFBaseRepository<Payment, AppDbContext>, IPaymentRepository
+    public class PaymentRepository : EFBaseRepository<AppDbContext, Domain.Payment, DAL.App.DTO.Payment>, IPaymentRepository
     {
-        public PaymentRepository(AppDbContext dbContext) : base(dbContext)
+        public PaymentRepository(AppDbContext dbContext) : base(dbContext,
+            new BaseDALMapper<Domain.Payment, DAL.App.DTO.Payment>())
         {
         }
         
         
-        public new async Task<IEnumerable<Payment>> AllAsync()
+        public new async Task<IEnumerable<DAL.App.DTO.Payment>> AllAsync()
         {
             var query = RepoDbSet
                 .Include(p => p.Person)
@@ -27,11 +26,11 @@ namespace DAL.App.EF.Repositories
                 .Include(p => p.PaymentType)
                 .AsQueryable();
             
-            return await query.ToListAsync();
+            return (await query.ToListAsync()).Select(domainEntity => Mapper.Map(domainEntity));
         }
 
 
-        public async Task<Payment> FirstOrDefaultAsync(Guid id)
+        public async Task<DAL.App.DTO.Payment> FirstOrDefaultAsync(Guid id)
         {
             var query = RepoDbSet
                 .Include(p => p.Person)
@@ -40,15 +39,21 @@ namespace DAL.App.EF.Repositories
                 .Where(p => p.Id == id)
                 .AsQueryable();
             
-            return await query.FirstOrDefaultAsync();
+            return Mapper.Map(await query.FirstOrDefaultAsync());
         }
-        
+
+        public async Task<bool> ExistsAsync(Guid id)
+        {
+            return await RepoDbSet.AnyAsync(a => a.Id == id);
+        }
+
         public async Task DeleteAsync(Guid id)
         {
             var payment = await FirstOrDefaultAsync(id);
             base.Remove(payment);
         }
         
+        /*
         public async Task<IEnumerable<PaymentDTO>> DTOAllAsync()
         {
             var query = RepoDbSet
@@ -134,5 +139,6 @@ namespace DAL.App.EF.Repositories
 
             return paymentDTO;
         }
+        */
     }
 }
