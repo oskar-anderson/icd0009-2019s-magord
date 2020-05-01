@@ -8,23 +8,14 @@ using DAL.App.DTO;
 namespace Contracts.DAL.App.Repositories
 {
 
-    public interface IPaymentTypeRepository : IPaymentTypeRepository<Guid, PaymentType>, IBaseRepository<PaymentType>
+    public interface IPaymentTypeRepository : IBaseRepository<PaymentType>, IPaymentTypeRepositoryCustom
     {
         
     }
-    public interface IPaymentTypeRepository<TKey, TDALEntity> : IBaseRepository<TKey, TDALEntity>
-        where TDALEntity : class, IDomainBaseEntity<TKey>, new() 
-        where TKey : IEquatable<TKey>
-    {
-        Task<IEnumerable<TDALEntity>> AllAsync();
-        Task<TDALEntity> FirstOrDefaultAsync(Guid id);
-        Task<bool> ExistsAsync(Guid id);
-        Task DeleteAsync(Guid id);
-        
-        
-        // DTO methods
-        //Task<IEnumerable<PaymentTypeDTO>> DTOAllAsync();
-        //Task<PaymentTypeDTO> DTOFirstOrDefaultAsync(Guid id);
 
+    public interface IPaymentTypeRepositoryCustom
+    {
+        
     }
+    
 }

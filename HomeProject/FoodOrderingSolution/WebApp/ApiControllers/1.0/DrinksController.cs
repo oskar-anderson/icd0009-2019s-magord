@@ -1,90 +1,72 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using Contracts.BLL.App;
 using Contracts.DAL.App;
-using Domain;
 using Extensions;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using PublicApi.DTO.v1.DrinkDTOs;
+using PublicApi.DTO.v1.Mappers;
+using V1DTO=PublicApi.DTO.v1;
 
 namespace WebApp.ApiControllers._1._0
 {
-    [Route("api/[controller]")]
     [ApiController]
+    [ApiVersion( "1.0" )]
+    [Route("api/v{version:apiVersion}/[controller]")]
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class DrinksController : ControllerBase
     {
-        private readonly IAppUnitOfWork _uow;
+        private readonly IAppBLL _bll;
+        private readonly DrinkMapper _mapper = new DrinkMapper();
 
-        public DrinksController(IAppUnitOfWork uow)
+        public DrinksController(IAppBLL bll)
         {
-            _uow = uow;
+            _bll = bll;
         }
 
         // GET: api/Drinks
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<DrinkDTO>>> GetDrinks()
+        [AllowAnonymous]
+        public async Task<ActionResult<IEnumerable<V1DTO.Drink>>> GetDrinks()
         {
-            var drinkDTOs = await _uow.Drinks.DTOAllAsync(User.UserGuidId());
-            
-            return Ok(drinkDTOs);
+            return Ok((await _bll.Drinks.GetAllAsync()).Select(e => _mapper.Map(e)));
         }
 
         // GET: api/Drinks/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<DrinkDTO>> GetDrink(Guid id)
+        [AllowAnonymous]
+        public async Task<ActionResult<V1DTO.Drink>> GetDrink(Guid id)
         {
-            var drink = await _uow.Drinks.DTOFirstOrDefaultAsync(id, User.UserGuidId());
-
+            var drink = await _bll.Drinks.FirstOrDefaultAsync(id);
+            
             if (drink == null)
             {
-                return NotFound();
+                return NotFound(new {message = "Drink not found"});
             }
 
-            return Ok(drink);
+            return Ok(_mapper.Map(drink));
         }
 
         // PUT: api/Drinks/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see https://aka.ms/RazorPagesCRUD.
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutDrink(Guid id, DrinkEditDTO drinkEditDTO)
+        public async Task<IActionResult> PutDrink(Guid id, V1DTO.Drink drink)
         {
-            if (id != drinkEditDTO.Id)
+            drink.AppUserId = User.UserId();
+            
+            if (id != drink.Id)
             {
                 return BadRequest();
             }
 
-            var drink = await _uow.Drinks.FirstOrDefaultAsync(drinkEditDTO.Id, User.UserGuidId());
-            if (drink == null)
-            {
-                return BadRequest();
-            }
-
-            drink.Size = drinkEditDTO.Size;
-            drink.Name = drinkEditDTO.Name;
-            drink.Amount = drinkEditDTO.Amount;
-
-            _uow.Drinks.Update(drink);
-
-            try
-            {
-                await _uow.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!await _uow.Drinks.ExistsAsync(id, User.UserGuidId()))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+            await _bll.Drinks.UpdateAsync(_mapper.Map(drink), User.UserId());
+            await _bll.SaveChangesAsync();
 
             return NoContent();
         }
@@ -93,35 +75,34 @@ namespace WebApp.ApiControllers._1._0
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see https://aka.ms/RazorPagesCRUD.
         [HttpPost]
-        public async Task<ActionResult<Drink>> PostDrink(DrinkCreateDTO drinkCreateDTO)
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
+        public async Task<ActionResult<V1DTO.Drink>> PostDrink(V1DTO.Drink drink)
         {
-            var drink = new Drink
-            {
-                Id = drinkCreateDTO.Id,
-                AppUserId = User.UserGuidId(),
-                Size = drinkCreateDTO.Size,
-                Amount = drinkCreateDTO.Amount,
-                Name = drinkCreateDTO.Name,
-            };
-            
-            _uow.Drinks.Add(drink);
-            await _uow.SaveChangesAsync();
+            drink.AppUserId = User.UserId();
 
-            return CreatedAtAction("GetDrink", new { id = drink.Id }, drink);
+            var bllEntity = _mapper.Map(drink);
+            _bll.Drinks.Add(bllEntity);
+            await _bll.SaveChangesAsync();
+            drink.Id = bllEntity.Id;
+            
+            return CreatedAtAction("GetDrink",
+                new { id = drink.Id, version = HttpContext.GetRequestedApiVersion()?.ToString() ?? "0" },
+                drink);
         }
 
         // DELETE: api/Drinks/5
         [HttpDelete("{id}")]
-        public async Task<ActionResult<Drink>> DeleteDrink(Guid id)
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
+        public async Task<ActionResult<V1DTO.Drink>> DeleteDrink(Guid id)
         {
-            var drink = await _uow.Drinks.FirstOrDefaultAsync(id, User.UserGuidId());
+            var drink = await _bll.Drinks.FirstOrDefaultAsync(id, User.UserId());
             if (drink == null)
             {
-                return NotFound();
+                return NotFound( new {message = "Drink not found"});
             }
 
-            _uow.Drinks.Remove(drink);
-            await _uow.SaveChangesAsync();
+            await _bll.Drinks.RemoveAsync(drink);
+            await _bll.SaveChangesAsync();
 
             return Ok(drink);
         }

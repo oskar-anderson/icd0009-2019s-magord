@@ -1,38 +1,31 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq.Expressions;
 using System.Threading.Tasks;
 
 namespace Contracts.DAL.Base.Repositories
 {
-    public interface IBaseRepository<TDALEntity> : IBaseRepository<Guid, TDALEntity>
-        where TDALEntity : class, IDomainBaseEntity<Guid>, new()
+    public interface IBaseRepository<TEntity> : IBaseRepository<Guid, TEntity> 
+        where TEntity : class, IDomainEntityId<Guid>, new()
     {
     }
 
-    public interface IBaseRepository<TKey, TDALEntity>
-        where TDALEntity : class, IDomainBaseEntity<TKey>, new()
+    public interface IBaseRepository<in TKey, TEntity>
         where TKey : IEquatable<TKey>
+        where TEntity : class, IDomainEntityId<TKey>, new()
     {
-        // CRUD
-        IEnumerable<TDALEntity> All();
-        Task<IEnumerable<TDALEntity>> AllAsync();
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="userId">Limit the result to this users data (entity.userId == userid)</param>
+        /// <param name="noTracking">use AsNotracking if datasource supports it</param>
+        /// <returns></returns>
+        Task<IEnumerable<TEntity>> GetAllAsync(object? userId = null, bool noTracking = true);
+        Task<TEntity> FirstOrDefaultAsync(TKey id, object? userId = null, bool noTracking = true);
+        TEntity Add(TEntity entity);
+        Task<TEntity> UpdateAsync(TEntity entity, object? userId = null);
+        Task<TEntity> RemoveAsync(TEntity entity, object? userId = null);
+        Task<TEntity> RemoveAsync(TKey id, object? userId = null);
+        Task<bool> ExistsAsync(TKey id, object? userId = null);
 
-
-        // TODO: would be nice to implement these predicates
-        //IEnumerable<TEntity> Get(Expression<Func<TEntity, bool>>? filter = null);
-        //Task<IEnumerable<TEntity>> GetAsync(Expression<Func<TEntity, bool>>? filter = null);
-
-        TDALEntity Find(params object[] id);
-        Task<TDALEntity> FindAsync(params object[] id);
-        TDALEntity Add(TDALEntity entity);
-        TDALEntity Update(TDALEntity entity);
-        TDALEntity Remove(TDALEntity entity);
-        TDALEntity Remove(params object[] id);
-
-
-
-        //Task<IEnumerable<TDALEntity>> GetAllAsync(object? userId = null, bool noTracking = true);
-        //Task<TDALEntity> FirstOrDefaultAsync(object? userId = null, bool noTracking = true);
     }
 }

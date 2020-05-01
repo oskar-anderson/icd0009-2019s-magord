@@ -6,24 +6,20 @@ using DAL.App.DTO.Identity;
 
 namespace DAL.App.DTO
 {
-    public class Ingredient : Ingredient<Guid>, IDomainEntityId
+    public class Ingredient : IDomainEntityId
     {
-    }
-    
-    public class Ingredient<TKey> : IDomainBaseEntity<TKey>
-        where TKey: IEquatable<TKey>
-    {
-        public TKey Id { get; set; } = default!;
+        public Guid Id { get; set; } = default!;
         
         public string Name { get; set; } = default!;
 
         public int Amount { get; set; } = default!;
 
-        public TKey FoodId { get; set; } = default!;
+        public Guid FoodId { get; set; } = default!;
         public Food? Food { get; set; }
 
         public ICollection<Price>? Prices { get; set; }
 
         public ICollection<Order>? Orders { get; set; }
     }
+    
 }

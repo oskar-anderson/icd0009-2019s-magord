@@ -6,14 +6,9 @@ using DAL.App.DTO.Identity;
 
 namespace DAL.App.DTO
 {
-    public class Food : Food<Guid>, IDomainEntityId
+    public class Food : IDomainEntityId
     {
-    }
-    
-    public class Food<TKey> : IDomainBaseEntity<TKey>
-        where TKey: IEquatable<TKey>
-    {
-        public TKey Id { get; set; } = default!;
+        public Guid Id { get; set; } = default!;
         
         public string? Description { get; set; }
 
@@ -23,7 +18,7 @@ namespace DAL.App.DTO
 
         public float Size { get; set; } = default!;
         
-        public TKey FoodTypeId { get; set; } = default!;
+        public Guid FoodTypeId { get; set; } = default!;
         public FoodType? FoodType { get; set; }
 
         public ICollection<Ingredient>? Ingredients { get; set; }

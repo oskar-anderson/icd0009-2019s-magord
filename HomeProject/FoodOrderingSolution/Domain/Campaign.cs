@@ -6,12 +6,7 @@ using DAL.Base;
 
 namespace Domain
 {
-    public class Campaign : Campaign<Guid>, IDomainEntityBaseMetadata
-    {
-    }
-    
-    public class Campaign<TKey> : DomainEntityBaseMetadata<TKey>
-        where TKey : IEquatable<TKey>
+    public class Campaign : DomainEntityIdMetadata
     {
         public string From { get; set; } = default!;
 
@@ -24,4 +19,5 @@ namespace Domain
 
         public ICollection<Price>? Prices { get; set; }
     }
+    
 }

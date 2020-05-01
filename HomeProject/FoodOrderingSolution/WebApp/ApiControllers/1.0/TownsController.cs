@@ -7,9 +7,8 @@ using Extensions;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using PublicApi.DTO.v1;
-using Town = PublicApi.DTO.v1.Town;
+using PublicApi.DTO.v1.Mappers;
+using V1DTO=PublicApi.DTO.v1;
 
 namespace WebApp.ApiControllers._1._0
 {
@@ -20,39 +19,34 @@ namespace WebApp.ApiControllers._1._0
     public class TownsController : ControllerBase
     {
         private readonly IAppBLL _bll;
+        private readonly TownMapper _mapper = new TownMapper();
 
         public TownsController(IAppBLL bll)
         {
-            _bll = bll;
+            _bll = bll; 
         }
 
         // GET: api/Towns
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Town>>> GetTowns()
+        [AllowAnonymous]
+        public async Task<ActionResult<IEnumerable<V1DTO.Town>>> GetTowns()
         {
-            var towns = (await _bll.Towns.AllAsync(User.UserGuidId()))
-                .Select(bllEntity => new Town()
-                {
-                    Id = bllEntity.Id,
-                    Name = bllEntity.Name,
-                    AreaCount = bllEntity.AreaCount,
-                });
-
-            return Ok(towns);
+            return Ok((await _bll.Towns.GetAllAsync()).Select(e => _mapper.Map(e)));
         }
 
         // GET: api/Towns/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Town>> GetTown(Guid id)
+        [AllowAnonymous]
+        public async Task<ActionResult<V1DTO.Town>> GetTown(Guid id)
         {
-            var town = await _bll.Towns.FirstOrDefaultAsync(id, User.UserGuidId());
+            var town = await _bll.Towns.FirstOrDefaultAsync(id);
             
             if (town == null)
             {
-                return NotFound();
+                return NotFound(new {message = "Town not found"});
             }
 
-            return Ok(town);
+            return Ok(_mapper.Map(town));
         }
 
         // PUT: api/Towns/5
@@ -60,38 +54,17 @@ namespace WebApp.ApiControllers._1._0
         // more details see https://aka.ms/RazorPagesCRUD.
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutTown(Guid id, TownEdit townEditDTO)
+        public async Task<IActionResult> PutTown(Guid id, V1DTO.Town town)
         {
-            if (id != townEditDTO.Id)
+            town.AppUserId = User.UserId();
+            
+            if (id != town.Id)
             {
                 return BadRequest();
             }
 
-            var town = await _bll.Towns.FirstOrDefaultAsync(townEditDTO.Id, User.UserGuidId());
-            if (town == null)
-            {
-                return BadRequest();
-            }
-            
-            town.Name = townEditDTO.Name;
-            
-            _bll.Towns.Update(town);
-
-            try
-            {
-                await _bll.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!await _bll.Towns.ExistsAsync(town.Id, User.UserGuidId()))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+            await _bll.Towns.UpdateAsync(_mapper.Map(town), User.UserId());
+            await _bll.SaveChangesAsync();
 
             return NoContent();
         }
@@ -101,32 +74,32 @@ namespace WebApp.ApiControllers._1._0
         // more details see https://aka.ms/RazorPagesCRUD.
         [HttpPost]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
-        public async Task<ActionResult<Town>> PostTown(TownCreate townCreateDTO)
+        public async Task<ActionResult<V1DTO.Town>> PostTown(V1DTO.Town town)
         {
-            var town = new BLL.App.DTO.Town()
-            {
-                AppUserId = User.UserGuidId(),
-                Name = townCreateDTO.Name
-            };
-            
-            _bll.Towns.Add(town);
-            await _bll.SaveChangesAsync();
+            town.AppUserId = User.UserId();
 
-            return CreatedAtAction("GetTown", new { id = town.Id }, town);
+            var bllEntity = _mapper.Map(town);
+            _bll.Towns.Add(bllEntity);
+            await _bll.SaveChangesAsync();
+            town.Id = bllEntity.Id;
+            
+            return CreatedAtAction("GetTown",
+                new { id = town.Id, version = HttpContext.GetRequestedApiVersion()?.ToString() ?? "0" },
+                town);
         }
 
         // DELETE: api/Towns/5
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
         [HttpDelete("{id}")]
-        public async Task<ActionResult<Town>> DeleteTown(Guid id)
+        public async Task<ActionResult<V1DTO.Town>> DeleteTown(Guid id)
         {
-            var town = await _bll.Towns.FirstOrDefaultAsync(id, User.UserGuidId());
+            var town = await _bll.Towns.FirstOrDefaultAsync(id, User.UserId());
             if (town == null)
             {
-                return NotFound();
+                return NotFound(new {message = "Town not found"});
             }
 
-            _bll.Towns.Remove(town);
+            await _bll.Towns.RemoveAsync(id);
             await _bll.SaveChangesAsync();
 
             return Ok(town);

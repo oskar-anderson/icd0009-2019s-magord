@@ -6,14 +6,9 @@ using DAL.App.DTO.Identity;
 
 namespace DAL.App.DTO
 {
-    public class Person : Person<Guid>, IDomainEntityId
+    public class Person : IDomainEntityId
     {
-    }
-    
-    public class Person<TKey> : IDomainBaseEntity<TKey>
-        where TKey: IEquatable<TKey>
-    {
-        public TKey Id { get; set; } = default!;
+        public Guid Id { get; set; } = default!;
         
         public string FirstName { get; set; } = default!;
         public string LastName { get; set; } = default!;
@@ -32,9 +27,10 @@ namespace DAL.App.DTO
 
         //public ICollection<AppUser>? AppUsers { get; set; }
 
-        public TKey AppUserId { get; set; } = default!;
-        public AppUser<TKey>? AppUser { get; set; }
+        public Guid AppUserId { get; set; } = default!;
+        public AppUser? AppUser { get; set; }
         
         public ICollection<Contact>? Contacts { get; set; }
     }
+    
 }

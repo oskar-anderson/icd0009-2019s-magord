@@ -3,59 +3,49 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Contracts.DAL.App.Repositories;
-using DAL.Base.EF.Mappers;
+using DAL.App.DTO;
 using DAL.Base.EF.Repositories;
+using DAL.Base.Mappers;
 using Microsoft.EntityFrameworkCore;
 
 namespace DAL.App.EF.Repositories
 {
-    public class PriceRepository : EFBaseRepository<AppDbContext, Domain.Price, DAL.App.DTO.Price>, IPriceRepository
+    public class PriceRepository : EFBaseRepository<AppDbContext, Domain.Identity.AppUser, Domain.Price, DAL.App.DTO.Price>, IPriceRepository
     {
         public PriceRepository(AppDbContext dbContext) : base(dbContext,
-            new BaseDALMapper<Domain.Price, DAL.App.DTO.Price>())
+            new BaseMapper<Domain.Price, DAL.App.DTO.Price>())
         {
         }
-        
-        
-        public new async Task<IEnumerable<DAL.App.DTO.Price>> AllAsync()
+
+        public override async Task<IEnumerable<Price>> GetAllAsync(object? userId = null, bool noTracking = true)
         {
-            var query = RepoDbSet
+            var query = PrepareQuery(userId, noTracking);
+            query = query
+                .Include(p => p.Campaign)
+                .Include(p => p.Ingredient)
+                .Include(p => p.Order)
+                .Include(p => p.Drink)
+                .Include(p => p.Food);
+            var domainEntities = await query.ToListAsync();
+            var result = domainEntities.Select(e => Mapper.Map(e));
+            return result;
+        }
+        
+        public override async Task<Price> FirstOrDefaultAsync(Guid id, object? userId = null, bool noTracking = true)
+        {
+            var query = PrepareQuery(userId, noTracking);
+            query = query
                 .Include(p => p.Campaign)
                 .Include(p => p.Ingredient)
                 .Include(p => p.Order)
                 .Include(p => p.Drink)
                 .Include(p => p.Food)
-                .AsQueryable();
-            
-            return (await query.ToListAsync()).Select(domainEntity => Mapper.Map(domainEntity));
-        }
-        
-
-        public async Task<DAL.App.DTO.Price> FirstOrDefaultAsync(Guid id)
-        {
-            var query = RepoDbSet
-                .Include(p => p.Campaign)
-                .Include(p => p.Ingredient)
-                .Include(p => p.Order)
-                .Include(p => p.Drink)
-                .Include(p => p.Food)
-                .Where(p => p.Id == id)
-                .AsQueryable();
-            
-            return Mapper.Map(await query.FirstOrDefaultAsync());
+                .Where(p => p.Id == id);
+            var domainEntity = await query.FirstOrDefaultAsync(e => e.Id.Equals(id));
+            var result = Mapper.Map(domainEntity);
+            return result;
         }
 
-        public async Task<bool> ExistsAsync(Guid id)
-        {
-            return await RepoDbSet.AnyAsync(a => a.Id == id);
-        }
-
-        public async Task DeleteAsync(Guid id)
-        {
-            var price = await FirstOrDefaultAsync(id);
-            base.Remove(price);
-        }
-        
         /*
         public async Task<IEnumerable<PriceDTO>> DTOAllAsync()
         {

@@ -3,51 +3,42 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Contracts.DAL.App.Repositories;
-using DAL.Base.EF.Mappers;
+using DAL.App.DTO;
 using DAL.Base.EF.Repositories;
-using Domain;
+using DAL.Base.Mappers;
 using Microsoft.EntityFrameworkCore;
 
 
 namespace DAL.App.EF.Repositories
 {
-    public class FoodRepository : EFBaseRepository<AppDbContext, Domain.Food, DAL.App.DTO.Food>, IFoodRepository
+    public class FoodRepository : EFBaseRepository<AppDbContext, Domain.Identity.AppUser, Domain.Food, DAL.App.DTO.Food>, IFoodRepository
     {
         public FoodRepository(AppDbContext dbContext) : base(dbContext,
-            new BaseDALMapper<Domain.Food, DAL.App.DTO.Food>())
+            new BaseMapper<Domain.Food, DAL.App.DTO.Food>())
         {
-        }
-        
-        
-        public new async Task<IEnumerable<DAL.App.DTO.Food>> AllAsync()
-        {
-            var query = RepoDbSet
-                .Include(f => f.FoodType)
-                .AsQueryable();
-            
-            return (await query.ToListAsync()).Select(domainEntity => Mapper.Map(domainEntity));
-        }
-        
-        public async Task<DAL.App.DTO.Food> FirstOrDefaultAsync(Guid id)
-        {
-            var query = RepoDbSet
-                .Include(f => f.FoodType)
-                .Where(f => f.Id == id).AsQueryable();
-            
-            return Mapper.Map(await query.FirstOrDefaultAsync());
         }
 
-        public async Task<bool> ExistsAsync(Guid id)
+        public override async Task<IEnumerable<Food>> GetAllAsync(object? userId = null, bool noTracking = true)
         {
-            return await RepoDbSet.AnyAsync(a => a.Id == id);
+            var query = PrepareQuery(userId, noTracking);
+            query = query
+                .Include(f => f.FoodType);
+            var domainEntities = await query.ToListAsync();
+            var result = domainEntities.Select(e => Mapper.Map(e));
+            return result;
         }
 
-        public async Task DeleteAsync(Guid id)
+        public override async Task<Food> FirstOrDefaultAsync(Guid id, object? userId = null, bool noTracking = true)
         {
-            var food = await FirstOrDefaultAsync(id);
-            base.Remove(food);
+            var query = PrepareQuery(userId, noTracking);
+            query = query
+                .Include(f => f.FoodType)
+                .Where(r => r.Id == id);
+            var domainEntity = await query.FirstOrDefaultAsync(e => e.Id.Equals(id));
+            var result = Mapper.Map(domainEntity);
+            return result;
         }
-        
+
         /*
         public async Task<IEnumerable<FoodDTO>> DTOAllAsync()
         {

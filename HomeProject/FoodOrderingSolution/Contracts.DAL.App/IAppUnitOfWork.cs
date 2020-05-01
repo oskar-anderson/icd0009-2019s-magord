@@ -3,7 +3,7 @@ using Contracts.DAL.Base;
 
 namespace Contracts.DAL.App
 {
-    public interface IAppUnitOfWork : IBaseUnitOfWork
+    public interface IAppUnitOfWork : IBaseUnitOfWork, IBaseEntityTracker
     {
         IAreaRepository Areas { get; }
         IBillRepository Bills { get; }

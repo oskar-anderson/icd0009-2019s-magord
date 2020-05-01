@@ -22,7 +22,7 @@
         <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="3.1.3" />
         <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.1.1" />
         <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="3.1.1" />
-        <PackageReference Include="Swashbuckle.AspNetCore" Version="5.3.1" />
+        <PackageReference Include="Swashbuckle.AspNetCore" Version="5.3.3" />
     </ItemGroup>
 
     <ItemGroup>
@@ -34,7 +34,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <_ContentIncludedByDefault Remove="Areas\Identity\Pages\_ViewStart.cshtml" />
       <_ContentIncludedByDefault Remove="Views\Areas\Create.cshtml" />
       <_ContentIncludedByDefault Remove="Views\Areas\Delete.cshtml" />
       <_ContentIncludedByDefault Remove="Views\Areas\Details.cshtml" />
@@ -125,99 +124,163 @@
       <_ContentIncludedByDefault Remove="Views\Towns\Details.cshtml" />
       <_ContentIncludedByDefault Remove="Views\Towns\Edit.cshtml" />
       <_ContentIncludedByDefault Remove="Views\Towns\Index.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\Home\Index.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\Home\Privacy.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\Shared\Error.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\Shared\_Layout.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\Shared\_LoginPartial.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\Shared\_ValidationScriptsPartial.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\_ViewImports.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\_ViewStart.cshtml" />
     </ItemGroup>
 
+   
+
+  
+  
+  
+  
     <ItemGroup>
-      <UpToDateCheckInput Remove="Views\Areas\Create.cshtml" />
-      <UpToDateCheckInput Remove="Views\Areas\Delete.cshtml" />
-      <UpToDateCheckInput Remove="Views\Areas\Details.cshtml" />
-      <UpToDateCheckInput Remove="Views\Areas\Edit.cshtml" />
-      <UpToDateCheckInput Remove="Views\Areas\Index.cshtml" />
-      <UpToDateCheckInput Remove="Views\Bills\Create.cshtml" />
-      <UpToDateCheckInput Remove="Views\Bills\Delete.cshtml" />
-      <UpToDateCheckInput Remove="Views\Bills\Details.cshtml" />
-      <UpToDateCheckInput Remove="Views\Bills\Edit.cshtml" />
-      <UpToDateCheckInput Remove="Views\Bills\Index.cshtml" />
-      <UpToDateCheckInput Remove="Views\Campaigns\Create.cshtml" />
-      <UpToDateCheckInput Remove="Views\Campaigns\Delete.cshtml" />
-      <UpToDateCheckInput Remove="Views\Campaigns\Details.cshtml" />
-      <UpToDateCheckInput Remove="Views\Campaigns\Edit.cshtml" />
-      <UpToDateCheckInput Remove="Views\Campaigns\Index.cshtml" />
-      <UpToDateCheckInput Remove="Views\Contacts\Create.cshtml" />
-      <UpToDateCheckInput Remove="Views\Contacts\Delete.cshtml" />
-      <UpToDateCheckInput Remove="Views\Contacts\Details.cshtml" />
-      <UpToDateCheckInput Remove="Views\Contacts\Edit.cshtml" />
-      <UpToDateCheckInput Remove="Views\Contacts\Index.cshtml" />
-      <UpToDateCheckInput Remove="Views\ContactTypes\Create.cshtml" />
-      <UpToDateCheckInput Remove="Views\ContactTypes\Delete.cshtml" />
-      <UpToDateCheckInput Remove="Views\ContactTypes\Details.cshtml" />
-      <UpToDateCheckInput Remove="Views\ContactTypes\Edit.cshtml" />
-      <UpToDateCheckInput Remove="Views\ContactTypes\Index.cshtml" />
-      <UpToDateCheckInput Remove="Views\Drinks\Create.cshtml" />
-      <UpToDateCheckInput Remove="Views\Drinks\Delete.cshtml" />
-      <UpToDateCheckInput Remove="Views\Drinks\Details.cshtml" />
-      <UpToDateCheckInput Remove="Views\Drinks\Edit.cshtml" />
-      <UpToDateCheckInput Remove="Views\Drinks\Index.cshtml" />
-      <UpToDateCheckInput Remove="Views\Foods\Create.cshtml" />
-      <UpToDateCheckInput Remove="Views\Foods\Delete.cshtml" />
-      <UpToDateCheckInput Remove="Views\Foods\Details.cshtml" />
-      <UpToDateCheckInput Remove="Views\Foods\Edit.cshtml" />
-      <UpToDateCheckInput Remove="Views\Foods\Index.cshtml" />
+      <Compile Remove="ApiControllers\1.0\BillsController.cs" />
+      <Compile Remove="ApiControllers\1.0\CampaignsController.cs" />
+      <Compile Remove="ApiControllers\1.0\ContactsController.cs" />
+      <Compile Remove="ApiControllers\1.0\FoodsController.cs" />
+      <Compile Remove="ApiControllers\1.0\IngredientsController.cs" />
+      <Compile Remove="ApiControllers\1.0\OrdersController.cs" />
+      <Compile Remove="ApiControllers\1.0\PaymentsController.cs" />
+      <Compile Remove="ApiControllers\1.0\PaymentTypesController.cs" />
+      <Compile Remove="ApiControllers\1.0\PersonInRestaurantsController.cs" />
+      <Compile Remove="ApiControllers\1.0\PricesController.cs" />
+      <Compile Remove="ApiControllers\1.0\RestaurantsController.cs" />
+    </ItemGroup>
+
+   
+
+  
+  
+  
+  
+    <ItemGroup>
+      <Folder Include="Areas\Admin\ViewModels" />
+    </ItemGroup>
+
+   
+
+  
+  
+  
+  
+    <ItemGroup>
       <UpToDateCheckInput Remove="Views\FoodTypes\Create.cshtml" />
       <UpToDateCheckInput Remove="Views\FoodTypes\Delete.cshtml" />
       <UpToDateCheckInput Remove="Views\FoodTypes\Details.cshtml" />
       <UpToDateCheckInput Remove="Views\FoodTypes\Edit.cshtml" />
       <UpToDateCheckInput Remove="Views\FoodTypes\Index.cshtml" />
-      <UpToDateCheckInput Remove="Views\Ingredients\Create.cshtml" />
-      <UpToDateCheckInput Remove="Views\Ingredients\Delete.cshtml" />
-      <UpToDateCheckInput Remove="Views\Ingredients\Details.cshtml" />
-      <UpToDateCheckInput Remove="Views\Ingredients\Edit.cshtml" />
-      <UpToDateCheckInput Remove="Views\Ingredients\Index.cshtml" />
-      <UpToDateCheckInput Remove="Views\Orders\Create.cshtml" />
-      <UpToDateCheckInput Remove="Views\Orders\Delete.cshtml" />
-      <UpToDateCheckInput Remove="Views\Orders\Details.cshtml" />
-      <UpToDateCheckInput Remove="Views\Orders\Edit.cshtml" />
-      <UpToDateCheckInput Remove="Views\Orders\Index.cshtml" />
-      <UpToDateCheckInput Remove="Views\OrderTypes\Create.cshtml" />
-      <UpToDateCheckInput Remove="Views\OrderTypes\Delete.cshtml" />
-      <UpToDateCheckInput Remove="Views\OrderTypes\Details.cshtml" />
-      <UpToDateCheckInput Remove="Views\OrderTypes\Edit.cshtml" />
-      <UpToDateCheckInput Remove="Views\OrderTypes\Index.cshtml" />
-      <UpToDateCheckInput Remove="Views\Payments\Create.cshtml" />
-      <UpToDateCheckInput Remove="Views\Payments\Delete.cshtml" />
-      <UpToDateCheckInput Remove="Views\Payments\Details.cshtml" />
-      <UpToDateCheckInput Remove="Views\Payments\Edit.cshtml" />
-      <UpToDateCheckInput Remove="Views\Payments\Index.cshtml" />
-      <UpToDateCheckInput Remove="Views\PaymentTypes\Create.cshtml" />
-      <UpToDateCheckInput Remove="Views\PaymentTypes\Delete.cshtml" />
-      <UpToDateCheckInput Remove="Views\PaymentTypes\Details.cshtml" />
-      <UpToDateCheckInput Remove="Views\PaymentTypes\Edit.cshtml" />
-      <UpToDateCheckInput Remove="Views\PaymentTypes\Index.cshtml" />
-      <UpToDateCheckInput Remove="Views\PersonInRestaurants\Create.cshtml" />
-      <UpToDateCheckInput Remove="Views\PersonInRestaurants\Delete.cshtml" />
-      <UpToDateCheckInput Remove="Views\PersonInRestaurants\Details.cshtml" />
-      <UpToDateCheckInput Remove="Views\PersonInRestaurants\Edit.cshtml" />
-      <UpToDateCheckInput Remove="Views\PersonInRestaurants\Index.cshtml" />
-      <UpToDateCheckInput Remove="Views\Persons\Create.cshtml" />
-      <UpToDateCheckInput Remove="Views\Persons\Delete.cshtml" />
-      <UpToDateCheckInput Remove="Views\Persons\Details.cshtml" />
-      <UpToDateCheckInput Remove="Views\Persons\Edit.cshtml" />
-      <UpToDateCheckInput Remove="Views\Persons\Index.cshtml" />
-      <UpToDateCheckInput Remove="Views\Prices\Create.cshtml" />
-      <UpToDateCheckInput Remove="Views\Prices\Delete.cshtml" />
-      <UpToDateCheckInput Remove="Views\Prices\Details.cshtml" />
-      <UpToDateCheckInput Remove="Views\Prices\Edit.cshtml" />
-      <UpToDateCheckInput Remove="Views\Prices\Index.cshtml" />
+      <UpToDateCheckInput Remove="Views\Campaigns\Create.cshtml" />
+      <UpToDateCheckInput Remove="Views\Campaigns\Delete.cshtml" />
+      <UpToDateCheckInput Remove="Views\Campaigns\Details.cshtml" />
+      <UpToDateCheckInput Remove="Views\Campaigns\Edit.cshtml" />
+      <UpToDateCheckInput Remove="Views\Campaigns\Index.cshtml" />
       <UpToDateCheckInput Remove="Views\Restaurants\Create.cshtml" />
       <UpToDateCheckInput Remove="Views\Restaurants\Delete.cshtml" />
       <UpToDateCheckInput Remove="Views\Restaurants\Details.cshtml" />
       <UpToDateCheckInput Remove="Views\Restaurants\Edit.cshtml" />
       <UpToDateCheckInput Remove="Views\Restaurants\Index.cshtml" />
+      <UpToDateCheckInput Remove="Views\Bills\Create.cshtml" />
+      <UpToDateCheckInput Remove="Views\Bills\Delete.cshtml" />
+      <UpToDateCheckInput Remove="Views\Bills\Details.cshtml" />
+      <UpToDateCheckInput Remove="Views\Bills\Edit.cshtml" />
+      <UpToDateCheckInput Remove="Views\Bills\Index.cshtml" />
       <UpToDateCheckInput Remove="Views\Towns\Create.cshtml" />
       <UpToDateCheckInput Remove="Views\Towns\Delete.cshtml" />
       <UpToDateCheckInput Remove="Views\Towns\Details.cshtml" />
       <UpToDateCheckInput Remove="Views\Towns\Edit.cshtml" />
       <UpToDateCheckInput Remove="Views\Towns\Index.cshtml" />
+      <UpToDateCheckInput Remove="Views\Drinks\Create.cshtml" />
+      <UpToDateCheckInput Remove="Views\Drinks\Delete.cshtml" />
+      <UpToDateCheckInput Remove="Views\Drinks\Details.cshtml" />
+      <UpToDateCheckInput Remove="Views\Drinks\Edit.cshtml" />
+      <UpToDateCheckInput Remove="Views\Drinks\Index.cshtml" />
+      <UpToDateCheckInput Remove="Views\ContactTypes\Create.cshtml" />
+      <UpToDateCheckInput Remove="Views\ContactTypes\Delete.cshtml" />
+      <UpToDateCheckInput Remove="Views\ContactTypes\Details.cshtml" />
+      <UpToDateCheckInput Remove="Views\ContactTypes\Edit.cshtml" />
+      <UpToDateCheckInput Remove="Views\ContactTypes\Index.cshtml" />
+      <UpToDateCheckInput Remove="Views\Payments\Create.cshtml" />
+      <UpToDateCheckInput Remove="Views\Payments\Delete.cshtml" />
+      <UpToDateCheckInput Remove="Views\Payments\Details.cshtml" />
+      <UpToDateCheckInput Remove="Views\Payments\Edit.cshtml" />
+      <UpToDateCheckInput Remove="Views\Payments\Index.cshtml" />
+      <UpToDateCheckInput Remove="Views\Areas\Create.cshtml" />
+      <UpToDateCheckInput Remove="Views\Areas\Delete.cshtml" />
+      <UpToDateCheckInput Remove="Views\Areas\Details.cshtml" />
+      <UpToDateCheckInput Remove="Views\Areas\Edit.cshtml" />
+      <UpToDateCheckInput Remove="Views\Areas\Index.cshtml" />
+      <UpToDateCheckInput Remove="Views\OrderTypes\Create.cshtml" />
+      <UpToDateCheckInput Remove="Views\OrderTypes\Delete.cshtml" />
+      <UpToDateCheckInput Remove="Views\OrderTypes\Details.cshtml" />
+      <UpToDateCheckInput Remove="Views\OrderTypes\Edit.cshtml" />
+      <UpToDateCheckInput Remove="Views\OrderTypes\Index.cshtml" />
+      <UpToDateCheckInput Remove="Views\PaymentTypes\Create.cshtml" />
+      <UpToDateCheckInput Remove="Views\PaymentTypes\Delete.cshtml" />
+      <UpToDateCheckInput Remove="Views\PaymentTypes\Details.cshtml" />
+      <UpToDateCheckInput Remove="Views\PaymentTypes\Edit.cshtml" />
+      <UpToDateCheckInput Remove="Views\PaymentTypes\Index.cshtml" />
+      <UpToDateCheckInput Remove="Views\Persons\Create.cshtml" />
+      <UpToDateCheckInput Remove="Views\Persons\Delete.cshtml" />
+      <UpToDateCheckInput Remove="Views\Persons\Details.cshtml" />
+      <UpToDateCheckInput Remove="Views\Persons\Edit.cshtml" />
+      <UpToDateCheckInput Remove="Views\Persons\Index.cshtml" />
+      <UpToDateCheckInput Remove="Views\Contacts\Create.cshtml" />
+      <UpToDateCheckInput Remove="Views\Contacts\Delete.cshtml" />
+      <UpToDateCheckInput Remove="Views\Contacts\Details.cshtml" />
+      <UpToDateCheckInput Remove="Views\Contacts\Edit.cshtml" />
+      <UpToDateCheckInput Remove="Views\Contacts\Index.cshtml" />
+      <UpToDateCheckInput Remove="Views\Orders\Create.cshtml" />
+      <UpToDateCheckInput Remove="Views\Orders\Delete.cshtml" />
+      <UpToDateCheckInput Remove="Views\Orders\Details.cshtml" />
+      <UpToDateCheckInput Remove="Views\Orders\Edit.cshtml" />
+      <UpToDateCheckInput Remove="Views\Orders\Index.cshtml" />
+      <UpToDateCheckInput Remove="Views\Foods\Create.cshtml" />
+      <UpToDateCheckInput Remove="Views\Foods\Delete.cshtml" />
+      <UpToDateCheckInput Remove="Views\Foods\Details.cshtml" />
+      <UpToDateCheckInput Remove="Views\Foods\Edit.cshtml" />
+      <UpToDateCheckInput Remove="Views\Foods\Index.cshtml" />
+      <UpToDateCheckInput Remove="Views\PersonInRestaurants\Create.cshtml" />
+      <UpToDateCheckInput Remove="Views\PersonInRestaurants\Delete.cshtml" />
+      <UpToDateCheckInput Remove="Views\PersonInRestaurants\Details.cshtml" />
+      <UpToDateCheckInput Remove="Views\PersonInRestaurants\Edit.cshtml" />
+      <UpToDateCheckInput Remove="Views\PersonInRestaurants\Index.cshtml" />
+      <UpToDateCheckInput Remove="Views\Ingredients\Create.cshtml" />
+      <UpToDateCheckInput Remove="Views\Ingredients\Delete.cshtml" />
+      <UpToDateCheckInput Remove="Views\Ingredients\Details.cshtml" />
+      <UpToDateCheckInput Remove="Views\Ingredients\Edit.cshtml" />
+      <UpToDateCheckInput Remove="Views\Ingredients\Index.cshtml" />
+      <UpToDateCheckInput Remove="Views\Prices\Create.cshtml" />
+      <UpToDateCheckInput Remove="Views\Prices\Delete.cshtml" />
+      <UpToDateCheckInput Remove="Views\Prices\Details.cshtml" />
+      <UpToDateCheckInput Remove="Views\Prices\Edit.cshtml" />
+      <UpToDateCheckInput Remove="Views\Prices\Index.cshtml" />
     </ItemGroup>
+
+   
+
+  
+  
+  
+  
+    <ItemGroup>
+      <Content Update="Areas\Admin\Views\_ViewImports.cshtml">
+        <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+        <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      </Content>
+      <Content Update="Areas\Admin\Views\_ViewStart.cshtml">
+        <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+        <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      </Content>
+    </ItemGroup>
+  
+  
+
 
 </Project>

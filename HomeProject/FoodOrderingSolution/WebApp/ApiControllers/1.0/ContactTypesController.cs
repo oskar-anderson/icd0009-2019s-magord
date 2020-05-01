@@ -1,118 +1,107 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using Contracts.BLL.App;
 using Contracts.DAL.App;
-using Domain;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using PublicApi.DTO.v1;
+using PublicApi.DTO.v1.Mappers;
+using V1DTO=PublicApi.DTO.v1;
 
 namespace WebApp.ApiControllers._1._0
 {
-    [Route("api/[controller]")]
+    [Route("api/v{version:apiVersion}/[controller]")]
     [ApiController]
+    [ApiVersion("1.0")]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+
     public class ContactTypesController : ControllerBase
     {
-        private readonly IAppUnitOfWork _uow;
+        private readonly IAppBLL _bll;
+        private readonly ContactTypeMapper _mapper = new ContactTypeMapper();
 
-        public ContactTypesController(IAppUnitOfWork uow)
+
+        public ContactTypesController(IAppBLL bll)
         {
-            _uow = uow;
+            _bll = bll;
         }
 
         // GET: api/ContactTypes
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<ContactTypeDTO>>> GetContactTypes()
+        [AllowAnonymous]
+        public async Task<ActionResult<IEnumerable<V1DTO.ContactType>>> GetContactTypes()
         {
-            var contactTypeDTOs = await _uow.ContactTypes.DTOAllAsync();
-            
-            return Ok(contactTypeDTOs);
+            return Ok((await _bll.ContactTypes.GetAllAsync()).Select(e => _mapper.Map(e)));
         }
 
         // GET: api/ContactTypes/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<ContactTypeDTO>> GetContactType(Guid id)
+        [AllowAnonymous]
+        public async Task<ActionResult<V1DTO.ContactType>> GetContactType(Guid id)
         {
-            var contactType = await _uow.ContactTypes.DTOFirstOrDefaultAsync(id);
+            var contactType = await _bll.ContactTypes.FirstOrDefaultAsync(id);
 
             if (contactType == null)
             {
-                return NotFound();
+                return NotFound(new {message = "ContactType not found"});
             }
 
-            return Ok(contactType);
+            return Ok(_mapper.Map(contactType));
+
         }
 
         // PUT: api/ContactTypes/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see https://aka.ms/RazorPagesCRUD.
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutContactType(Guid id, ContactTypeEditDTO contactTypeEditDTO)
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
+        public async Task<IActionResult> PutContactType(Guid id, V1DTO.ContactType contactType)
         {
-            if (id != contactTypeEditDTO.Id)
+            if (id != contactType.Id)
             {
-                return BadRequest();
+                return BadRequest(new {message = "id and gpsLocationType.id do not match"});
             }
 
-            var contactType = await _uow.ContactTypes.FirstOrDefaultAsync(contactTypeEditDTO.Id);
-            if (contactType == null)
-            {
-                return BadRequest();
-            }
-
-            contactType.Name = contactTypeEditDTO.Name;
-            
-            _uow.ContactTypes.Update(contactType);
-
-            try
-            {
-                await _uow.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!await _uow.ContactTypes.ExistsAsync(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+            await _bll.ContactTypes.UpdateAsync(_mapper.Map(contactType));
+            await _bll.SaveChangesAsync();
 
             return NoContent();
+
         }
 
         // POST: api/ContactTypes
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see https://aka.ms/RazorPagesCRUD.
         [HttpPost]
-        public async Task<ActionResult<ContactType>> PostContactType(ContactTypeCreateDTO contactTypeCreateDTO)
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
+        public async Task<ActionResult<V1DTO.ContactType>> PostContactType(V1DTO.ContactType contactType)
         {
-            var contactType = new ContactType
-            {
-                Id = contactTypeCreateDTO.Id,
-                Name = contactTypeCreateDTO.Name,
-            };
+            var bllEntity = _mapper.Map(contactType);
+            _bll.ContactTypes.Add(bllEntity);
+            await _bll.SaveChangesAsync();
+            contactType.Id = bllEntity.Id;
             
-            _uow.ContactTypes.Add(contactType);
-            await _uow.SaveChangesAsync();
-
-            return CreatedAtAction("GetContactType", new { id = contactType.Id }, contactType);
+            return CreatedAtAction("GetContactType",
+                new {id = contactType.Id, version = HttpContext.GetRequestedApiVersion()?.ToString() ?? "0"},
+                contactType);
         }
 
         // DELETE: api/ContactTypes/5
         [HttpDelete("{id}")]
-        public async Task<ActionResult<ContactType>> DeleteContactType(Guid id)
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
+        public async Task<ActionResult<V1DTO.ContactType>> DeleteContactType(Guid id)
         {
-            var contactType = await _uow.ContactTypes.FirstOrDefaultAsync(id);
+            var contactType = await _bll.ContactTypes.FirstOrDefaultAsync(id);
             if (contactType == null)
             {
-                return NotFound();
+                return NotFound(new {message = "ContactType not found!"});
             }
 
-            _uow.ContactTypes.Remove(contactType);
-            await _uow.SaveChangesAsync();
+            await _bll.ContactTypes.RemoveAsync(contactType);
+            await _bll.SaveChangesAsync();
 
             return Ok(contactType);
         }

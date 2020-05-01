@@ -1,10 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Contracts.BLL.App;
 using Contracts.DAL.App;
 using Domain;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using PublicApi.DTO.v1.Mappers;
 using PublicApi.DTO.v1.RestaurantDTOs;
 
 namespace WebApp.ApiControllers._1._0
@@ -13,7 +15,8 @@ namespace WebApp.ApiControllers._1._0
     [ApiController]
     public class RestaurantsController : ControllerBase
     {
-        private readonly IAppUnitOfWork _uow;
+        private readonly IAppBLL _bll;
+        private readonly RestaurantMapper _mapper = new RestaurantMapper();
 
         public RestaurantsController(IAppUnitOfWork uow)
         {

@@ -6,7 +6,7 @@ namespace Contracts.BLL.Base
     public interface IBaseBLL
     {
         Task<int> SaveChangesAsync();
-        int SaveChanges();
-        TService GetService<TService>(Func<TService> serviceCreationMethod);
+        TService GetService<TService>(Func<TService> serviceCreationMethod)
+            where TService : class;
     }
 }

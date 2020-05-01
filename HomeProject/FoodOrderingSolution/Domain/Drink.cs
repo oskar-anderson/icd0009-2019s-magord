@@ -7,14 +7,7 @@ using Domain.Identity;
 
 namespace Domain
 {
-    public class Drink : Drink<Guid, AppUser>, IDomainEntityBaseMetadata, IDomainEntityUser<AppUser>
-    {
-        
-    }
-
-    public class Drink<TKey, TUser> : DomainEntityBaseMetadata<TKey>, IDomainEntityUser<TKey, TUser>
-        where TKey : IEquatable<TKey>
-        where TUser : AppUser<TKey>
+    public class Drink : DomainEntityIdMetadataUser<AppUser>
     {
         public float Size { get; set; } = default!;
 
@@ -25,8 +18,5 @@ namespace Domain
         public ICollection<Price>? Prices { get; set; }
 
         public ICollection<Order>? Orders { get; set; }
-
-        public TKey AppUserId { get; set; } = default!;
-        public TUser? AppUser { get; set; }
     }
 }

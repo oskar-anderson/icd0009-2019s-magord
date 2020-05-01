@@ -3,52 +3,44 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Contracts.DAL.App.Repositories;
-using DAL.Base.EF.Mappers;
+using DAL.App.DTO;
 using DAL.Base.EF.Repositories;
-using Domain;
+using DAL.Base.Mappers;
 using Microsoft.EntityFrameworkCore;
 
 
 namespace DAL.App.EF.Repositories
 {
-    public class ContactRepository : EFBaseRepository<AppDbContext, Domain.Contact, DAL.App.DTO.Contact>, IContactRepository
+    public class ContactRepository : EFBaseRepository<AppDbContext, Domain.Identity.AppUser, Domain.Contact, DAL.App.DTO.Contact>, IContactRepository
     {
         public ContactRepository(AppDbContext dbContext) : base(dbContext,
-            new BaseDALMapper<Domain.Contact, DAL.App.DTO.Contact>())
+            new BaseMapper<Domain.Contact, DAL.App.DTO.Contact>())
         {
-        }
-        
-        public new async Task<IEnumerable<DAL.App.DTO.Contact>> AllAsync()
-        {
-            var query = RepoDbSet
-                .Include(c => c.ContactType)
-                .Include(c => c.Person)
-                .AsQueryable();
-            
-            return (await query.ToListAsync()).Select(domainEntity => Mapper.Map(domainEntity));
-        }
-        
-        public async Task<DAL.App.DTO.Contact> FirstOrDefaultAsync(Guid id)
-        {
-            var query = RepoDbSet
-                .Include(c => c.ContactType)
-                .Include(c => c.Person)
-                .Where(a => a.Id == id).AsQueryable();
-            
-            return Mapper.Map(await query.FirstOrDefaultAsync());
         }
 
-        public async Task<bool> ExistsAsync(Guid id)
+        public override async Task<IEnumerable<Contact>> GetAllAsync(object? userId = null, bool noTracking = true)
         {
-            return await RepoDbSet.AnyAsync(a => a.Id == id);
+            var query = PrepareQuery(userId, noTracking);
+            query = query
+                .Include(c => c.ContactType)
+                .Include(c => c.Person);
+            var domainEntities = await query.ToListAsync();
+            var result = domainEntities.Select(e => Mapper.Map(e));
+            return result;
         }
 
-        public async Task DeleteAsync(Guid id)
+        public override async Task<Contact> FirstOrDefaultAsync(Guid id, object? userId = null, bool noTracking = true)
         {
-            var contact = await FirstOrDefaultAsync(id);
-            base.Remove(contact);
+            var query = PrepareQuery(userId, noTracking);
+            query = query
+                .Include(c => c.ContactType)
+                .Include(c => c.Person)
+                .Where(r => r.Id == id);
+            var domainEntity = await query.FirstOrDefaultAsync(e => e.Id.Equals(id));
+            var result = Mapper.Map(domainEntity);
+            return result;
         }
-        
+
         /*
         public async Task<IEnumerable<ContactDTO>> DTOAllAsync()
         {

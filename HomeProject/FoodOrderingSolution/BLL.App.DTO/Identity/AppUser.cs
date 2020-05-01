@@ -1,16 +1,12 @@
 ﻿using System;
+using Contracts.DAL.Base;
 
 namespace BLL.App.DTO.Identity
 {
-    public class AppUser : AppUser<Guid>
+    public class AppUser : IDomainEntityId
     {
-        
-    }
-    
-    public class AppUser<TKey>
-        where TKey: IEquatable<TKey>
-    {
-        public TKey Id { get; set; } = default!;
-
+        public Guid Id { get; set; }
+        public string Email { get; set; } = default!;
+        public string UserName { get; set; } = default!;
     }
 }

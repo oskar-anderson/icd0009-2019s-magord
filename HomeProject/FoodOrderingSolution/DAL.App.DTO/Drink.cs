@@ -6,14 +6,9 @@ using DAL.App.DTO.Identity;
 
 namespace DAL.App.DTO
 {
-    public class Drink : Drink<Guid>, IDomainEntityId
+    public class  Drink : IDomainEntityId
     {
-    }
-    
-    public class Drink<TKey> : IDomainBaseEntity<TKey>
-        where TKey: IEquatable<TKey>
-    {
-        public TKey Id { get; set; } = default!;
+        public Guid Id { get; set; } = default!;
         
         public float Size { get; set; } = default!;
 
@@ -25,7 +20,7 @@ namespace DAL.App.DTO
 
         public ICollection<Order>? Orders { get; set; }
 
-        public TKey AppUserId { get; set; } = default!;
-        public AppUser<TKey>? AppUser { get; set; }
+        public Guid AppUserId { get; set; } = default!;
+        public AppUser? AppUser { get; set; }
     }
 }

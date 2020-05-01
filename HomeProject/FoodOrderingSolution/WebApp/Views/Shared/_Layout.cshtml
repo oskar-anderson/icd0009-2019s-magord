@@ -1,103 +1,84 @@
-﻿<!DOCTYPE html>
+﻿@using Domain.Identity
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<AppUser> SignInManager
+@inject UserManager<AppUser> UserManager
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>@ViewData["Title"] - WebApp</title>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/css/site.css" />
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="~/css/site.css"/>
 </head>
 <body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">WebApp</a>
-                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse">
-                    <partial name="_LoginPartial" />
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Areas" asp-action="Index">Areas</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Bills" asp-action="Index">Bills</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Campaigns" asp-action="Index">Campaigns</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Contacts" asp-action="Index">Contacts</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="ContactTypes" asp-action="Index">ContactTypes</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Drinks" asp-action="Index">Drinks</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Foods" asp-action="Index">Foods</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="FoodTypes" asp-action="Index">FoodTypes</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Ingredients" asp-action="Index">Ingredients</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Orders" asp-action="Index">Orders</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="OrderTypes" asp-action="Index">OrderTypes</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Payments" asp-action="Index">Payments</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="PaymentTypes" asp-action="Index">PaymentTypes</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Persons" asp-action="Index">Persons</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="PersonInRestaurants" asp-action="Index">PersonInRestaurants</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Prices" asp-action="Index">Prices</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Restaurants" asp-action="Index">Restaurants</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Towns" asp-action="Index">Towns</a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </nav>
-    </header>
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
-    </div>
-
-    <footer class="border-top footer text-muted">
+<header>
+    <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
         <div class="container">
-            &copy; 2020 - WebApp - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+            <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">WebApp</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                    aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse">
+                <partial name="_LoginPartial"/>
+                <ul class="navbar-nav flex-grow-1">
+                    <li class="nav-item">
+                        <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                    </li>
+                    @if (SignInManager.IsSignedIn(User) && User.IsInRole("admin"))
+                    {
+                        <li class="nav-item dropdown">
+                            <a class="nav-link text-dark dropdown-toggle" href="#" id="navbarDropdownAdmin" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Admin
+                            </a>
+                            <div class="dropdown-menu" aria-labelledby="navbarDropdownAdmin">
+                                <a class="dropdown-item text-dark" asp-area="Admin" asp-controller="Areas" asp-action="Index">Areas</a>
+                                <a class="dropdown-item text-dark" asp-area="Admin" asp-controller="Bills" asp-action="Index">Bills</a>
+                                <a class="dropdown-item text-dark" asp-area="Admin" asp-controller="Campaigns" asp-action="Index">Campaigns</a>
+                                <a class="dropdown-item text-dark" asp-area="Admin" asp-controller="Contacts" asp-action="Index">Contacts</a>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item text-dark" asp-area="Admin" asp-controller="ContactTypes" asp-action="Index">ContactTypes</a>
+                                <a class="dropdown-item text-dark" asp-area="Admin" asp-controller="Drinks" asp-action="Index">Drinks</a>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item text-dark" asp-area="Admin" asp-controller="Foods" asp-action="Index">Foods</a>
+                                <a class="dropdown-item text-dark" asp-area="Admin" asp-controller="FoodTypes" asp-action="Index">FoodTypes</a>
+                                <a class="dropdown-item text-dark" asp-area="Admin" asp-controller="Ingredients" asp-action="Index">Ingredients</a>
+                                <a class="dropdown-item text-dark" asp-area="Admin" asp-controller="Orders" asp-action="Index">Orders</a>
+                                <a class="dropdown-item text-dark" asp-area="Admin" asp-controller="OrderTypes" asp-action="Index">OrderTypes</a>
+                                <a class="dropdown-item text-dark" asp-area="Admin" asp-controller="Payments" asp-action="Index">Payments</a>
+                                <a class="dropdown-item text-dark" asp-area="Admin" asp-controller="PaymentTypes" asp-action="Index">PaymentTypes</a>
+                                <a class="dropdown-item text-dark" asp-area="Admin" asp-controller="Persons" asp-action="Index">Persons</a>
+                                <a class="dropdown-item text-dark" asp-area="Admin" asp-controller="PersonInRestaurants" asp-action="Index">PersonInRestaurants</a>
+                                <a class="dropdown-item text-dark" asp-area="Admin" asp-controller="Prices" asp-action="Index">Prices</a>
+                                <a class="dropdown-item text-dark" asp-area="Admin" asp-controller="Restaurants" asp-action="Index">Restaurants</a>
+                                <a class="dropdown-item text-dark" asp-area="Admin" asp-controller="Towns" asp-action="Index">Towns</a>
+                            </div>
+                        </li>
+                    }
+                </ul>
+            </div>
         </div>
-    </footer>
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
-    @RenderSection("Scripts", required: false)
+    </nav>
+</header>
+<div class="container">
+    <main role="main" class="pb-3">
+        @RenderBody()
+    </main>
+</div>
+
+<footer class="border-top footer text-muted">
+    <div class="container">
+        &copy; 2020 - WebApp - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+    </div>
+</footer>
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+<script src="~/js/site.js" asp-append-version="true"></script>
+@RenderSection("Scripts", required: false)
 </body>
 </html>

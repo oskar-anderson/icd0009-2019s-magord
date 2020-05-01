@@ -8,23 +8,14 @@ using DAL.App.DTO;
 namespace Contracts.DAL.App.Repositories
 {
 
-    public interface IAreaRepository : IAreaRepository<Guid, Area>, IBaseRepository<Area>
+    public interface IAreaRepository : IBaseRepository<Area>, IAreaRepositoryCustom
     {
         
     }
-    public interface IAreaRepository<TKey, TDALEntity> : IBaseRepository<TKey, TDALEntity>
-        where TDALEntity : class, IDomainBaseEntity<TKey>, new() 
-        where TKey : IEquatable<TKey>
-    {
-        Task<IEnumerable<TDALEntity>> AllAsync();
-        Task<TDALEntity> FirstOrDefaultAsync(Guid id);
-        Task<bool> ExistsAsync(Guid id);
-        Task DeleteAsync(Guid id);
-        
-        
-        // DTO methods
-        //Task<IEnumerable<AreaDTO>> DTOAllAsync();
-        //Task<AreaDTO> DTOFirstOrDefaultAsync(Guid id);
 
+    public interface IAreaRepositoryCustom
+    {
+        
     }
+    
 }

@@ -6,20 +6,16 @@ using DAL.Base;
 
 namespace Domain
 {
-    public class Area : Area<Guid>, IDomainEntityBaseMetadata
-    {
-    }
-    
-    public class Area<TKey> : DomainEntityBaseMetadata<TKey>
-        where TKey : IEquatable<TKey>
+    public class Area : DomainEntityIdMetadata
     {
         // If can be null then -> public string? Name { get; set; }
         // If cannot be null then -> public string Name { get; set; } = default!;
         [MaxLength(256)] [MinLength(1)] public string Name { get; set; } = default!;
 
         public ICollection<Restaurant>? Restaurants { get; set; }
-
-        public TKey TownId { get; set; } = default!;
+        
+        public Guid TownId { get; set; } = default!;
         public Town? Town { get; set; }
     }
+    
 }

@@ -3,74 +3,48 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Contracts.DAL.App.Repositories;
-using DAL.Base.EF.Mappers;
+using DAL.App.DTO;
 using DAL.Base.EF.Repositories;
+using DAL.Base.Mappers;
 using Microsoft.EntityFrameworkCore;
 
 
 namespace DAL.App.EF.Repositories
 {
-    public class BillRepository : EFBaseRepository<AppDbContext, Domain.Bill, DAL.App.DTO.Bill>, IBillRepository
+    public class BillRepository : EFBaseRepository<AppDbContext, Domain.Identity.AppUser, Domain.Bill, DAL.App.DTO.Bill>, IBillRepository
     {
         public BillRepository(AppDbContext dbContext) : base(dbContext,
-            new BaseDALMapper<Domain.Bill, DAL.App.DTO.Bill>())
+            new BaseMapper<Domain.Bill, DAL.App.DTO.Bill>())
         {
         }
-        
-        public async Task<IEnumerable<DAL.App.DTO.Bill>> AllAsync(Guid? userId = null)
+
+        public override async Task<IEnumerable<Bill>> GetAllAsync(object? userId = null, bool noTracking = true)
         {
-            var query = RepoDbSet
+            var query = PrepareQuery(userId, noTracking);
+            query = query
                 .Include(b => b.Person)
+                .ThenInclude(p => p!.FirstName)
                 .Include(b => b.Order)
-                .AsQueryable();
-            
-            if (userId != null)
-            {
-                query = query.Where(b => b.Order!.AppUserId == userId && b.Person!.AppUserId == userId);
-            }
-
-            return (await query.ToListAsync()).Select(domainEntity => Mapper.Map(domainEntity));
+                .ThenInclude(o => o!.Number);
+            var domainEntities = await query.ToListAsync();
+            var result = domainEntities.Select(e => Mapper.Map(e));
+            return result;
         }
 
-        public async Task<DAL.App.DTO.Bill> FirstOrDefaultAsync(Guid id, Guid? userId = null)
+        public override async Task<Bill> FirstOrDefaultAsync(Guid id, object? userId = null, bool noTracking = true)
         {
-
-            var query = RepoDbSet
-                .Include(b => b.Order)
-                .Include(b => b.Person)
-                .Where(b => b.Id == id)
-                .AsQueryable();
-            
-            if (userId != null)
-            {
-                query = query.Where(b => b.Order!.AppUserId == userId && b.Person!.AppUserId == userId);
-            }
-
-            return Mapper.Map(await query.FirstOrDefaultAsync());
+            var query = PrepareQuery(userId, noTracking);
+            query = query
+                    .Include(b => b.Person)
+                    .ThenInclude(p => p!.FirstName)
+                    .Include(b => b.Order)
+                    .ThenInclude(o => o!.Number)
+                .Where(r => r.Id == id);
+            var domainEntity = await query.FirstOrDefaultAsync(e => e.Id.Equals(id));
+            var result = Mapper.Map(domainEntity);
+            return result;
         }
 
-        public async Task<bool> ExistsAsync(Guid id, Guid? userId = null)
-        {
-            if (userId == null)
-            {
-                return await RepoDbSet.AnyAsync(b => b.Id == id);
-            }
-
-            return await RepoDbSet.AnyAsync(b => b.Id == id && b.Order!.AppUserId == userId);
-        }
-
-        public async Task DeleteAsync(Guid id, Guid? userId = null)
-        {
-            var query = RepoDbSet.Where(a => a.Id == id).AsQueryable();
-            if (userId != null)
-            {
-                query = query.Where(a => a.AppUserId == userId);
-            }
-
-            var bill = await query.AsNoTracking().FirstOrDefaultAsync();
-            base.Remove(bill.Id);
-        }
-        
         /*
         public async Task<IEnumerable<BillDTO>> DTOAllAsync(Guid? userId = null)
         {

@@ -3,51 +3,42 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Contracts.DAL.App.Repositories;
-using DAL.Base.EF.Mappers;
+using DAL.App.DTO;
 using DAL.Base.EF.Repositories;
+using DAL.Base.Mappers;
 using Microsoft.EntityFrameworkCore;
 
 
 namespace DAL.App.EF.Repositories
 {
-    public class IngredientRepository : EFBaseRepository<AppDbContext, Domain.Ingredient, DAL.App.DTO.Ingredient>, IIngredientRepository
+    public class IngredientRepository : EFBaseRepository<AppDbContext, Domain.Identity.AppUser, Domain.Ingredient, DAL.App.DTO.Ingredient>, IIngredientRepository
     {
         public IngredientRepository(AppDbContext dbContext) : base(dbContext,
-            new BaseDALMapper<Domain.Ingredient, DAL.App.DTO.Ingredient>())
+            new BaseMapper<Domain.Ingredient, DAL.App.DTO.Ingredient>())
         {
         }
-        
-        
-        public new async Task<IEnumerable<DAL.App.DTO.Ingredient>> AllAsync()
+
+        public override async Task<IEnumerable<Ingredient>> GetAllAsync(object? userId = null, bool noTracking = true)
         {
-            var query = RepoDbSet
+            var query = PrepareQuery(userId, noTracking);
+            query = query
+                .Include(i => i.Food);
+            var domainEntities = await query.ToListAsync();
+            var result = domainEntities.Select(e => Mapper.Map(e));
+            return result;
+        }
+
+        public override async Task<Ingredient> FirstOrDefaultAsync(Guid id, object? userId = null, bool noTracking = true)
+        {
+            var query = PrepareQuery(userId, noTracking);
+            query = query
                 .Include(i => i.Food)
-                .AsQueryable();
-            
-            return (await query.ToListAsync()).Select(domainEntity => Mapper.Map(domainEntity));
+                .Where(r => r.Id == id);
+            var domainEntity = await query.FirstOrDefaultAsync(e => e.Id.Equals(id));
+            var result = Mapper.Map(domainEntity);
+            return result;
         }
 
-        
-        public async Task<DAL.App.DTO.Ingredient> FirstOrDefaultAsync(Guid id)
-        {
-            var query = RepoDbSet
-                .Include(i => i.Food)
-                .Where(i => i.Id == id).AsQueryable();
-            
-            return Mapper.Map(await query.FirstOrDefaultAsync());
-        }
-
-        public async Task<bool> ExistsAsync(Guid id)
-        {
-            return await RepoDbSet.AnyAsync(a => a.Id == id);
-        }
-
-        public async Task DeleteAsync(Guid id)
-        {
-            var ingredient = await FirstOrDefaultAsync(id);
-            base.Remove(ingredient);
-        }
-        
         /*
         public async Task<IEnumerable<IngredientDTO>> DTOAllAsync()
         {

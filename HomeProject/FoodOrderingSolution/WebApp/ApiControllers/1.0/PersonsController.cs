@@ -3,15 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Contracts.BLL.App;
-using Contracts.DAL.App;
-using Domain;
 using Extensions;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using PublicApi.DTO.v1;
-using Person = PublicApi.DTO.v1.Person;
+using PublicApi.DTO.v1.Mappers;
+using V1DTO=PublicApi.DTO.v1;
 
 namespace WebApp.ApiControllers._1._0
 {
@@ -21,8 +19,8 @@ namespace WebApp.ApiControllers._1._0
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class PersonsController : ControllerBase
     {
-        //private readonly IAppUnitOfWork _uow;
         private readonly IAppBLL _bll;
+        private readonly PersonMapper _mapper = new PersonMapper();
         
         public PersonsController(IAppBLL bll)
         {
@@ -31,74 +29,43 @@ namespace WebApp.ApiControllers._1._0
 
         // GET: api/Persons
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Person>>> GetPersons()
+        [AllowAnonymous]
+        public async Task<ActionResult<IEnumerable<V1DTO.Person>>> GetPersons()
         {
-            var persons = (await _bll.Persons.AllAsync(User.UserGuidId()))
-                .Select(bllEntity => new Person()
-                {
-                    Id = bllEntity.Id,
-                    FirstName = bllEntity.FirstName,
-                    LastName = bllEntity.LastName,
-                    Sex = bllEntity.Sex,
-                    DateOfBirth = bllEntity.DateOfBirth,
-                });
-
-            return Ok(persons);
+            return Ok((await _bll.Persons.GetAllAsync()).Select(e => _mapper.Map(e)));
         }
 
         // GET: api/Persons/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Person>> GetPerson(Guid id)
+        [AllowAnonymous]
+        public async Task<ActionResult<V1DTO.Person>> GetPerson(Guid id)
         {
-            var person = await _bll.Persons.FirstOrDefaultAsync(id, User.UserGuidId());
+            var person = await _bll.Persons.FirstOrDefaultAsync(id);
 
             if (person == null)
             {
-                return NotFound();
+                return NotFound(new {message = "Person not found"});
             }
 
-            return Ok(person);
+            return Ok(_mapper.Map(person));
         }
 
         // PUT: api/Persons/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see https://aka.ms/RazorPagesCRUD.
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutPerson(Guid id, PersonEdit personEditDTO)
+        public async Task<IActionResult> PutPerson(Guid id, V1DTO.Person person)
         {
-            if (id != personEditDTO.Id)
-            {
-                return BadRequest();
-            }
-
-            var person = await _bll.Persons.FirstOrDefaultAsync(personEditDTO.Id, User.UserGuidId());
-            if (person == null)
-            {
-                return BadRequest();
-            }
-
-            person.FirstName = personEditDTO.FirstName;
-            person.LastName = personEditDTO.LastName;
-            person.Sex = personEditDTO.Sex;
-            person.DateOfBirth = personEditDTO.DateOfBirth;
+            person.AppUserId = User.UserId();
             
-            _bll.Persons.Update(person);
+            if (id != person.Id)
+            {
+                return BadRequest();
+            }
 
-            try
-            {
-                await _bll.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!await _bll.Persons.ExistsAsync(id, User.UserGuidId()))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+            await _bll.Persons.UpdateAsync(_mapper.Map(person), User.UserId());
+            await _bll.SaveChangesAsync();
 
             return NoContent();
         }
@@ -107,34 +74,33 @@ namespace WebApp.ApiControllers._1._0
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see https://aka.ms/RazorPagesCRUD.
         [HttpPost]
-        public async Task<ActionResult<Person>> PostPerson(PersonCreate personCreateDTO)
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
+        public async Task<ActionResult<V1DTO.Person>> PostPerson(V1DTO.Person person)
         {
-            var person = new BLL.App.DTO.Person
-            {
-                AppUserId = User.UserGuidId(),
-                FirstName = personCreateDTO.FirstName,
-                LastName = personCreateDTO.LastName,
-                Sex = personCreateDTO.Sex,
-                DateOfBirth = personCreateDTO.DateOfBirth,
-            };
+            person.AppUserId = User.UserId();
             
-            _bll.Persons.Add(person);
+            var bllEntity = _mapper.Map(person);
+            _bll.Persons.Add(bllEntity);
             await _bll.SaveChangesAsync();
-
-            return CreatedAtAction("GetPerson", new { id = person.Id }, person);
+            person.Id = bllEntity.Id;
+            
+            return CreatedAtAction("GetPerson",
+                new { id = person.Id, version = HttpContext.GetRequestedApiVersion()?.ToString() ?? "0" },
+                person);
         }
 
         // DELETE: api/Persons/5
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
         [HttpDelete("{id}")]
-        public async Task<ActionResult<Person>> DeletePerson(Guid id)
+        public async Task<ActionResult<V1DTO.Person>> DeletePerson(Guid id)
         {
-            var person = await _bll.Persons.FirstOrDefaultAsync(id, User.UserGuidId());
+            var person = await _bll.Persons.FirstOrDefaultAsync(id, User.UserId());
             if (person == null)
             {
-                return NotFound();
+                return NotFound(new {message = "Person not found"});
             }
 
-            _bll.Persons.Remove(person);
+            await _bll.Persons.RemoveAsync(person);
             await _bll.SaveChangesAsync();
 
             return Ok(person);

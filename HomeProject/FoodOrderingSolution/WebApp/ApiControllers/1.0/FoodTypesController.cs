@@ -1,50 +1,52 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
-using Contracts.DAL.App;
-using Domain;
+using Contracts.BLL.App;
 using Extensions;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using PublicApi.DTO.v1.FoodTypeDTOs;
+using PublicApi.DTO.v1.Mappers;
+using V1DTO=PublicApi.DTO.v1;
 
 namespace WebApp.ApiControllers._1._0
 {
-    [Route("api/[controller]")]
     [ApiController]
+    [ApiVersion( "1.0" )]
+    [Route("api/v{version:apiVersion}/[controller]")]
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class FoodTypesController : ControllerBase
     {
-        private readonly IAppUnitOfWork _uow;
+        private readonly IAppBLL _bll;
+        private readonly FoodTypeMapper _mapper = new FoodTypeMapper();
 
-        public FoodTypesController(IAppUnitOfWork uow)
+        public FoodTypesController(IAppBLL bll)
         {
-            _uow = uow;
+            _bll = bll;
         }
 
         // GET: api/FoodTypes
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<FoodTypeDTO>>> GetFoodTypes()
+        [AllowAnonymous]
+        public async Task<ActionResult<IEnumerable<V1DTO.FoodType>>> GetFoodTypes()
         {
-            var foodTypeDTOs = await _uow.FoodTypes.DTOAllAsync(User.UserGuidId());
-            
-            return Ok(foodTypeDTOs);
+            return Ok((await _bll.FoodTypes.GetAllAsync()).Select(e => _mapper.Map(e)));
         }
 
         // GET: api/FoodTypes/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<FoodTypeDTO>> GetFoodType(Guid id)
+        [AllowAnonymous]
+        public async Task<ActionResult<V1DTO.FoodType>> GetFoodType(Guid id)
         {
-            var foodType = await _uow.FoodTypes.DTOFirstOrDefaultAsync(id, User.UserGuidId());
-
+            var foodType = await _bll.FoodTypes.FirstOrDefaultAsync(id);
+            
             if (foodType == null)
             {
-                return NotFound();
+                return NotFound(new {message = "FoodType not found"});
             }
 
-            return Ok(foodType);
+            return Ok(_mapper.Map(foodType));
         }
 
         // PUT: api/FoodTypes/5
@@ -52,38 +54,17 @@ namespace WebApp.ApiControllers._1._0
         // more details see https://aka.ms/RazorPagesCRUD.
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutFoodType(Guid id, FoodTypeEditDTO foodTypeEditDTO)
+        public async Task<IActionResult> PutFoodType(Guid id, V1DTO.FoodType foodType)
         {
-            if (id != foodTypeEditDTO.Id)
-            {
-                return BadRequest();
-            }
-
-            var foodType = await _uow.FoodTypes.FirstOrDefaultAsync(foodTypeEditDTO.Id, User.UserGuidId());
-            if (foodType == null)
-            {
-                return BadRequest();
-            }
+            foodType.AppUserId = User.UserId();
             
-            foodType.Name = foodTypeEditDTO.Name;
-
-            _uow.FoodTypes.Update(foodType);
-
-            try
+            if (id != foodType.Id)
             {
-                await _uow.SaveChangesAsync();
+                return BadRequest();
             }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!await _uow.FoodTypes.ExistsAsync(id, User.UserGuidId()))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+
+            await _bll.FoodTypes.UpdateAsync(_mapper.Map(foodType), User.UserId());
+            await _bll.SaveChangesAsync();
 
             return NoContent();
         }
@@ -93,34 +74,33 @@ namespace WebApp.ApiControllers._1._0
         // more details see https://aka.ms/RazorPagesCRUD.
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
         [HttpPost]
-        public async Task<ActionResult<FoodType>> PostFoodType(FoodTypeCreateDTO foodTypeCreateDTO)
+        public async Task<ActionResult<V1DTO.FoodType>> PostFoodType(V1DTO.FoodType foodType)
         {
-            var foodType = new FoodType
-            {
-                Id = foodTypeCreateDTO.Id,
-                AppUserId = User.UserGuidId(),
-                Name = foodTypeCreateDTO.Name,
-            };
-            
-            _uow.FoodTypes.Add(foodType);
-            await _uow.SaveChangesAsync();
+            foodType.AppUserId = User.UserId();
 
-            return CreatedAtAction("GetFoodType", new { id = foodType.Id }, foodType);
+            var bllEntity = _mapper.Map(foodType);
+            _bll.FoodTypes.Add(bllEntity);
+            await _bll.SaveChangesAsync();
+            foodType.Id = bllEntity.Id;
+            
+            return CreatedAtAction("GetFoodType",
+                new { id = foodType.Id, version = HttpContext.GetRequestedApiVersion()?.ToString() ?? "0" },
+                foodType);
         }
 
         // DELETE: api/FoodTypes/5
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
         [HttpDelete("{id}")]
-        public async Task<ActionResult<FoodType>> DeleteFoodType(Guid id)
+        public async Task<ActionResult<V1DTO.FoodType>> DeleteFoodType(Guid id)
         {
-            var foodType = await _uow.FoodTypes.FirstOrDefaultAsync(id, User.UserGuidId());
+            var foodType = await _bll.FoodTypes.FirstOrDefaultAsync(id, User.UserId());
             if (foodType == null)
             {
-                return NotFound();
+                return NotFound(new {message = "FoodType not found"});
             }
 
-            _uow.FoodTypes.Remove(foodType);
-            await _uow.SaveChangesAsync();
+            await _bll.FoodTypes.RemoveAsync(foodType);
+            await _bll.SaveChangesAsync();
 
             return Ok(foodType);
         }

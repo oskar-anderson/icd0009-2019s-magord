@@ -5,7 +5,9 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using Microsoft.VisualStudio.Web.CodeGeneration.Contracts.Messaging;
+using PublicApi.DTO.v1;
+using PublicApi.DTO.v1.Identity;
+
 
 namespace WebApp.ApiControllers._1._0.Identity
 {
@@ -15,12 +17,12 @@ namespace WebApp.ApiControllers._1._0.Identity
     public class AccountController : ControllerBase
     {
         private readonly IConfiguration _configuration;
-        private readonly UserManager<AppUser> _userManager;
+        private readonly UserManager<Domain.Identity.AppUser> _userManager;
         private readonly ILogger<AccountController> _logger;
-        private readonly SignInManager<AppUser> _signInManager;
+        private readonly SignInManager<Domain.Identity.AppUser> _signInManager;
 
-        public AccountController(IConfiguration configuration, UserManager<AppUser> userManager,
-            ILogger<AccountController> logger, SignInManager<AppUser> signInManager)
+        public AccountController(IConfiguration configuration, UserManager<Domain.Identity.AppUser> userManager,
+            SignInManager<Domain.Identity.AppUser> signInManager, ILogger<AccountController> logger)
         {
             _configuration = configuration;
             _userManager = userManager;
@@ -86,7 +88,7 @@ namespace WebApp.ApiControllers._1._0.Identity
         }
         
         [HttpPost]
-        public async Task<ActionResult<string>> Login([FromBody] LoginDTO model)
+        public async Task<ActionResult> Login([FromBody] LoginDTO model)
         {
             var appUser = await _userManager.FindByEmailAsync(model.Email);
             if (appUser == null)
@@ -126,14 +128,16 @@ namespace WebApp.ApiControllers._1._0.Identity
                 return StatusCode(404, new {message = "User already registered!"});
             }
             
-            appUser = new AppUser() 
+            appUser = new Domain.Identity.AppUser() 
             {
                 UserName = model.Email, 
                 Email = model.Email
             };
             
             var result = await _userManager.CreateAsync(appUser, model.Password);
-            //await _userManager.AddToRoleAsync(appUser, "User");
+            
+            // Adds the registered user to the User role
+            await _userManager.AddToRoleAsync(appUser, "User");
 
             if (!result.Succeeded)
             {
@@ -153,31 +157,6 @@ namespace WebApp.ApiControllers._1._0.Identity
 
             _logger.LogInformation($"Web-Api register. User {appUser.Email} registration successful!");
             return Ok(new {token = jwt, status = $"User {appUser.Email} created and logged in!"});
-        }
-
-        public class LoginDTO
-        {
-            public string Email { get; set; } = default!;
-            public string Password { get; set; } = default!;
-        }
-
-        public class RegisterDTO
-        {
-            public string Email { get; set; } = default!;
-            public string Password { get; set; } = default!;
-        }
-
-        public class ChangeEmailDTO
-        {
-            public string Email { get; set; } = default!;
-            public string NewEmail { get; set; } = default!;
-        }
-
-        public class ChangePasswordDTO
-        {
-            public string Email { get; set; } = default!;
-            public string OldPassword { get; set; } = default!;
-            public string NewPassword { get; set; } = default!;
         }
     }
 }

@@ -3,22 +3,40 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Contracts.DAL.App.Repositories;
-using DAL.Base.EF.Mappers;
+using DAL.App.DTO;
 using DAL.Base.EF.Repositories;
+using DAL.Base.Mappers;
 using Microsoft.EntityFrameworkCore;
 
 namespace DAL.App.EF.Repositories
 {
-    public class OrderRepository : EFBaseRepository<AppDbContext, Domain.Order, DAL.App.DTO.Order>, IOrderRepository
+    public class OrderRepository : EFBaseRepository<AppDbContext, Domain.Identity.AppUser, Domain.Order, DAL.App.DTO.Order>, IOrderRepository
     {
         public OrderRepository(AppDbContext dbContext) : base(dbContext,
-            new BaseDALMapper<Domain.Order, DAL.App.DTO.Order>())
+            new BaseMapper<Domain.Order, DAL.App.DTO.Order>())
         {
         }
 
-        public async Task<IEnumerable<DAL.App.DTO.Order>> AllAsync(Guid? userId = null)
+        public override async Task<IEnumerable<Order>> GetAllAsync(object? userId = null, bool noTracking = true)
         {
-            var query = RepoDbSet
+            var query = PrepareQuery(userId, noTracking);
+            query = query
+                .Include(o => o.Person)
+                .Include(o => o.Restaurant)
+                .Include(o => o.Ingredient)
+                .Include(o => o.Food)
+                .Include(o => o.Drink)
+                .Include(o => o.AppUser)
+                .Include(o => o.OrderType);
+            var domainEntities = await query.ToListAsync();
+            var result = domainEntities.Select(e => Mapper.Map(e));
+            return result;
+        }
+
+        public override async Task<Order> FirstOrDefaultAsync(Guid id, object? userId = null, bool noTracking = true)
+        {
+            var query = PrepareQuery(userId, noTracking);
+            query = query
                 .Include(o => o.Person)
                 .Include(o => o.Restaurant)
                 .Include(o => o.Ingredient)
@@ -26,61 +44,10 @@ namespace DAL.App.EF.Repositories
                 .Include(o => o.Drink)
                 .Include(o => o.AppUser)
                 .Include(o => o.OrderType)
-                .AsQueryable();
-            
-            if (userId == null)
-            {
-                return await base.AllAsync();
-            }
-
-            return (await query.Where(o => o.AppUserId == userId && o.Drink!.AppUserId == userId &&
-                                           o.Person!.AppUserId == userId && o.OrderType!.AppUserId == userId).ToListAsync())
-                .Select(domainEntity => Mapper.Map(domainEntity));
-        }
-
-        public async Task<DAL.App.DTO.Order> FirstOrDefaultAsync(Guid id, Guid? userId = null)
-        {
-            var query = RepoDbSet
-                .Include(o => o.Person)
-                .Include(o => o.Restaurant)
-                .Include(o => o.Ingredient)
-                .Include(o => o.Food)
-                .Include(o => o.Drink)
-                .Include(o => o.AppUser)
-                .Include(o => o.OrderType)
-                .Where(o => o.Id == id).AsQueryable()
-                .AsQueryable();
-            
-            if (userId != null)
-            {
-                query = query.Where(o => o.AppUserId == userId && o.Drink!.AppUserId == userId
-                                                               && o.Person!.AppUserId == userId && o.OrderType!.AppUserId == userId);
-            }
-
-            return Mapper.Map(await query.FirstOrDefaultAsync());
-        }
-
-        public async Task<bool> ExistsAsync(Guid id, Guid? userId = null)
-        {
-            if (userId == null)
-            {
-                return await RepoDbSet.AnyAsync(o => o.Id == id);
-            }
-
-            return await RepoDbSet.AnyAsync(b => b.Id == id && b.AppUserId == userId);
-        }
-
-        public async Task DeleteAsync(Guid id, Guid? userId = null)
-        {
-            var query = RepoDbSet.Where(a => a.Id == id).AsQueryable();
-            if (userId != null)
-            {
-                query = query.Where(a => a.AppUserId == userId);
-            }
-
-            var order = await query.AsNoTracking().FirstOrDefaultAsync();
-            base.Remove(order.Id);
-
+                .Where(r => r.Id == id);
+            var domainEntity = await query.FirstOrDefaultAsync(e => e.Id.Equals(id));
+            var result = Mapper.Map(domainEntity);
+            return result;
         }
         
         /*

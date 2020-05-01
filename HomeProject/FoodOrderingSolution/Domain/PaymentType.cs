@@ -6,12 +6,7 @@ using DAL.Base;
 
 namespace Domain
 {
-    public class PaymentType : PaymentType<Guid>, IDomainEntityBaseMetadata
-    {
-    }
-    
-    public class PaymentType<TKey> : DomainEntityBaseMetadata<TKey>
-        where TKey : IEquatable<TKey>
+    public class PaymentType : DomainEntityIdMetadata
     {
         [MaxLength(128)] [MinLength(1)] public string Name { get; set; } = default!;
 

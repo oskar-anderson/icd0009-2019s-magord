@@ -3,52 +3,45 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Contracts.DAL.App.Repositories;
-using DAL.Base.EF.Mappers;
+using DAL.App.DTO;
+using DAL.App.EF.Mappers;
 using DAL.Base.EF.Repositories;
+using DAL.Base.Mappers;
 using Microsoft.EntityFrameworkCore;
 
 
 namespace DAL.App.EF.Repositories
 {
-    public class AreaRepository : EFBaseRepository<AppDbContext, Domain.Area, DAL.App.DTO.Area>, IAreaRepository
+    public class AreaRepository : EFBaseRepository<AppDbContext, Domain.Identity.AppUser, Domain.Area, DAL.App.DTO.Area>, IAreaRepository
     {
         public AreaRepository(AppDbContext dbContext) : base(dbContext,
-            new BaseDALMapper<Domain.Area, DAL.App.DTO.Area>())
+            new DALMapper<Domain.Area, DAL.App.DTO.Area>())
         {
         }
 
-        public new async Task<IEnumerable<DAL.App.DTO.Area>>  AllAsync()
+        public override async Task<IEnumerable<Area>> GetAllAsync(object? userId = null, bool noTracking = true)
         {
-            var query = RepoDbSet
+            var query = PrepareQuery(userId, noTracking);
+            query = query
                 .Include(a => a.Town)
-                .AsQueryable();
-
-            return (await query.ToListAsync()).Select(domainEntity => Mapper.Map(domainEntity));
+                .ThenInclude(a => a!.Name);
+            var domainEntities = await query.ToListAsync();
+            var result = domainEntities.Select(e => Mapper.Map(e));
+            return result;
         }
 
-
-        public async Task<DAL.App.DTO.Area> FirstOrDefaultAsync(Guid id)
+        public override async Task<Area> FirstOrDefaultAsync(Guid id, object? userId = null, bool noTracking = true)
         {
-            var query = RepoDbSet
+            var query = PrepareQuery(userId, noTracking);
+            query = query
                 .Include(a => a.Town)
-                .Where(a => a.Id == id)
-                .AsQueryable();
-
-            return Mapper.Map(await query.FirstOrDefaultAsync());
+                .ThenInclude(a => a!.Name)
+                .Where(r => r.Id == id);
+            var domainEntity = await query.FirstOrDefaultAsync(e => e.Id.Equals(id));
+            var result = Mapper.Map(domainEntity);
+            return result;
         }
 
-        public async Task<bool> ExistsAsync(Guid id)
-        {
-            return await RepoDbSet.AnyAsync(a => a.Id == id);
-        }
-
-
-        public async Task DeleteAsync(Guid id)
-        {
-            var area = await FirstOrDefaultAsync(id);
-            base.Remove(area);
-        }
-        
         /*
         public async Task<IEnumerable<AreaDTO>> DTOAllAsync()
         {

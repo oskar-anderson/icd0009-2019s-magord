@@ -6,12 +6,7 @@ using DAL.Base;
 
 namespace Domain
 {
-    public class ContactType : ContactType<Guid>, IDomainEntityBaseMetadata
-    {
-    }
-    
-    public class ContactType<TKey> : DomainEntityBaseMetadata<TKey>
-        where TKey : IEquatable<TKey>
+    public class ContactType : DomainEntityIdMetadata
     {
         [MaxLength(256)] [MinLength(1)] public string Name { get; set; } = default!;
 

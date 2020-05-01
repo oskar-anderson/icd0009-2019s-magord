@@ -6,12 +6,7 @@ using DAL.Base;
 
 namespace Domain
 {
-    public class Food : Food<Guid>, IDomainEntityBaseMetadata
-    {
-    }
-    
-    public class Food<TKey> : DomainEntityBaseMetadata<TKey>
-        where TKey : IEquatable<TKey>
+    public class Food : DomainEntityIdMetadata
     {
         [MaxLength(1024)]
         public string? Description { get; set; }
@@ -22,7 +17,7 @@ namespace Domain
 
         public float Size { get; set; } = default!;
         
-        public TKey FoodTypeId { get; set; } = default!;
+        public Guid FoodTypeId { get; set; } = default!;
         public FoodType? FoodType { get; set; }
 
         public ICollection<Ingredient>? Ingredients { get; set; }
@@ -30,6 +25,5 @@ namespace Domain
         public ICollection<Order>? Orders { get; set; }
 
         public ICollection<Price>? Prices { get; set; }
-
     }
 }

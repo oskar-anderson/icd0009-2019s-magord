@@ -5,11 +5,13 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <PackageReference Include="AutoMapper" Version="9.0.0" />
       <PackageReference Include="System.ComponentModel.Annotations" Version="4.7.0" />
     </ItemGroup>
 
     <ItemGroup>
       <ProjectReference Include="..\BLL.App.DTO\BLL.App.DTO.csproj" />
+      <ProjectReference Include="..\DAL.Base\DAL.Base.csproj" />
     </ItemGroup>
 
 </Project>

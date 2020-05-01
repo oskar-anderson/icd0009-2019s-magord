@@ -9,56 +9,89 @@ using Contracts.DAL.Base.Repositories;
 
 namespace BLL.Base.Services
 {
-    public class BaseEntityService<TServiceRepository, TUnitOfWork, TDALEntity, TBLLEntity> : BaseService,
-        IBaseEntityService<TBLLEntity>
-        where TBLLEntity : class, IDomainBaseEntity<Guid>, new()
-        where TDALEntity : class, IDomainBaseEntity<Guid>, new()
-        where TUnitOfWork : IBaseUnitOfWork
-        where TServiceRepository : IBaseRepository<TDALEntity>
-
+    public class BaseEntityService<TUOW, TRepository, TMapper, TDALEntity, TBLLEntity> : 
+        BaseEntityService<Guid, TUOW, TRepository, TMapper, TDALEntity, TBLLEntity>, IBaseEntityService<TBLLEntity>
+        where TDALEntity : class, IDomainEntityId<Guid>, new()
+        where TBLLEntity : class, IDomainEntityId<Guid>, new()
+        where TUOW : IBaseUnitOfWork, IBaseEntityTracker
+        where TRepository : IBaseRepository<Guid, TDALEntity>
+        where TMapper : IBaseMapper<TDALEntity, TBLLEntity>
     {
-        protected readonly TUnitOfWork ServiceUnitOfWork;
-        protected readonly IBaseBLLMapper<TDALEntity, TBLLEntity> Mapper;
-        protected readonly TServiceRepository ServiceRepository;
-
-        public BaseEntityService(TUnitOfWork unitOfWork, IBaseBLLMapper<TDALEntity, TBLLEntity> mapper,
-            TServiceRepository serviceRepository)
+        public BaseEntityService(TUOW uow, TRepository repository,
+            TMapper mapper) : base(uow, repository, mapper)
         {
-            ServiceUnitOfWork = unitOfWork;
-            ServiceRepository = serviceRepository;
-            Mapper = mapper;
+        }
+    }
+    
+    public class BaseEntityService<TKey, TUOW, TRepository, TMapper, TDALEntity, TBLLEntity> : IBaseEntityService<TKey, TBLLEntity>
+        where TKey : IEquatable<TKey>
+        where TDALEntity : class, IDomainEntityId<TKey>, new()
+        where TBLLEntity : class, IDomainEntityId<TKey>, new()
+        where TUOW : IBaseUnitOfWork, IBaseEntityTracker<TKey>
+        where TRepository : IBaseRepository<TKey, TDALEntity>
+        where TMapper : IBaseMapper<TDALEntity, TBLLEntity>
+    {
+        protected readonly TUOW UOW;
+        protected readonly TRepository Repository;
+        protected readonly TMapper Mapper;
 
-            // TODO - NOT POSSIBLE - we have no idea of what DAL actually is.
-            // we have now BaseRepository implementation - cant call new on it
-            // or asc for func methodToCreateRepo to create the correct repo
-            //ServiceRepository = ServiceUnitOfWork.GetRepository<IBaseRepository<TDALEntity>>(methodToCreateRepo);
+        public BaseEntityService(TUOW uow, TRepository repository, TMapper mapper)
+        {
+            UOW = uow;
+            Repository = repository;
+            Mapper = mapper;
         }
 
+        public virtual async Task<IEnumerable<TBLLEntity>> GetAllAsync(object? userId = null, bool noTracking = true)
+        {
+            var dalEntities = await Repository.GetAllAsync(userId, noTracking);
+            var result = dalEntities.Select(e => Mapper.Map(e));
+            return result;
+        }
 
-        public virtual IEnumerable<TBLLEntity> All() =>
-            ServiceRepository.All().Select(entity => Mapper.Map<TDALEntity, TBLLEntity>(entity));
+        public virtual async  Task<TBLLEntity> FirstOrDefaultAsync(TKey id, object? userId = null, bool noTracking = true)
+        {
+            var dalEntity = await Repository.FirstOrDefaultAsync(id, userId, noTracking);
+            var result = Mapper.Map(dalEntity);
+            return result;
+        }
 
-        public virtual async Task<IEnumerable<TBLLEntity>> AllAsync() =>
-            (await ServiceRepository.AllAsync()).Select(entity => Mapper.Map<TDALEntity, TBLLEntity>(entity));
+        public TBLLEntity Add(TBLLEntity entity)
+        {
+            var dalEntity = Mapper.Map(entity);
+            var trackedDALEntity = Repository.Add(dalEntity);
+            UOW.AddToEntityTracker(trackedDALEntity, entity);
+            var result = Mapper.Map(trackedDALEntity);
+            return result;
+        }
 
-        public virtual TBLLEntity Find(params object[] id) =>
-            Mapper.Map<TDALEntity, TBLLEntity>(ServiceRepository.Find(id));
+        public virtual async  Task<TBLLEntity> UpdateAsync(TBLLEntity entity, object? userId = null)
+        {
+            var dalEntity = Mapper.Map(entity);
+            var resultDALEntity = await Repository.UpdateAsync(dalEntity, userId);
+            var result = Mapper.Map(resultDALEntity);
+            return result;
+        }
 
-        public virtual async Task<TBLLEntity> FindAsync(params object[] id) =>
-            Mapper.Map<TDALEntity, TBLLEntity>(await ServiceRepository.FindAsync(id));
+        public virtual async  Task<TBLLEntity> RemoveAsync(TBLLEntity entity, object? userId = null)
+        {
+            var dalEntity = Mapper.Map(entity);
+            var resultDALEntity = await Repository.RemoveAsync(dalEntity, userId);
+            var result = Mapper.Map(resultDALEntity);
+            return result;
+        }
 
-        public virtual TBLLEntity Add(TBLLEntity entity) =>
-            Mapper.Map<TDALEntity, TBLLEntity>(ServiceRepository.Add(Mapper.Map<TBLLEntity, TDALEntity>(entity)));
+        public virtual async  Task<TBLLEntity> RemoveAsync(TKey id, object? userId = null)
+        {
+            var resultDALEntity = await Repository.RemoveAsync(id, userId);
+            var result = Mapper.Map(resultDALEntity);
+            return result;
+        }
 
-        public virtual TBLLEntity Update(TBLLEntity entity) =>
-            Mapper.Map<TDALEntity, TBLLEntity>(ServiceRepository.Update(Mapper.Map<TBLLEntity, TDALEntity>(entity)));
-
-
-        public virtual TBLLEntity Remove(TBLLEntity entity) =>
-            Mapper.Map<TDALEntity, TBLLEntity>(ServiceRepository.Remove(Mapper.Map<TBLLEntity, TDALEntity>(entity)));
-
-
-        public virtual TBLLEntity Remove(params object[] id) =>
-            Mapper.Map<TDALEntity, TBLLEntity>(ServiceRepository.Remove(id));
+        public virtual async  Task<bool> ExistsAsync(TKey id, object? userId = null)
+        {
+            var result = await Repository.ExistsAsync(id, userId);
+            return result;
+        }
     }
 }

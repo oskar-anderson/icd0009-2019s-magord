@@ -38,7 +38,7 @@ namespace DAL.App.EF.Helpers
             
 
             var userName = "magord@ttu.ee";
-            var passWord = "Kala.2020";
+            var passWord = "Kala.maja.2020";
 
             var user = userManager.FindByNameAsync(userName).Result;
             if (user == null)

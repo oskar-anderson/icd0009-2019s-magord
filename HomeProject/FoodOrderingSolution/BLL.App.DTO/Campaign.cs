@@ -5,25 +5,14 @@ using Contracts.DAL.Base;
 namespace BLL.App.DTO
 {
     
-    public class Campaign : Campaign<Guid>, IDomainEntityId
+    public class Campaign : IDomainEntityId
     {
-        
-    }
-    public class Campaign<TKey> : IDomainBaseEntity<TKey>
-        where TKey: IEquatable<TKey>
-
-    {
-        public TKey Id { get; set; } = default!;
+        public Guid Id { get; set; } = default!;
         
         public string From { get; set; } = default!;
-
         public string To { get; set; } = default!;
-        
         public string Name { get; set; } = default!;
-        
         public string? Comment { get; set; }
-
         public ICollection<Price>? Prices { get; set; }
     }
-    
 }

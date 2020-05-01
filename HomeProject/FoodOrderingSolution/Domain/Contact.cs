@@ -5,21 +5,15 @@ using DAL.Base;
 
 namespace Domain
 {
-    public class Contact : Contact<Guid>, IDomainEntityBaseMetadata
-    {
-    }
-    
-    public class Contact<TKey> : DomainEntityBaseMetadata<TKey>
-        where TKey : IEquatable<TKey>
+    public class Contact : DomainEntityIdMetadata
     {
         [MaxLength(256)] [MinLength(1)] public string Name { get; set; } = default!;
         
-        public TKey PersonId { get; set; } = default!;
+        public Guid PersonId { get; set; } = default!;
         public Person? Person { get; set; }
         
-        public TKey ContactTypeId { get; set; } = default!;
+        public Guid ContactTypeId { get; set; } = default!;
         public ContactType? ContactType { get; set; }
-
-
     }
+    
 }

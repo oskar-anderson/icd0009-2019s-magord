@@ -27,13 +27,15 @@ namespace DAL.App.EF.Migrations
                         .HasColumnType("datetime(6)");
 
                     b.Property<string>("ChangedBy")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+                        .HasColumnType("varchar(256) CHARACTER SET utf8mb4")
+                        .HasMaxLength(256);
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime(6)");
 
                     b.Property<string>("CreatedBy")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+                        .HasColumnType("varchar(256) CHARACTER SET utf8mb4")
+                        .HasMaxLength(256);
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -56,20 +58,22 @@ namespace DAL.App.EF.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("char(36)");
 
-                    b.Property<Guid?>("AppUserId")
+                    b.Property<Guid>("AppUserId")
                         .HasColumnType("char(36)");
 
                     b.Property<DateTime>("ChangedAt")
                         .HasColumnType("datetime(6)");
 
                     b.Property<string>("ChangedBy")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+                        .HasColumnType("varchar(256) CHARACTER SET utf8mb4")
+                        .HasMaxLength(256);
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime(6)");
 
                     b.Property<string>("CreatedBy")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+                        .HasColumnType("varchar(256) CHARACTER SET utf8mb4")
+                        .HasMaxLength(256);
 
                     b.Property<int>("Number")
                         .HasColumnType("int");
@@ -108,7 +112,8 @@ namespace DAL.App.EF.Migrations
                         .HasColumnType("datetime(6)");
 
                     b.Property<string>("ChangedBy")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+                        .HasColumnType("varchar(256) CHARACTER SET utf8mb4")
+                        .HasMaxLength(256);
 
                     b.Property<string>("Comment")
                         .HasColumnType("varchar(1024) CHARACTER SET utf8mb4")
@@ -118,7 +123,8 @@ namespace DAL.App.EF.Migrations
                         .HasColumnType("datetime(6)");
 
                     b.Property<string>("CreatedBy")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+                        .HasColumnType("varchar(256) CHARACTER SET utf8mb4")
+                        .HasMaxLength(256);
 
                     b.Property<string>("From")
                         .IsRequired()
@@ -148,7 +154,8 @@ namespace DAL.App.EF.Migrations
                         .HasColumnType("datetime(6)");
 
                     b.Property<string>("ChangedBy")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+                        .HasColumnType("varchar(256) CHARACTER SET utf8mb4")
+                        .HasMaxLength(256);
 
                     b.Property<Guid>("ContactTypeId")
                         .HasColumnType("char(36)");
@@ -157,7 +164,8 @@ namespace DAL.App.EF.Migrations
                         .HasColumnType("datetime(6)");
 
                     b.Property<string>("CreatedBy")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+                        .HasColumnType("varchar(256) CHARACTER SET utf8mb4")
+                        .HasMaxLength(256);
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -186,13 +194,15 @@ namespace DAL.App.EF.Migrations
                         .HasColumnType("datetime(6)");
 
                     b.Property<string>("ChangedBy")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+                        .HasColumnType("varchar(256) CHARACTER SET utf8mb4")
+                        .HasMaxLength(256);
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime(6)");
 
                     b.Property<string>("CreatedBy")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+                        .HasColumnType("varchar(256) CHARACTER SET utf8mb4")
+                        .HasMaxLength(256);
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -213,20 +223,22 @@ namespace DAL.App.EF.Migrations
                     b.Property<int>("Amount")
                         .HasColumnType("int");
 
-                    b.Property<Guid?>("AppUserId")
+                    b.Property<Guid>("AppUserId")
                         .HasColumnType("char(36)");
 
                     b.Property<DateTime>("ChangedAt")
                         .HasColumnType("datetime(6)");
 
                     b.Property<string>("ChangedBy")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+                        .HasColumnType("varchar(256) CHARACTER SET utf8mb4")
+                        .HasMaxLength(256);
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime(6)");
 
                     b.Property<string>("CreatedBy")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+                        .HasColumnType("varchar(256) CHARACTER SET utf8mb4")
+                        .HasMaxLength(256);
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -256,13 +268,15 @@ namespace DAL.App.EF.Migrations
                         .HasColumnType("datetime(6)");
 
                     b.Property<string>("ChangedBy")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+                        .HasColumnType("varchar(256) CHARACTER SET utf8mb4")
+                        .HasMaxLength(256);
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime(6)");
 
                     b.Property<string>("CreatedBy")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+                        .HasColumnType("varchar(256) CHARACTER SET utf8mb4")
+                        .HasMaxLength(256);
 
                     b.Property<string>("Description")
                         .HasColumnType("varchar(1024) CHARACTER SET utf8mb4")
@@ -292,20 +306,22 @@ namespace DAL.App.EF.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("char(36)");
 
-                    b.Property<Guid?>("AppUserId")
+                    b.Property<Guid>("AppUserId")
                         .HasColumnType("char(36)");
 
                     b.Property<DateTime>("ChangedAt")
                         .HasColumnType("datetime(6)");
 
                     b.Property<string>("ChangedBy")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+                        .HasColumnType("varchar(256) CHARACTER SET utf8mb4")
+                        .HasMaxLength(256);
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime(6)");
 
                     b.Property<string>("CreatedBy")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+                        .HasColumnType("varchar(256) CHARACTER SET utf8mb4")
+                        .HasMaxLength(256);
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -424,13 +440,15 @@ namespace DAL.App.EF.Migrations
                         .HasColumnType("datetime(6)");
 
                     b.Property<string>("ChangedBy")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+                        .HasColumnType("varchar(256) CHARACTER SET utf8mb4")
+                        .HasMaxLength(256);
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime(6)");
 
                     b.Property<string>("CreatedBy")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+                        .HasColumnType("varchar(256) CHARACTER SET utf8mb4")
+                        .HasMaxLength(256);
 
                     b.Property<Guid>("FoodId")
                         .HasColumnType("char(36)");
@@ -453,20 +471,22 @@ namespace DAL.App.EF.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("char(36)");
 
-                    b.Property<Guid?>("AppUserId")
+                    b.Property<Guid>("AppUserId")
                         .HasColumnType("char(36)");
 
                     b.Property<DateTime>("ChangedAt")
                         .HasColumnType("datetime(6)");
 
                     b.Property<string>("ChangedBy")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+                        .HasColumnType("varchar(256) CHARACTER SET utf8mb4")
+                        .HasMaxLength(256);
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime(6)");
 
                     b.Property<string>("CreatedBy")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+                        .HasColumnType("varchar(256) CHARACTER SET utf8mb4")
+                        .HasMaxLength(256);
 
                     b.Property<Guid>("DrinkId")
                         .HasColumnType("char(36)");
@@ -523,14 +543,15 @@ namespace DAL.App.EF.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("char(36)");
 
-                    b.Property<Guid?>("AppUserId")
+                    b.Property<Guid>("AppUserId")
                         .HasColumnType("char(36)");
 
                     b.Property<DateTime>("ChangedAt")
                         .HasColumnType("datetime(6)");
 
                     b.Property<string>("ChangedBy")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+                        .HasColumnType("varchar(256) CHARACTER SET utf8mb4")
+                        .HasMaxLength(256);
 
                     b.Property<string>("Comment")
                         .HasColumnType("varchar(1024) CHARACTER SET utf8mb4")
@@ -540,7 +561,8 @@ namespace DAL.App.EF.Migrations
                         .HasColumnType("datetime(6)");
 
                     b.Property<string>("CreatedBy")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+                        .HasColumnType("varchar(256) CHARACTER SET utf8mb4")
+                        .HasMaxLength(256);
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -570,13 +592,15 @@ namespace DAL.App.EF.Migrations
                         .HasColumnType("datetime(6)");
 
                     b.Property<string>("ChangedBy")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+                        .HasColumnType("varchar(256) CHARACTER SET utf8mb4")
+                        .HasMaxLength(256);
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime(6)");
 
                     b.Property<string>("CreatedBy")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+                        .HasColumnType("varchar(256) CHARACTER SET utf8mb4")
+                        .HasMaxLength(256);
 
                     b.Property<Guid>("PaymentTypeId")
                         .HasColumnType("char(36)");
@@ -609,13 +633,15 @@ namespace DAL.App.EF.Migrations
                         .HasColumnType("datetime(6)");
 
                     b.Property<string>("ChangedBy")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+                        .HasColumnType("varchar(256) CHARACTER SET utf8mb4")
+                        .HasMaxLength(256);
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime(6)");
 
                     b.Property<string>("CreatedBy")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+                        .HasColumnType("varchar(256) CHARACTER SET utf8mb4")
+                        .HasMaxLength(256);
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -633,20 +659,22 @@ namespace DAL.App.EF.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("char(36)");
 
-                    b.Property<Guid?>("AppUserId")
+                    b.Property<Guid>("AppUserId")
                         .HasColumnType("char(36)");
 
                     b.Property<DateTime>("ChangedAt")
                         .HasColumnType("datetime(6)");
 
                     b.Property<string>("ChangedBy")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+                        .HasColumnType("varchar(256) CHARACTER SET utf8mb4")
+                        .HasMaxLength(256);
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime(6)");
 
                     b.Property<string>("CreatedBy")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+                        .HasColumnType("varchar(256) CHARACTER SET utf8mb4")
+                        .HasMaxLength(256);
 
                     b.Property<string>("DateOfBirth")
                         .IsRequired()
@@ -683,13 +711,15 @@ namespace DAL.App.EF.Migrations
                         .HasColumnType("datetime(6)");
 
                     b.Property<string>("ChangedBy")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+                        .HasColumnType("varchar(256) CHARACTER SET utf8mb4")
+                        .HasMaxLength(256);
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime(6)");
 
                     b.Property<string>("CreatedBy")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+                        .HasColumnType("varchar(256) CHARACTER SET utf8mb4")
+                        .HasMaxLength(256);
 
                     b.Property<string>("From")
                         .IsRequired()
@@ -725,20 +755,22 @@ namespace DAL.App.EF.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("char(36)");
 
-                    b.Property<Guid?>("CampaignId")
+                    b.Property<Guid>("CampaignId")
                         .HasColumnType("char(36)");
 
                     b.Property<DateTime>("ChangedAt")
                         .HasColumnType("datetime(6)");
 
                     b.Property<string>("ChangedBy")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+                        .HasColumnType("varchar(256) CHARACTER SET utf8mb4")
+                        .HasMaxLength(256);
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime(6)");
 
                     b.Property<string>("CreatedBy")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+                        .HasColumnType("varchar(256) CHARACTER SET utf8mb4")
+                        .HasMaxLength(256);
 
                     b.Property<Guid>("DrinkId")
                         .HasColumnType("char(36)");
@@ -796,7 +828,8 @@ namespace DAL.App.EF.Migrations
                         .HasColumnType("datetime(6)");
 
                     b.Property<string>("ChangedBy")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+                        .HasColumnType("varchar(256) CHARACTER SET utf8mb4")
+                        .HasMaxLength(256);
 
                     b.Property<string>("ClosedFrom")
                         .IsRequired()
@@ -806,7 +839,8 @@ namespace DAL.App.EF.Migrations
                         .HasColumnType("datetime(6)");
 
                     b.Property<string>("CreatedBy")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+                        .HasColumnType("varchar(256) CHARACTER SET utf8mb4")
+                        .HasMaxLength(256);
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -830,20 +864,22 @@ namespace DAL.App.EF.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("char(36)");
 
-                    b.Property<Guid?>("AppUserId")
+                    b.Property<Guid>("AppUserId")
                         .HasColumnType("char(36)");
 
                     b.Property<DateTime>("ChangedAt")
                         .HasColumnType("datetime(6)");
 
                     b.Property<string>("ChangedBy")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+                        .HasColumnType("varchar(256) CHARACTER SET utf8mb4")
+                        .HasMaxLength(256);
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime(6)");
 
                     b.Property<string>("CreatedBy")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+                        .HasColumnType("varchar(256) CHARACTER SET utf8mb4")
+                        .HasMaxLength(256);
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -970,7 +1006,8 @@ namespace DAL.App.EF.Migrations
                     b.HasOne("Domain.Identity.AppUser", "AppUser")
                         .WithMany("Bills")
                         .HasForeignKey("AppUserId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.HasOne("Domain.Order", "Order")
                         .WithMany("Bills")
@@ -1005,7 +1042,8 @@ namespace DAL.App.EF.Migrations
                     b.HasOne("Domain.Identity.AppUser", "AppUser")
                         .WithMany()
                         .HasForeignKey("AppUserId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Domain.Food", b =>
@@ -1022,7 +1060,8 @@ namespace DAL.App.EF.Migrations
                     b.HasOne("Domain.Identity.AppUser", "AppUser")
                         .WithMany()
                         .HasForeignKey("AppUserId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Domain.Ingredient", b =>
@@ -1039,7 +1078,8 @@ namespace DAL.App.EF.Migrations
                     b.HasOne("Domain.Identity.AppUser", "AppUser")
                         .WithMany("Orders")
                         .HasForeignKey("AppUserId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.HasOne("Domain.Drink", "Drink")
                         .WithMany("Orders")
@@ -1083,7 +1123,8 @@ namespace DAL.App.EF.Migrations
                     b.HasOne("Domain.Identity.AppUser", "AppUser")
                         .WithMany()
                         .HasForeignKey("AppUserId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Domain.Payment", b =>
@@ -1112,7 +1153,8 @@ namespace DAL.App.EF.Migrations
                     b.HasOne("Domain.Identity.AppUser", "AppUser")
                         .WithMany("Persons")
                         .HasForeignKey("AppUserId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Domain.PersonInRestaurant", b =>
@@ -1135,7 +1177,8 @@ namespace DAL.App.EF.Migrations
                     b.HasOne("Domain.Campaign", "Campaign")
                         .WithMany("Prices")
                         .HasForeignKey("CampaignId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.HasOne("Domain.Drink", "Drink")
                         .WithMany("Prices")
@@ -1176,7 +1219,8 @@ namespace DAL.App.EF.Migrations
                     b.HasOne("Domain.Identity.AppUser", "AppUser")
                         .WithMany()
                         .HasForeignKey("AppUserId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>

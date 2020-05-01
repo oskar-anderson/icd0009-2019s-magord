@@ -6,14 +6,9 @@ using DAL.App.DTO.Identity;
 
 namespace DAL.App.DTO
 {
-    public class Restaurant : Restaurant<Guid>, IDomainEntityId
+    public class Restaurant : IDomainEntityId
     {
-    }
-    
-    public class Restaurant<TKey> : IDomainBaseEntity<TKey>
-        where TKey: IEquatable<TKey>
-    {
-        public TKey Id { get; set; } = default!;
+        public Guid Id { get; set; } = default!;
         
         public string Name { get; set; } = default!;
 
@@ -23,11 +18,12 @@ namespace DAL.App.DTO
 
         public string ClosedFrom { get; set; } = default!;
 
-        public TKey AreaId { get; set; } = default!;
+        public Guid AreaId { get; set; } = default!;
         public Area? Area { get; set; }
 
         public ICollection<PersonInRestaurant>? PersonInRestaurants { get; set; }
 
         public ICollection<Order>? Orders { get; set; }
     }
+    
 }

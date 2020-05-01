@@ -65,6 +65,10 @@ namespace WebApp.Helpers
             var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
             var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
             options.IncludeXmlComments(xmlPath);
+            
+            // use fullname for schemaId - avoids conflicts between classes using the same name (which are in different namespaces)
+            options.CustomSchemaIds(i => i.FullName);
+
         }
     }
 }

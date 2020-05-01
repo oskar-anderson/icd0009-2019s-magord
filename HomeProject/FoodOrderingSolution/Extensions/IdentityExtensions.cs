@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Reflection;
 using System.Security.Claims;
 using System.Text;
 using Microsoft.AspNetCore.Identity;
@@ -12,6 +13,7 @@ namespace Extensions
     public static class IdentityExtensions
     {
         public static TKey UserId<TKey>(this ClaimsPrincipal user)
+            where TKey : struct
         {
             var stringId = user.Claims
                 .Single(c => c.Type == ClaimTypes.NameIdentifier).Value;
@@ -37,7 +39,7 @@ namespace Extensions
             }
         }
 
-        public static Guid UserGuidId(this ClaimsPrincipal user)
+        public static Guid UserId(this ClaimsPrincipal user)
         {
             return user.UserId<Guid>();
         }

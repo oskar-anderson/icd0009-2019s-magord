@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -10,7 +11,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DAL.App.EF
 {
-    public class AppDbContext : IdentityDbContext<AppUser, AppRole, Guid> // Before was DbContext
+    public class AppDbContext : IdentityDbContext<AppUser, AppRole, Guid>, IBaseEntityTracker
     {
         private readonly IUserNameProvider _userNameProvider;
 
@@ -33,16 +34,26 @@ namespace DAL.App.EF
         public DbSet<Campaign> Campaigns { get; set; } = default!;
         public DbSet<Bill> Bills { get; set; } = default!;
 
+        private readonly Dictionary<IDomainEntityId<Guid>, IDomainEntityId<Guid>> _entityTracker =
+            new Dictionary<IDomainEntityId<Guid>, IDomainEntityId<Guid>>();
+        
         public AppDbContext(DbContextOptions<AppDbContext> options, IUserNameProvider userNameProvider)
             : base(options)
         {
             _userNameProvider = userNameProvider;
         }
+        
+        public void AddToEntityTracker(IDomainEntityId<Guid> internalEntity, IDomainEntityId<Guid> externalEntity)
+        {
+            _entityTracker.Add(internalEntity, externalEntity);
+        }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
-
+            
+            // Disabling cascade delete
+            
             foreach (var relationship in builder.Model
                 .GetEntityTypes().SelectMany(e => e.GetForeignKeys()))
             {
@@ -81,16 +92,28 @@ namespace DAL.App.EF
             }
         }
 
+        private void UpdateTrackedEntities()
+        {
+            foreach (var (key, value) in _entityTracker)
+            {
+                value.Id = key.Id;
+            }
+        }
+
         public override int SaveChanges()
         {
             SaveChangesMetadataUpdate();
-            return base.SaveChanges();
+            var result = base.SaveChanges();
+            UpdateTrackedEntities();
+            return result;
         }
 
         public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = new CancellationToken())
         {
             SaveChangesMetadataUpdate();
-            return base.SaveChangesAsync(cancellationToken);
+            var result = base.SaveChangesAsync(cancellationToken);
+            UpdateTrackedEntities();
+            return result;
         }
     }
 }

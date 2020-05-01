@@ -6,14 +6,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace Domain.Identity
 {
-    public class AppUser : AppUser<Guid>
-    {
-        
-    }
-
-    
-    public class AppUser<TKey> : IdentityUser<TKey>
-        where TKey : IEquatable<TKey>
+    public class AppUser : IdentityUser<Guid>, IDomainEntityId
     {
         //public Guid? PersonId { get; set; }
         //public Person? Person { get; set; }

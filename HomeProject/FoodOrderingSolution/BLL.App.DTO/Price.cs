@@ -3,34 +3,31 @@ using Contracts.DAL.Base;
 
 namespace BLL.App.DTO
 {
-    public class Price : Price<Guid>, IDomainEntityId
+    public class Price : IDomainEntityId
     {
-    }
-    
-    public class Price<TKey> : IDomainBaseEntity<TKey>
-        where TKey: IEquatable<TKey>
-    {
-        public TKey Id { get; set; } = default!;
+        public Guid Id { get; set; } = default!;
         
         public string From { get; set; } = default!;
 
         public string To { get; set; } = default!;
         
-        public decimal Value { get; set; } = default!;
+        public decimal Value { get; set; }
 
-        public TKey IngredientId { get; set; } = default!;
+        public Guid IngredientId { get; set; } = default!;
         public Ingredient? Ingredient { get; set; }
 
-        public TKey FoodId { get; set; } = default!;
+        public Guid FoodId { get; set; } = default!;
         public Food? Food { get; set; }
         
-        public TKey DrinkId { get; set; } = default!;
+        public Guid DrinkId { get; set; } = default!;
         public Drink? Drink { get; set; }
         
-        public TKey OrderId { get; set; } = default!;
+        public Guid OrderId { get; set; } = default!;
         public Order? Order { get; set; }
-
-        public TKey CampaignId { get; set; } = default!;
+        
+        public Guid? CampaignId { get; set; }
         public Campaign? Campaign { get; set; }
     }
+    
+    
 }
