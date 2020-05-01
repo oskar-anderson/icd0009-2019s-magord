@@ -16,9 +16,6 @@
             <th>
                 Name
             </th>
-            <th>
-                AreaCount
-            </th>
             <th></th>
         </tr>
     </thead>
@@ -26,9 +23,6 @@
         <tr repeat.for="town of _towns">
             <td>
                 ${town.name}
-            </td>
-            <td>
-                ${town.areaCount}
             </td>
             <td>
                 <a route-href="route: towns-edit; params.bind: { id: town.id }">Edit</a> |

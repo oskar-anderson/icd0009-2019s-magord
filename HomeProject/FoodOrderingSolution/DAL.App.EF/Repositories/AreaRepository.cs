@@ -23,8 +23,7 @@ namespace DAL.App.EF.Repositories
         {
             var query = PrepareQuery(userId, noTracking);
             query = query
-                .Include(a => a.Town)
-                .ThenInclude(a => a!.Name);
+                .Include(a => a.Town);
             var domainEntities = await query.ToListAsync();
             var result = domainEntities.Select(e => Mapper.Map(e));
             return result;
@@ -35,7 +34,6 @@ namespace DAL.App.EF.Repositories
             var query = PrepareQuery(userId, noTracking);
             query = query
                 .Include(a => a.Town)
-                .ThenInclude(a => a!.Name)
                 .Where(r => r.Id == id);
             var domainEntity = await query.FirstOrDefaultAsync(e => e.Id.Equals(id));
             var result = Mapper.Map(domainEntity);

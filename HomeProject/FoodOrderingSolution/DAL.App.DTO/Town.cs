@@ -11,10 +11,7 @@ namespace DAL.App.DTO
         public Guid Id { get; set; }
 
         public string Name { get; set; } = default!;
-
-        public ICollection<Area>? Areas { get; set; }
-        public int AreaCount { get; set; }
-
+        
         public Guid AppUserId { get; set; } 
         public AppUser? AppUser { get; set; }
         

@@ -10,7 +10,5 @@ namespace PublicApi.DTO.v1
         
         [MaxLength(256)] [MinLength(1)] public string Name { get; set; } = default!;
         public Guid AppUserId { get; set; }
-        
-        public int AreaCount { get; set; }
     }
 }
