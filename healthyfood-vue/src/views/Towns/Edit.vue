@@ -21,7 +21,7 @@
                         />
                     </div>
                     <div class="form-group">
-                        <input @click="onSubmit($event)" value="Submit" class="btn btn-primary" />
+                        <input type="submit" @click="onSubmit($event)" value="Submit" class="btn btn-primary" />
                     </div>
                     <div>
                         <router-link :to="{ name: 'Towns' }">Back to List</router-link>

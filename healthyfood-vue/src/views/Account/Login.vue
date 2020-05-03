@@ -1,25 +1,27 @@
 <template>
     <div class="row">
         <div class="col-md-6">
-            <h4>Use a local account to log in.</h4>
-            <h2 style="color: red" v-if="loginWasOk === false">Login failed!</h2>
-            <hr />
-            <div class="form-group">
-                <label for="Input_Email">Email</label>
-                <input v-model="loginInfo.email" class="form-control" type="email" id="Input_Email" />
-            </div>
-            <div class="form-group">
-                <label for="Input_Password">Password</label>
-                <input
-                    v-model="loginInfo.password"
-                    class="form-control"
-                    type="password"
-                    id="Input_Password"
-                />
-            </div>
-            <div class="form-group">
-                <button @click="loginOnClick($event)" type="submit" class="btn btn-primary">Log in</button>
-            </div>
+            <form>
+                <h4>Use a local account to log in.</h4>
+                <h2 style="color: red" v-if="loginWasOk === false">Login failed!</h2>
+                <hr />
+                <div class="form-group">
+                    <label for="Input_Email">Email</label>
+                    <input v-model="loginInfo.email" class="form-control" type="email" id="Input_Email" />
+                </div>
+                <div class="form-group">
+                    <label for="Input_Password">Password</label>
+                    <input
+                        v-model="loginInfo.password"
+                        class="form-control"
+                        type="password"
+                        id="Input_Password"
+                    />
+                </div>
+                <div class="form-group">
+                    <button type="submit" @click="loginOnClick($event)" class="btn btn-primary">Log in</button>
+                </div>
+            </form>
         </div>
     </div>
 </template>
@@ -39,22 +41,22 @@ export default class Login extends Vue {
 
     private loginWasOk: boolean | null = null;
 
-    loginOnClick(): void {
-        if (
-            this.loginInfo.email.length > 0 &&
-            this.loginInfo.password.length > 0
-        ) {
-            store
-                .dispatch("authenticateUser", this.loginInfo)
-                .then((isLoggedIn: boolean) => {
-                    if (isLoggedIn) {
-                        this.loginWasOk = true;
-                        router.push("/");
-                    } else {
-                        this.loginWasOk = false;
-                    }
-                });
+    loginOnClick(event: Event): void | null {
+        event.preventDefault();
+        if (this.loginInfo.email.length < 0 || this.loginInfo.password.length < 0) {
+            this.loginWasOk = false;
+            return null;
         }
+        store
+            .dispatch("authenticateUser", this.loginInfo)
+            .then((isLoggedIn: boolean) => {
+                if (isLoggedIn) {
+                    this.loginWasOk = true;
+                    router.push("/");
+                } else {
+                    this.loginWasOk = false;
+                }
+            });
     }
 
     // ============ Lifecycle methods ==========

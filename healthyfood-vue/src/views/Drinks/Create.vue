@@ -33,7 +33,7 @@
                         />
                     </div>
                     <div class="form-group">
-                        <input @click="onSubmit($event)" value="Create" class="btn btn-primary" />
+                        <input type="submit" @click="onSubmit($event)" value="Create" class="btn btn-primary" />
                     </div>
                     <div>
                         <router-link :to="{ name: 'Drinks' }">Back to List</router-link>

@@ -5,7 +5,7 @@
         <hr />
         <div class="row">
             <div class="col-md-4">
-                <form method="post">
+                <form>
                     <div class="form-group">
                         <label class="control-label" for="Name">Name</label>
                         <input
@@ -17,7 +17,7 @@
                         />
                     </div>
                     <div class="form-group">
-                        <input @click="onSubmit($event)" value="Create" class="btn btn-primary" />
+                        <input type="submit" @click="onSubmit($event)" value="Create" class="btn btn-primary" />
                     </div>
                     <div>
                         <router-link :to="{ name: 'Towns' }">Back to List</router-link>
