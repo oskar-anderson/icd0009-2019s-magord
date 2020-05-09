@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Contracts.DAL.App.Repositories;
 using DAL.App.DTO;
+using DAL.App.EF.Mappers;
 using DAL.Base.EF.Repositories;
 using DAL.Base.Mappers;
 using Microsoft.EntityFrameworkCore;
@@ -14,7 +15,7 @@ namespace DAL.App.EF.Repositories
     public class FoodRepository : EFBaseRepository<AppDbContext, Domain.Identity.AppUser, Domain.Food, DAL.App.DTO.Food>, IFoodRepository
     {
         public FoodRepository(AppDbContext dbContext) : base(dbContext,
-            new BaseMapper<Domain.Food, DAL.App.DTO.Food>())
+            new DALMapper<Domain.Food, DAL.App.DTO.Food>())
         {
         }
 

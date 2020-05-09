@@ -1,4 +1,5 @@
 ﻿using System;
+using BLL.App.DTO.Identity;
 using Contracts.DAL.Base;
 
 namespace BLL.App.DTO
@@ -19,6 +20,9 @@ namespace BLL.App.DTO
         
         public Guid PaymentTypeId { get; set; } = default!;
         public PaymentType? PaymentType { get; set; }
+        
+        public Guid AppUserId { get; set; } 
+        public AppUser? AppUser { get; set; }
     }
     
 }

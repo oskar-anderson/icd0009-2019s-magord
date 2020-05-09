@@ -1,124 +1,147 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
-using Contracts.DAL.App;
-using Domain;
+using Contracts.BLL.App;
+using Extensions;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using PublicApi.DTO.v1.FoodDTOs;
+using PublicApi.DTO.v1.Mappers;
+using V1DTO=PublicApi.DTO.v1;
 
 namespace WebApp.ApiControllers._1._0
 {
-    [Route("api/[controller]")]
+    /// <summary>
+    /// Foods Api Controller
+    /// </summary>
     [ApiController]
+    [ApiVersion( "1.0" )]
+    [Route("api/v{version:apiVersion}/[controller]")]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public class FoodsController : ControllerBase
     {
-        private readonly IAppUnitOfWork _uow;
-
-        public FoodsController(IAppUnitOfWork uow)
+        private readonly IAppBLL _bll;
+        private readonly FoodMapper _mapper = new FoodMapper();
+        
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        public FoodsController(IAppBLL bll)
         {
-            _uow = uow;
+            _bll = bll;
         }
 
-        // GET: api/Foods
+        /// <summary>
+        /// Get a list of all the Food-s
+        /// </summary>
+        /// <returns>List of Foods</returns>
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<FoodDTO>>> GetFoods()
+        [AllowAnonymous]
+        [Produces("application/json")]
+        [Consumes("application/json")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<V1DTO.Food>))]
+        public async Task<ActionResult<IEnumerable<V1DTO.Food>>> GetFoods()
         {
-            var foodDTOs = await _uow.Foods.DTOAllAsync();
-            
-            return Ok(foodDTOs);
+            return Ok((await _bll.Foods.GetAllAsync()).Select(e => _mapper.Map(e)));
         }
 
-        // GET: api/Foods/5
+        /// <summary>
+        /// Get a single Food
+        /// </summary>
+        /// <param name="id">Food Id</param>
+        /// <returns>Food object</returns>
         [HttpGet("{id}")]
-        public async Task<ActionResult<FoodDTO>> GetFood(Guid id)
+        [AllowAnonymous]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(V1DTO.Food))]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<V1DTO.Food>> GetFood(Guid id)
         {
-            var food = await _uow.Foods.DTOFirstOrDefaultAsync(id);
-
+            var food = await _bll.Foods.FirstOrDefaultAsync(id);
+            
             if (food == null)
             {
-                return NotFound();
+                return NotFound(new {message = "Food not found"});
             }
 
-            return Ok(food);
+            return Ok(_mapper.Map(food));
         }
 
-        // PUT: api/Foods/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for
-        // more details see https://aka.ms/RazorPagesCRUD.
+        /// <summary>
+        /// Update the Food
+        /// </summary>
+        /// <param name="id">Food id</param>
+        /// <param name="food">Food object</param>
+        /// <returns></returns>
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutFood(Guid id, FoodEditDTO foodEditDTO)
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
+        [Produces("application/json")]
+        [Consumes("application/json")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> PutFood(Guid id, V1DTO.Food food)
         {
-            if (id != foodEditDTO.Id)
-            {
-                return BadRequest();
-            }
-
-            var food = await _uow.Foods.FirstOrDefaultAsync(foodEditDTO.Id);
-            if (food == null)
-            {
-                return BadRequest();
-            }
-
-            food.Description = foodEditDTO.Description;
-            food.Name = foodEditDTO.Name;
-            food.Amount = foodEditDTO.Amount;
-            food.Size = foodEditDTO.Size;
+            food.AppUserId = User.UserId();
             
-            _uow.Foods.Update(food);
+            if (id != food.Id)
+            {
+                return BadRequest(new {message = "The id and food.id do not match!"});
+            }
 
-            try
-            {
-                await _uow.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!await _uow.Foods.ExistsAsync(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+            await _bll.Foods.UpdateAsync(_mapper.Map(food), User.UserId());
+            await _bll.SaveChangesAsync();
 
             return NoContent();
         }
 
-        // POST: api/Foods
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for
-        // more details see https://aka.ms/RazorPagesCRUD.
+        /// <summary>
+        /// Create a new Food 
+        /// </summary>
+        /// <param name="food">Food object to create</param>
+        /// <returns>Created Food object</returns>
         [HttpPost]
-        public async Task<ActionResult<Food>> PostFood(FoodCreateDTO foodCreateDTO)
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
+        [Produces("application/json")]
+        [Consumes("application/json")]
+        [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(V1DTO.Food))]
+        public async Task<ActionResult<V1DTO.Food>> PostFood(V1DTO.Food food)
         {
-            var food = new Food
-            {
-                Id = foodCreateDTO.Id,
-                Name = foodCreateDTO.Name,
-                Description  = foodCreateDTO.Description,
-                Amount = foodCreateDTO.Amount,
-                Size = foodCreateDTO.Size
-            };
-            
-            _uow.Foods.Add(food);
-            await _uow.SaveChangesAsync();
+            food.AppUserId = User.UserId();
 
-            return CreatedAtAction("GetFood", new { id = food.Id }, food);
+            var bllEntity = _mapper.Map(food);
+            _bll.Foods.Add(bllEntity);
+            await _bll.SaveChangesAsync();
+            food.Id = bllEntity.Id;
+            
+            return CreatedAtAction("GetFood",
+                new { id = food.Id, version = HttpContext.GetRequestedApiVersion()?.ToString() ?? "0" },
+                food);
         }
 
-        // DELETE: api/Foods/5
+        /// <summary>
+        /// Delete an Food
+        /// </summary>
+        /// <param name="id">Food Id</param>
+        /// <returns>Deleted Food object</returns>
         [HttpDelete("{id}")]
-        public async Task<ActionResult<Food>> DeleteFood(Guid id)
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
+        [Produces("application/json")]
+        [Consumes("application/json")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(V1DTO.Food))]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<V1DTO.Food>> DeleteFood(Guid id)
         {
-            var food = await _uow.Foods.FirstOrDefaultAsync(id);
+            var food = await _bll.Foods.FirstOrDefaultAsync(id, User.UserId());
             if (food == null)
             {
-                return NotFound();
+                return NotFound(new {message = "Food not found"});
             }
 
-            _uow.Foods.Remove(food);
-            await _uow.SaveChangesAsync();
+            await _bll.Foods.RemoveAsync(id);
+            await _bll.SaveChangesAsync();
 
             return Ok(food);
         }

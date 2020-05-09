@@ -17,5 +17,8 @@ namespace DAL.App.DTO
 
         public Guid ContactTypeId { get; set; } = default!;
         public ContactType? ContactType { get; set; }
+        
+        public Guid AppUserId { get; set; } 
+        public AppUser? AppUser { get; set; }
     }
 }

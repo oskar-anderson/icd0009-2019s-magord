@@ -1,122 +1,137 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
-using Contracts.DAL.App;
-using Domain;
+using Contracts.BLL.App;
+using Extensions;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using PublicApi.DTO.v1.PersonInRestaurantDTOs;
+using PublicApi.DTO.v1.Mappers;
+using V1DTO=PublicApi.DTO.v1;
 
 namespace WebApp.ApiControllers._1._0
 {
-    [Route("api/[controller]")]
+    /// <summary>
+    /// PersonInRestaurants Api Controller
+    /// </summary>
     [ApiController]
+    [ApiVersion( "1.0" )]
+    [Route("api/v{version:apiVersion}/[controller]")]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public class PersonInRestaurantsController : ControllerBase
     {
-        private readonly IAppUnitOfWork _uow;
-
-        public PersonInRestaurantsController(IAppUnitOfWork uow)
+        private readonly IAppBLL _bll;
+        private readonly PersonInRestaurantMapper _mapper = new PersonInRestaurantMapper();
+        
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        public PersonInRestaurantsController(IAppBLL bll)
         {
-            _uow = uow;
+            _bll = bll;
         }
 
-        // GET: api/PersonInRestaurants
+        /// <summary>
+        /// Get a list of all the Persons in restaurant-s
+        /// </summary>
+        /// <returns>List of PersonsInRestaurants</returns>
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<PersonInRestaurantDTO>>> GetPersonInRestaurants()
+        [Produces("application/json")]
+        [Consumes("application/json")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<V1DTO.PersonInRestaurant>))]
+        public async Task<ActionResult<IEnumerable<V1DTO.PersonInRestaurant>>> GetPersonInRestaurants()
         {
-            var personInRestaurantDTOs = await _uow.PersonsInRestaurants.DTOAllAsync();
-            
-            return Ok(personInRestaurantDTOs);
+            return Ok((await _bll.PersonInRestaurants.GetAllAsync()).Select(e => _mapper.Map(e)));
         }
 
-        // GET: api/PersonInRestaurants/5
+        /// <summary>
+        /// Get a single Person in restaurant
+        /// </summary>
+        /// <param name="id">PersonInRestaurant Id</param>
+        /// <returns>PersonInRestaurant object</returns>
         [HttpGet("{id}")]
-        public async Task<ActionResult<PersonInRestaurantDTO>> GetPersonInRestaurant(Guid id)
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(V1DTO.PersonInRestaurant))]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<V1DTO.PersonInRestaurant>> GetPersonInRestaurant(Guid id)
         {
-            var personInRestaurant = await _uow.PersonsInRestaurants.DTOFirstOrDefaultAsync(id);
-
+            var personInRestaurant = await _bll.PersonInRestaurants.FirstOrDefaultAsync(id);
+            
             if (personInRestaurant == null)
             {
-                return NotFound();
+                return NotFound(new {message = "Person in restaurant not found"});
             }
 
-            return Ok(personInRestaurant);
+            return Ok(_mapper.Map(personInRestaurant));
         }
 
-        // PUT: api/PersonInRestaurants/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for
-        // more details see https://aka.ms/RazorPagesCRUD.
+        /// <summary>
+        /// Update the Person in restaurant
+        /// </summary>
+        /// <param name="id">PersonInRestaurant id</param>
+        /// <param name="personInRestaurant">PersonInRestaurant object</param>
+        /// <returns></returns>
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutPersonInRestaurant(Guid id, PersonInRestaurantEditDTO personInRestaurantEditDTO)
+        public async Task<IActionResult> PutPersonInRestaurant(Guid id, V1DTO.PersonInRestaurant personInRestaurant)
         {
-            if (id != personInRestaurantEditDTO.Id)
+            personInRestaurant.AppUserId = User.UserId();
+            
+            if (id != personInRestaurant.Id)
             {
-                return BadRequest();
+                return BadRequest(new {message = "The id and personInRestaurant.id do not match!"});
             }
 
-            var personInRestaurant = await _uow.PersonsInRestaurants.FirstOrDefaultAsync(personInRestaurantEditDTO.Id);
-            if (personInRestaurant == null)
-            {
-                return BadRequest();
-            }
-
-            personInRestaurant.From = personInRestaurantEditDTO.From;
-            personInRestaurant.To = personInRestaurantEditDTO.To;
-            personInRestaurant.Role = personInRestaurantEditDTO.Role;
-
-            _uow.PersonsInRestaurants.Update(personInRestaurant);
-
-            try
-            {
-                await _uow.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!await _uow.PersonsInRestaurants.ExistsAsync(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+            await _bll.PersonInRestaurants.UpdateAsync(_mapper.Map(personInRestaurant), User.UserId());
+            await _bll.SaveChangesAsync();
 
             return NoContent();
         }
 
-        // POST: api/PersonInRestaurants
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for
-        // more details see https://aka.ms/RazorPagesCRUD.
+        /// <summary>
+        /// Create a new Person in restaurant
+        /// </summary>
+        /// <param name="personInRestaurant">PersonInRestaurant object to create</param>
+        /// <returns>Created PersonInRestaurant object</returns>
         [HttpPost]
-        public async Task<ActionResult<PersonInRestaurant>> PostPersonInRestaurant(PersonInRestaurantCreateDTO personInRestaurantCreateDTO)
+        [Produces("application/json")]
+        [Consumes("application/json")]
+        [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(V1DTO.PersonInRestaurant))]
+        public async Task<ActionResult<V1DTO.PersonInRestaurant>> PostPersonInRestaurant(V1DTO.PersonInRestaurant personInRestaurant)
         {
-            var personInRestaurant = new PersonInRestaurant
-            {
-                Id = personInRestaurantCreateDTO.Id,
-                From = personInRestaurantCreateDTO.From,
-                To = personInRestaurantCreateDTO.To,
-                Role = personInRestaurantCreateDTO.Role
-            };
-            
-            _uow.PersonsInRestaurants.Add(personInRestaurant);
-            await _uow.SaveChangesAsync();
+            personInRestaurant.AppUserId = User.UserId();
 
-            return CreatedAtAction("GetPersonInRestaurant", new { id = personInRestaurant.Id }, personInRestaurant);
+            var bllEntity = _mapper.Map(personInRestaurant);
+            _bll.PersonInRestaurants.Add(bllEntity);
+            await _bll.SaveChangesAsync();
+            personInRestaurant.Id = bllEntity.Id;
+            
+            return CreatedAtAction("GetPersonInRestaurant",
+                new { id = personInRestaurant.Id, version = HttpContext.GetRequestedApiVersion()?.ToString() ?? "0" },
+                personInRestaurant);
         }
 
-        // DELETE: api/PersonInRestaurants/5
+        /// <summary>
+        /// Delete an Person in restaurant
+        /// </summary>
+        /// <param name="id">PersonInRestaurant Id</param>
+        /// <returns>Deleted PersonInRestaurant object</returns>
         [HttpDelete("{id}")]
-        public async Task<ActionResult<PersonInRestaurant>> DeletePersonInRestaurant(Guid id)
+        [Produces("application/json")]
+        [Consumes("application/json")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(V1DTO.PersonInRestaurant))]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<V1DTO.PersonInRestaurant>> DeletePersonInRestaurant(Guid id)
         {
-            var personInRestaurant = await _uow.PersonsInRestaurants.FirstOrDefaultAsync(id);
+            var personInRestaurant = await _bll.PersonInRestaurants.FirstOrDefaultAsync(id, User.UserId());
             if (personInRestaurant == null)
             {
-                return NotFound();
+                return NotFound(new {message = "Person in restaurant not found"});
             }
 
-            _uow.PersonsInRestaurants.Remove(personInRestaurant);
-            await _uow.SaveChangesAsync();
+            await _bll.PersonInRestaurants.RemoveAsync(id);
+            await _bll.SaveChangesAsync();
 
             return Ok(personInRestaurant);
         }

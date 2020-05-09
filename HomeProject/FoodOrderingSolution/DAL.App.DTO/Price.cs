@@ -30,6 +30,9 @@ namespace DAL.App.DTO
         
         public Guid? CampaignId { get; set; }
         public Campaign? Campaign { get; set; }
+        
+        public Guid AppUserId { get; set; } 
+        public AppUser? AppUser { get; set; }
     }
     
     

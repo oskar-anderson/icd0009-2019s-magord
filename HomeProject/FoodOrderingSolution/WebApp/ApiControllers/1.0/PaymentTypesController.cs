@@ -1,118 +1,143 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
-using Contracts.DAL.App;
-using Domain;
+using Contracts.BLL.App;
+using Extensions;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using PublicApi.DTO.v1.PaymentTypeDTOs;
+using PublicApi.DTO.v1.Mappers;
+using V1DTO=PublicApi.DTO.v1;
 
 namespace WebApp.ApiControllers._1._0
 {
-    [Route("api/[controller]")]
+    /// <summary>
+    /// Payment Types Api Controller
+    /// </summary>
     [ApiController]
+    [ApiVersion( "1.0" )]
+    [Route("api/v{version:apiVersion}/[controller]")]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public class PaymentTypesController : ControllerBase
     {
-        private readonly IAppUnitOfWork _uow;
+        private readonly IAppBLL _bll;
+        private readonly PaymentTypeMapper _mapper = new PaymentTypeMapper();
 
-        public PaymentTypesController(IAppUnitOfWork uow)
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        public PaymentTypesController(IAppBLL bll)
         {
-            _uow = uow;
+            _bll = bll;
         }
 
-        // GET: api/PaymentTypes
+        /// <summary>
+        /// Get a list of all the Payment type-s
+        /// </summary>
+        /// <returns>List of PaymentTypes</returns>
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<PaymentTypeDTO>>> GetPaymentTypes()
+        [AllowAnonymous]
+        [Produces("application/json")]
+        [Consumes("application/json")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<V1DTO.PaymentType>))]
+        public async Task<ActionResult<IEnumerable<V1DTO.PaymentType>>> GetPaymentTypes()
         {
-            var paymentTypeDTOs = await _uow.PaymentTypes.DTOAllAsync();
-            
-            return Ok(paymentTypeDTOs);
+            return Ok((await _bll.PaymentTypes.GetAllAsync()).Select(e => _mapper.Map(e)));
         }
 
-        // GET: api/PaymentTypes/5
+        /// <summary>
+        /// Get a single Payment type
+        /// </summary>
+        /// <param name="id">PaymentType Id</param>
+        /// <returns>PaymentType object</returns>
         [HttpGet("{id}")]
-        public async Task<ActionResult<PaymentTypeDTO>> GetPaymentType(Guid id)
+        [AllowAnonymous]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(V1DTO.PaymentType))]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<V1DTO.PaymentType>> GetPaymentType(Guid id)
         {
-            var paymentType = await _uow.PaymentTypes.DTOFirstOrDefaultAsync(id);
-
+            var paymentType = await _bll.PaymentTypes.FirstOrDefaultAsync(id);
+            
             if (paymentType == null)
             {
-                return NotFound();
+                return NotFound(new {message = "Payment type not found"});
             }
 
-            return Ok(paymentType);
+            return Ok(_mapper.Map(paymentType));
         }
 
-        // PUT: api/PaymentTypes/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for
-        // more details see https://aka.ms/RazorPagesCRUD.
+        /// <summary>
+        /// Update the Payment type
+        /// </summary>
+        /// <param name="id">PaymentType id</param>
+        /// <param name="paymentType">PaymentType object</param>
+        /// <returns></returns>
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutPaymentType(Guid id, PaymentTypeEditDTO paymentTypeEditDTO)
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
+        [Produces("application/json")]
+        [Consumes("application/json")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> PutPaymentType(Guid id, V1DTO.PaymentType paymentType)
         {
-            if (id != paymentTypeEditDTO.Id)
+            if (id != paymentType.Id)
             {
-                return BadRequest();
+                return BadRequest(new {message = "The id and paymentType.id do not match!"});
             }
 
-            var paymentType = await _uow.PaymentTypes.FirstOrDefaultAsync(paymentTypeEditDTO.Id);
-            if (paymentType == null)
-            {
-                return BadRequest();
-            }
-
-            paymentType.Name = paymentTypeEditDTO.Name;
-            
-            _uow.PaymentTypes.Update(paymentType);
-
-            try
-            {
-                await _uow.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!await _uow.PaymentTypes.ExistsAsync(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+            await _bll.PaymentTypes.UpdateAsync(_mapper.Map(paymentType), User.UserId());
+            await _bll.SaveChangesAsync();
 
             return NoContent();
         }
 
-        // POST: api/PaymentTypes
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for
-        // more details see https://aka.ms/RazorPagesCRUD.
+        /// <summary>
+        /// Create a new Payment type 
+        /// </summary>
+        /// <param name="paymentType">PaymentType object to create</param>
+        /// <returns>Created PaymentType object</returns>
         [HttpPost]
-        public async Task<ActionResult<PaymentType>> PostPaymentType(PaymentTypeCreateDTO paymentTypeCreateDTO)
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
+        [Produces("application/json")]
+        [Consumes("application/json")]
+        [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(V1DTO.PaymentType))]
+        public async Task<ActionResult<V1DTO.PaymentType>> PostPaymentType(V1DTO.PaymentType paymentType)
         {
-            var paymentType = new PaymentType
-            {
-                Id = paymentTypeCreateDTO.Id,
-                Name = paymentTypeCreateDTO.Name,
-            };
+            var bllEntity = _mapper.Map(paymentType);
+            _bll.PaymentTypes.Add(bllEntity);
+            await _bll.SaveChangesAsync();
+            paymentType.Id = bllEntity.Id;
             
-            _uow.PaymentTypes.Add(paymentType);
-            await _uow.SaveChangesAsync();
-            
-            return CreatedAtAction("GetPaymentType", new { id = paymentType.Id }, paymentType);
+            return CreatedAtAction("GetPaymentType",
+                new { id = paymentType.Id, version = HttpContext.GetRequestedApiVersion()?.ToString() ?? "0" },
+                paymentType);
         }
 
-        // DELETE: api/PaymentTypes/5
+        /// <summary>
+        /// Delete an Payment type
+        /// </summary>
+        /// <param name="id">PaymentType Id</param>
+        /// <returns>Deleted PaymentType object</returns>
         [HttpDelete("{id}")]
-        public async Task<ActionResult<PaymentType>> DeletePaymentType(Guid id)
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
+        [Produces("application/json")]
+        [Consumes("application/json")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(V1DTO.PaymentType))]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<V1DTO.PaymentType>> DeletePaymentType(Guid id)
         {
-            var paymentType = await _uow.PaymentTypes.FirstOrDefaultAsync(id);
+            var paymentType = await _bll.PaymentTypes.FirstOrDefaultAsync(id, User.UserId());
             if (paymentType == null)
             {
-                return NotFound();
+                return NotFound(new {message = "Payment type not found"});
             }
 
-            _uow.PaymentTypes.Remove(paymentType);
-            await _uow.SaveChangesAsync();
+            await _bll.PaymentTypes.RemoveAsync(id);
+            await _bll.SaveChangesAsync();
 
             return Ok(paymentType);
         }

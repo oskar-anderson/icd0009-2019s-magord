@@ -1,122 +1,142 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
-using Contracts.DAL.App;
-using Domain;
+using Contracts.BLL.App;
+using Extensions;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using PublicApi.DTO.v1.PriceDTOs;
+using PublicApi.DTO.v1.Mappers;
+using V1DTO=PublicApi.DTO.v1;
 
 namespace WebApp.ApiControllers._1._0
 {
-    [Route("api/[controller]")]
+    /// <summary>
+    /// Prices Api Controller
+    /// </summary>
     [ApiController]
+    [ApiVersion( "1.0" )]
+    [Route("api/v{version:apiVersion}/[controller]")]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public class PricesController : ControllerBase
     {
-        private readonly IAppUnitOfWork _uow;
-
-        public PricesController(IAppUnitOfWork uow)
+        private readonly IAppBLL _bll;
+        private readonly PriceMapper _mapper = new PriceMapper();
+        
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        public PricesController(IAppBLL bll)
         {
-            _uow = uow;
+            _bll = bll;
         }
-
-        // GET: api/Prices
+        
+        /// <summary>
+        /// Get a list of all the Price-s
+        /// </summary>
+        /// <returns>List of Prices</returns>
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<PriceDTO>>> GetPrices()
+        [Produces("application/json")]
+        [Consumes("application/json")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<V1DTO.Price>))]
+        public async Task<ActionResult<IEnumerable<V1DTO.Price>>> GetPrices()
         {
-            var priceDTOs = await _uow.Prices.DTOAllAsync();
-            
-            return Ok(priceDTOs);
+            return Ok((await _bll.Prices.GetAllAsync()).Select(e => _mapper.Map(e)));
         }
 
-        // GET: api/Prices/5
+        /// <summary>
+        /// Get a single Price
+        /// </summary>
+        /// <param name="id">Price Id</param>
+        /// <returns>Price object</returns>
         [HttpGet("{id}")]
-        public async Task<ActionResult<PriceDTO>> GetPrice(Guid id)
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(V1DTO.Price))]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<V1DTO.Price>> GetPrice(Guid id)
         {
-            var price = await _uow.Prices.DTOFirstOrDefaultAsync(id);
-
+            var price = await _bll.Prices.FirstOrDefaultAsync(id);
+            
             if (price == null)
             {
-                return NotFound();
+                return NotFound(new {message = "Price not found"});
             }
 
-            return Ok(price);
+            return Ok(_mapper.Map(price));
         }
 
-        // PUT: api/Prices/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for
-        // more details see https://aka.ms/RazorPagesCRUD.
+        /// <summary>
+        /// Update the Price
+        /// </summary>
+        /// <param name="id">Price id</param>
+        /// <param name="price">Price object</param>
+        /// <returns></returns>
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutPrice(Guid id, PriceEditDTO priceEditDTO)
+        [Produces("application/json")]
+        [Consumes("application/json")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> PutPrice(Guid id, V1DTO.Price price)
         {
-            if (id != priceEditDTO.Id)
-            {
-                return BadRequest();
-            }
-
-            var price = await _uow.Prices.FirstOrDefaultAsync(priceEditDTO.Id);
-            if (price == null)
-            {
-                return BadRequest();
-            }
-
-            price.From = priceEditDTO.From;
-            price.To = priceEditDTO.To;
-            price.Value = priceEditDTO.Value;
+            price.AppUserId = User.UserId();
             
-            _uow.Prices.Update(price);
+            if (id != price.Id)
+            {
+                return BadRequest(new {message = "The id and price.id do not match!"});
+            }
 
-            try
-            {
-                await _uow.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (await _uow.Prices.ExistsAsync(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+            await _bll.Prices.UpdateAsync(_mapper.Map(price), User.UserId());
+            await _bll.SaveChangesAsync();
 
             return NoContent();
         }
 
-        // POST: api/Prices
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for
-        // more details see https://aka.ms/RazorPagesCRUD.
+        /// <summary>
+        /// Create a new Price 
+        /// </summary>
+        /// <param name="price">Price object to create</param>
+        /// <returns>Created Price object</returns>
         [HttpPost]
-        public async Task<ActionResult<Price>> PostPrice(PriceCreateDTO priceCreateDTO)
+        [Produces("application/json")]
+        [Consumes("application/json")]
+        [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(V1DTO.Price))]
+        public async Task<ActionResult<V1DTO.Price>> PostPrice(V1DTO.Price price)
         {
-            var price = new Price
-            {
-                Id = priceCreateDTO.Id,
-                From = priceCreateDTO.From,
-                To = priceCreateDTO.To,
-                Value = priceCreateDTO.Value,
-            };
-            
-            _uow.Prices.Add(price);
-            await _uow.SaveChangesAsync();
+            price.AppUserId = User.UserId();
 
-            return CreatedAtAction("GetPrice", new { id = price.Id }, price);
+            var bllEntity = _mapper.Map(price);
+            _bll.Prices.Add(bllEntity);
+            await _bll.SaveChangesAsync();
+            price.Id = bllEntity.Id;
+            
+            return CreatedAtAction("GetPrice",
+                new { id = price.Id, version = HttpContext.GetRequestedApiVersion()?.ToString() ?? "0" },
+                price);
         }
 
-        // DELETE: api/Prices/5
+        /// <summary>
+        /// Delete an Price
+        /// </summary>
+        /// <param name="id">Price Id</param>
+        /// <returns>Deleted Price object</returns>
         [HttpDelete("{id}")]
-        public async Task<ActionResult<Price>> DeletePrice(Guid id)
+        [Produces("application/json")]
+        [Consumes("application/json")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(V1DTO.Price))]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<V1DTO.Price>> DeletePrice(Guid id)
         {
-            var price = await _uow.Prices.FirstOrDefaultAsync(id);
+            var price = await _bll.Prices.FirstOrDefaultAsync(id, User.UserId());
             if (price == null)
             {
-                return NotFound();
+                return NotFound(new {message = "Price not found"});
             }
 
-            _uow.Prices.Remove(price);
-            await _uow.SaveChangesAsync();
+            await _bll.Prices.RemoveAsync(id);
+            await _bll.SaveChangesAsync();
 
             return Ok(price);
         }

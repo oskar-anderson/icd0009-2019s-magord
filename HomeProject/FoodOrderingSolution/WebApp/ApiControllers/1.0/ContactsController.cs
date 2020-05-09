@@ -1,119 +1,142 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
-using Contracts.DAL.App;
-using Domain;
+using Contracts.BLL.App;
+using Extensions;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using PublicApi.DTO.v1;
+using PublicApi.DTO.v1.Mappers;
+using V1DTO=PublicApi.DTO.v1;
 
 namespace WebApp.ApiControllers._1._0
 {
-    [Route("api/[controller]")]
+    /// <summary>
+    /// Contacts Api Controller
+    /// </summary>
     [ApiController]
+    [ApiVersion( "1.0" )]
+    [Route("api/v{version:apiVersion}/[controller]")]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public class ContactsController : ControllerBase
     {
-        private readonly IAppUnitOfWork _uow;
+        private readonly IAppBLL _bll;
+        private readonly ContactMapper _mapper = new ContactMapper();
 
-        public ContactsController(IAppUnitOfWork uow)
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        public ContactsController(IAppBLL bll)
         {
-            _uow = uow;
+            _bll = bll;
         }
-
-        // GET: api/Contacts
+        
+        /// <summary>
+        /// Get a list of all the Contact-s
+        /// </summary>
+        /// <returns>List of Contacts</returns>
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<ContactDTO>>> GetContacts()
+        [Produces("application/json")]
+        [Consumes("application/json")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<V1DTO.Contact>))]
+        public async Task<ActionResult<IEnumerable<V1DTO.Contact>>> GetContacts()
         {
-            var contactDTO = await _uow.Contacts.DTOAllAsync();
-            
-            return Ok(contactDTO);
+            return Ok((await _bll.Contacts.GetAllAsync()).Select(e => _mapper.Map(e)));
         }
 
-        // GET: api/Contacts/5
+        /// <summary>
+        /// Get a single Contact
+        /// </summary>
+        /// <param name="id">Contact Id</param>
+        /// <returns>Contact object</returns>
         [HttpGet("{id}")]
-        public async Task<ActionResult<ContactDTO>> GetContact(Guid id)
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(V1DTO.Contact))]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<V1DTO.Contact>> GetContact(Guid id)
         {
-            var contact = await _uow.Contacts.DTOFirstOrDefaultAsync(id);
-
+            var contact = await _bll.Contacts.FirstOrDefaultAsync(id);
+            
             if (contact == null)
             {
-                return NotFound();
+                return NotFound(new {message = "Contact not found"});
             }
 
-            return Ok(contact);
+            return Ok(_mapper.Map(contact));
         }
 
-        // PUT: api/Contacts/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for
-        // more details see https://aka.ms/RazorPagesCRUD.
+        /// <summary>
+        /// Update the Contact
+        /// </summary>
+        /// <param name="id">Contact id</param>
+        /// <param name="contact">Contact object</param>
+        /// <returns></returns>
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutContact(Guid id, ContactEditDTO contactEditDTO)
+        [Produces("application/json")]
+        [Consumes("application/json")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> PutContact(Guid id, V1DTO.Contact contact)
         {
-            if (id != contactEditDTO.Id)
-            {
-                return BadRequest();
-            }
-
-            var contact = await _uow.Contacts.FirstOrDefaultAsync(contactEditDTO.Id);
+            contact.AppUserId = User.UserId();
             
-            if (contact == null)
+            if (id != contact.Id)
             {
-                return BadRequest();
+                return BadRequest(new {message = "The id and contact.id do not match!"});
             }
 
-            contact.Name = contactEditDTO.Name;
-            
-            _uow.Contacts.Update(contact);
-
-            try
-            {
-                await _uow.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!await _uow.Contacts.ExistsAsync(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+            await _bll.Contacts.UpdateAsync(_mapper.Map(contact), User.UserId());
+            await _bll.SaveChangesAsync();
 
             return NoContent();
         }
 
-        // POST: api/Contacts
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for
-        // more details see https://aka.ms/RazorPagesCRUD.
+        /// <summary>
+        /// Create a new Contact 
+        /// </summary>
+        /// <param name="contact">Contact object to create</param>
+        /// <returns>Created Contact object</returns>
         [HttpPost]
-        public async Task<ActionResult<Contact>> PostContact(ContactCreateDTO contactCreateDTO)
+        [Produces("application/json")]
+        [Consumes("application/json")]
+        [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(V1DTO.Contact))]
+        public async Task<ActionResult<V1DTO.Contact>> PostContact(V1DTO.Contact contact)
         {
-            var contact = new Contact
-            {
-                Id = contactCreateDTO.Id,
-                Name = contactCreateDTO.Name,
-            };
-            
-            _uow.Contacts.Add(contact);
-            await _uow.SaveChangesAsync();
+            contact.AppUserId = User.UserId();
 
-            return CreatedAtAction("GetContact", new { id = contact.Id }, contact);
+            var bllEntity = _mapper.Map(contact);
+            _bll.Contacts.Add(bllEntity);
+            await _bll.SaveChangesAsync();
+            contact.Id = bllEntity.Id;
+            
+            return CreatedAtAction("GetContact",
+                new { id = contact.Id, version = HttpContext.GetRequestedApiVersion()?.ToString() ?? "0" },
+                contact);
         }
 
-        // DELETE: api/Contacts/5
+        /// <summary>
+        /// Delete a Contact
+        /// </summary>
+        /// <param name="id">Contact Id</param>
+        /// <returns>Deleted Contact object</returns>
         [HttpDelete("{id}")]
-        public async Task<ActionResult<Contact>> DeleteContact(Guid id)
+        [Produces("application/json")]
+        [Consumes("application/json")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(V1DTO.Contact))]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<V1DTO.Contact>> DeleteContact(Guid id)
         {
-            var contact = await _uow.Contacts.FirstOrDefaultAsync(id);
+            var contact = await _bll.Contacts.FirstOrDefaultAsync(id, User.UserId());
             if (contact == null)
             {
-                return NotFound();
+                return NotFound(new {message = "Contact not found"});
             }
 
-            _uow.Contacts.Remove(contact);
-            await _uow.SaveChangesAsync();
+            await _bll.Contacts.RemoveAsync(id);
+            await _bll.SaveChangesAsync();
 
             return Ok(contact);
         }

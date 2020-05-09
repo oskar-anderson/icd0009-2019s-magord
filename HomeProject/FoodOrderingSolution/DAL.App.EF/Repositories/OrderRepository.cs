@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Contracts.DAL.App.Repositories;
 using DAL.App.DTO;
+using DAL.App.EF.Mappers;
 using DAL.Base.EF.Repositories;
 using DAL.Base.Mappers;
 using Microsoft.EntityFrameworkCore;
@@ -13,7 +14,7 @@ namespace DAL.App.EF.Repositories
     public class OrderRepository : EFBaseRepository<AppDbContext, Domain.Identity.AppUser, Domain.Order, DAL.App.DTO.Order>, IOrderRepository
     {
         public OrderRepository(AppDbContext dbContext) : base(dbContext,
-            new BaseMapper<Domain.Order, DAL.App.DTO.Order>())
+            new DALMapper<Domain.Order, DAL.App.DTO.Order>())
         {
         }
 

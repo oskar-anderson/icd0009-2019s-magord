@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using Contracts.DAL.Base;
 using DAL.Base;
+using Domain.Identity;
 
 namespace Domain
 {
-    public class Area : DomainEntityIdMetadata
+    public class Area : DomainEntityIdMetadataUser<AppUser>
     {
         // If can be null then -> public string? Name { get; set; }
         // If cannot be null then -> public string Name { get; set; } = default!;

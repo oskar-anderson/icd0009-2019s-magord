@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Contracts.DAL.App.Repositories;
 using DAL.App.DTO;
+using DAL.App.EF.Mappers;
 using DAL.Base.EF.Repositories;
 using DAL.Base.Mappers;
 using Microsoft.EntityFrameworkCore;
@@ -14,7 +15,7 @@ namespace DAL.App.EF.Repositories
     public class ContactRepository : EFBaseRepository<AppDbContext, Domain.Identity.AppUser, Domain.Contact, DAL.App.DTO.Contact>, IContactRepository
     {
         public ContactRepository(AppDbContext dbContext) : base(dbContext,
-            new BaseMapper<Domain.Contact, DAL.App.DTO.Contact>())
+            new DALMapper<Domain.Contact, DAL.App.DTO.Contact>())
         {
         }
 

@@ -2,10 +2,11 @@
 using System.ComponentModel.DataAnnotations;
 using Contracts.DAL.Base;
 using DAL.Base;
+using Domain.Identity;
 
 namespace Domain
 {
-    public class PersonInRestaurant : DomainEntityIdMetadata
+    public class PersonInRestaurant : DomainEntityIdMetadataUser<AppUser>
     {
         public string From { get; set; } = default!;
 

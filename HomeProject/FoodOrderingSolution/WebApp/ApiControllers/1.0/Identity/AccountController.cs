@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Domain.Identity;
 using Extensions;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -11,6 +12,9 @@ using PublicApi.DTO.v1.Identity;
 
 namespace WebApp.ApiControllers._1._0.Identity
 {
+    /// <summary>
+    /// Api endpoint for registering new user, user log-in and changing password and email
+    /// </summary>
     [ApiController]
     [ApiVersion( "1.0" )]
     [Route("api/v{version:apiVersion}/[controller]/[action]")]
@@ -21,6 +25,13 @@ namespace WebApp.ApiControllers._1._0.Identity
         private readonly ILogger<AccountController> _logger;
         private readonly SignInManager<Domain.Identity.AppUser> _signInManager;
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="configuration"></param>
+        /// <param name="userManager"></param>
+        /// <param name="signInManager"></param>
+        /// <param name="logger"></param>
         public AccountController(IConfiguration configuration, UserManager<Domain.Identity.AppUser> userManager,
             SignInManager<Domain.Identity.AppUser> signInManager, ILogger<AccountController> logger)
         {
@@ -30,14 +41,22 @@ namespace WebApp.ApiControllers._1._0.Identity
             _signInManager = signInManager;
         }
         
+        /// <summary>
+        /// Endpoint for user change-password (jwt generation)
+        /// </summary>
+        /// <param name="model">user data</param>
+        /// <returns></returns>
         [HttpPost]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordDTO model)
         {
             var user = await _userManager.FindByEmailAsync(model.Email);
             if (user == null)
             {
                 _logger.LogInformation($"Web-Api email change. User {model.Email} not found!");
-                return StatusCode(403);
+                return StatusCode(404, new {message = "Changing user password failed! User not found!"});
             }
 
             var result = await _userManager.ChangePasswordAsync(user, model.OldPassword, model.NewPassword);
@@ -55,17 +74,25 @@ namespace WebApp.ApiControllers._1._0.Identity
             }
             
             _logger.LogInformation("Your password is remains unchanged!");
-            return StatusCode(403);
+            return StatusCode(400, new {message = "User password not changed!"});
         }
 
+        /// <summary>
+        /// Endpoint for user change-email (jwt generation)
+        /// </summary>
+        /// <param name="model">user data</param>
+        /// <returns></returns>
         [HttpPost]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> ChangeEmail([FromBody] ChangeEmailDTO model)
         {
             var user = await _userManager.FindByEmailAsync(model.Email);
             if (user == null)
             {
                 _logger.LogInformation($"Web-Api email change. User {model.Email} not found!");
-                return StatusCode(403);
+                return StatusCode(404, new {message = "Changing user email failed! User not found!"});
             }
 
             var token = await _userManager.GenerateChangeEmailTokenAsync(user, model.NewEmail);
@@ -79,14 +106,24 @@ namespace WebApp.ApiControllers._1._0.Identity
                     _configuration["JWT:Issuer"],
                     _configuration.GetValue<int>("JWT:ExpirationInDays")
                 );
-                _logger.LogInformation($"Token generated for user {model.NewEmail}");
+                _logger.LogInformation($"New token generated for user {model.NewEmail}");
                 return Ok(new {token = jwt, status = "Email changed!"});
             }
             
-            _logger.LogInformation("Your email is remains unchanged!");
-            return StatusCode(403);
+            _logger.LogInformation("Your email remains unchanged!");
+            return StatusCode(400, new {message = "User email not changed!"});
         }
         
+        /// <summary>
+        /// Endpoint for user log-in (jwt generation)
+        /// </summary>
+        /// <param name="model">login data</param>
+        /// <returns></returns>
+        [HttpPost]
+        [Produces("application/json")]
+        [Consumes("application/json")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [HttpPost]
         public async Task<ActionResult> Login([FromBody] LoginDTO model)
         {
@@ -94,14 +131,13 @@ namespace WebApp.ApiControllers._1._0.Identity
             if (appUser == null)
             {
                 _logger.LogInformation($"Web-Api login. User {model.Email} not found!");
-                //return StatusCode(403);
-                return StatusCode(403, new {message = "Login failed! User not found!"});
+                return StatusCode(404, new {message = "Login failed! User not found!"});
             }
 
             var result = await _signInManager.CheckPasswordSignInAsync(appUser, model.Password, false);
             if (result.Succeeded)
             {
-                var claimsPrincipal = await _signInManager.CreateUserPrincipalAsync(appUser); //get the User analog
+                var claimsPrincipal = await _signInManager.CreateUserPrincipalAsync(appUser);
                 var jwt = IdentityExtensions.GenerateJWT(claimsPrincipal.Claims,
                     _configuration["JWT:SigningKey"],
                     _configuration["JWT:Issuer"],
@@ -112,12 +148,21 @@ namespace WebApp.ApiControllers._1._0.Identity
             }
 
             _logger.LogInformation($"Web-Api login. User {model.Email} attempted to log-in with bad password!");
-            //return StatusCode(403);
             return StatusCode(404, new {message = "User not found!"});
         }
 
 
+        /// <summary>
+        /// Endpoint for user registration and immediate log-in (jwt generation) 
+        /// </summary>
+        /// <param name="model">user data</param>
+        /// <returns></returns>
         [HttpPost]
+        [Produces("application/json")]
+        [Consumes("application/json")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<string>> Register([FromBody] RegisterDTO model)
         {
             
@@ -142,7 +187,7 @@ namespace WebApp.ApiControllers._1._0.Identity
             if (!result.Succeeded)
             {
                 _logger.LogInformation($"Web-Api register. User {model.Email} registration failed!");
-                return StatusCode(403, new {message = "Registration failed!"});
+                return StatusCode(400, new {message = "Registration failed!"});
             }
 
             _logger.LogInformation("New user created.");

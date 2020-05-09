@@ -1,127 +1,147 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Contracts.BLL.App;
-using Contracts.DAL.App;
-using Domain;
+using Extensions;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using PublicApi.DTO.v1.Mappers;
-using PublicApi.DTO.v1.RestaurantDTOs;
+using V1DTO=PublicApi.DTO.v1;
 
 namespace WebApp.ApiControllers._1._0
 {
-    [Route("api/[controller]")]
+    /// <summary>
+    /// Restaurants Api Controller
+    /// </summary>
     [ApiController]
+    [ApiVersion( "1.0" )]
+    [Route("api/v{version:apiVersion}/[controller]")]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public class RestaurantsController : ControllerBase
     {
         private readonly IAppBLL _bll;
         private readonly RestaurantMapper _mapper = new RestaurantMapper();
-
-        public RestaurantsController(IAppUnitOfWork uow)
+        
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        public RestaurantsController(IAppBLL bll)
         {
-            _uow = uow;
+            _bll = bll; 
         }
 
-        // GET: api/Restaurants
+        /// <summary>
+        /// Get a list of all the Restaurant-s
+        /// </summary>
+        /// <returns>List of Restaurants</returns>
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<RestaurantDTO>>> GetRestaurants()
+        [AllowAnonymous]
+        [Produces("application/json")]
+        [Consumes("application/json")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<V1DTO.Restaurant>))]
+        public async Task<ActionResult<IEnumerable<V1DTO.Restaurant>>> GetRestaurants()
         {
-            var restaurantDTOs = await _uow.Restaurants.DTOAllAsync();
-            
-            return Ok(restaurantDTOs);
+            return Ok((await _bll.Restaurants.GetAllAsync()).Select(e => _mapper.Map(e)));
         }
 
-        // GET: api/Restaurants/5
+        /// <summary>
+        /// Get a single Restaurant
+        /// </summary>
+        /// <param name="id">Restaurant Id</param>
+        /// <returns>Restaurant object</returns>
         [HttpGet("{id}")]
-        public async Task<ActionResult<RestaurantDTO>> GetRestaurant(Guid id)
+        [AllowAnonymous]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(V1DTO.Restaurant))]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<V1DTO.Restaurant>> GetRestaurant(Guid id)
         {
-            var restaurant = await _uow.Restaurants.DTOFirstOrDefaultAsync(id);
-
+            var restaurant = await _bll.Restaurants.FirstOrDefaultAsync(id);
+            
             if (restaurant == null)
             {
-                return NotFound();
+                return NotFound(new {message = "Restaurant not found"});
             }
 
-            return Ok(restaurant);
+            return Ok(_mapper.Map(restaurant));
         }
 
-        // PUT: api/Restaurants/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for
-        // more details see https://aka.ms/RazorPagesCRUD.
+        /// <summary>
+        /// Update the Restaurant
+        /// </summary>
+        /// <param name="id">Restaurant id</param>
+        /// <param name="restaurant">Restaurant object</param>
+        /// <returns></returns>
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutRestaurant(Guid id, RestaurantEditDTO restaurantEditDTO)
+        [Produces("application/json")]
+        [Consumes("application/json")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> PutRestaurant(Guid id, V1DTO.Restaurant restaurant)
         {
-            if (id != restaurantEditDTO.Id)
-            {
-                return BadRequest();
-            }
-
-            var restaurant = await _uow.Restaurants.FirstOrDefaultAsync(restaurantEditDTO.Id);
-            if (restaurant == null)
-            {
-                return BadRequest();
-            }
-
-            restaurant.Name = restaurantEditDTO.Name;
-            restaurant.Address = restaurantEditDTO.Address;
-            restaurant.OpenedFrom = restaurantEditDTO.OpenedFrom;
-            restaurant.ClosedFrom = restaurantEditDTO.ClosedFrom;
+            restaurant.AppUserId = User.UserId();
             
-            _uow.Restaurants.Update(restaurant);
+            if (id != restaurant.Id)
+            {
+                return BadRequest(new {message = "The id and restaurant.id do not match!"});
+            }
 
-            try
-            {
-                await _uow.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!await _uow.Restaurants.ExistsAsync(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+            await _bll.Restaurants.UpdateAsync(_mapper.Map(restaurant), User.UserId());
+            await _bll.SaveChangesAsync();
 
             return NoContent();
         }
 
-        // POST: api/Restaurants
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for
-        // more details see https://aka.ms/RazorPagesCRUD.
+        /// <summary>
+        /// Create a new Restaurant 
+        /// </summary>
+        /// <param name="restaurant">Restaurant object to create</param>
+        /// <returns>Created Restaurant object</returns>
         [HttpPost]
-        public async Task<ActionResult<Restaurant>> PostRestaurant(RestaurantCreateDTO restaurantCreateDTO)
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
+        [Produces("application/json")]
+        [Consumes("application/json")]
+        [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(V1DTO.Restaurant))]
+        public async Task<ActionResult<V1DTO.Restaurant>> PostRestaurant(V1DTO.Restaurant restaurant)
         {
-            var restaurant = new Restaurant
-            {
-                Id = restaurantCreateDTO.Id,
-                Name = restaurantCreateDTO.Name,
-                Address = restaurantCreateDTO.Address,
-                OpenedFrom = restaurantCreateDTO.OpenedFrom,
-                ClosedFrom = restaurantCreateDTO.ClosedFrom
-            };
-            
-            _uow.Restaurants.Add(restaurant);
-            await _uow.SaveChangesAsync();
+            restaurant.AppUserId = User.UserId();
 
-            return CreatedAtAction("GetRestaurant", new { id = restaurant.Id }, restaurant);
+            var bllEntity = _mapper.Map(restaurant);
+            _bll.Restaurants.Add(bllEntity);
+            await _bll.SaveChangesAsync();
+            restaurant.Id = bllEntity.Id;
+            
+            return CreatedAtAction("GetRestaurant",
+                new { id = restaurant.Id, version = HttpContext.GetRequestedApiVersion()?.ToString() ?? "0" },
+                restaurant);
         }
 
-        // DELETE: api/Restaurants/5
+        /// <summary>
+        /// Delete a Restaurant
+        /// </summary>
+        /// <param name="id">Restaurant Id</param>
+        /// <returns>Deleted Restaurant object</returns>
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
         [HttpDelete("{id}")]
-        public async Task<ActionResult<Restaurant>> DeleteRestaurant(Guid id)
+        [Produces("application/json")]
+        [Consumes("application/json")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(V1DTO.Restaurant))]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<V1DTO.Restaurant>> DeleteRestaurant(Guid id)
         {
-            var restaurant = await _uow.Restaurants.FirstOrDefaultAsync(id);
+            var restaurant = await _bll.Restaurants.FirstOrDefaultAsync(id, User.UserId());
             if (restaurant == null)
             {
-                return NotFound();
+                return NotFound(new {message = "Restaurant not found"});
             }
 
-            _uow.Restaurants.Remove(restaurant);
-            await _uow.SaveChangesAsync();
+            await _bll.Restaurants.RemoveAsync(id);
+            await _bll.SaveChangesAsync();
 
             return Ok(restaurant);
         }

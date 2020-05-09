@@ -1,126 +1,144 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
-using Contracts.DAL.App;
-using Domain;
+using Contracts.BLL.App;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using PublicApi.DTO.v1.CampaignDTOs;
+using PublicApi.DTO.v1.Mappers;
+using V1DTO=PublicApi.DTO.v1;
 
 namespace WebApp.ApiControllers._1._0
 {
-    [Route("api/[controller]")]
+    /// <summary>
+    /// Bills Api Controller
+    /// </summary>
+    [Route("api/v{version:apiVersion}/[controller]")]
     [ApiController]
+    [ApiVersion("1.0")]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public class CampaignsController : ControllerBase
     {
-        private readonly IAppUnitOfWork _uow;
-
-        public CampaignsController(IAppUnitOfWork uow)
+        private readonly IAppBLL _bll;
+        private readonly CampaignMapper _mapper = new CampaignMapper();
+        
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        public CampaignsController(IAppBLL bll)
         {
-            _uow = uow;
+            _bll = bll;
         }
-
-        // GET: api/Campaigns
+        
+        /// <summary>
+        /// Get a list of all the Campaign-s
+        /// </summary>
+        /// <returns>List of Campaigns</returns>
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<CampaignDTO>>> GetCampaigns()
+        [AllowAnonymous]
+        [Produces("application/json")]
+        [Consumes("application/json")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<V1DTO.Campaign>))]
+        public async Task<ActionResult<IEnumerable<V1DTO.Campaign>>> GetCampaigns()
         {
-            var campaignDTOs = await _uow.Campaigns.DTOAllAsync();
-            
-            return Ok(campaignDTOs);
+            return Ok((await _bll.Campaigns.GetAllAsync()).Select(e => _mapper.Map(e)));
 
         }
 
-        // GET: api/Campaigns/5
+        /// <summary>
+        /// Get a single Campaign
+        /// </summary>
+        /// <param name="id">Campaign Id</param>
+        /// <returns>Campaign object</returns>
         [HttpGet("{id}")]
-        public async Task<ActionResult<CampaignDTO>> GetCampaign(Guid id)
+        [AllowAnonymous]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(V1DTO.Campaign))]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<V1DTO.Campaign>> GetCampaign(Guid id)
         {
-            var campaign = await _uow.Campaigns.DTOFirstOrDefaultAsync(id);
+            var campaign = await _bll.Campaigns.FirstOrDefaultAsync(id);
 
             if (campaign == null)
             {
-                return NotFound();
+                return NotFound(new {message = "Campaign not found"});
             }
 
-            return Ok(campaign);
+            return Ok(_mapper.Map(campaign));
 
         }
 
-        // PUT: api/Campaigns/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for
-        // more details see https://aka.ms/RazorPagesCRUD.
+        /// <summary>
+        /// Update the Campaign
+        /// </summary>
+        /// <param name="id">Campaign id</param>
+        /// <param name="campaign">Campaign object</param>
+        /// <returns></returns>
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutCampaign(Guid id, CampaignEditDTO campaignEditDTO)
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
+        [Produces("application/json")]
+        [Consumes("application/json")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> PutCampaign(Guid id, V1DTO.Campaign campaign)
         {
-            if (id != campaignEditDTO.Id)
+            if (id != campaign.Id)
             {
-                return BadRequest();
+                return BadRequest(new {message = "The id and campaign.id do not match!"});
             }
 
-            var campaign = await _uow.Campaigns.FirstOrDefaultAsync(campaignEditDTO.Id);
-            if (campaign == null)
-            {
-                return BadRequest();
-            }
-
-            campaign.To = campaignEditDTO.To;
-            campaign.Name = campaignEditDTO.Name;
-            campaign.Comment = campaignEditDTO.Comment;
-            
-            _uow.Campaigns.Update(campaign);
-
-
-            try
-            {
-                await _uow.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!await _uow.Campaigns.ExistsAsync(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+            await _bll.Campaigns.UpdateAsync(_mapper.Map(campaign));
+            await _bll.SaveChangesAsync();
 
             return NoContent();
         }
 
-        // POST: api/Campaigns
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for
-        // more details see https://aka.ms/RazorPagesCRUD.
+        /// <summary>
+        /// Create a new Campaign 
+        /// </summary>
+        /// <param name="campaign">Campaign object to create</param>
+        /// <returns>Created Campaign object</returns>
         [HttpPost]
-        public async Task<ActionResult<Campaign>> PostCampaign(CampaignCreateDTO campaignCreateDTO)
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
+        [Produces("application/json")]
+        [Consumes("application/json")]
+        [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(V1DTO.Campaign))]
+        public async Task<ActionResult<V1DTO.Campaign>> PostCampaign(V1DTO.Campaign campaign)
         {
-            var campaign = new Campaign
-            {
-                Id = campaignCreateDTO.Id,
-                From = campaignCreateDTO.From,
-                To = campaignCreateDTO.To,
-                Name = campaignCreateDTO.Name,
-                Comment = campaignCreateDTO.Comment
-            };
+            var bllEntity = _mapper.Map(campaign);
+            _bll.Campaigns.Add(bllEntity);
+            await _bll.SaveChangesAsync();
+            campaign.Id = bllEntity.Id;
             
-            _uow.Campaigns.Add(campaign);
-            await _uow.SaveChangesAsync();
-
-            return CreatedAtAction("GetCampaign", new { id = campaign.Id }, campaign);
+            return CreatedAtAction("GetCampaign",
+                new {id = campaign.Id, version = HttpContext.GetRequestedApiVersion()?.ToString() ?? "0"},
+                campaign);
         }
 
-        // DELETE: api/Campaigns/5
+        /// <summary>
+        /// Delete a Campaign
+        /// </summary>
+        /// <param name="id">Campaign Id</param>
+        /// <returns>Deleted Campaign object</returns>
         [HttpDelete("{id}")]
-        public async Task<ActionResult<Campaign>> DeleteCampaign(Guid id)
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
+        [Produces("application/json")]
+        [Consumes("application/json")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(V1DTO.Campaign))]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<V1DTO.Campaign>> DeleteCampaign(Guid id)
         {
-            var campaign = await _uow.Campaigns.FirstOrDefaultAsync(id);
+            var campaign = await _bll.Campaigns.FirstOrDefaultAsync(id);
             if (campaign == null)
             {
-                return NotFound();
+                return NotFound(new {message = "Campaign not found!"});
             }
 
-            _uow.Campaigns.Remove(campaign);
-            await _uow.SaveChangesAsync();
+            await _bll.Campaigns.RemoveAsync(campaign);
+            await _bll.SaveChangesAsync();
 
             return Ok(campaign);
         }

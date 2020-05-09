@@ -1,126 +1,142 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
-using Contracts.DAL.App;
-using Domain;
+using Contracts.BLL.App;
 using Extensions;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using PublicApi.DTO.v1.OrderDTOs;
+using PublicApi.DTO.v1.Mappers;
+using V1DTO=PublicApi.DTO.v1;
 
 namespace WebApp.ApiControllers._1._0
 {
-    [Route("api/[controller]")]
+    /// <summary>
+    /// Orders Api Controller
+    /// </summary>
     [ApiController]
+    [ApiVersion( "1.0" )]
+    [Route("api/v{version:apiVersion}/[controller]")]
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public class OrdersController : ControllerBase
     {
-        private readonly IAppUnitOfWork _uow;
-
-        public OrdersController(IAppUnitOfWork uow)
+        private readonly IAppBLL _bll;
+        private readonly OrderMapper _mapper = new OrderMapper();
+        
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        public OrdersController(IAppBLL bll)
         {
-            _uow = uow;
+            _bll = bll; 
         }
 
-        // GET: api/Orders
+        /// <summary>
+        /// Get a list of all the Order-s
+        /// </summary>
+        /// <returns>List of Orders</returns>
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<OrderDTO>>> GetOrders()
+        [Produces("application/json")]
+        [Consumes("application/json")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<V1DTO.Order>))]
+        public async Task<ActionResult<IEnumerable<V1DTO.Order>>> GetOrders()
         {
-            var orderDTOs = await _uow.Orders.DTOAllAsync(User.UserGuidId());
-
-            return Ok(orderDTOs);
+            return Ok((await _bll.Orders.GetAllAsync()).Select(e => _mapper.Map(e)));
         }
 
-        // GET: api/Orders/5
+        /// <summary>
+        /// Get a single Order
+        /// </summary>
+        /// <param name="id">Order Id</param>
+        /// <returns>Order object</returns>
         [HttpGet("{id}")]
-        public async Task<ActionResult<OrderDTO>> GetOrder(Guid id)
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(V1DTO.Order))]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<V1DTO.Order>> GetOrder(Guid id)
         {
-            var order = await _uow.Orders.DTOFirstOrDefaultAsync(id, User.UserGuidId());
-
+            var order = await _bll.Orders.FirstOrDefaultAsync(id);
+            
             if (order == null)
             {
-                return NotFound();
+                return NotFound(new {message = "Order not found"});
             }
 
-            return Ok(order);
+            return Ok(_mapper.Map(order));
         }
 
-        // PUT: api/Orders/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for
-        // more details see https://aka.ms/RazorPagesCRUD.
+        /// <summary>
+        /// Update the Order
+        /// </summary>
+        /// <param name="id">Order id</param>
+        /// <param name="order">Order object</param>
+        /// <returns></returns>
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutOrder(Guid id, OrderEditDTO orderEditDTO)
+        [Produces("application/json")]
+        [Consumes("application/json")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> PutOrder(Guid id, V1DTO.Order order)
         {
-            if (id != orderEditDTO.Id)
+            order.AppUserId = User.UserId();
+            
+            if (id != order.Id)
             {
-                return BadRequest();
+                return BadRequest(new {message = "The id and order.id do not match!"});
             }
 
-            var order = await _uow.Orders.FirstOrDefaultAsync(orderEditDTO.Id, User.UserGuidId());
-            if (order == null)
-            {
-                return BadRequest();
-            }
-
-            order.OrderStatus = orderEditDTO.OrderStatus;
-            order.Number = orderEditDTO.Number;
-
-            _uow.Orders.Update(order);
-
-            try
-            {
-                await _uow.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!await _uow.Orders.ExistsAsync(id, User.UserGuidId()))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+            await _bll.Orders.UpdateAsync(_mapper.Map(order), User.UserId());
+            await _bll.SaveChangesAsync();
 
             return NoContent();
         }
 
-        // POST: api/Orders
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for
-        // more details see https://aka.ms/RazorPagesCRUD.
+        /// <summary>
+        /// Create a new Order 
+        /// </summary>
+        /// <param name="order">Order object to create</param>
+        /// <returns>Created Order object</returns>
         [HttpPost]
-        public async Task<ActionResult<Order>> PostOrder(OrderCreateDTO orderCreateDTO)
+        [Produces("application/json")]
+        [Consumes("application/json")]
+        [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(V1DTO.Order))]
+        public async Task<ActionResult<V1DTO.Order>> PostOrder(V1DTO.Order order)
         {
-            var order = new Order
-            {
-                Id = orderCreateDTO.Id,
-                AppUserId = User.UserGuidId(),
-                OrderStatus = orderCreateDTO.OrderStatus,
-                Number = orderCreateDTO.Number,
-                TimeCreated = orderCreateDTO.TimeCreated
-            };
+            order.AppUserId = User.UserId();
 
-            _uow.Orders.Add(order);
-            await _uow.SaveChangesAsync();
-
-            return CreatedAtAction("GetOrder", new { id = order.Id }, order);
+            var bllEntity = _mapper.Map(order);
+            _bll.Orders.Add(bllEntity);
+            await _bll.SaveChangesAsync();
+            order.Id = bllEntity.Id;
+            
+            return CreatedAtAction("GetOrder",
+                new { id = order.Id, version = HttpContext.GetRequestedApiVersion()?.ToString() ?? "0" },
+                order);
         }
 
-        // DELETE: api/Orders/5
+        /// <summary>
+        /// Delete an Order
+        /// </summary>
+        /// <param name="id">Order Id</param>
+        /// <returns>Deleted Order object</returns>
         [HttpDelete("{id}")]
-        public async Task<ActionResult<Order>> DeleteOrder(Guid id)
+        [Produces("application/json")]
+        [Consumes("application/json")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(V1DTO.Order))]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<V1DTO.Order>> DeleteOrder(Guid id)
         {
-            var order = await _uow.Orders.FirstOrDefaultAsync(id, User.UserGuidId());
+            var order = await _bll.Orders.FirstOrDefaultAsync(id, User.UserId());
             if (order == null)
             {
-                return NotFound();
+                return NotFound(new {message = "Order not found"});
             }
 
-            _uow.Orders.Remove(order);
-            await _uow.SaveChangesAsync();
+            await _bll.Orders.RemoveAsync(id);
+            await _bll.SaveChangesAsync();
 
             return Ok(order);
         }

@@ -13,5 +13,7 @@ namespace PublicApi.DTO.v1
         public Guid PersonId { get; set; }
         public Guid BillId { get; set; }
         public Guid PaymentTypeId { get; set; }
+        
+        public Guid AppUserId { get; set; }
     }
 }

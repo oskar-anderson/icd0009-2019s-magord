@@ -11,6 +11,7 @@ namespace BLL.App.Mappers
         public AreaServiceMapper() : base()
         {
             MapperConfigurationExpression.CreateMap<DALAppDTO.Town, BLLAppDTO.Town>();
+            MapperConfigurationExpression.CreateMap<DALAppDTO.Identity.AppUser, BLLAppDTO.Identity.AppUser>();
             Mapper = new Mapper(new MapperConfiguration(MapperConfigurationExpression));
         }
         

@@ -20,6 +20,9 @@ namespace DAL.App.DTO
         public ICollection<Price>? Prices { get; set; }
 
         public ICollection<Order>? Orders { get; set; }
+        
+        public Guid AppUserId { get; set; } 
+        public AppUser? AppUser { get; set; }
     }
     
 }

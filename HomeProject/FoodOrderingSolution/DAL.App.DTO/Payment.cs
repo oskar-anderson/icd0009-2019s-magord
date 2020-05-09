@@ -22,6 +22,9 @@ namespace DAL.App.DTO
         
         public Guid PaymentTypeId { get; set; } = default!;
         public PaymentType? PaymentType { get; set; }
+        
+        public Guid AppUserId { get; set; } 
+        public AppUser? AppUser { get; set; }
     }
     
 }

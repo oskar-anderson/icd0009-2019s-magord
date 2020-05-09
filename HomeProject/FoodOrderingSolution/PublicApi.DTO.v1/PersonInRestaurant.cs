@@ -17,5 +17,7 @@ namespace PublicApi.DTO.v1
         public Guid PersonId { get; set; }
         
         public Guid RestaurantId { get; set; }
+        
+        public Guid AppUserId { get; set; }
     }
 }

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Contracts.DAL.App.Repositories;
 using DAL.App.DTO;
+using DAL.App.EF.Mappers;
 using DAL.Base.EF.Repositories;
 using DAL.Base.Mappers;
 using Microsoft.EntityFrameworkCore;
@@ -14,7 +15,7 @@ namespace DAL.App.EF.Repositories
     public class BillRepository : EFBaseRepository<AppDbContext, Domain.Identity.AppUser, Domain.Bill, DAL.App.DTO.Bill>, IBillRepository
     {
         public BillRepository(AppDbContext dbContext) : base(dbContext,
-            new BaseMapper<Domain.Bill, DAL.App.DTO.Bill>())
+            new DALMapper<Domain.Bill, DAL.App.DTO.Bill>())
         {
         }
 
@@ -23,9 +24,8 @@ namespace DAL.App.EF.Repositories
             var query = PrepareQuery(userId, noTracking);
             query = query
                 .Include(b => b.Person)
-                .ThenInclude(p => p!.FirstName)
                 .Include(b => b.Order)
-                .ThenInclude(o => o!.Number);
+                .Include(b => b.AppUser);
             var domainEntities = await query.ToListAsync();
             var result = domainEntities.Select(e => Mapper.Map(e));
             return result;
@@ -36,10 +36,9 @@ namespace DAL.App.EF.Repositories
             var query = PrepareQuery(userId, noTracking);
             query = query
                     .Include(b => b.Person)
-                    .ThenInclude(p => p!.FirstName)
                     .Include(b => b.Order)
-                    .ThenInclude(o => o!.Number)
-                .Where(r => r.Id == id);
+                    .Include(b => b.AppUser)
+                    .Where(r => r.Id == id);
             var domainEntity = await query.FirstOrDefaultAsync(e => e.Id.Equals(id));
             var result = Mapper.Map(domainEntity);
             return result;

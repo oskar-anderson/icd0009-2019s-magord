@@ -1,120 +1,147 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
-using Contracts.DAL.App;
-using Domain;
+using Contracts.BLL.App;
+using Extensions;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using PublicApi.DTO.v1.IngredientDTOs;
+using PublicApi.DTO.v1.Mappers;
+using V1DTO=PublicApi.DTO.v1;
 
 namespace WebApp.ApiControllers._1._0
 {
-    [Route("api/[controller]")]
+    /// <summary>
+    /// Ingredients Api Controller
+    /// </summary>
     [ApiController]
+    [ApiVersion( "1.0" )]
+    [Route("api/v{version:apiVersion}/[controller]")]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public class IngredientsController : ControllerBase
     {
-        private readonly IAppUnitOfWork _uow;
+        private readonly IAppBLL _bll;
+        private readonly IngredientMapper _mapper = new IngredientMapper();
 
-        public IngredientsController(IAppUnitOfWork uow)
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        public IngredientsController(IAppBLL bll)
         {
-            _uow = uow;
+            _bll = bll; 
         }
 
-        // GET: api/Ingredients
+        /// <summary>
+        /// Get a list of all the Ingredient-s
+        /// </summary>
+        /// <returns>List of Ingredients</returns>
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<IngredientDTO>>> GetIngredients()
+        [AllowAnonymous]
+        [Produces("application/json")]
+        [Consumes("application/json")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<V1DTO.Ingredient>))]
+        public async Task<ActionResult<IEnumerable<V1DTO.Ingredient>>> GetIngredients()
         {
-            var ingredientDTOs = await _uow.Ingredients.DTOAllAsync();
-            
-            return Ok(ingredientDTOs);
+            return Ok((await _bll.Ingredients.GetAllAsync()).Select(e => _mapper.Map(e)));
         }
 
-        // GET: api/Ingredients/5
+        /// <summary>
+        /// Get a single Ingredient
+        /// </summary>
+        /// <param name="id">Ingredient Id</param>
+        /// <returns>Ingredient object</returns>
         [HttpGet("{id}")]
-        public async Task<ActionResult<IngredientDTO>> GetIngredient(Guid id)
+        [AllowAnonymous]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(V1DTO.Ingredient))]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<V1DTO.Ingredient>> GetIngredient(Guid id)
         {
-            var ingredient = await _uow.Ingredients.DTOFirstOrDefaultAsync(id);
-
+            var ingredient = await _bll.Ingredients.FirstOrDefaultAsync(id);
+            
             if (ingredient == null)
             {
-                return NotFound();
+                return NotFound(new {message = "Ingredient not found"});
             }
 
-            return Ok(ingredient);
+            return Ok(_mapper.Map(ingredient));
         }
 
-        // PUT: api/Ingredients/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for
-        // more details see https://aka.ms/RazorPagesCRUD.
+        /// <summary>
+        /// Update the Ingredient
+        /// </summary>
+        /// <param name="id">Ingredient id</param>
+        /// <param name="ingredient">Ingredient object</param>
+        /// <returns></returns>
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutIngredient(Guid id, IngredientEditDTO ingredientEditDTO)
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
+        [Produces("application/json")]
+        [Consumes("application/json")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> PutIngredient(Guid id, V1DTO.Ingredient ingredient)
         {
-            if (id != ingredientEditDTO.Id)
+            ingredient.AppUserId = User.UserId();
+            
+            if (id != ingredient.Id)
             {
-                return BadRequest();
+                return BadRequest(new {message = "The id and ingredient.id do not match!"});
             }
 
-            var ingredient = await _uow.Ingredients.FirstOrDefaultAsync(ingredientEditDTO.Id);
-            if (ingredient == null)
-            {
-                return BadRequest();
-            }
-            
-            ingredient.Name = ingredientEditDTO.Name;
-            ingredient.Amount = ingredientEditDTO.Amount;
-            
-            _uow.Ingredients.Update(ingredient);
-
-            try
-            {
-                await _uow.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!await _uow.Ingredients.ExistsAsync(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+            await _bll.Ingredients.UpdateAsync(_mapper.Map(ingredient), User.UserId());
+            await _bll.SaveChangesAsync();
 
             return NoContent();
         }
 
-        // POST: api/Ingredients
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for
-        // more details see https://aka.ms/RazorPagesCRUD.
+        /// <summary>
+        /// Create a new Ingredient 
+        /// </summary>
+        /// <param name="ingredient">Ingredient object to create</param>
+        /// <returns>Created Ingredient object</returns>
         [HttpPost]
-        public async Task<ActionResult<Ingredient>> PostIngredient(IngredientCreateDTO ingredientCreateDTO)
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
+        [Produces("application/json")]
+        [Consumes("application/json")]
+        [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(V1DTO.Ingredient))]
+        public async Task<ActionResult<V1DTO.Ingredient>> PostIngredient(V1DTO.Ingredient ingredient)
         {
-            var ingredient = new Ingredient
-            {
-                Id = ingredientCreateDTO.Id,
-                Amount = ingredientCreateDTO.Amount,
-                Name = ingredientCreateDTO.Name,
-            };
-            
-            _uow.Ingredients.Add(ingredient);
-            await _uow.SaveChangesAsync();
+            ingredient.AppUserId = User.UserId();
 
-            return CreatedAtAction("GetIngredient", new { id = ingredient.Id }, ingredient);
+            var bllEntity = _mapper.Map(ingredient);
+            _bll.Ingredients.Add(bllEntity);
+            await _bll.SaveChangesAsync();
+            ingredient.Id = bllEntity.Id;
+            
+            return CreatedAtAction("GetIngredient",
+                new { id = ingredient.Id, version = HttpContext.GetRequestedApiVersion()?.ToString() ?? "0" },
+                ingredient);
         }
 
-        // DELETE: api/Ingredients/5
+        /// <summary>
+        /// Delete an Ingredient
+        /// </summary>
+        /// <param name="id">Ingredient Id</param>
+        /// <returns>Deleted Ingredient object</returns>
         [HttpDelete("{id}")]
-        public async Task<ActionResult<Ingredient>> DeleteIngredient(Guid id)
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
+        [Produces("application/json")]
+        [Consumes("application/json")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(V1DTO.Ingredient))]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<V1DTO.Ingredient>> DeleteIngredient(Guid id)
         {
-            var ingredient = await _uow.Ingredients.FirstOrDefaultAsync(id);
+            var ingredient = await _bll.Ingredients.FirstOrDefaultAsync(id, User.UserId());
             if (ingredient == null)
             {
-                return NotFound();
+                return NotFound(new {message = "Ingredient not found"});
             }
 
-            _uow.Ingredients.Remove(ingredient);
-            await _uow.SaveChangesAsync();
+            await _bll.Ingredients.RemoveAsync(id);
+            await _bll.SaveChangesAsync();
 
             return Ok(ingredient);
         }

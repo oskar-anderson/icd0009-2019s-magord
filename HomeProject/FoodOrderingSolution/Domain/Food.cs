@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using Contracts.DAL.Base;
 using DAL.Base;
+using Domain.Identity;
 
 namespace Domain
 {
-    public class Food : DomainEntityIdMetadata
+    public class Food : DomainEntityIdMetadataUser<AppUser>
     {
         [MaxLength(1024)]
         public string? Description { get; set; }

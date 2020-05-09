@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Contracts.DAL.App.Repositories;
  using DAL.App.DTO;
+ using DAL.App.EF.Mappers;
  using DAL.Base.EF.Repositories;
  using DAL.Base.Mappers;
  using Microsoft.EntityFrameworkCore;
@@ -14,7 +15,7 @@ namespace DAL.App.EF.Repositories
     public class RestaurantRepository : EFBaseRepository<AppDbContext, Domain.Identity.AppUser, Domain.Restaurant, DAL.App.DTO.Restaurant>, IRestaurantRepository
     {
         public RestaurantRepository(AppDbContext dbContext) : base(dbContext,
-            new BaseMapper<Domain.Restaurant, DAL.App.DTO.Restaurant>())
+            new DALMapper<Domain.Restaurant, DAL.App.DTO.Restaurant>())
         {
         }
         

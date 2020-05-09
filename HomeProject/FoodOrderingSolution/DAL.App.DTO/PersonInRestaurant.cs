@@ -21,6 +21,9 @@ namespace DAL.App.DTO
 
         public Guid RestaurantId { get; set; } = default!;
         public Restaurant? Restaurant { get; set; }
+        
+        public Guid AppUserId { get; set; } 
+        public AppUser? AppUser { get; set; }
     }
     
 }

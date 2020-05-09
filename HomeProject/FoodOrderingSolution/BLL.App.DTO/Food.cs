@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using BLL.App.DTO.Identity;
 using Contracts.DAL.Base;
 
 namespace BLL.App.DTO
@@ -18,6 +19,9 @@ namespace BLL.App.DTO
         
         public Guid FoodTypeId { get; set; } = default!;
         public FoodType? FoodType { get; set; }
+        
+        public Guid AppUserId { get; set; } = default!;
+        public AppUser? AppUser { get; set; }
 
         public ICollection<Ingredient>? Ingredients { get; set; }
 

@@ -1,4 +1,5 @@
 ﻿using System;
+using BLL.App.DTO.Identity;
 using Contracts.DAL.Base;
 
 namespace BLL.App.DTO
@@ -27,7 +28,8 @@ namespace BLL.App.DTO
         
         public Guid? CampaignId { get; set; }
         public Campaign? Campaign { get; set; }
+        
+        public Guid AppUserId { get; set; } = default!;
+        public AppUser? AppUser { get; set; }
     }
-    
-    
 }
