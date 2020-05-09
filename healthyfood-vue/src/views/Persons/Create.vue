@@ -11,7 +11,7 @@
                         <input
                             class="form-control"
                             type="text"
-                            id="Name"
+                            id="FirstName"
                             maxlength="256"
                             v-model="personInfo.firstName"
                         />
@@ -19,7 +19,7 @@
                         <input
                             class="form-control"
                             type="text"
-                            id="Name"
+                            id="Lastname"
                             maxlength="256"
                             v-model="personInfo.lastName"
                         />
@@ -27,7 +27,7 @@
                         <input
                             class="form-control"
                             type="text"
-                            id="Name"
+                            id="Sex"
                             maxlength="1"
                             v-model="personInfo.sex"
                         />
@@ -35,7 +35,7 @@
                         <input
                             class="form-control"
                             type="text"
-                            id="Name"
+                            id="dob"
                             maxlength="256"
                             v-model="personInfo.dateOfBirth"
                         />
@@ -57,6 +57,8 @@ import { Component, Vue } from "vue-property-decorator";
 import store from "../../store";
 import { IPersonCreate } from '../../domain/IPerson/IPersonCreate';
 import router from '../../router';
+import flatpickr from 'flatpickr'
+require("flatpickr/dist/flatpickr.css")
 
 @Component
 export default class PersonsCreate extends Vue {
@@ -89,6 +91,11 @@ export default class PersonsCreate extends Vue {
     }
 
     mounted(): void {
+        flatpickr('#dob', {
+            altInput: true,
+            altFormat: "F j, Y",
+            dateFormat: "d/m/Y"
+        })
         console.log("mounted");
     }
 

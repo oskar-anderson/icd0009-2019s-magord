@@ -3,7 +3,6 @@ import { IChangeEmailDTO } from './../types/IChangeEmailDTO';
 import { IRegisterDTO } from './../types/IRegisterDTO';
 import { ILoginDTO } from './../types/ILoginDTO';
 import Axios from 'axios'
-import store from '@/store';
 
 interface ILoginResponse {
     token: string;
