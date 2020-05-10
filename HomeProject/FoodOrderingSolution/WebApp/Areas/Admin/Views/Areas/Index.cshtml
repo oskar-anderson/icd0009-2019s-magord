@@ -1,4 +1,4 @@
-@model IEnumerable<BLL.App.DTO.Area>
+@model IEnumerable<Domain.Area>
 
 @{
     ViewData["Title"] = "Index";
@@ -18,18 +18,7 @@
             <th>
                 @Html.DisplayNameFor(model => model.Town)
             </th>
-            <th>
-                @Html.DisplayNameFor(model => model.CreatedBy)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.CreatedAt)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ChangedBy)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ChangedAt)
-            </th>
+            
             <th></th>
         </tr>
     </thead>
@@ -41,18 +30,6 @@
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Town!.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.CreatedBy)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.CreatedAt)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ChangedBy)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ChangedAt)
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |

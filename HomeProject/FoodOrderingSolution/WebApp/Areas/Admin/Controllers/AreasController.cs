@@ -1,7 +1,10 @@
+#pragma warning disable 1591
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Contracts.BLL.App;
 using Contracts.DAL.App;
+using DAL.App.EF;
 using Domain;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -14,22 +17,18 @@ namespace WebApp.Areas.Admin.Controllers
     [Authorize(Roles= "Admin")]
     public class AreasController : Controller
     {
-        private readonly IAppBLL _bll;
-        
+        private readonly AppDbContext _context;
 
-        // GET: Areas
-        public AreasController(IAppBLL bll)
+        public AreasController(AppDbContext context)
         {
-            _bll = bll;
+            _context = context;
         }
 
+        // GET: Areas
         public async Task<IActionResult> Index()
         {
-            var result = await _bll.Areas.GetAllAsync();
-            
-            //var areas = await _uow.Areas.GetAllAsync();
-            
-            return View(result);
+            var appDbContext = _context.Areas.Include(a => a.Town);
+            return View(await appDbContext.ToListAsync());
         }
 
         // GET: Areas/Details/5
@@ -40,8 +39,9 @@ namespace WebApp.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var area = await _uow.Areas.FirstOrDefaultAsync(id.Value);
-            
+            var area = await _context.Areas
+                .Include(a => a.Town)
+                .FirstOrDefaultAsync(m => m.Id == id);
             if (area == null)
             {
                 return NotFound();
@@ -51,9 +51,9 @@ namespace WebApp.Areas.Admin.Controllers
         }
 
         // GET: Areas/Create
-        public async Task<IActionResult> Create()
+        public IActionResult Create()
         {
-            ViewData["TownId"] = new SelectList(await _uow.Towns.AllAsync(), nameof(Town.Id), nameof(Town.Name));
+            ViewData["TownId"] = new SelectList(_context.Towns, "Id", "Id");
             return View();
         }
 
@@ -62,32 +62,32 @@ namespace WebApp.Areas.Admin.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(Area area)
+        public async Task<IActionResult> Create([Bind("Name,TownId,CreatedBy,CreatedAt,DeletedBy,DeletedAt,Id")] Area area)
         {
             if (ModelState.IsValid)
             {
-                _uow.Areas.Add(area);
-                await _uow.SaveChangesAsync();
+                _context.Add(area);
+                await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["TownId"] = new SelectList(await _uow.Towns.AllAsync(), nameof(Town.Id), nameof(Town.Name), area.TownId);
+            ViewData["TownId"] = new SelectList(_context.Towns, "Id", "Id", area.Town?.Name);
             return View(area);
         }
 
         // GET: Areas/Edit/5
-        public async Task<IActionResult> Edit(Guid? id)
+        public async Task<IActionResult> Edit(Guid id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var area = await _uow.Areas.FirstOrDefaultAsync(id.Value);
+            var area = await _context.Areas.FindAsync(id);
             if (area == null)
             {
                 return NotFound();
             }
-            ViewData["TownId"] = new SelectList(await _uow.Towns.AllAsync(), nameof(Town.Id), nameof(Town.Name), area.TownId);
+            ViewData["TownId"] = new SelectList(_context.Towns, "Id", "Id", area.TownId);
             return View(area);
         }
 
@@ -96,7 +96,7 @@ namespace WebApp.Areas.Admin.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, Area area)
+        public async Task<IActionResult> Edit(Guid? id, [Bind("Name,TownId,CreatedBy,CreatedAt,DeletedBy,DeletedAt,Id")] Area area)
         {
             if (id != area.Id)
             {
@@ -107,12 +107,12 @@ namespace WebApp.Areas.Admin.Controllers
             {
                 try
                 {
-                    _uow.Areas.Update(area);
-                    await _uow.SaveChangesAsync();
+                    _context.Update(area);
+                    await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!await _uow.Areas.ExistsAsync(area.Id))
+                    if (!AreaExists(area.Id))
                     {
                         return NotFound();
                     }
@@ -123,7 +123,7 @@ namespace WebApp.Areas.Admin.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["TownId"] = new SelectList(await _uow.Towns.AllAsync(), nameof(Town.Id), nameof(Town.Name), area.TownId);
+            ViewData["TownId"] = new SelectList(_context.Towns, "Id", "Id", area.TownId);
             return View(area);
         }
 
@@ -135,12 +135,14 @@ namespace WebApp.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var area = await _uow.Areas.FirstOrDefaultAsync(id.Value);
-            
+            var area = await _context.Areas
+                .Include(a => a.Town)
+                .FirstOrDefaultAsync(m => m.Id == id);
             if (area == null)
             {
                 return NotFound();
             }
+
             return View(area);
         }
 
@@ -149,9 +151,16 @@ namespace WebApp.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            await _uow.Areas.DeleteAsync(id);
-            await _uow.SaveChangesAsync();
+            var area = await _context.Areas.FindAsync(id);
+            _context.Areas.Remove(area);
+            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
+
+        private bool AreaExists(Guid id)
+        {
+            return _context.Areas.Any(e => e.Id == id);
+        }
+
     }
 }

@@ -1,6 +1,9 @@
+#pragma warning disable 1591
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Contracts.DAL.App;
+using DAL.App.EF;
 using Domain;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -13,30 +16,32 @@ namespace WebApp.Areas.Admin.Controllers
     [Authorize(Roles= "Admin")]
     public class ContactsController : Controller
     {
-        private readonly IAppUnitOfWork _uow;
+        private readonly AppDbContext _context;
 
-        public ContactsController(IAppUnitOfWork uow)
+        public ContactsController(AppDbContext context)
         {
-            _uow = uow;
+            _context = context;
         }
 
         // GET: Contacts
         public async Task<IActionResult> Index()
         {
-            var contacts = await _uow.Contacts.AllAsync();
-            return View(contacts);
+            var appDbContext = _context.Contacts.Include(c => c.ContactType).Include(c => c.Person);
+            return View(await appDbContext.ToListAsync());
         }
 
         // GET: Contacts/Details/5
-        public async Task<IActionResult> Details(Guid? id)
+        public async Task<IActionResult> Details(Guid id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var contact = await _uow.Contacts.FirstOrDefaultAsync(id.Value);
-
+            var contact = await _context.Contacts
+                .Include(c => c.ContactType)
+                .Include(c => c.Person)
+                .FirstOrDefaultAsync(m => m.Id == id);
             if (contact == null)
             {
                 return NotFound();
@@ -46,10 +51,10 @@ namespace WebApp.Areas.Admin.Controllers
         }
 
         // GET: Contacts/Create
-        public async Task<IActionResult> Create()
+        public IActionResult Create()
         {
-            ViewData["ContactTypeId"] = new SelectList(await _uow.ContactTypes.AllAsync(), nameof(ContactType.Id), nameof(ContactType.Name));
-            ViewData["PersonId"] = new SelectList(await _uow.Persons.AllAsync(), nameof(Person.Id), nameof(Person.FirstName));
+            ViewData["ContactTypeId"] = new SelectList(_context.ContactTypes, "Id", "Id");
+            ViewData["PersonId"] = new SelectList(_context.Persons, "Id", "Id");
             return View();
         }
 
@@ -58,36 +63,34 @@ namespace WebApp.Areas.Admin.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(Contact contact)
+        public async Task<IActionResult> Create([Bind("Name,PersonId,ContactTypeId,CreatedBy,CreatedAt,DeletedBy,DeletedAt,Id")] Contact contact)
         {
             if (ModelState.IsValid)
             {
-                //contact.Id = Guid.NewGuid();
-                _uow.Contacts.Add(contact);
-                await _uow.SaveChangesAsync();
+                _context.Add(contact);
+                await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["ContactTypeId"] = new SelectList(await _uow.ContactTypes.AllAsync(), nameof(ContactType.Id), nameof(ContactType.Name), contact.ContactTypeId);
-            ViewData["PersonId"] = new SelectList(await _uow.Persons.AllAsync(), nameof(Person.Id), nameof(Person.FirstName), contact.PersonId);
+            ViewData["ContactTypeId"] = new SelectList(_context.ContactTypes, "Id", "Id", contact.ContactTypeId);
+            ViewData["PersonId"] = new SelectList(_context.Persons, "Id", "Id", contact.PersonId);
             return View(contact);
         }
 
         // GET: Contacts/Edit/5
-        public async Task<IActionResult> Edit(Guid? id)
+        public async Task<IActionResult> Edit(Guid id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var contact = await _uow.Contacts.FirstOrDefaultAsync(id.Value);
-            
+            var contact = await _context.Contacts.FindAsync(id);
             if (contact == null)
             {
                 return NotFound();
             }
-            ViewData["ContactTypeId"] = new SelectList(await _uow.ContactTypes.AllAsync(), nameof(ContactType.Id), nameof(ContactType.Name), contact.ContactTypeId);
-            ViewData["PersonId"] = new SelectList(await _uow.Persons.AllAsync(), nameof(Person.Id), nameof(Person.FirstName), contact.PersonId);
+            ViewData["ContactTypeId"] = new SelectList(_context.ContactTypes, "Id", "Id", contact.ContactTypeId);
+            ViewData["PersonId"] = new SelectList(_context.Persons, "Id", "Id", contact.PersonId);
             return View(contact);
         }
 
@@ -96,7 +99,7 @@ namespace WebApp.Areas.Admin.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, Contact contact)
+        public async Task<IActionResult> Edit(Guid id, [Bind("Name,PersonId,ContactTypeId,CreatedBy,CreatedAt,DeletedBy,DeletedAt,Id")] Contact contact)
         {
             if (id != contact.Id)
             {
@@ -107,12 +110,12 @@ namespace WebApp.Areas.Admin.Controllers
             {
                 try
                 {
-                    _uow.Contacts.Update(contact);
-                    await _uow.SaveChangesAsync();
+                    _context.Update(contact);
+                    await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!await _uow.Contacts.ExistsAsync(contact.Id))
+                    if (!ContactExists(contact.Id))
                     {
                         return NotFound();
                     }
@@ -123,21 +126,23 @@ namespace WebApp.Areas.Admin.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["ContactTypeId"] = new SelectList(await _uow.ContactTypes.AllAsync(), nameof(ContactType.Id), nameof(ContactType.Name), contact.ContactTypeId);
-            ViewData["PersonId"] = new SelectList(await _uow.Persons.AllAsync(), nameof(Person.Id), nameof(Person.FirstName), contact.PersonId);
+            ViewData["ContactTypeId"] = new SelectList(_context.ContactTypes, "Id", "Id", contact.ContactTypeId);
+            ViewData["PersonId"] = new SelectList(_context.Persons, "Id", "Id", contact.PersonId);
             return View(contact);
         }
 
         // GET: Contacts/Delete/5
-        public async Task<IActionResult> Delete(Guid? id)
+        public async Task<IActionResult> Delete(Guid id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var contact = await _uow.Contacts.FirstOrDefaultAsync(id.Value);
-            
+            var contact = await _context.Contacts
+                .Include(c => c.ContactType)
+                .Include(c => c.Person)
+                .FirstOrDefaultAsync(m => m.Id == id);
             if (contact == null)
             {
                 return NotFound();
@@ -151,9 +156,16 @@ namespace WebApp.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            await _uow.Contacts.DeleteAsync(id);
-            await _uow.SaveChangesAsync();
+            var contact = await _context.Contacts.FindAsync(id);
+            _context.Contacts.Remove(contact);
+            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
+
+        private bool ContactExists(Guid id)
+        {
+            return _context.Contacts.Any(e => e.Id == id);
+        }
+
     }
 }

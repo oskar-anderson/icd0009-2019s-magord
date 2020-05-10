@@ -1,6 +1,9 @@
+#pragma warning disable 1591
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Contracts.DAL.App;
+using DAL.App.EF;
 using Domain;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -13,30 +16,31 @@ namespace WebApp.Areas.Admin.Controllers
     [Authorize(Roles= "Admin")]
     public class RestaurantsController : Controller
     {
-        private readonly IAppUnitOfWork _uow;
+        private readonly AppDbContext _context;
 
-        public RestaurantsController(IAppUnitOfWork uow)
+        public RestaurantsController(AppDbContext context)
         {
-            _uow = uow;
+            _context = context;
         }
 
         // GET: Restaurants
         public async Task<IActionResult> Index()
         {
-            var restaurants = await _uow.Restaurants.AllAsync();
-            return View(restaurants);
+            var appDbContext = _context.Restaurants.Include(r => r.Area);
+            return View(await appDbContext.ToListAsync());
         }
 
         // GET: Restaurants/Details/5
-        public async Task<IActionResult> Details(Guid? id)
+        public async Task<IActionResult> Details(Guid id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var restaurant = await _uow.Restaurants.FirstOrDefaultAsync(id.Value);
-
+            var restaurant = await _context.Restaurants
+                .Include(r => r.Area)
+                .FirstOrDefaultAsync(m => m.Id == id);
             if (restaurant == null)
             {
                 return NotFound();
@@ -46,9 +50,9 @@ namespace WebApp.Areas.Admin.Controllers
         }
 
         // GET: Restaurants/Create
-        public async Task<IActionResult> Create()
+        public IActionResult Create()
         {
-            ViewData["AreaId"] = new SelectList(await _uow.Areas.AllAsync(), nameof(Area.Id), nameof(Area.Name));
+            ViewData["AreaId"] = new SelectList(_context.Areas, "Id", "Id");
             return View();
         }
 
@@ -57,34 +61,32 @@ namespace WebApp.Areas.Admin.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(Restaurant restaurant)
+        public async Task<IActionResult> Create([Bind("Name,Address,OpenedFrom,ClosedFrom,AreaId,CreatedBy,CreatedAt,DeletedBy,DeletedAt,Id")] Restaurant restaurant)
         {
             if (ModelState.IsValid)
             {
-                //restaurant.Id = Guid.NewGuid();
-                _uow.Restaurants.Add(restaurant);
-                await _uow.SaveChangesAsync();
+                _context.Add(restaurant);
+                await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["AreaId"] = new SelectList(await _uow.Areas.AllAsync(), nameof(Area.Id), nameof(Area.Name), restaurant.AreaId);
+            ViewData["AreaId"] = new SelectList(_context.Areas, "Id", "Id", restaurant.AreaId);
             return View(restaurant);
         }
 
         // GET: Restaurants/Edit/5
-        public async Task<IActionResult> Edit(Guid? id)
+        public async Task<IActionResult> Edit(Guid id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var restaurant = await _uow.Restaurants.FirstOrDefaultAsync(id.Value);
-
+            var restaurant = await _context.Restaurants.FindAsync(id);
             if (restaurant == null)
             {
                 return NotFound();
             }
-            ViewData["AreaId"] = new SelectList(await _uow.Areas.AllAsync(), nameof(Area.Id), nameof(Area.Name), restaurant.AreaId);
+            ViewData["AreaId"] = new SelectList(_context.Areas, "Id", "Id", restaurant.AreaId);
             return View(restaurant);
         }
 
@@ -93,7 +95,7 @@ namespace WebApp.Areas.Admin.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, Restaurant restaurant)
+        public async Task<IActionResult> Edit(Guid id, [Bind("Name,Address,OpenedFrom,ClosedFrom,AreaId,CreatedBy,CreatedAt,DeletedBy,DeletedAt,Id")] Restaurant restaurant)
         {
             if (id != restaurant.Id)
             {
@@ -104,12 +106,12 @@ namespace WebApp.Areas.Admin.Controllers
             {
                 try
                 {
-                    _uow.Restaurants.Update(restaurant);
-                    await _uow.SaveChangesAsync();
+                    _context.Update(restaurant);
+                    await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!await _uow.Restaurants.ExistsAsync(restaurant.Id))
+                    if (!RestaurantExists(restaurant.Id))
                     {
                         return NotFound();
                     }
@@ -120,20 +122,21 @@ namespace WebApp.Areas.Admin.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["AreaId"] = new SelectList(await _uow.Areas.AllAsync(), nameof(Area.Id), nameof(Area.Name), restaurant.AreaId);
+            ViewData["AreaId"] = new SelectList(_context.Areas, "Id", "Id", restaurant.AreaId);
             return View(restaurant);
         }
 
         // GET: Restaurants/Delete/5
-        public async Task<IActionResult> Delete(Guid? id)
+        public async Task<IActionResult> Delete(Guid id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var restaurant = await _uow.Restaurants.FirstOrDefaultAsync(id.Value);
-
+            var restaurant = await _context.Restaurants
+                .Include(r => r.Area)
+                .FirstOrDefaultAsync(m => m.Id == id);
             if (restaurant == null)
             {
                 return NotFound();
@@ -147,9 +150,16 @@ namespace WebApp.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            await _uow.Restaurants.DeleteAsync(id);
-            await _uow.SaveChangesAsync();
+            var restaurant = await _context.Restaurants.FindAsync(id);
+            _context.Restaurants.Remove(restaurant);
+            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
+
+        private bool RestaurantExists(Guid id)
+        {
+            return _context.Restaurants.Any(e => e.Id == id);
+        }
+
     }
 }

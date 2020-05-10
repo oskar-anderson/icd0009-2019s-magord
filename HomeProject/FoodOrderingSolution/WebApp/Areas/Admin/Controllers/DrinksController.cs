@@ -1,6 +1,9 @@
+#pragma warning disable 1591
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Contracts.DAL.App;
+using DAL.App.EF;
 using Domain;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -12,30 +15,29 @@ namespace WebApp.Areas.Admin.Controllers
     [Authorize(Roles= "Admin")]
     public class DrinksController : Controller
     {
-        private readonly IAppUnitOfWork _uow;
+        private readonly AppDbContext _context;
 
-        public DrinksController(IAppUnitOfWork uow)
+        public DrinksController(AppDbContext context)
         {
-            _uow = uow;
+            _context = context;
         }
 
         // GET: Drinks
         public async Task<IActionResult> Index()
         {
-            var drinks = await _uow.Drinks.AllAsync();
-            return View(drinks);
+            return View(await _context.Drinks.ToListAsync());
         }
 
         // GET: Drinks/Details/5
-        public async Task<IActionResult> Details(Guid? id)
+        public async Task<IActionResult> Details(Guid id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var drink = await _uow.Drinks.FirstOrDefaultAsync(id.Value);
-
+            var drink = await _context.Drinks
+                .FirstOrDefaultAsync(m => m.Id == id);
             if (drink == null)
             {
                 return NotFound();
@@ -55,28 +57,26 @@ namespace WebApp.Areas.Admin.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(Drink drink)
+        public async Task<IActionResult> Create([Bind("Size,Name,Amount,CreatedBy,CreatedAt,DeletedBy,DeletedAt,Id")] Drink drink)
         {
             if (ModelState.IsValid)
             {
-                //drink.Id = Guid.NewGuid();
-                _uow.Drinks.Add(drink);
-                await _uow.SaveChangesAsync();
+                _context.Add(drink);
+                await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
             return View(drink);
         }
 
         // GET: Drinks/Edit/5
-        public async Task<IActionResult> Edit(Guid? id)
+        public async Task<IActionResult> Edit(Guid id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var drink = await _uow.Drinks.FirstOrDefaultAsync(id.Value);
-
+            var drink = await _context.Drinks.FindAsync(id);
             if (drink == null)
             {
                 return NotFound();
@@ -89,7 +89,7 @@ namespace WebApp.Areas.Admin.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, Drink drink)
+        public async Task<IActionResult> Edit(Guid id, [Bind("Size,Name,Amount,CreatedBy,CreatedAt,DeletedBy,DeletedAt,Id")] Drink drink)
         {
             if (id != drink.Id)
             {
@@ -100,12 +100,12 @@ namespace WebApp.Areas.Admin.Controllers
             {
                 try
                 {
-                    _uow.Drinks.Update(drink);
-                    await _uow.SaveChangesAsync();
+                    _context.Update(drink);
+                    await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!await _uow.Drinks.ExistsAsync(drink.Id))
+                    if (!DrinkExists(drink.Id))
                     {
                         return NotFound();
                     }
@@ -120,15 +120,15 @@ namespace WebApp.Areas.Admin.Controllers
         }
 
         // GET: Drinks/Delete/5
-        public async Task<IActionResult> Delete(Guid? id)
+        public async Task<IActionResult> Delete(Guid id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var drink = await _uow.Drinks.FirstOrDefaultAsync(id.Value);
-
+            var drink = await _context.Drinks
+                .FirstOrDefaultAsync(m => m.Id == id);
             if (drink == null)
             {
                 return NotFound();
@@ -142,10 +142,15 @@ namespace WebApp.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            await _uow.Drinks.DeleteAsync(id);
-            await _uow.SaveChangesAsync();
+            var drink = await _context.Drinks.FindAsync(id);
+            _context.Drinks.Remove(drink);
+            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
+        private bool DrinkExists(Guid id)
+        {
+            return _context.Drinks.Any(e => e.Id == id);
+        }
     }
 }

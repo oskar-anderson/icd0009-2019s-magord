@@ -1,6 +1,9 @@
+#pragma warning disable 1591
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Contracts.DAL.App;
+using DAL.App.EF;
 using Domain;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -13,30 +16,33 @@ namespace WebApp.Areas.Admin.Controllers
     [Authorize(Roles= "Admin")]
     public class PaymentsController : Controller
     {
-        private readonly IAppUnitOfWork _uow;
+        private readonly AppDbContext _context;
 
-        public PaymentsController(IAppUnitOfWork uow)
+        public PaymentsController(AppDbContext context)
         {
-            _uow = uow;
+            _context = context;
         }
 
         // GET: Payments
         public async Task<IActionResult> Index()
         {
-            var payments = await _uow.Payments.AllAsync();
-            return View(payments);
+            var appDbContext = _context.Payments.Include(p => p.Bill).Include(p => p.PaymentType).Include(p => p.Person);
+            return View(await appDbContext.ToListAsync());
         }
 
         // GET: Payments/Details/5
-        public async Task<IActionResult> Details(Guid? id)
+        public async Task<IActionResult> Details(Guid id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var payment = await _uow.Payments.FirstOrDefaultAsync(id.Value);
-
+            var payment = await _context.Payments
+                .Include(p => p.Bill)
+                .Include(p => p.PaymentType)
+                .Include(p => p.Person)
+                .FirstOrDefaultAsync(m => m.Id == id);
             if (payment == null)
             {
                 return NotFound();
@@ -46,11 +52,11 @@ namespace WebApp.Areas.Admin.Controllers
         }
 
         // GET: Payments/Create
-        public async Task<IActionResult> Create()
+        public IActionResult Create()
         {
-            ViewData["BillId"] = new SelectList(await _uow.Bills.AllAsync(), nameof(Bill.Id), nameof(Bill.Sum));
-            ViewData["PaymentTypeId"] = new SelectList(await _uow.PaymentTypes.AllAsync(), nameof(PaymentType.Id), nameof(PaymentType.Name));
-            ViewData["PersonId"] = new SelectList(await _uow.Persons.AllAsync(), nameof(Person.Id), nameof(Person.FirstName));
+            ViewData["BillId"] = new SelectList(_context.Bills, "Id", "Id");
+            ViewData["PaymentTypeId"] = new SelectList(_context.PaymentTypes, "Id", "Id");
+            ViewData["PersonId"] = new SelectList(_context.Persons, "Id", "Id");
             return View();
         }
 
@@ -59,38 +65,36 @@ namespace WebApp.Areas.Admin.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(Payment payment)
+        public async Task<IActionResult> Create([Bind("Amount,TimeMade,PersonId,BillId,PaymentTypeId,CreatedBy,CreatedAt,DeletedBy,DeletedAt,Id")] Payment payment)
         {
             if (ModelState.IsValid)
             {
-                //payment.Id = Guid.NewGuid();
-                _uow.Payments.Add(payment);
-                await _uow.SaveChangesAsync();
+                _context.Add(payment);
+                await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["BillId"] = new SelectList(await _uow.Bills.AllAsync(), nameof(Bill.Id), nameof(Bill.Sum),payment.BillId);
-            ViewData["PaymentTypeId"] = new SelectList(await _uow.PaymentTypes.AllAsync(), nameof(PaymentType.Id), nameof(PaymentType.Name), payment.PaymentTypeId);
-            ViewData["PersonId"] = new SelectList(await _uow.Persons.AllAsync(), nameof(Person.Id), nameof(Person.FirstName), payment.PersonId);
+            ViewData["BillId"] = new SelectList(_context.Bills, "Id", "Id", payment.BillId);
+            ViewData["PaymentTypeId"] = new SelectList(_context.PaymentTypes, "Id", "Id", payment.PaymentTypeId);
+            ViewData["PersonId"] = new SelectList(_context.Persons, "Id", "Id", payment.PersonId);
             return View(payment);
         }
 
         // GET: Payments/Edit/5
-        public async Task<IActionResult> Edit(Guid? id)
+        public async Task<IActionResult> Edit(Guid id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var payment = await _uow.Payments.FirstOrDefaultAsync(id.Value);
-
+            var payment = await _context.Payments.FindAsync(id);
             if (payment == null)
             {
                 return NotFound();
             }
-            ViewData["BillId"] = new SelectList(await _uow.Bills.AllAsync(), nameof(Bill.Id), nameof(Bill.Sum),payment.BillId);
-            ViewData["PaymentTypeId"] = new SelectList(await _uow.PaymentTypes.AllAsync(), nameof(PaymentType.Id), nameof(PaymentType.Name), payment.PaymentTypeId);
-            ViewData["PersonId"] = new SelectList(await _uow.Persons.AllAsync(), nameof(Person.Id), nameof(Person.FirstName), payment.PersonId);
+            ViewData["BillId"] = new SelectList(_context.Bills, "Id", "Id", payment.BillId);
+            ViewData["PaymentTypeId"] = new SelectList(_context.PaymentTypes, "Id", "Id", payment.PaymentTypeId);
+            ViewData["PersonId"] = new SelectList(_context.Persons, "Id", "Id", payment.PersonId);
             return View(payment);
         }
 
@@ -99,7 +103,7 @@ namespace WebApp.Areas.Admin.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, Payment payment)
+        public async Task<IActionResult> Edit(Guid id, [Bind("Amount,TimeMade,PersonId,BillId,PaymentTypeId,CreatedBy,CreatedAt,DeletedBy,DeletedAt,Id")] Payment payment)
         {
             if (id != payment.Id)
             {
@@ -110,12 +114,12 @@ namespace WebApp.Areas.Admin.Controllers
             {
                 try
                 {
-                    _uow.Payments.Update(payment);
-                    await _uow.SaveChangesAsync();
+                    _context.Update(payment);
+                    await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!await _uow.Contacts.ExistsAsync(payment.Id))
+                    if (!PaymentExists(payment.Id))
                     {
                         return NotFound();
                     }
@@ -126,22 +130,25 @@ namespace WebApp.Areas.Admin.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["BillId"] = new SelectList(await _uow.Bills.AllAsync(), nameof(Bill.Id), nameof(Bill.Sum),payment.BillId);
-            ViewData["PaymentTypeId"] = new SelectList(await _uow.PaymentTypes.AllAsync(), nameof(PaymentType.Id), nameof(PaymentType.Name), payment.PaymentTypeId);
-            ViewData["PersonId"] = new SelectList(await _uow.Persons.AllAsync(), nameof(Person.Id), nameof(Person.FirstName), payment.PersonId);
+            ViewData["BillId"] = new SelectList(_context.Bills, "Id", "Id", payment.BillId);
+            ViewData["PaymentTypeId"] = new SelectList(_context.PaymentTypes, "Id", "Id", payment.PaymentTypeId);
+            ViewData["PersonId"] = new SelectList(_context.Persons, "Id", "Id", payment.PersonId);
             return View(payment);
         }
 
         // GET: Payments/Delete/5
-        public async Task<IActionResult> Delete(Guid? id)
+        public async Task<IActionResult> Delete(Guid id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var payment = await _uow.Payments.FirstOrDefaultAsync(id.Value);
-
+            var payment = await _context.Payments
+                .Include(p => p.Bill)
+                .Include(p => p.PaymentType)
+                .Include(p => p.Person)
+                .FirstOrDefaultAsync(m => m.Id == id);
             if (payment == null)
             {
                 return NotFound();
@@ -155,9 +162,16 @@ namespace WebApp.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            await _uow.Payments.DeleteAsync(id);
-            await _uow.SaveChangesAsync();
+            var payment = await _context.Payments.FindAsync(id);
+            _context.Payments.Remove(payment);
+            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
+
+        private bool PaymentExists(Guid id)
+        {
+            return _context.Payments.Any(e => e.Id == id);
+        }
+
     }
 }

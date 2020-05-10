@@ -1,6 +1,9 @@
+#pragma warning disable 1591
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Contracts.DAL.App;
+using DAL.App.EF;
 using Domain;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -13,30 +16,35 @@ namespace WebApp.Areas.Admin.Controllers
     [Authorize(Roles= "Admin")]
     public class PricesController : Controller
     {
-        private readonly IAppUnitOfWork _uow;
+        private readonly AppDbContext _context;
 
-        public PricesController(IAppUnitOfWork uow)
+        public PricesController(AppDbContext context)
         {
-            _uow = uow;
+            _context = context;
         }
 
         // GET: Prices
         public async Task<IActionResult> Index()
         {
-            var prices = await _uow.Prices.AllAsync();
-            return View(prices);
+            var appDbContext = _context.Prices.Include(p => p.Campaign).Include(p => p.Drink).Include(p => p.Food).Include(p => p.Ingredient).Include(p => p.Order);
+            return View(await appDbContext.ToListAsync());
         }
 
         // GET: Prices/Details/5
-        public async Task<IActionResult> Details(Guid? id)
+        public async Task<IActionResult> Details(Guid id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var price = await _uow.Prices.FirstOrDefaultAsync(id.Value);
-
+            var price = await _context.Prices
+                .Include(p => p.Campaign)
+                .Include(p => p.Drink)
+                .Include(p => p.Food)
+                .Include(p => p.Ingredient)
+                .Include(p => p.Order)
+                .FirstOrDefaultAsync(m => m.Id == id);
             if (price == null)
             {
                 return NotFound();
@@ -46,13 +54,13 @@ namespace WebApp.Areas.Admin.Controllers
         }
 
         // GET: Prices/Create
-        public async Task<IActionResult> Create()
+        public IActionResult Create()
         {
-            ViewData["CampaignId"] = new SelectList(await _uow.Campaigns.AllAsync(), nameof(Campaign.Id), nameof(Campaign.Name));
-            ViewData["DrinkId"] = new SelectList(await _uow.Drinks.AllAsync(), nameof(Drink.Id), nameof(Drink.Name));
-            ViewData["FoodId"] = new SelectList(await _uow.Foods.AllAsync(), nameof(Food.Id), nameof(Food.Name));
-            ViewData["IngredientId"] = new SelectList(await _uow.Ingredients.AllAsync(), nameof(Ingredient.Id), nameof(Ingredient.Name));
-            ViewData["OrderId"] = new SelectList(await _uow.Orders.AllAsync(), nameof(Order.Id), nameof(Order.Number));
+            ViewData["CampaignId"] = new SelectList(_context.Campaigns, "Id", "Id");
+            ViewData["DrinkId"] = new SelectList(_context.Drinks, "Id", "Id");
+            ViewData["FoodId"] = new SelectList(_context.Foods, "Id", "Id");
+            ViewData["IngredientId"] = new SelectList(_context.Ingredients, "Id", "Id");
+            ViewData["OrderId"] = new SelectList(_context.Orders, "Id", "Id");
             return View();
         }
 
@@ -61,42 +69,40 @@ namespace WebApp.Areas.Admin.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(Price price)
+        public async Task<IActionResult> Create([Bind("From,To,Value,IngredientId,FoodId,DrinkId,OrderId,CampaignId,CreatedBy,CreatedAt,DeletedBy,DeletedAt,Id")] Price price)
         {
             if (ModelState.IsValid)
             {
-                //price.Id = Guid.NewGuid();
-                _uow.Prices.Add(price);
-                await _uow.SaveChangesAsync();
+                _context.Add(price);
+                await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["CampaignId"] = new SelectList(await _uow.Campaigns.AllAsync(), nameof(Campaign.Id), nameof(Campaign.Name), price.CampaignId);
-            ViewData["DrinkId"] = new SelectList(await _uow.Drinks.AllAsync(), nameof(Drink.Id), nameof(Drink.Name), price.DrinkId);
-            ViewData["FoodId"] = new SelectList(await _uow.Foods.AllAsync(), nameof(Food.Id), nameof(Food.Name),price.FoodId);
-            ViewData["IngredientId"] = new SelectList(await _uow.Ingredients.AllAsync(), nameof(Ingredient.Id), nameof(Ingredient.Name), price.IngredientId);
-            ViewData["OrderId"] = new SelectList(await _uow.Orders.AllAsync(), nameof(Order.Id), nameof(Order.Number), price.OrderId);
+            ViewData["CampaignId"] = new SelectList(_context.Campaigns, "Id", "Id", price.CampaignId);
+            ViewData["DrinkId"] = new SelectList(_context.Drinks, "Id", "Id", price.DrinkId);
+            ViewData["FoodId"] = new SelectList(_context.Foods, "Id", "Id", price.FoodId);
+            ViewData["IngredientId"] = new SelectList(_context.Ingredients, "Id", "Id", price.IngredientId);
+            ViewData["OrderId"] = new SelectList(_context.Orders, "Id", "Id", price.OrderId);
             return View(price);
         }
 
         // GET: Prices/Edit/5
-        public async Task<IActionResult> Edit(Guid? id)
+        public async Task<IActionResult> Edit(Guid id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var price = await _uow.Prices.FirstOrDefaultAsync(id.Value);
-
+            var price = await _context.Prices.FindAsync(id);
             if (price == null)
             {
                 return NotFound();
             }
-            ViewData["CampaignId"] = new SelectList(await _uow.Campaigns.AllAsync(), nameof(Campaign.Id), nameof(Campaign.Name), price.CampaignId);
-            ViewData["DrinkId"] = new SelectList(await _uow.Drinks.AllAsync(), nameof(Drink.Id), nameof(Drink.Name), price.DrinkId);
-            ViewData["FoodId"] = new SelectList(await _uow.Foods.AllAsync(), nameof(Food.Id), nameof(Food.Name),price.FoodId);
-            ViewData["IngredientId"] = new SelectList(await _uow.Ingredients.AllAsync(), nameof(Ingredient.Id), nameof(Ingredient.Name), price.IngredientId);
-            ViewData["OrderId"] = new SelectList(await _uow.Orders.AllAsync(), nameof(Order.Id), nameof(Order.Number), price.OrderId);
+            ViewData["CampaignId"] = new SelectList(_context.Campaigns, "Id", "Id", price.CampaignId);
+            ViewData["DrinkId"] = new SelectList(_context.Drinks, "Id", "Id", price.DrinkId);
+            ViewData["FoodId"] = new SelectList(_context.Foods, "Id", "Id", price.FoodId);
+            ViewData["IngredientId"] = new SelectList(_context.Ingredients, "Id", "Id", price.IngredientId);
+            ViewData["OrderId"] = new SelectList(_context.Orders, "Id", "Id", price.OrderId);
             return View(price);
         }
 
@@ -105,7 +111,7 @@ namespace WebApp.Areas.Admin.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, Price price)
+        public async Task<IActionResult> Edit(Guid id, [Bind("From,To,Value,IngredientId,FoodId,DrinkId,OrderId,CampaignId,CreatedBy,CreatedAt,DeletedBy,DeletedAt,Id")] Price price)
         {
             if (id != price.Id)
             {
@@ -116,12 +122,12 @@ namespace WebApp.Areas.Admin.Controllers
             {
                 try
                 {
-                    _uow.Prices.Update(price);
-                    await _uow.SaveChangesAsync();
+                    _context.Update(price);
+                    await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!await _uow.Prices.ExistsAsync(price.Id))
+                    if (!PriceExists(price.Id))
                     {
                         return NotFound();
                     }
@@ -132,24 +138,29 @@ namespace WebApp.Areas.Admin.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["CampaignId"] = new SelectList(await _uow.Campaigns.AllAsync(), nameof(Campaign.Id), nameof(Campaign.Name), price.CampaignId);
-            ViewData["DrinkId"] = new SelectList(await _uow.Drinks.AllAsync(), nameof(Drink.Id), nameof(Drink.Name), price.DrinkId);
-            ViewData["FoodId"] = new SelectList(await _uow.Foods.AllAsync(), nameof(Food.Id), nameof(Food.Name),price.FoodId);
-            ViewData["IngredientId"] = new SelectList(await _uow.Ingredients.AllAsync(), nameof(Ingredient.Id), nameof(Ingredient.Name), price.IngredientId);
-            ViewData["OrderId"] = new SelectList(await _uow.Orders.AllAsync(), nameof(Order.Id), nameof(Order.Number), price.OrderId);
+            ViewData["CampaignId"] = new SelectList(_context.Campaigns, "Id", "Id", price.CampaignId);
+            ViewData["DrinkId"] = new SelectList(_context.Drinks, "Id", "Id", price.DrinkId);
+            ViewData["FoodId"] = new SelectList(_context.Foods, "Id", "Id", price.FoodId);
+            ViewData["IngredientId"] = new SelectList(_context.Ingredients, "Id", "Id", price.IngredientId);
+            ViewData["OrderId"] = new SelectList(_context.Orders, "Id", "Id", price.OrderId);
             return View(price);
         }
 
         // GET: Prices/Delete/5
-        public async Task<IActionResult> Delete(Guid? id)
+        public async Task<IActionResult> Delete(Guid id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var price = await _uow.Prices.FirstOrDefaultAsync(id.Value);
-
+            var price = await _context.Prices
+                .Include(p => p.Campaign)
+                .Include(p => p.Drink)
+                .Include(p => p.Food)
+                .Include(p => p.Ingredient)
+                .Include(p => p.Order)
+                .FirstOrDefaultAsync(m => m.Id == id);
             if (price == null)
             {
                 return NotFound();
@@ -163,9 +174,16 @@ namespace WebApp.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            await _uow.Prices.DeleteAsync(id);
-            await _uow.SaveChangesAsync();
+            var price = await _context.Prices.FindAsync(id);
+            _context.Prices.Remove(price);
+            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
+
+        private bool PriceExists(Guid id)
+        {
+            return _context.Prices.Any(e => e.Id == id);
+        }
+
     }
 }

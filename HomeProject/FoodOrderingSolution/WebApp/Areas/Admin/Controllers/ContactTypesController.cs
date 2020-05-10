@@ -1,6 +1,9 @@
+#pragma warning disable 1591
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Contracts.DAL.App;
+using DAL.App.EF;
 using Domain;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -12,30 +15,29 @@ namespace WebApp.Areas.Admin.Controllers
     [Authorize(Roles= "Admin")]
     public class ContactTypesController : Controller
     {
-        private readonly IAppUnitOfWork _uow;
+        private readonly AppDbContext _context;
 
-        public ContactTypesController(IAppUnitOfWork uow)
+        public ContactTypesController(AppDbContext context)
         {
-            _uow = uow;
+            _context = context;
         }
 
         // GET: ContactTypes
         public async Task<IActionResult> Index()
         {
-            var contactTypes = await _uow.ContactTypes.AllAsync();
-            return View(contactTypes);
+            return View(await _context.ContactTypes.ToListAsync());
         }
 
         // GET: ContactTypes/Details/5
-        public async Task<IActionResult> Details(Guid? id)
+        public async Task<IActionResult> Details(Guid id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var contactType = await _uow.ContactTypes.FirstOrDefaultAsync(id.Value);
-
+            var contactType = await _context.ContactTypes
+                .FirstOrDefaultAsync(m => m.Id == id);
             if (contactType == null)
             {
                 return NotFound();
@@ -55,28 +57,26 @@ namespace WebApp.Areas.Admin.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(ContactType contactType)
+        public async Task<IActionResult> Create([Bind("Name,CreatedBy,CreatedAt,DeletedBy,DeletedAt,Id")] ContactType contactType)
         {
             if (ModelState.IsValid)
             {
-                //contactType.Id = Guid.NewGuid();
-                _uow.ContactTypes.Add(contactType);
-                await _uow.SaveChangesAsync();
+                _context.Add(contactType);
+                await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
             return View(contactType);
         }
 
         // GET: ContactTypes/Edit/5
-        public async Task<IActionResult> Edit(Guid? id)
+        public async Task<IActionResult> Edit(Guid id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var contactType = await _uow.ContactTypes.FirstOrDefaultAsync(id.Value);
-
+            var contactType = await _context.ContactTypes.FindAsync(id);
             if (contactType == null)
             {
                 return NotFound();
@@ -89,7 +89,7 @@ namespace WebApp.Areas.Admin.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, ContactType contactType)
+        public async Task<IActionResult> Edit(Guid id, [Bind("Name,CreatedBy,CreatedAt,DeletedBy,DeletedAt,Id")] ContactType contactType)
         {
             if (id != contactType.Id)
             {
@@ -100,12 +100,12 @@ namespace WebApp.Areas.Admin.Controllers
             {
                 try
                 {
-                    _uow.ContactTypes.Update(contactType);
-                    await _uow.SaveChangesAsync();
+                    _context.Update(contactType);
+                    await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!await _uow.Contacts.ExistsAsync(contactType.Id))
+                    if (!ContactTypeExists(contactType.Id))
                     {
                         return NotFound();
                     }
@@ -120,15 +120,15 @@ namespace WebApp.Areas.Admin.Controllers
         }
 
         // GET: ContactTypes/Delete/5
-        public async Task<IActionResult> Delete(Guid? id)
+        public async Task<IActionResult> Delete(Guid id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var contactType = await _uow.ContactTypes.FirstOrDefaultAsync(id.Value);
-
+            var contactType = await _context.ContactTypes
+                .FirstOrDefaultAsync(m => m.Id == id);
             if (contactType == null)
             {
                 return NotFound();
@@ -142,9 +142,16 @@ namespace WebApp.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            await _uow.ContactTypes.DeleteAsync(id);
-            await _uow.SaveChangesAsync();
+            var contactType = await _context.ContactTypes.FindAsync(id);
+            _context.ContactTypes.Remove(contactType);
+            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
+
+        private bool ContactTypeExists(Guid id)
+        {
+            return _context.ContactTypes.Any(e => e.Id == id);
+        }
+
     }
 }

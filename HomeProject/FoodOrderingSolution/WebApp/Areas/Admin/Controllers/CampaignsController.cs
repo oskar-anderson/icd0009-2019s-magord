@@ -1,6 +1,9 @@
+#pragma warning disable 1591
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Contracts.DAL.App;
+using DAL.App.EF;
 using Domain;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -12,18 +15,17 @@ namespace WebApp.Areas.Admin.Controllers
     [Authorize(Roles= "Admin")]
     public class CampaignsController : Controller
     {
-        private readonly IAppUnitOfWork _uow;
+        private readonly AppDbContext _context;
 
-        public CampaignsController(IAppUnitOfWork uow)
+        public CampaignsController(AppDbContext context)
         {
-            _uow = uow;
+            _context = context;
         }
 
         // GET: Campaigns
         public async Task<IActionResult> Index()
         {
-            var campaigns = await _uow.Campaigns.AllAsync();
-            return View(campaigns);
+            return View(await _context.Campaigns.ToListAsync());
         }
 
         // GET: Campaigns/Details/5
@@ -34,8 +36,8 @@ namespace WebApp.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var campaign = await _uow.Campaigns.FirstOrDefaultAsync(id.Value);
-            
+            var campaign = await _context.Campaigns
+                .FirstOrDefaultAsync(m => m.Id == id);
             if (campaign == null)
             {
                 return NotFound();
@@ -55,12 +57,12 @@ namespace WebApp.Areas.Admin.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(Campaign campaign)
+        public async Task<IActionResult> Create([Bind("From,To,Name,Comment,CreatedBy,CreatedAt,DeletedBy,DeletedAt,Id")] Campaign campaign)
         {
             if (ModelState.IsValid)
             {
-                _uow.Campaigns.Add(campaign);
-                await _uow.SaveChangesAsync();
+                _context.Add(campaign);
+                await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
             return View(campaign);
@@ -74,8 +76,7 @@ namespace WebApp.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var campaign = await _uow.Campaigns.FirstOrDefaultAsync(id.Value);
-            
+            var campaign = await _context.Campaigns.FindAsync(id);
             if (campaign == null)
             {
                 return NotFound();
@@ -88,7 +89,7 @@ namespace WebApp.Areas.Admin.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, Campaign campaign)
+        public async Task<IActionResult> Edit(Guid id, [Bind("From,To,Name,Comment,CreatedBy,CreatedAt,DeletedBy,DeletedAt,Id")] Campaign campaign)
         {
             if (id != campaign.Id)
             {
@@ -99,12 +100,12 @@ namespace WebApp.Areas.Admin.Controllers
             {
                 try
                 {
-                    _uow.Campaigns.Update(campaign);
-                    await _uow.SaveChangesAsync();
+                    _context.Update(campaign);
+                    await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (await _uow.Campaigns.ExistsAsync(campaign.Id))
+                    if (!CampaignExists(campaign.Id))
                     {
                         return NotFound();
                     }
@@ -126,7 +127,8 @@ namespace WebApp.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var campaign = await _uow.Campaigns.FirstOrDefaultAsync(id.Value);
+            var campaign = await _context.Campaigns
+                .FirstOrDefaultAsync(m => m.Id == id);
             if (campaign == null)
             {
                 return NotFound();
@@ -140,10 +142,16 @@ namespace WebApp.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            await _uow.Campaigns.DeleteAsync(id);
-            await _uow.SaveChangesAsync();
-            
+            var campaign = await _context.Campaigns.FindAsync(id);
+            _context.Campaigns.Remove(campaign);
+            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
+
+        private bool CampaignExists(Guid id)
+        {
+            return _context.Campaigns.Any(e => e.Id == id);
+        }
+
     }
 }

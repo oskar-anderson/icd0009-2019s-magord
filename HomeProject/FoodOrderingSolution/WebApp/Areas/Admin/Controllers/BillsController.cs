@@ -1,7 +1,11 @@
+#pragma warning disable 1591
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Contracts.DAL.App;
+using DAL.App.EF;
 using Domain;
+using Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -13,18 +17,21 @@ namespace WebApp.Areas.Admin.Controllers
     [Authorize(Roles= "Admin")]
     public class BillsController : Controller
     {
-        private readonly IAppUnitOfWork _uow;
+        private readonly AppDbContext _context;
 
-        public BillsController(IAppUnitOfWork uow)
+        public BillsController(AppDbContext context)
         {
-            _uow = uow;
+            _context = context;
         }
 
         // GET: Bills
         public async Task<IActionResult> Index()
         {
-            var bills = await _uow.Bills.AllAsync(User.UserGuidId());
-            return View(bills);
+            var appDbContext = _context.Bills
+                .Include(b => b.AppUser)
+                .Include(b => b.Order)
+                .Include(b => b.Person);
+            return View(await appDbContext.ToListAsync());
         }
 
         // GET: Bills/Details/5
@@ -35,8 +42,11 @@ namespace WebApp.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var bill = await _uow.Bills.FirstOrDefaultAsync(id.Value, User.UserGuidId());
-            
+            var bill = await _context.Bills
+                .Include(b => b.AppUser)
+                .Include(b => b.Order)
+                .Include(b => b.Person)
+                .FirstOrDefaultAsync(m => m.Id == id);
             if (bill == null)
             {
                 return NotFound();
@@ -46,10 +56,11 @@ namespace WebApp.Areas.Admin.Controllers
         }
 
         // GET: Bills/Create
-        public async Task<IActionResult> Create()
+        public IActionResult Create()
         {
-            ViewData["OrderId"] = new SelectList(await _uow.Orders.AllAsync(), nameof(Order.Id), nameof(Order.Number));
-            ViewData["PersonId"] = new SelectList(await _uow.Persons.AllAsync(), nameof(Person.Id), nameof(Person.FirstName));
+            //ViewData["AppUserId"] = new SelectList(_context.Users, "Id", "Id");
+            ViewData["OrderId"] = new SelectList(_context.Orders, "Id", "Id");
+            ViewData["PersonId"] = new SelectList(_context.Persons, "Id", "Id");
             return View();
         }
 
@@ -58,36 +69,38 @@ namespace WebApp.Areas.Admin.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(Bill bill)
+        public async Task<IActionResult> Create( Bill bill)
         {
-            bill.AppUserId = User.UserGuidId();
+            
+            bill.AppUserId = User.UserId();
             
             if (ModelState.IsValid)
             {
-                _uow.Bills.Add(bill);
-                await _uow.SaveChangesAsync();
+                _context.Add(bill);
+                await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["OrderId"] = new SelectList(await _uow.Orders.AllAsync(), nameof(Order.Id), nameof(Order.Number), bill.OrderId);
-            ViewData["PersonId"] = new SelectList(await _uow.Persons.AllAsync(), nameof(Person.Id), nameof(Person.FirstName), bill.PersonId);
+            ViewData["OrderId"] = new SelectList(_context.Orders, "Id", "Id", bill.OrderId);
+            ViewData["PersonId"] = new SelectList(_context.Persons, "Id", "Id", bill.PersonId);
             return View(bill);
         }
 
         // GET: Bills/Edit/5
-        public async Task<IActionResult> Edit(Guid? id)
+        public async Task<IActionResult> Edit(string id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var bill = await _uow.Bills.FirstOrDefaultAsync(id.Value, User.UserGuidId());
+            var bill = await _context.Bills.FindAsync(id);
             if (bill == null)
             {
                 return NotFound();
             }
-            ViewData["OrderId"] = new SelectList(await _uow.Orders.AllAsync(), nameof(Order.Id), nameof(Order.Number), bill.OrderId);
-            ViewData["PersonId"] = new SelectList(await _uow.Persons.AllAsync(), nameof(Person.Id), nameof(Person.FirstName), bill.PersonId);
+            ViewData["AppUserId"] = new SelectList(_context.Users, "Id", "Id", bill.AppUserId);
+            ViewData["OrderId"] = new SelectList(_context.Orders, "Id", "Id", bill.OrderId);
+            ViewData["PersonId"] = new SelectList(_context.Persons, "Id", "Id", bill.PersonId);
             return View(bill);
         }
 
@@ -96,25 +109,23 @@ namespace WebApp.Areas.Admin.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, Bill bill)
+        public async Task<IActionResult> Edit(Guid id, [Bind("TimeIssued,Number,Sum,OrderId,AppUserId,PersonId,CreatedBy,CreatedAt,DeletedBy,DeletedAt,Id")] Bill bill)
         {
             if (id != bill.Id)
             {
                 return NotFound();
             }
 
-            bill.AppUserId = User.UserGuidId();
-
             if (ModelState.IsValid)
             {
                 try
                 {
-                    _uow.Bills.Update(bill);
-                    await _uow.SaveChangesAsync();
+                    _context.Update(bill);
+                    await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (await _uow.Bills.ExistsAsync(bill.Id, User.UserGuidId()))
+                    if (!BillExists(bill.Id))
                     {
                         return NotFound();
                     }
@@ -125,8 +136,9 @@ namespace WebApp.Areas.Admin.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["OrderId"] = new SelectList(await _uow.Orders.AllAsync(), nameof(Order.Id), nameof(Order.Number), bill.OrderId);
-            ViewData["PersonId"] = new SelectList(await _uow.Persons.AllAsync(), nameof(Person.Id), nameof(Person.FirstName), bill.PersonId);
+            ViewData["AppUserId"] = new SelectList(_context.Users, "Id", "Id", bill.AppUserId);
+            ViewData["OrderId"] = new SelectList(_context.Orders, "Id", "Id", bill.OrderId);
+            ViewData["PersonId"] = new SelectList(_context.Persons, "Id", "Id", bill.PersonId);
             return View(bill);
         }
 
@@ -138,8 +150,11 @@ namespace WebApp.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var bill = await _uow.Bills.FirstOrDefaultAsync(id.Value, User.UserGuidId());
-            
+            var bill = await _context.Bills
+                .Include(b => b.AppUser)
+                .Include(b => b.Order)
+                .Include(b => b.Person)
+                .FirstOrDefaultAsync(m => m.Id == id);
             if (bill == null)
             {
                 return NotFound();
@@ -153,10 +168,15 @@ namespace WebApp.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            await _uow.Bills.DeleteAsync(id, User.UserGuidId());
-            await _uow.SaveChangesAsync();
-
+            var bill = await _context.Bills.FindAsync(id);
+            _context.Bills.Remove(bill);
+            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
+        }
+
+        private bool BillExists(Guid  id)
+        {
+            return _context.Bills.Any(e => e.Id == id);
         }
     }
 }

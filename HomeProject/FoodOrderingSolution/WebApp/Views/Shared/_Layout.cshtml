@@ -30,7 +30,7 @@
                     <li class="nav-item">
                         <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
                     </li>
-                    @if (SignInManager.IsSignedIn(User) && User.IsInRole("admin"))
+                    @if (SignInManager.IsSignedIn(User) && User.IsInRole("Admin"))
                     {
                         <li class="nav-item dropdown">
                             <a class="nav-link text-dark dropdown-toggle" href="#" id="navbarDropdownAdmin" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">

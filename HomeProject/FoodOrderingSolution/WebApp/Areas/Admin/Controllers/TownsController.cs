@@ -1,7 +1,10 @@
+#pragma warning disable 1591
 using System;
+using System.Linq;
 using System.Threading.Tasks;
-using BLL.App.DTO;
-using Contracts.BLL.App;
+using DAL.App.EF;
+using Domain;
+using Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -12,30 +15,29 @@ namespace WebApp.Areas.Admin.Controllers
     [Authorize(Roles= "Admin")]
     public class TownsController : Controller
     {
-        private readonly IAppBLL _bll;
+        private readonly AppDbContext _context;
 
-        public TownsController(IAppBLL bll)
+        public TownsController(AppDbContext context)
         {
-            _bll = bll;
+            _context = context;
         }
 
         // GET: Towns
         public async Task<IActionResult> Index()
         {
-            var towns = await _bll.Towns.AllAsync(User.UserGuidId());
-            return View(towns);
+            return View(await _context.Towns.ToListAsync());
         }
 
         // GET: Towns/Details/5
-        public async Task<IActionResult> Details(Guid? id)
+        public async Task<IActionResult> Details(Guid id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var town = await _bll.Towns.FirstOrDefaultAsync(id.Value, User.UserGuidId());
-
+            var town = await _context.Towns
+                .FirstOrDefaultAsync(m => m.Id == id);
             if (town == null)
             {
                 return NotFound();
@@ -55,30 +57,26 @@ namespace WebApp.Areas.Admin.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(BLL.App.DTO.Town town)
+        public async Task<IActionResult> Create([Bind("Name,CreatedBy,CreatedAt,DeletedBy,DeletedAt,Id")] Town town)
         {
-            town.AppUserId = User.UserGuidId();
-            
             if (ModelState.IsValid)
             {
-                //town.Id = Guid.NewGuid();
-                _bll.Towns.Add(town);
-                await _bll.SaveChangesAsync();
+                _context.Add(town);
+                await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
             return View(town);
         }
 
         // GET: Towns/Edit/5
-        public async Task<IActionResult> Edit(Guid? id)
+        public async Task<IActionResult> Edit(Guid id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var town = await _bll.Towns.FirstOrDefaultAsync(id.Value, User.UserGuidId());
-
+            var town = await _context.Towns.FindAsync(id);
             if (town == null)
             {
                 return NotFound();
@@ -91,10 +89,8 @@ namespace WebApp.Areas.Admin.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, Town town)
+        public async Task<IActionResult> Edit(Guid id, [Bind("Name,CreatedBy,CreatedAt,DeletedBy,DeletedAt,Id")] Town town)
         {
-            town.AppUserId = User.UserGuidId();
-            
             if (id != town.Id)
             {
                 return NotFound();
@@ -104,12 +100,12 @@ namespace WebApp.Areas.Admin.Controllers
             {
                 try
                 {
-                    _bll.Towns.Update(town);
-                    await _bll.SaveChangesAsync();
+                    _context.Update(town);
+                    await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!await _bll.Towns.ExistsAsync(town.Id))
+                    if (!TownExists(town.Id))
                     {
                         return NotFound();
                     }
@@ -124,15 +120,15 @@ namespace WebApp.Areas.Admin.Controllers
         }
 
         // GET: Towns/Delete/5
-        public async Task<IActionResult> Delete(Guid? id)
+        public async Task<IActionResult> Delete(Guid id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var town = await _bll.Towns.FirstOrDefaultAsync(id.Value);
-
+            var town = await _context.Towns
+                .FirstOrDefaultAsync(m => m.Id == id);
             if (town == null)
             {
                 return NotFound();
@@ -146,9 +142,16 @@ namespace WebApp.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            await _bll.Towns.DeleteAsync(id);
-            await _bll.SaveChangesAsync();
+            var town = await _context.Towns.FindAsync(id);
+            _context.Towns.Remove(town);
+            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
+
+        private bool TownExists(Guid id)
+        {
+            return _context.Towns.Any(e => e.Id == id);
+        }
+
     }
 }

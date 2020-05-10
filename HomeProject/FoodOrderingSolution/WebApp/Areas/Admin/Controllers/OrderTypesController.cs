@@ -1,6 +1,9 @@
+#pragma warning disable 1591
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Contracts.DAL.App;
+using DAL.App.EF;
 using Domain;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -12,30 +15,29 @@ namespace WebApp.Areas.Admin.Controllers
     [Authorize(Roles= "Admin")]
     public class OrderTypesController : Controller
     {
-        private readonly IAppUnitOfWork _uow;
+        private readonly AppDbContext _context;
 
-        public OrderTypesController(IAppUnitOfWork uow)
+        public OrderTypesController(AppDbContext context)
         {
-            _uow = uow;
+            _context = context;
         }
 
         // GET: OrderTypes
         public async Task<IActionResult> Index()
         {
-            var orderTypes = await _uow.OrderTypes.AllAsync();
-            return View(orderTypes);
+            return View(await _context.OrderTypes.ToListAsync());
         }
 
         // GET: OrderTypes/Details/5
-        public async Task<IActionResult> Details(Guid? id)
+        public async Task<IActionResult> Details(Guid id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var orderType = await _uow.OrderTypes.FirstOrDefaultAsync(id.Value);
-
+            var orderType = await _context.OrderTypes
+                .FirstOrDefaultAsync(m => m.Id == id);
             if (orderType == null)
             {
                 return NotFound();
@@ -55,28 +57,26 @@ namespace WebApp.Areas.Admin.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(OrderType orderType)
+        public async Task<IActionResult> Create([Bind("Name,Comment,CreatedBy,CreatedAt,DeletedBy,DeletedAt,Id")] OrderType orderType)
         {
             if (ModelState.IsValid)
             {
-                //orderType.Id = Guid.NewGuid();
-                _uow.OrderTypes.Add(orderType);
-                await _uow.SaveChangesAsync();
+                _context.Add(orderType);
+                await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
             return View(orderType);
         }
 
         // GET: OrderTypes/Edit/5
-        public async Task<IActionResult> Edit(Guid? id)
+        public async Task<IActionResult> Edit(Guid id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var orderType = await _uow.OrderTypes.FirstOrDefaultAsync(id.Value);
-
+            var orderType = await _context.OrderTypes.FindAsync(id);
             if (orderType == null)
             {
                 return NotFound();
@@ -89,7 +89,7 @@ namespace WebApp.Areas.Admin.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, OrderType orderType)
+        public async Task<IActionResult> Edit(Guid id, [Bind("Name,Comment,CreatedBy,CreatedAt,DeletedBy,DeletedAt,Id")] OrderType orderType)
         {
             if (id != orderType.Id)
             {
@@ -100,12 +100,12 @@ namespace WebApp.Areas.Admin.Controllers
             {
                 try
                 {
-                    _uow.OrderTypes.Update(orderType);
-                    await _uow.SaveChangesAsync();
+                    _context.Update(orderType);
+                    await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!await _uow.OrderTypes.ExistsAsync(orderType.Id))
+                    if (!OrderTypeExists(orderType.Id))
                     {
                         return NotFound();
                     }
@@ -120,15 +120,15 @@ namespace WebApp.Areas.Admin.Controllers
         }
 
         // GET: OrderTypes/Delete/5
-        public async Task<IActionResult> Delete(Guid? id)
+        public async Task<IActionResult> Delete(Guid id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var orderType = await _uow.OrderTypes.FirstOrDefaultAsync(id.Value);
-
+            var orderType = await _context.OrderTypes
+                .FirstOrDefaultAsync(m => m.Id == id);
             if (orderType == null)
             {
                 return NotFound();
@@ -142,9 +142,16 @@ namespace WebApp.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            await _uow.OrderTypes.DeleteAsync(id);
-            await _uow.SaveChangesAsync();
+            var orderType = await _context.OrderTypes.FindAsync(id);
+            _context.OrderTypes.Remove(orderType);
+            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
+
+        private bool OrderTypeExists(Guid id)
+        {
+            return _context.OrderTypes.Any(e => e.Id == id);
+        }
+
     }
 }
