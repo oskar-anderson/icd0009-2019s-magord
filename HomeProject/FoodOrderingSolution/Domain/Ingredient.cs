@@ -7,7 +7,7 @@ using Domain.Identity;
 
 namespace Domain
 {
-    public class Ingredient : DomainEntityIdMetadataUser<AppUser>
+    public class Ingredient : DomainEntityIdMetadata
     {
         [MaxLength(256)] [MinLength(1)] public string Name { get; set; } = default!;
 

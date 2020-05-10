@@ -84,14 +84,12 @@ namespace WebApp.ApiControllers._1._0
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> PutRestaurant(Guid id, V1DTO.Restaurant restaurant)
         {
-            restaurant.AppUserId = User.UserId();
-            
             if (id != restaurant.Id)
             {
                 return BadRequest(new {message = "The id and restaurant.id do not match!"});
             }
 
-            await _bll.Restaurants.UpdateAsync(_mapper.Map(restaurant), User.UserId());
+            await _bll.Restaurants.UpdateAsync(_mapper.Map(restaurant));
             await _bll.SaveChangesAsync();
 
             return NoContent();
@@ -109,8 +107,6 @@ namespace WebApp.ApiControllers._1._0
         [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(V1DTO.Restaurant))]
         public async Task<ActionResult<V1DTO.Restaurant>> PostRestaurant(V1DTO.Restaurant restaurant)
         {
-            restaurant.AppUserId = User.UserId();
-
             var bllEntity = _mapper.Map(restaurant);
             _bll.Restaurants.Add(bllEntity);
             await _bll.SaveChangesAsync();
@@ -134,7 +130,7 @@ namespace WebApp.ApiControllers._1._0
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<V1DTO.Restaurant>> DeleteRestaurant(Guid id)
         {
-            var restaurant = await _bll.Restaurants.FirstOrDefaultAsync(id, User.UserId());
+            var restaurant = await _bll.Restaurants.FirstOrDefaultAsync(id);
             if (restaurant == null)
             {
                 return NotFound(new {message = "Restaurant not found"});

@@ -13,9 +13,5 @@ namespace BLL.App.DTO
         public string? Comment { get; set; }
 
         public ICollection<Order>? Orders { get; set; }
-        
-        public Guid AppUserId { get; set; } = default!;
-        public AppUser? AppUser { get; set; }
     }
-    
 }

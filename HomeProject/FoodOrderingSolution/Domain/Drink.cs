@@ -7,7 +7,7 @@ using Domain.Identity;
 
 namespace Domain
 {
-    public class Drink : DomainEntityIdMetadataUser<AppUser>
+    public class Drink : DomainEntityIdMetadata
     {
         public float Size { get; set; } = default!;
 

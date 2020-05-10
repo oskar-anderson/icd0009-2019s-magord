@@ -14,6 +14,5 @@ namespace PublicApi.DTO.v1
         public int Amount { get; set; } = default!;
         public float Size { get; set; } = default!;
         public Guid FoodTypeId { get; set; } = default!;
-        public Guid AppUserId { get; set; }
     }
 }

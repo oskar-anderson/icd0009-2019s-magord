@@ -84,14 +84,12 @@ namespace WebApp.ApiControllers._1._0
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> PutArea(Guid id, V1DTO.Area area)
         {
-            area.AppUserId = User.UserId();
-            
             if (id != area.Id)
             {
                 return BadRequest(new {message = "The id and area.id do not match!"});
             }
 
-            await _bll.Areas.UpdateAsync(_mapper.Map(area), User.UserId());
+            await _bll.Areas.UpdateAsync(_mapper.Map(area));
             await _bll.SaveChangesAsync();
 
             return NoContent();
@@ -109,8 +107,6 @@ namespace WebApp.ApiControllers._1._0
         [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(V1DTO.Area))]
         public async Task<ActionResult<V1DTO.Area>> PostArea(V1DTO.Area area)
         {
-            area.AppUserId = User.UserId();
-            
             var bllEntity = _mapper.Map(area);
             _bll.Areas.Add(bllEntity);
             await _bll.SaveChangesAsync();
@@ -134,7 +130,7 @@ namespace WebApp.ApiControllers._1._0
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<V1DTO.Area>> DeleteArea(Guid id)
         {
-            var area = await _bll.Areas.FirstOrDefaultAsync(id, User.UserId());
+            var area = await _bll.Areas.FirstOrDefaultAsync(id);
             if (area == null)
             {
                 return NotFound(new {message = "Area not found"});

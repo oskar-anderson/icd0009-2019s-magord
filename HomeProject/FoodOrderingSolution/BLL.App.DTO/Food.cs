@@ -19,9 +19,6 @@ namespace BLL.App.DTO
         
         public Guid FoodTypeId { get; set; } = default!;
         public FoodType? FoodType { get; set; }
-        
-        public Guid AppUserId { get; set; } = default!;
-        public AppUser? AppUser { get; set; }
 
         public ICollection<Ingredient>? Ingredients { get; set; }
 

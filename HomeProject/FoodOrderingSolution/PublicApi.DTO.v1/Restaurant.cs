@@ -17,6 +17,5 @@ namespace PublicApi.DTO.v1
         public string ClosedFrom { get; set; } = default!;
         
         public Guid AreaId { get; set; } = default!;
-        public Guid AppUserId { get; set; }
     }
 }

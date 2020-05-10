@@ -84,14 +84,12 @@ namespace WebApp.ApiControllers._1._0
         [HttpPut("{id}")]
         public async Task<IActionResult> PutTown(Guid id, V1DTO.Town town)
         {
-            town.AppUserId = User.UserId();
-            
             if (id != town.Id)
             {
                 return BadRequest(new {message = "The id and town.id do not match!"});
             }
 
-            await _bll.Towns.UpdateAsync(_mapper.Map(town), User.UserId());
+            await _bll.Towns.UpdateAsync(_mapper.Map(town));
             await _bll.SaveChangesAsync();
 
             return NoContent();
@@ -109,8 +107,6 @@ namespace WebApp.ApiControllers._1._0
         [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(V1DTO.Town))]
         public async Task<ActionResult<V1DTO.Town>> PostTown(V1DTO.Town town)
         {
-            town.AppUserId = User.UserId();
-
             var bllEntity = _mapper.Map(town);
             _bll.Towns.Add(bllEntity);
             await _bll.SaveChangesAsync();
@@ -134,7 +130,7 @@ namespace WebApp.ApiControllers._1._0
         [HttpDelete("{id}")]
         public async Task<ActionResult<V1DTO.Town>> DeleteTown(Guid id)
         {
-            var town = await _bll.Towns.FirstOrDefaultAsync(id, User.UserId());
+            var town = await _bll.Towns.FirstOrDefaultAsync(id);
             if (town == null)
             {
                 return NotFound(new {message = "Town not found"});

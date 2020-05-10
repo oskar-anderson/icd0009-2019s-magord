@@ -12,7 +12,5 @@ namespace BLL.App.DTO
         public ICollection<Restaurant>? Restaurants { get; set; }
         public Guid TownId { get; set; } = default!;
         public Town? Town { get; set; }
-        public Guid AppUserId { get; set; } = default!;
-        public AppUser? AppUser { get; set; }
     }
 }

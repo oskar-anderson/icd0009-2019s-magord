@@ -10,7 +10,5 @@ namespace PublicApi.DTO.v1
         
         [MaxLength(256)] [MinLength(1)] public string Name { get; set; } = default!;
         [MaxLength(1024)] public string? Comment { get; set; }
-        public Guid AppUserId { get; set; }
     }
-
 }

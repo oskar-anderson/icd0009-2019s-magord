@@ -7,7 +7,7 @@ using Domain.Identity;
 
 namespace Domain
 {
-    public class Town : DomainEntityIdMetadataUser<AppUser>
+    public class Town : DomainEntityIdMetadata
     {
         [MaxLength(256)] [MinLength(1)] public string Name { get; set; } = default!;
         public ICollection<Area>? Areas { get; set; }

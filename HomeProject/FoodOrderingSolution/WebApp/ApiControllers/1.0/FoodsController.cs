@@ -84,14 +84,12 @@ namespace WebApp.ApiControllers._1._0
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> PutFood(Guid id, V1DTO.Food food)
         {
-            food.AppUserId = User.UserId();
-            
             if (id != food.Id)
             {
                 return BadRequest(new {message = "The id and food.id do not match!"});
             }
 
-            await _bll.Foods.UpdateAsync(_mapper.Map(food), User.UserId());
+            await _bll.Foods.UpdateAsync(_mapper.Map(food));
             await _bll.SaveChangesAsync();
 
             return NoContent();
@@ -109,8 +107,6 @@ namespace WebApp.ApiControllers._1._0
         [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(V1DTO.Food))]
         public async Task<ActionResult<V1DTO.Food>> PostFood(V1DTO.Food food)
         {
-            food.AppUserId = User.UserId();
-
             var bllEntity = _mapper.Map(food);
             _bll.Foods.Add(bllEntity);
             await _bll.SaveChangesAsync();
@@ -134,7 +130,7 @@ namespace WebApp.ApiControllers._1._0
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<V1DTO.Food>> DeleteFood(Guid id)
         {
-            var food = await _bll.Foods.FirstOrDefaultAsync(id, User.UserId());
+            var food = await _bll.Foods.FirstOrDefaultAsync(id);
             if (food == null)
             {
                 return NotFound(new {message = "Food not found"});

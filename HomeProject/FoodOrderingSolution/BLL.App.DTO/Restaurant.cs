@@ -19,9 +19,6 @@ namespace BLL.App.DTO
 
         public Guid AreaId { get; set; } = default!;
         public Area? Area { get; set; }
-        
-        public Guid AppUserId { get; set; } 
-        public AppUser? AppUser { get; set; }
 
         public ICollection<PersonInRestaurant>? PersonInRestaurants { get; set; }
 

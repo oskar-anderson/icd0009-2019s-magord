@@ -7,7 +7,7 @@ using Domain.Identity;
 
 namespace Domain
 {
-    public class Area : DomainEntityIdMetadataUser<AppUser>
+    public class Area : DomainEntityIdMetadata
     {
         // If can be null then -> public string? Name { get; set; }
         // If cannot be null then -> public string Name { get; set; } = default!;

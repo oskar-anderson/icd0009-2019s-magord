@@ -84,14 +84,12 @@ namespace WebApp.ApiControllers._1._0
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> PutIngredient(Guid id, V1DTO.Ingredient ingredient)
         {
-            ingredient.AppUserId = User.UserId();
-            
             if (id != ingredient.Id)
             {
                 return BadRequest(new {message = "The id and ingredient.id do not match!"});
             }
 
-            await _bll.Ingredients.UpdateAsync(_mapper.Map(ingredient), User.UserId());
+            await _bll.Ingredients.UpdateAsync(_mapper.Map(ingredient));
             await _bll.SaveChangesAsync();
 
             return NoContent();
@@ -109,8 +107,6 @@ namespace WebApp.ApiControllers._1._0
         [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(V1DTO.Ingredient))]
         public async Task<ActionResult<V1DTO.Ingredient>> PostIngredient(V1DTO.Ingredient ingredient)
         {
-            ingredient.AppUserId = User.UserId();
-
             var bllEntity = _mapper.Map(ingredient);
             _bll.Ingredients.Add(bllEntity);
             await _bll.SaveChangesAsync();
@@ -134,7 +130,7 @@ namespace WebApp.ApiControllers._1._0
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<V1DTO.Ingredient>> DeleteIngredient(Guid id)
         {
-            var ingredient = await _bll.Ingredients.FirstOrDefaultAsync(id, User.UserId());
+            var ingredient = await _bll.Ingredients.FirstOrDefaultAsync(id);
             if (ingredient == null)
             {
                 return NotFound(new {message = "Ingredient not found"});

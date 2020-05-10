@@ -86,14 +86,12 @@ namespace WebApp.ApiControllers._1._0
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> PutDrink(Guid id, V1DTO.Drink drink)
         {
-            drink.AppUserId = User.UserId();
-            
             if (id != drink.Id)
             {
                 return BadRequest(new {message = "The id and drink.id do not match!"});
             }
 
-            await _bll.Drinks.UpdateAsync(_mapper.Map(drink), User.UserId());
+            await _bll.Drinks.UpdateAsync(_mapper.Map(drink));
             await _bll.SaveChangesAsync();
 
             return NoContent();
@@ -111,8 +109,6 @@ namespace WebApp.ApiControllers._1._0
         [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(V1DTO.Drink))]
         public async Task<ActionResult<V1DTO.Drink>> PostDrink(V1DTO.Drink drink)
         {
-            drink.AppUserId = User.UserId();
-
             var bllEntity = _mapper.Map(drink);
             _bll.Drinks.Add(bllEntity);
             await _bll.SaveChangesAsync();
@@ -136,7 +132,7 @@ namespace WebApp.ApiControllers._1._0
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<V1DTO.Drink>> DeleteDrink(Guid id)
         {
-            var drink = await _bll.Drinks.FirstOrDefaultAsync(id, User.UserId());
+            var drink = await _bll.Drinks.FirstOrDefaultAsync(id);
             if (drink == null)
             {
                 return NotFound( new {message = "Drink not found"});

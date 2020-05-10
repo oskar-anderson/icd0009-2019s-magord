@@ -84,14 +84,12 @@ namespace WebApp.ApiControllers._1._0
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> PutOrderType(Guid id, V1DTO.OrderType orderType)
         {
-            orderType.AppUserId = User.UserId();
-            
             if (id != orderType.Id)
             {
                 return BadRequest(new {message = "The id and orderType.id do not match!"});
             }
 
-            await _bll.OrderTypes.UpdateAsync(_mapper.Map(orderType), User.UserId());
+            await _bll.OrderTypes.UpdateAsync(_mapper.Map(orderType));
             await _bll.SaveChangesAsync();
 
             return NoContent();
@@ -109,8 +107,6 @@ namespace WebApp.ApiControllers._1._0
         [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(V1DTO.OrderType))]
         public async Task<ActionResult<V1DTO.OrderType>> PostOrderType(V1DTO.OrderType orderType)
         {
-            orderType.AppUserId = User.UserId();
-
             var bllEntity = _mapper.Map(orderType);
             _bll.OrderTypes.Add(bllEntity);
             await _bll.SaveChangesAsync();
@@ -134,7 +130,7 @@ namespace WebApp.ApiControllers._1._0
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<V1DTO.OrderType>> DeleteOrderType(Guid id)
         {
-            var orderType = await _bll.OrderTypes.FirstOrDefaultAsync(id, User.UserId());
+            var orderType = await _bll.OrderTypes.FirstOrDefaultAsync(id);
             if (orderType == null)
             {
                 return NotFound(new {message = "Order Type not found"});
