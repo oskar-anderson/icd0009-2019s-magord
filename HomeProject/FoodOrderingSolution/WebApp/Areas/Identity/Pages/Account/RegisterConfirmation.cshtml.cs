@@ -1,3 +1,4 @@
+#pragma warning disable 1591
 using Microsoft.AspNetCore.Authorization;
 using System.Text;
 using System.Threading.Tasks;

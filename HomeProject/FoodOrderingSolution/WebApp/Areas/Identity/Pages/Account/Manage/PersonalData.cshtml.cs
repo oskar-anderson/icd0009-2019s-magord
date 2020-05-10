@@ -1,3 +1,4 @@
+#pragma warning disable 1591
 using System.Threading.Tasks;
 using Domain.Identity;
 using Microsoft.AspNetCore.Identity;
