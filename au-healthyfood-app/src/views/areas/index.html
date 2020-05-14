@@ -7,41 +7,37 @@
 
     <h1>Areas Index</h1>
 
-<p>
-    <a route-href="route: areas-create; params.bind: {}">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                Name
-            </th>
-            <th>
-                Town
-            </th>
-            <th>
-                RestaurantCount
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr repeat.for="area of _areas">
-            <td>
-                ${area.name}
-            </td>
-            <th>
-                ${area.town.name}
-            </th>
-            <td>
-                ${area.restaurantCount}
-            </td>
-            <td>
-                <a route-href="route: areas-edit; params.bind: { id: area.id }">Edit</a> |
-                <a route-href="route: areas-details; params.bind: { id: area.id }">Details</a> |
-                <a route-href="route: areas-delete; params.bind: { id: area.id }">Delete</a>
-            </td>
-        </tr>
-    </tbody>
-</table>
+    <p>
+        <a if.bind="isAdmin" route-href="route: areas-create; params.bind: {}">Create New</a>
+    </p>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    Name
+                </th>
+                <th>
+                    Town
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr repeat.for="area of _areas">
+                <td>
+                    ${area.name}
+                </td>
+                <td>
+                    ${area.town}
+                </td>
+                <td>
+                    <a if.bind="isAdmin" route-href="route: areas-edit; params.bind: { id: area.id }">Edit</a>
+                    <span if.bind="isAdmin">|</span>
+                    <a route-href="route: areas-details; params.bind: { id: area.id }">Details</a> 
+                    <button style="float: right" if.bind="isAdmin" click.trigger="deleteOnClick(area)" type="button"
+                        class="btn btn-danger">Delete</button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
 </template>

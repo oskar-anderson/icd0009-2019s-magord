@@ -34,8 +34,9 @@ export class AccountRegister {
             response => {
                 console.log(response);
                 if (response.statusCode == 200) {
-
                     this.appState.jwt = response.data!.token;
+                    this.appState.password = this._password;
+                    this.appState.email = this._email;
                     this.router!.navigateToRoute('home');
                 } else {
                     this._errorMessage = response.statusCode.toString()

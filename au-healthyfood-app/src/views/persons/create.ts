@@ -3,6 +3,8 @@ import { RouteConfig, NavigationInstruction, Router } from 'aurelia-router';
 import { PersonService } from 'service/person-service';
 import { IAlertData } from 'types/IAlertData';
 import { AlertType } from 'types/AlertType';
+import flatpickr from 'flatpickr'
+require("flatpickr/dist/flatpickr.css")
 
 
 @autoinject
@@ -20,7 +22,11 @@ export class TownsCreate {
     }
 
     attached() {
-
+        flatpickr('#DateOfBirth', {
+            altInput: true,
+            altFormat: "F j, Y",
+            dateFormat: "d/m/Y"
+        })
     }
 
     activate(params: any, routeConfig: RouteConfig, navigationInstruction: NavigationInstruction) {

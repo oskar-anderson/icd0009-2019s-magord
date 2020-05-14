@@ -11,7 +11,7 @@ export class AreasDetails {
 
     private _alert: IAlertData | null = null;
 
-    private _area?: IArea | null = null;
+    private area?: IArea;
 
     constructor(private areaService: AreaService) {
 
@@ -28,7 +28,7 @@ export class AreasDetails {
                 response => {
                     if (response.statusCode >= 200 && response.statusCode < 300) {
                         this._alert = null;
-                        this._area = response.data!;
+                        this.area = response.data!;
                     } else {
                         // show error message
                         this._alert = {
@@ -36,7 +36,7 @@ export class AreasDetails {
                             type: AlertType.Danger,
                             dismissable: true,
                         }
-                        this._area = undefined;
+                        this.area = undefined;
                     }
                 }                
             );

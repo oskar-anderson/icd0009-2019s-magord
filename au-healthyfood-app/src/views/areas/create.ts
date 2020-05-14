@@ -4,10 +4,9 @@ import { IAlertData } from 'types/IAlertData';
 import { AlertType } from 'types/AlertType';
 
 import { AreaService } from 'service/area-service';
-import { IArea } from 'domain/IArea/IArea';
-
 import { TownService } from 'service/town-service'
 import { ITown } from 'domain/ITown/ITown'
+import { IAreaCreate } from 'domain/IArea/IAreaCreate';
 
 
 @autoinject
@@ -15,8 +14,7 @@ export class AreasCreate {
 
     private _alert: IAlertData | null = null;
 
-    _name = "";
-    _townId: string | null = null;
+    area: IAreaCreate | null = null;
     _towns: ITown[] | null = null;
 
 
@@ -46,9 +44,17 @@ export class AreasCreate {
     }
 
     onSubmit(event: Event) {
-        console.log(event);
+        event.preventDefault();
+        if (this.area!.townId == null || this.area!.name == null ) {
+            this._alert = {
+                message: "Please fill all the cells",
+                type: AlertType.Danger,
+                dismissable:false,
+            }
+            return null;
+        }
         this.areaService
-            .createArea({ name: this._name })
+            .createArea(this.area!)
             .then(
                 response => {
                     if (response.statusCode >= 200 && response.statusCode < 300) {
@@ -64,7 +70,5 @@ export class AreasCreate {
                     }
                 }
             );
-
-        event.preventDefault();
     }
 }

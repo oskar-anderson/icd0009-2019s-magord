@@ -15,24 +15,18 @@
                 Name
             </dt>
             <dd class="col-sm-10">
-                ${_area.name}
+                ${area.name}
             </dd>
             <dt class="col-sm-2">
                 Town
             </dt>
             <dd class="col-sm-10">
-                ${_area.town.name}
-            </dd>
-            <dt class="col-sm-2">
-                RestaurantCount
-            </dt>
-            <dd class="col-sm-10">
-                ${_area.restaurantCount}
+                ${area.town}
             </dd>
         </dl>
     </div>
     <div>
-        <a route-href="route: areas-edit; params.bind: { id: _area.id }">Edit</a> |
+        <a route-href="route: areas-edit; params.bind: { id: area.id }">Edit</a> |
         <a route-href="route: areas-index; params.bind: { }">Back to List</a>
     </div>
 </template>

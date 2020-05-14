@@ -1,0 +1,52 @@
+<template>
+
+    <require from="../../components/alert"></require>
+
+    <alert alert-data.bind="_alert"></alert>
+
+
+    <h1>Create</h1>
+    <h4>Ingredient</h4>
+    <hr />
+    <div class="row">
+        <div class="col-md-4">
+            <form submit.trigger="onSubmit($event)">
+                <div class="form-group">
+                    <label class="control-label" for="Name">Name</label>
+                    <input class="form-control" type="text" id="Name" maxlength="256" value.bind="ingredient.name" />
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label" for="Amount">Amount</label>
+                    <input class="form-control" type="text" id="Amount" maxlength="256" value.bind="ingredient.amount" />
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label" for="FoodId">Food</label>
+                    <select class="form-control" data-val="true", type="text" id="FoodId" maxlength="256" value.bind="ingredient.foodId">
+                    <option model.bind="null">Choose a food</option>
+                    <option repeat.for="food of _foods" model.bind="food.id">${food.name}</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label" for="PriceId">Price</label>
+                    <select class="form-control" data-val="true", type="text" id="PriceId" maxlength="256" value.bind="ingredient.priceId">
+                    <option model.bind="null">Choose a price</option>
+                    <option repeat.for="price of _prices" model.bind="price.id">${price.value}</option>
+                    </select>
+                </div>
+                
+
+                <div class="form-group">
+                    <input type="submit" value="Create" class="btn btn-primary" />
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div>
+        <a route-href="route: ingredients-index; params.bind: { }">Back to List</a>
+    </div>
+
+</template>

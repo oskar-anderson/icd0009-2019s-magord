@@ -1,0 +1,46 @@
+<template>
+
+    <require from="../../components/alert"></require>
+
+    <alert alert-data.bind="_alert"></alert>
+
+
+    <h1>Create</h1>
+
+    <h4>Campaign</h4>
+    <hr />
+    <div class="row">
+        <div class="col-md-4">
+            <form submit.trigger="onSubmit($event)">
+                <div class="form-group">
+                    <label class="control-label" for="Name">Name</label>
+                    <input class="form-control" type="text" id="Name" maxlength="256" value.bind="campaign.name" />
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label" for="From">From</label>
+                    <input class="form-control" type="text" id="From" maxlength="1024" value.bind="campaign.from" />
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label" for="To">To</label>
+                    <input class="form-control" type="text" id="To" maxlength="1024" value.bind="campaign.to" />
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label" for="Comment">Comment</label>
+                    <input class="form-control" type="text" id="Comment" maxlength="1024" value.bind="campaign.comment" />
+                </div>
+
+                <div class="form-group">
+                    <input type="submit" value="Submit" class="btn btn-primary" />
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div>
+        <a route-href="route: campaigns-index; params.bind: { }">Back to List</a>
+    </div>
+
+</template>

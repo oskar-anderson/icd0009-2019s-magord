@@ -14,18 +14,19 @@
             <form submit.trigger="onSubmit($event)">
                 <div class="form-group">
                     <label class="control-label" for="Name">Name</label>
-                    <input class="form-control" type="text" id="Name" maxlength="256" value.bind="_area.name" />
+                    <input class="form-control" type="text" id="Name" maxlength="256" value.bind="area.name"/>
                 </div>
 
                 <div class="form-group">
                     <label class="control-label" for="TownId">Town</label>
-                    <select class="form-control" data-val="true", type="text" id="TownId" maxlength="256" value.bind="_area.townId">
-                    <option repeat.for="_town of _towns">${_town.Id}</option>
+                    <select class="form-control" data-val="true", type="text" id="TownId" maxlength="256" value.bind="area.townId">
+                    <option model.bind="null"> Choose a town</option>
+                    <option repeat.for="town of _towns" model.bind="town.id">${town.name}</option>
                     </select>
                 </div>
 
                 <div class="form-group">
-                    <input type="submit" value="Create" class="btn btn-primary" />
+                    <input type="submit" value="Submit" class="btn btn-primary" />
                 </div>
             </form>
         </div>

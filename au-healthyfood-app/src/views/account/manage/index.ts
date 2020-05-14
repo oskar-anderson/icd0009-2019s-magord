@@ -1,5 +1,3 @@
-import { AccountLogin } from './../login';
-import { Router } from 'aurelia-router';
 import { autoinject } from 'aurelia-framework';
 import { AccountService } from 'service/account-service';
 import { AppState } from 'state/app-state';
@@ -14,7 +12,6 @@ export class AccountManage {
     }
 
     attached(){
-        this._email = this.accountService.userEmail;
+        this._email = this.appState.email as string
     }
-    
 }

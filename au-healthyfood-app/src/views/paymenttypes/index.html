@@ -1,3 +1,37 @@
 <template>
-    PaymentsTypes index
+
+    <require from="../../components/alert"></require>
+
+    <alert alert-data.bind="_alert"></alert>
+
+
+    <h1>Payment types Index</h1>
+
+    <p>
+        <a if.bind="isAdmin" route-href="route: paymenttypes-create; params.bind: {}">Create New</a>
+    </p>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    Name
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr repeat.for="paymentType of _paymentTypes">
+                <td>
+                    ${paymentType.name}
+                </td>
+                <td>
+                    <a if.bind="isAdmin" route-href="route: paymenttypes-edit; params.bind: { id: paymentType.id }">Edit</a>
+                    <span if.bind="isAdmin">|</span>
+                    <a route-href="route: paymenttypes-details; params.bind: { id: paymentType.id }">Details</a> 
+                    <button style="float: right" if.bind="isAdmin" click.trigger="deleteOnClick(paymentType)" type="button"
+                        class="btn btn-danger">Delete</button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
 </template>

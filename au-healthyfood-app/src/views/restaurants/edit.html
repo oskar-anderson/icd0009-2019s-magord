@@ -1,0 +1,54 @@
+<template>
+
+    <require from="../../components/alert"></require>
+
+    <alert alert-data.bind="_alert"></alert>
+
+
+    <h1>Edit</h1>
+
+    <h4>Restaurant</h4>
+    <hr />
+    <div class="row">
+        <div class="col-md-4">
+            <form submit.trigger="onSubmit($event)">
+                <div class="form-group">
+                    <label class="control-label" for="Name">Name</label>
+                    <input class="form-control" type="text" id="Name" maxlength="256" value.bind="restaurant.name" />
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label" for="Address">Address</label>
+                    <input class="form-control" type="text" id="Address" maxlength="256" value.bind="restaurant.address" />
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label" for="OpenedFrom">Opened from</label>
+                    <input class="form-control" type="text" id="OpenedFrom" maxlength="256" value.bind="restaurant.openedFrom" />
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label" for="ClosedFrom">Closed from</label>
+                    <input class="form-control" type="text" id="ClosedFrom" maxlength="256" value.bind="restaurant.closedFrom" />
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label" for="AreaId">Area</label>
+                    <select class="form-control" data-val="true", type="text" id="AreaId" maxlength="256" value.bind="restaurant.areaId">
+                    <option model.bind="null">Choose an area</option>
+                    <option repeat.for="area of _areas" model.bind="area.id">${area.name}</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <input type="submit" value="Submit" class="btn btn-primary" />
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div>
+        <a route-href="route: restaurants-index; params.bind: { }">Back to List</a>
+    </div>
+
+</template>

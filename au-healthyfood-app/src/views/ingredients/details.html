@@ -4,37 +4,41 @@
 
     <alert alert-data.bind="_alert"></alert>
 
-    <h1>Delete</h1>
 
-    <h3>Are you sure you want to delete this?</h3>
+    <h1>Details</h1>
+
     <div>
-        <h4>Drink</h4>
+        <h4>Ingredient</h4>
         <hr />
         <dl class="row">
             <dt class="col-sm-2">
                 Name
             </dt>
             <dd class="col-sm-10">
-                ${_drink.name}
+                ${ingredient.name}
             </dd>
             <dt class="col-sm-2">
                 Amount
             </dt>
             <dd class="col-sm-10">
-                ${_drink.amount}
+                ${ingredient.amount}
             </dd>
             <dt class="col-sm-2">
-                Size
+                Food
             </dt>
             <dd class="col-sm-10">
-                ${_drink.size}
+                ${ingredient.food}
+            </dd>
+            <dt class="col-sm-2">
+                Price
+            </dt>
+            <dd class="col-sm-10">
+                ${ingredient.price}
             </dd>
         </dl>
-
-        <form submit.trigger="onSubmit($event)">
-            <input type="submit" value="Delete" class="btn btn-danger" /> |
-            <a route-href="route: drinks-index; params.bind: { }">Back to List</a>
-        </form>
-
+    </div>
+    <div>
+        <a route-href="route: ingredients-edit; params.bind: { id: ingredient.id }">Edit</a> |
+        <a route-href="route: ingredients-index; params.bind: { }">Back to List</a>
     </div>
 </template>

@@ -1,6 +1,6 @@
 import { autoinject } from 'aurelia-framework';
 import { AppState } from 'state/app-state';
-import { HttpClient, json } from 'aurelia-fetch-client';
+import { HttpClient } from 'aurelia-fetch-client';
 import { IFetchResponse } from 'types/IFetchResponse';
 import { ILoginResponse } from 'domain/ILoginResponse';
 
@@ -29,8 +29,6 @@ export class AccountService {
             // Everything went well!
             if (response.status >= 200 && response.status < 300) {
                 const data = (await response.json()) as ILoginResponse;
-                this.userEmail = email;
-                this.userPassword = password;
                 return {
                     statusCode: response.status,
                     data: data
@@ -67,8 +65,6 @@ export class AccountService {
             // Everything went well!
             if (response.status >= 200 && response.status < 300) {
                 const data = (await response.json()) as ILoginResponse;
-                this.userEmail = email;
-                this.userPassword = password;
                 return {
                     statusCode: response.status,
                     data: data
@@ -103,8 +99,6 @@ export class AccountService {
             // Everything went well!
             if (response.status >= 200 && response.status < 300) {
                 const data = (await response.json()) as ILoginResponse;
-                console.log(data.status)
-                this.userPassword = newPassword;
                 return {
                     statusCode: response.status,
                     data: data
@@ -139,8 +133,6 @@ export class AccountService {
             // Everything went well!
             if (response.status >= 200 && response.status < 300) {
                 const data = (await response.json()) as ILoginResponse;
-                console.log(data.status)
-                this.userEmail = newEmail;
                 return {
                     statusCode: response.status,
                     data: data

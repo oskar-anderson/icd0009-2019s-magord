@@ -4,6 +4,8 @@ import { PersonService } from 'service/person-service';
 import { IPerson } from 'domain/IPerson/IPerson';
 import { IAlertData } from 'types/IAlertData';
 import { AlertType } from 'types/AlertType';
+import flatpickr from 'flatpickr'
+require("flatpickr/dist/flatpickr.css")
 
 
 @autoinject
@@ -16,6 +18,7 @@ export class PersonsEdit {
     }
 
     attached() {
+        
     }
 
     activate(params: any, routeConfig: RouteConfig, navigationInstruction: NavigationInstruction) {

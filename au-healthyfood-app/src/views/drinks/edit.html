@@ -26,6 +26,14 @@
                 </div>
 
                 <div class="form-group">
+                    <label class="control-label" for="PriceId">Price</label>
+                    <select class="form-control" data-val="true", type="text" id="PriceId" maxlength="256" value.bind="_drink.priceId">
+                    <option model.bind="null">Choose a price</option>
+                    <option repeat.for="price of _prices" model.bind="price.id">${price.value}</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
                     <input type="submit" value="Create" class="btn btn-primary" />
                 </div>
             </form>

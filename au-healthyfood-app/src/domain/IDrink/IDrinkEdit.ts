@@ -3,4 +3,6 @@ export interface IDrinkEdit{
     name: string;
     amount: number;
     size: number;
+    priceId: string | null;
+    price: number;
 }

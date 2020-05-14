@@ -1,4 +1,4 @@
 export interface IAreaCreate {
     name: string;
-    //townId: string | null
+    townId: string | null;
 }

@@ -1,0 +1,49 @@
+<template>
+
+    <require from="../../components/alert"></require>
+
+    <alert alert-data.bind="_alert"></alert>
+
+
+    <h1>Edit</h1>
+
+    <h4>Price</h4>
+    <hr />
+    <div class="row">
+        <div class="col-md-4">
+            <form submit.trigger="onSubmit($event)">
+                <div class="form-group">
+                    <label class="control-label" for="Value">Value</label>
+                    <input class="form-control" type="text" id="Value" maxlength="256" value.bind="price.value" />
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label" for="From">From</label>
+                    <input class="form-control" type="text" id="From" maxlength="256" value.bind="price.from" />
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label" for="To">To</label>
+                    <input class="form-control" type="text" id="To" maxlength="256" value.bind="price.to" />
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label" for="CampaignId">Campaign</label>
+                    <select class="form-control" data-val="true", type="text" id="CampaignId" maxlength="256" value.bind="price.campaignId">
+                    <option model.bind="null">Choose a campaign</option>
+                    <option repeat.for="campaign of _campaigns" model.bind="campaign.id">${campaign.name}</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <input type="submit" value="Submit" class="btn btn-primary" />
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div>
+        <a route-href="route: prices-index; params.bind: { }">Back to List</a>
+    </div>
+
+</template>

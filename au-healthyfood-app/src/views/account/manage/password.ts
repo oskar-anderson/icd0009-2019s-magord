@@ -18,9 +18,10 @@ export class AccountManagePassword {
     }
 
     attached() {
-        this.oldPassword = this.accountService.userPassword;
-        this.oldPasswordConfirm = this.accountService.userPassword;
-        this.email = this.accountService.userEmail;
+        // this.oldPassword = this.accountService.userPassword;
+        this.oldPassword = this.appState.password as string;
+        this.oldPasswordConfirm = this.appState.password as string;
+        this.email = this.appState.email as string;
     }
 
     onSubmit(event: Event){
@@ -46,8 +47,9 @@ export class AccountManagePassword {
             response => {
                 if (response.statusCode == 200) {
                     this.appState.jwt = response.data!.token;
-                    this.router!.navigateToRoute('account-manage');
+                    this.appState.password = this.newPassword;
                     alert("Password changed!")
+                    this.router!.navigateToRoute('account-manage');
                 } else {
                     this._errorMessage = response.statusCode.toString()
                         + ' ' 
