@@ -55,7 +55,7 @@ namespace WebApp.ApiControllers._1._0.Identity
             var user = await _userManager.FindByEmailAsync(model.Email);
             if (user == null)
             {
-                _logger.LogInformation($"Web-Api email change. User {model.Email} not found!");
+                _logger.LogInformation($"Web-Api password change. User {model.Email} not found!");
                 return StatusCode(404, new {message = "Changing user password failed! User not found!"});
             }
 

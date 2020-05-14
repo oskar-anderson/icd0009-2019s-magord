@@ -9,7 +9,13 @@ namespace DAL.App.EF.Mappers
     {
         public DALMapper() : base()
         {
+            // From DALAppDTO to Domain
+            MapperConfigurationExpression.CreateMap<DAL.App.DTO.Price, Domain.Price>();
+            
+            
+            // From Domain to DALAppDTO
             MapperConfigurationExpression.CreateMap<Domain.ContactType, DAL.App.DTO.ContactType>();
+            MapperConfigurationExpression.CreateMap<Domain.Price, DAL.App.DTO.Price>();
             MapperConfigurationExpression.CreateMap<Domain.PaymentType, DAL.App.DTO.PaymentType>();
             MapperConfigurationExpression.CreateMap<Domain.Bill, DAL.App.DTO.Bill>();
             MapperConfigurationExpression.CreateMap<Domain.OrderType, DAL.App.DTO.OrderType>();

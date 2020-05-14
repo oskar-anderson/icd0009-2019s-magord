@@ -42,10 +42,10 @@ namespace WebApp.ApiControllers._1._0
         [AllowAnonymous]
         [Produces("application/json")]
         [Consumes("application/json")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<V1DTO.Restaurant>))]
-        public async Task<ActionResult<IEnumerable<V1DTO.Restaurant>>> GetRestaurants()
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<V1DTO.RestaurantView>))]
+        public async Task<ActionResult<IEnumerable<V1DTO.RestaurantView>>> GetRestaurants()
         {
-            return Ok((await _bll.Restaurants.GetAllAsync()).Select(e => _mapper.Map(e)));
+            return Ok((await _bll.Restaurants.GetAllForViewAsync()).Select(e => _mapper.MapRestaurantView(e)));
         }
 
         /// <summary>
@@ -59,14 +59,14 @@ namespace WebApp.ApiControllers._1._0
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<V1DTO.Restaurant>> GetRestaurant(Guid id)
         {
-            var restaurant = await _bll.Restaurants.FirstOrDefaultAsync(id);
+            var restaurant = await _bll.Restaurants.FirstOrDefaultForViewAsync(id);
             
             if (restaurant == null)
             {
                 return NotFound(new {message = "Restaurant not found"});
             }
 
-            return Ok(_mapper.Map(restaurant));
+            return Ok(_mapper.MapRestaurantView(restaurant));
         }
 
         /// <summary>

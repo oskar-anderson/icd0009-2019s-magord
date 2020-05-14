@@ -10,7 +10,6 @@ namespace DAL.App.DTO
     {
         public Guid Id { get; set; } = default!;
         public string Name { get; set; } = default!;
-        public ICollection<Restaurant>? Restaurants { get; set; }
         public Guid TownId { get; set; } = default!;
         public Town? Town { get; set; }
     }

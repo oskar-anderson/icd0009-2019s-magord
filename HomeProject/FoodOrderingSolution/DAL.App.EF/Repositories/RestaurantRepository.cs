@@ -41,6 +41,38 @@ namespace DAL.App.EF.Repositories
             return result;
         }
         
+        public virtual async Task<IEnumerable<RestaurantView>> GetAllForViewAsync()
+        {
+            return await RepoDbSet
+                .Include(a => a.Area)
+                .Select(a => new RestaurantView()
+                {
+                    Id = a.Id,
+                    Name = a.Name,
+                    Address = a.Address,
+                    OpenedFrom = a.OpenedFrom,
+                    ClosedFrom = a.ClosedFrom,
+                    Area = a.Area!.Name,
+                }).ToListAsync();
+        }
+
+        public virtual async Task<RestaurantView> FirstOrDefaultForViewAsync(Guid id)
+        {
+            return await RepoDbSet
+                .Include(a => a.Area)
+                .Where(r => r.Id == id)
+                .Select(a => new RestaurantView()
+                {
+                    Id = a.Id,
+                    Name = a.Name,
+                    Address = a.Address,
+                    OpenedFrom = a.OpenedFrom,
+                    ClosedFrom = a.ClosedFrom,
+                    Area = a.Area!.Name,
+                })
+                .FirstOrDefaultAsync();
+        }
+        
 
         /*
         public async Task<IEnumerable<RestaurantDTO>> DTOAllAsync()

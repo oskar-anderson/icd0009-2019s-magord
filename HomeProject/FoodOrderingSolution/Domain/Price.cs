@@ -1,6 +1,5 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
-using Contracts.DAL.Base;
+﻿﻿using System;
+using System.Collections.Generic;
 using DAL.Base;
 using Domain.Identity;
 
@@ -8,12 +7,21 @@ namespace Domain
 {
     public class Price : DomainEntityIdMetadataUser<AppUser>
     {
-        public string From { get; set; } = default!;
-
-        public string To { get; set; } = default!;
-        
         public decimal Value { get; set; } = default!;
+        public string From { get; set; } = default!;
+        public string To { get; set; } = default!;
+        public Guid? CampaignId { get; set; }
+        public Campaign? Campaign { get; set; }
+        
+        
 
+        // NEW
+        public ICollection<Ingredient>? Ingredients { get; set; }
+        public ICollection<Food>? Foods { get; set; }
+        public ICollection<Drink>? Drinks { get; set; }
+        
+        
+        /* OLD
         public Guid IngredientId { get; set; } = default!;
         public Ingredient? Ingredient { get; set; }
 
@@ -25,9 +33,7 @@ namespace Domain
         
         public Guid OrderId { get; set; } = default!;
         public Order? Order { get; set; }
-
-        public Guid CampaignId { get; set; } = default!;
-        public Campaign? Campaign { get; set; }
+        */
     }
     
 }

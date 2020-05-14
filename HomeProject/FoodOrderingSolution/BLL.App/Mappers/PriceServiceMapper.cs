@@ -12,13 +12,14 @@ namespace BLL.App.Mappers
         {
             MapperConfigurationExpression.CreateMap<DALAppDTO.Identity.AppUser, BLLAppDTO.Identity.AppUser>();
             MapperConfigurationExpression.CreateMap<DALAppDTO.Campaign, BLLAppDTO.Campaign>();
-            MapperConfigurationExpression.CreateMap<DALAppDTO.Ingredient, BLLAppDTO.Ingredient>();
-            MapperConfigurationExpression.CreateMap<DALAppDTO.Order, BLLAppDTO.Order>();
-            MapperConfigurationExpression.CreateMap<DALAppDTO.Drink, BLLAppDTO.Drink>();
-            MapperConfigurationExpression.CreateMap<DALAppDTO.Food, BLLAppDTO.Food>();
+            MapperConfigurationExpression.CreateMap<DALAppDTO.PriceView, BLLAppDTO.PriceView>();
 
             Mapper = new Mapper(new MapperConfiguration(MapperConfigurationExpression));
         }
         
+        public BLLAppDTO.PriceView MapPriceView(DALAppDTO.PriceView inObject)
+        {
+            return Mapper.Map<BLLAppDTO.PriceView>(inObject);
+        }
     }
 }

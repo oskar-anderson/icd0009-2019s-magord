@@ -13,6 +13,5 @@ namespace BLL.App.DTO
         public string To { get; set; } = default!;
         public string Name { get; set; } = default!;
         public string? Comment { get; set; }
-        public ICollection<Price>? Prices { get; set; }
     }
 }

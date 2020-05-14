@@ -5,7 +5,7 @@ using Contracts.DAL.App.Repositories;
 
 namespace Contracts.BLL.App.Services
 {
-    public interface IPriceService : IBaseEntityService<Price>, IPriceRepositoryCustom
+    public interface IPriceService : IBaseEntityService<Price>, IPriceRepositoryCustom<PriceView>
     {
         // TODO: add custom methods
     }

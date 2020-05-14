@@ -41,10 +41,10 @@ namespace WebApp.ApiControllers._1._0
         [HttpGet]
         [Produces("application/json")]
         [Consumes("application/json")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<V1DTO.Contact>))]
-        public async Task<ActionResult<IEnumerable<V1DTO.Contact>>> GetContacts()
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<V1DTO.ContactView>))]
+        public async Task<ActionResult<IEnumerable<V1DTO.ContactView>>> GetContacts()
         {
-            return Ok((await _bll.Contacts.GetAllAsync()).Select(e => _mapper.Map(e)));
+            return Ok((await _bll.Contacts.GetAllForViewAsync()).Select(e => _mapper.MapContactView(e)));
         }
 
         /// <summary>
@@ -57,14 +57,14 @@ namespace WebApp.ApiControllers._1._0
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<V1DTO.Contact>> GetContact(Guid id)
         {
-            var contact = await _bll.Contacts.FirstOrDefaultAsync(id);
+            var contact = await _bll.Contacts.FirstOrDefaultForViewAsync(id);
             
             if (contact == null)
             {
                 return NotFound(new {message = "Contact not found"});
             }
 
-            return Ok(_mapper.Map(contact));
+            return Ok(_mapper.MapContactView(contact));
         }
 
         /// <summary>

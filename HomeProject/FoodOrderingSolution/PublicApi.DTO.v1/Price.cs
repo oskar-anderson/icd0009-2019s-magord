@@ -13,11 +13,7 @@ namespace PublicApi.DTO.v1
         
         public decimal Value { get; set; } = default!;
         
-        public Guid IngredientId { get; set; }
-        public Guid FoodId { get; set; }
-        public Guid DrinkId { get; set; }
-        public Guid OrderId { get; set; }
-        public Guid CampaignId { get; set; }
+        public Guid? CampaignId { get; set; }
         
         public Guid AppUserId { get; set; }
     }

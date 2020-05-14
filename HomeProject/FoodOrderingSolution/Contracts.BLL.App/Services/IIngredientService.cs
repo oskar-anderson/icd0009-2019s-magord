@@ -5,7 +5,7 @@ using Contracts.DAL.App.Repositories;
 
 namespace Contracts.BLL.App.Services
 {
-    public interface IIngredientService : IBaseEntityService<Ingredient>, IIngredientRepositoryCustom
+    public interface IIngredientService : IBaseEntityService<Ingredient>, IIngredientRepositoryCustom<IngredientView>
     {
         // TODO: add custom methods
     }

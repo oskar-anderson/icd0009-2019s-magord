@@ -7,6 +7,7 @@ namespace Contracts.BLL.App.Mappers
 {
     public interface IAreaServiceMapper : IBaseMapper<DALAppDTO.Area, BLLAppDTO.Area>
     {
+        BLLAppDTO.AreaView MapAreaView(DALAppDTO.AreaView inObject);
         
     }
 }

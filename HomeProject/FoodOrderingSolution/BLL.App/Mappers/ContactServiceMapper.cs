@@ -10,10 +10,16 @@ namespace BLL.App.Mappers
     {
         public ContactServiceMapper() : base()
         {
-            MapperConfigurationExpression.CreateMap<DALAppDTO.Person, BLLAppDTO.Person>();
+            MapperConfigurationExpression.CreateMap<DALAppDTO.ContactView, BLLAppDTO.ContactView>();
             MapperConfigurationExpression.CreateMap<DALAppDTO.ContactType, BLLAppDTO.ContactType>();
             MapperConfigurationExpression.CreateMap<DALAppDTO.Identity.AppUser, BLLAppDTO.Identity.AppUser>();
+            
             Mapper = new Mapper(new MapperConfiguration(MapperConfigurationExpression));
+        }
+        
+        public BLLAppDTO.ContactView MapContactView(DALAppDTO.ContactView inObject)
+        {
+            return Mapper.Map<BLLAppDTO.ContactView>(inObject);
         }
         
     }

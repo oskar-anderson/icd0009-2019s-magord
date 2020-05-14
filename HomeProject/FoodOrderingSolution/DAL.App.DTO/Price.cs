@@ -16,6 +16,7 @@ namespace DAL.App.DTO
         
         public decimal Value { get; set; }
 
+        /*
         public Guid IngredientId { get; set; } = default!;
         public Ingredient? Ingredient { get; set; }
 
@@ -27,6 +28,7 @@ namespace DAL.App.DTO
         
         public Guid OrderId { get; set; } = default!;
         public Order? Order { get; set; }
+        */
         
         public Guid? CampaignId { get; set; }
         public Campaign? Campaign { get; set; }

@@ -5,7 +5,7 @@ using Contracts.DAL.App.Repositories;
 
 namespace Contracts.BLL.App.Services
 {
-    public interface IContactService : IBaseEntityService<Contact>, IContactRepositoryCustom
+    public interface IContactService : IBaseEntityService<Contact>, IContactRepositoryCustom<ContactView>
     {
         // TODO: add custom methods
     }

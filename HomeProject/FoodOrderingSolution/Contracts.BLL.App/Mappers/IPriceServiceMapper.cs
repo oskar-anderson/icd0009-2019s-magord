@@ -7,6 +7,7 @@ namespace Contracts.BLL.App.Mappers
 {
     public interface IPriceServiceMapper : IBaseMapper<DALAppDTO.Price, BLLAppDTO.Price>
     {
+        BLLAppDTO.PriceView MapPriceView(DALAppDTO.PriceView inObject);
         
     }
 }

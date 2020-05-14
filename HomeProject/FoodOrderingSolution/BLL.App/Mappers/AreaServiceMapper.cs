@@ -10,10 +10,18 @@ namespace BLL.App.Mappers
     {
         public AreaServiceMapper() : base()
         {
+            MapperConfigurationExpression.CreateMap<DALAppDTO.AreaView, BLLAppDTO.AreaView>();
             MapperConfigurationExpression.CreateMap<DALAppDTO.Town, BLLAppDTO.Town>();
             MapperConfigurationExpression.CreateMap<DALAppDTO.Identity.AppUser, BLLAppDTO.Identity.AppUser>();
+            
             Mapper = new Mapper(new MapperConfiguration(MapperConfigurationExpression));
         }
+        
+        public BLLAppDTO.AreaView MapAreaView(DALAppDTO.AreaView inObject)
+        {
+            return Mapper.Map<BLLAppDTO.AreaView>(inObject);
+        }
+
         
     }
 }

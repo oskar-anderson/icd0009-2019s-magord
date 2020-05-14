@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -39,6 +40,33 @@ namespace DAL.App.EF.Repositories
             var result = Mapper.Map(domainEntity);
             return result;
         }
+        
+        public virtual async Task<IEnumerable<AreaView>> GetAllForViewAsync()
+        {
+            return await RepoDbSet
+                .Include(a => a.Town)
+                .Select(a => new AreaView()
+                {
+                    Id = a.Id,
+                    Name = a.Name,
+                    Town = a.Town!.Name,
+                }).ToListAsync();
+        }
+
+        public virtual async Task<AreaView> FirstOrDefaultForViewAsync(Guid id)
+        {
+            return await RepoDbSet
+                .Include(a => a.Town)
+                .Where(r => r.Id == id)
+                .Select(a => new AreaView()
+                {
+                    Id = a.Id,
+                    Name = a.Name,
+                    Town = a.Town!.Name,
+                })
+                .FirstOrDefaultAsync();
+        }
+
 
         /*
         public async Task<IEnumerable<AreaDTO>> DTOAllAsync()

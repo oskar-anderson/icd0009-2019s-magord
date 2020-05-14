@@ -16,15 +16,19 @@ namespace Domain
 
         public int Amount { get; set; } = default!;
 
-        public float Size { get; set; } = default!;
+        public string Size { get; set; } = default!;
         
         public Guid FoodTypeId { get; set; } = default!;
         public FoodType? FoodType { get; set; }
 
-        public ICollection<Ingredient>? Ingredients { get; set; }
-
         public ICollection<Order>? Orders { get; set; }
-
+        
+        // New
+        public Guid PriceId { get; set; } = default!;
+        public Price? Price { get; set; }
+        
+        /* OLD
         public ICollection<Price>? Prices { get; set; }
+        */
     }
 }

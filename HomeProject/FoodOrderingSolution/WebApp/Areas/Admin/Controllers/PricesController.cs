@@ -26,7 +26,7 @@ namespace WebApp.Areas.Admin.Controllers
         // GET: Prices
         public async Task<IActionResult> Index()
         {
-            var appDbContext = _context.Prices.Include(p => p.Campaign).Include(p => p.Drink).Include(p => p.Food).Include(p => p.Ingredient).Include(p => p.Order);
+            var appDbContext = _context.Prices.Include(p => p.Campaign);
             return View(await appDbContext.ToListAsync());
         }
 
@@ -40,10 +40,6 @@ namespace WebApp.Areas.Admin.Controllers
 
             var price = await _context.Prices
                 .Include(p => p.Campaign)
-                .Include(p => p.Drink)
-                .Include(p => p.Food)
-                .Include(p => p.Ingredient)
-                .Include(p => p.Order)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (price == null)
             {
@@ -78,10 +74,6 @@ namespace WebApp.Areas.Admin.Controllers
                 return RedirectToAction(nameof(Index));
             }
             ViewData["CampaignId"] = new SelectList(_context.Campaigns, "Id", "Id", price.CampaignId);
-            ViewData["DrinkId"] = new SelectList(_context.Drinks, "Id", "Id", price.DrinkId);
-            ViewData["FoodId"] = new SelectList(_context.Foods, "Id", "Id", price.FoodId);
-            ViewData["IngredientId"] = new SelectList(_context.Ingredients, "Id", "Id", price.IngredientId);
-            ViewData["OrderId"] = new SelectList(_context.Orders, "Id", "Id", price.OrderId);
             return View(price);
         }
 
@@ -99,10 +91,6 @@ namespace WebApp.Areas.Admin.Controllers
                 return NotFound();
             }
             ViewData["CampaignId"] = new SelectList(_context.Campaigns, "Id", "Id", price.CampaignId);
-            ViewData["DrinkId"] = new SelectList(_context.Drinks, "Id", "Id", price.DrinkId);
-            ViewData["FoodId"] = new SelectList(_context.Foods, "Id", "Id", price.FoodId);
-            ViewData["IngredientId"] = new SelectList(_context.Ingredients, "Id", "Id", price.IngredientId);
-            ViewData["OrderId"] = new SelectList(_context.Orders, "Id", "Id", price.OrderId);
             return View(price);
         }
 
@@ -139,10 +127,6 @@ namespace WebApp.Areas.Admin.Controllers
                 return RedirectToAction(nameof(Index));
             }
             ViewData["CampaignId"] = new SelectList(_context.Campaigns, "Id", "Id", price.CampaignId);
-            ViewData["DrinkId"] = new SelectList(_context.Drinks, "Id", "Id", price.DrinkId);
-            ViewData["FoodId"] = new SelectList(_context.Foods, "Id", "Id", price.FoodId);
-            ViewData["IngredientId"] = new SelectList(_context.Ingredients, "Id", "Id", price.IngredientId);
-            ViewData["OrderId"] = new SelectList(_context.Orders, "Id", "Id", price.OrderId);
             return View(price);
         }
 
@@ -156,10 +140,6 @@ namespace WebApp.Areas.Admin.Controllers
 
             var price = await _context.Prices
                 .Include(p => p.Campaign)
-                .Include(p => p.Drink)
-                .Include(p => p.Food)
-                .Include(p => p.Ingredient)
-                .Include(p => p.Order)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (price == null)
             {

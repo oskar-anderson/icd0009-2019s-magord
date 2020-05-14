@@ -1,4 +1,9 @@
-﻿using BLL.App.Mappers;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using BLL.App.DTO;
+using BLL.App.Mappers;
 using BLL.Base.Services;
 using Contracts.BLL.App.Mappers;
 using Contracts.BLL.App.Services;
@@ -12,6 +17,16 @@ namespace BLL.App.Services
     {
         public FoodService(IAppUnitOfWork uow) : base(uow, uow.Foods, new FoodServiceMapper())
         {
+        }
+        
+        public virtual async Task<IEnumerable<FoodView>> GetAllForViewAsync()
+        {
+            return (await Repository.GetAllForViewAsync()).Select(e => Mapper.MapFoodView(e));
+        }
+        
+        public virtual async Task<FoodView> FirstOrDefaultForViewAsync(Guid id)
+        {
+            return Mapper.MapFoodView(await Repository.FirstOrDefaultForViewAsync(id));
         }
     }
 }

@@ -44,10 +44,10 @@ namespace WebApp.ApiControllers._1._0
         [AllowAnonymous]
         [Produces("application/json")]
         [Consumes("application/json")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<V1DTO.Drink>))]
-        public async Task<ActionResult<IEnumerable<V1DTO.Drink>>> GetDrinks()
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<V1DTO.DrinkView>))]
+        public async Task<ActionResult<IEnumerable<V1DTO.DrinkView>>> GetDrinks()
         {
-            return Ok((await _bll.Drinks.GetAllAsync()).Select(e => _mapper.Map(e)));
+            return Ok((await _bll.Drinks.GetAllForViewAsync()).Select(e => _mapper.MapDrinkView(e)));
         }
 
         /// <summary>
@@ -61,14 +61,14 @@ namespace WebApp.ApiControllers._1._0
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<V1DTO.Drink>> GetDrink(Guid id)
         {
-            var drink = await _bll.Drinks.FirstOrDefaultAsync(id);
+            var drink = await _bll.Drinks.FirstOrDefaultForViewAsync(id);
             
             if (drink == null)
             {
                 return NotFound(new {message = "Drink not found"});
             }
 
-            return Ok(_mapper.Map(drink));
+            return Ok(_mapper.MapDrinkView(drink));
         }
 
         /// <summary>

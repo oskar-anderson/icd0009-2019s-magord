@@ -19,7 +19,7 @@ namespace WebApp.ApiControllers._1._0
     [ApiController]
     [ApiVersion( "1.0" )]
     [Route("api/v{version:apiVersion}/[controller]")]
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public class PricesController : ControllerBase
     {
@@ -41,10 +41,10 @@ namespace WebApp.ApiControllers._1._0
         [HttpGet]
         [Produces("application/json")]
         [Consumes("application/json")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<V1DTO.Price>))]
-        public async Task<ActionResult<IEnumerable<V1DTO.Price>>> GetPrices()
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<V1DTO.PriceView>))]
+        public async Task<ActionResult<IEnumerable<V1DTO.PriceView>>> GetPrices()
         {
-            return Ok((await _bll.Prices.GetAllAsync()).Select(e => _mapper.Map(e)));
+            return Ok((await _bll.Prices.GetAllForViewAsync()).Select(e => _mapper.MapPriceView(e)));
         }
 
         /// <summary>
@@ -57,14 +57,14 @@ namespace WebApp.ApiControllers._1._0
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<V1DTO.Price>> GetPrice(Guid id)
         {
-            var price = await _bll.Prices.FirstOrDefaultAsync(id);
+            var price = await _bll.Prices.FirstOrDefaultForViewAsync(id);
             
             if (price == null)
             {
                 return NotFound(new {message = "Price not found"});
             }
 
-            return Ok(_mapper.Map(price));
+            return Ok(_mapper.MapPriceView(price));
         }
 
         /// <summary>

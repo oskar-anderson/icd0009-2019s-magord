@@ -10,10 +10,16 @@ namespace BLL.App.Mappers
     {
         public RestaurantServiceMapper(): base()
         {
+            MapperConfigurationExpression.CreateMap<DALAppDTO.RestaurantView, BLLAppDTO.RestaurantView>();
             MapperConfigurationExpression.CreateMap<DALAppDTO.Identity.AppUser, BLLAppDTO.Identity.AppUser>();
             MapperConfigurationExpression.CreateMap<DALAppDTO.Area, BLLAppDTO.Area>();
 
             Mapper = new Mapper(new MapperConfiguration(MapperConfigurationExpression));
+        }
+        
+        public BLLAppDTO.RestaurantView MapRestaurantView(DALAppDTO.RestaurantView inObject)
+        {
+            return Mapper.Map<BLLAppDTO.RestaurantView>(inObject);
         }
         
     }

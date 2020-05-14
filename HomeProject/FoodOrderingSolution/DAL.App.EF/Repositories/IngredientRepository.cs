@@ -23,7 +23,8 @@ namespace DAL.App.EF.Repositories
         {
             var query = PrepareQuery(userId, noTracking);
             query = query
-                .Include(i => i.Food);
+                .Include(i => i.Food)
+                .Include(i => i.Price);
             var domainEntities = await query.ToListAsync();
             var result = domainEntities.Select(e => Mapper.Map(e));
             return result;
@@ -33,10 +34,43 @@ namespace DAL.App.EF.Repositories
         {
             var query = PrepareQuery(userId, noTracking);
             query = query
-                .Include(i => i.Food);
+                .Include(i => i.Food)
+                .Include(i => i.Price);
             var domainEntity = await query.FirstOrDefaultAsync(e => e.Id.Equals(id));
             var result = Mapper.Map(domainEntity);
             return result;
+        }
+        
+        public virtual async Task<IEnumerable<IngredientView>> GetAllForViewAsync()
+        {
+            return await RepoDbSet
+                .Include(i => i.Food)
+                .Include(i => i.Price)
+                .Select(a => new IngredientView()
+                {
+                    Id = a.Id,
+                    Name = a.Name,
+                    Amount = a.Amount,
+                    Food = a.Food!.Name,
+                    Price = a.Price!.Value,
+                }).ToListAsync();
+        }
+
+        public virtual async Task<IngredientView> FirstOrDefaultForViewAsync(Guid id)
+        {
+            return await RepoDbSet
+                .Include(i => i.Food)
+                .Include(i => i.Price)
+                .Where(r => r.Id == id)
+                .Select(a => new IngredientView()
+                {
+                    Id = a.Id,
+                    Name = a.Name,
+                    Amount = a.Amount,
+                    Food = a.Food!.Name,
+                    Price = a.Price!.Value,
+                })
+                .FirstOrDefaultAsync();
         }
 
         /*

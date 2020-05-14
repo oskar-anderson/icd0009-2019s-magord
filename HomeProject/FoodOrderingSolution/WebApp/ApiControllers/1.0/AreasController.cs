@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Contracts.BLL.App;
-using Extensions;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -42,10 +41,10 @@ namespace WebApp.ApiControllers._1._0
         [AllowAnonymous]
         [Produces("application/json")]
         [Consumes("application/json")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<V1DTO.Area>))]
-        public async Task<ActionResult<IEnumerable<V1DTO.Area>>> GetAreas()
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<V1DTO.AreaView>))]
+        public async Task<ActionResult<IEnumerable<V1DTO.AreaView>>> GetAreas()
         {
-            return Ok((await _bll.Areas.GetAllAsync()).Select(e => _mapper.Map(e)));
+            return Ok((await _bll.Areas.GetAllForViewAsync()).Select(e => _mapper.MapAreaView(e)));
         }
 
         /// <summary>
@@ -59,14 +58,14 @@ namespace WebApp.ApiControllers._1._0
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<V1DTO.Area>> GetArea(Guid id)
         {
-            var area = await _bll.Areas.FirstOrDefaultAsync(id);
+            var area = await _bll.Areas.FirstOrDefaultForViewAsync(id);
             
             if (area == null)
             {
                 return NotFound(new {message = "Area not found!"});
             }
 
-            return Ok(_mapper.Map(area));
+            return Ok(_mapper.MapAreaView(area));
         }
 
         /// <summary>

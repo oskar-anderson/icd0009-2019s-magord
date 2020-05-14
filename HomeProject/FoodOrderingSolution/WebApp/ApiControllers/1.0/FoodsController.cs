@@ -42,10 +42,10 @@ namespace WebApp.ApiControllers._1._0
         [AllowAnonymous]
         [Produces("application/json")]
         [Consumes("application/json")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<V1DTO.Food>))]
-        public async Task<ActionResult<IEnumerable<V1DTO.Food>>> GetFoods()
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<V1DTO.FoodView>))]
+        public async Task<ActionResult<IEnumerable<V1DTO.FoodView>>> GetFoods()
         {
-            return Ok((await _bll.Foods.GetAllAsync()).Select(e => _mapper.Map(e)));
+            return Ok((await _bll.Foods.GetAllForViewAsync()).Select(e => _mapper.MapFoodView(e)));
         }
 
         /// <summary>
@@ -59,14 +59,14 @@ namespace WebApp.ApiControllers._1._0
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<V1DTO.Food>> GetFood(Guid id)
         {
-            var food = await _bll.Foods.FirstOrDefaultAsync(id);
+            var food = await _bll.Foods.FirstOrDefaultForViewAsync(id);
             
             if (food == null)
             {
                 return NotFound(new {message = "Food not found"});
             }
 
-            return Ok(_mapper.Map(food));
+            return Ok(_mapper.MapFoodView(food));
         }
 
         /// <summary>

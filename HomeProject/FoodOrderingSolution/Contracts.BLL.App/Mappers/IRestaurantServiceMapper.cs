@@ -7,6 +7,7 @@ namespace Contracts.BLL.App.Mappers
 {
     public interface IRestaurantServiceMapper : IBaseMapper<DALAppDTO.Restaurant, BLLAppDTO.Restaurant>
     {
+        BLLAppDTO.RestaurantView MapRestaurantView(DALAppDTO.RestaurantView inObject);
         
     }
 }

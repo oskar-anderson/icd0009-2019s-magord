@@ -22,11 +22,7 @@ namespace DAL.App.EF.Repositories
         {
             var query = PrepareQuery(userId, noTracking);
             query = query
-                .Include(p => p.Campaign)
-                .Include(p => p.Ingredient)
-                .Include(p => p.Order)
-                .Include(p => p.Drink)
-                .Include(p => p.Food);
+                .Include(p => p.Campaign);
             var domainEntities = await query.ToListAsync();
             var result = domainEntities.Select(e => Mapper.Map(e));
             return result;
@@ -37,14 +33,40 @@ namespace DAL.App.EF.Repositories
             var query = PrepareQuery(userId, noTracking);
             query = query
                 .Include(p => p.Campaign)
-                .Include(p => p.Ingredient)
-                .Include(p => p.Order)
-                .Include(p => p.Drink)
-                .Include(p => p.Food)
                 .Where(p => p.Id == id);
             var domainEntity = await query.FirstOrDefaultAsync(e => e.Id.Equals(id));
             var result = Mapper.Map(domainEntity);
             return result;
+        }
+        
+        public virtual async Task<IEnumerable<PriceView>> GetAllForViewAsync()
+        {
+            return await RepoDbSet
+                .Include(a => a.Campaign)
+                .Select(a => new PriceView()
+                {
+                    Id = a.Id,
+                    From = a.From,
+                    To = a.To,
+                    Value = a.Value,
+                    Campaign = a.Campaign!.Name,
+                }).ToListAsync();
+        }
+
+        public virtual async Task<PriceView> FirstOrDefaultForViewAsync(Guid id)
+        {
+            return await RepoDbSet
+                .Include(a => a.Campaign)
+                .Where(r => r.Id == id)
+                .Select(a => new PriceView()
+                {
+                    Id = a.Id,
+                    From = a.From,
+                    To = a.To,
+                    Value = a.Value,
+                    Campaign = a.Campaign!.Name,
+                })
+                .FirstOrDefaultAsync();
         }
 
         /*

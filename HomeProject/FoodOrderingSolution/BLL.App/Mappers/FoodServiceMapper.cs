@@ -10,10 +10,17 @@ namespace BLL.App.Mappers
     {
         public FoodServiceMapper(): base()
         {
-            MapperConfigurationExpression.CreateMap<DALAppDTO.Identity.AppUser, BLLAppDTO.Identity.AppUser>();
+
+            MapperConfigurationExpression.CreateMap<DALAppDTO.Price, BLLAppDTO.Price>();
             MapperConfigurationExpression.CreateMap<DALAppDTO.FoodType, BLLAppDTO.FoodType>();
+            MapperConfigurationExpression.CreateMap<DALAppDTO.FoodView, BLLAppDTO.FoodView>();
 
             Mapper = new Mapper(new MapperConfiguration(MapperConfigurationExpression));
+        }
+        
+        public BLLAppDTO.FoodView MapFoodView(DALAppDTO.FoodView inObject)
+        {
+            return Mapper.Map<BLLAppDTO.FoodView>(inObject);
         }
         
     }

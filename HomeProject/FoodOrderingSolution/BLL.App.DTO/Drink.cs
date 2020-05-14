@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using BLL.App.DTO.Identity;
 using Contracts.DAL.Base;
 
 namespace BLL.App.DTO
@@ -15,8 +13,7 @@ namespace BLL.App.DTO
 
         public int Amount { get; set; } = default!;
 
-        public ICollection<Price>? Prices { get; set; }
-
-        public ICollection<Order>? Orders { get; set; }
+        public Guid PriceId { get; set; } = default!;
+        public Price? Price { get; set; }
     }
 }

@@ -24,7 +24,7 @@ namespace DAL.App.EF.Repositories
             var query = PrepareQuery(userId, noTracking);
             query = query
                 .Include(c => c.ContactType)
-                .Include(c => c.Person);
+                .Include(a => a.AppUser);
             var domainEntities = await query.ToListAsync();
             var result = domainEntities.Select(e => Mapper.Map(e));
             return result;
@@ -35,11 +35,39 @@ namespace DAL.App.EF.Repositories
             var query = PrepareQuery(userId, noTracking);
             query = query
                 .Include(c => c.ContactType)
-                .Include(c => c.Person)
+                .Include(a => a.AppUser)
                 .Where(r => r.Id == id);
             var domainEntity = await query.FirstOrDefaultAsync(e => e.Id.Equals(id));
             var result = Mapper.Map(domainEntity);
             return result;
+        }
+        
+        public virtual async Task<IEnumerable<ContactView>> GetAllForViewAsync()
+        {
+            return await RepoDbSet
+                .Include(a => a.ContactType)
+                .Include(a => a.AppUser)
+                .Select(a => new ContactView()
+                {
+                    Id = a.Id,
+                    Name = a.Name,
+                    ContactType = a.ContactType!.Name,
+                }).ToListAsync();
+        }
+
+        public virtual async Task<ContactView> FirstOrDefaultForViewAsync(Guid id)
+        {
+            return await RepoDbSet
+                .Include(a => a.ContactType)
+                .Include(a => a.AppUser)
+                .Where(r => r.Id == id)
+                .Select(a => new ContactView()
+                {
+                    Id = a.Id,
+                    Name = a.Name,
+                    ContactType = a.ContactType!.Name,
+                })
+                .FirstOrDefaultAsync();
         }
 
         /*

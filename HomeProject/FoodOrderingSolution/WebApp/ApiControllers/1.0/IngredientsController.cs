@@ -42,10 +42,10 @@ namespace WebApp.ApiControllers._1._0
         [AllowAnonymous]
         [Produces("application/json")]
         [Consumes("application/json")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<V1DTO.Ingredient>))]
-        public async Task<ActionResult<IEnumerable<V1DTO.Ingredient>>> GetIngredients()
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<V1DTO.IngredientView>))]
+        public async Task<ActionResult<IEnumerable<V1DTO.IngredientView>>> GetIngredients()
         {
-            return Ok((await _bll.Ingredients.GetAllAsync()).Select(e => _mapper.Map(e)));
+            return Ok((await _bll.Ingredients.GetAllForViewAsync()).Select(e => _mapper.MapIngredientView(e)));
         }
 
         /// <summary>
@@ -59,14 +59,14 @@ namespace WebApp.ApiControllers._1._0
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<V1DTO.Ingredient>> GetIngredient(Guid id)
         {
-            var ingredient = await _bll.Ingredients.FirstOrDefaultAsync(id);
+            var ingredient = await _bll.Ingredients.FirstOrDefaultForViewAsync(id);
             
             if (ingredient == null)
             {
                 return NotFound(new {message = "Ingredient not found"});
             }
 
-            return Ok(_mapper.Map(ingredient));
+            return Ok(_mapper.MapIngredientView(ingredient));
         }
 
         /// <summary>

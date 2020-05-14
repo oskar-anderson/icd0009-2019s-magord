@@ -7,6 +7,7 @@ namespace Contracts.BLL.App.Mappers
 {
     public interface IDrinkServiceMapper : IBaseMapper<DALAppDTO.Drink, BLLAppDTO.Drink>
     {
+        BLLAppDTO.DrinkView MapDrinkView(DALAppDTO.DrinkView inObject);
         
     }
 }

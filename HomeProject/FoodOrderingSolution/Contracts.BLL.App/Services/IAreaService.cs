@@ -5,7 +5,7 @@ using Contracts.DAL.App.Repositories;
 
 namespace Contracts.BLL.App.Services
 {
-    public interface IAreaService : IBaseEntityService<Area>, IAreaRepositoryCustom
+    public interface IAreaService : IBaseEntityService<Area>, IAreaRepositoryCustom<AreaView>
     {
         // TODO: add custom methods
     }

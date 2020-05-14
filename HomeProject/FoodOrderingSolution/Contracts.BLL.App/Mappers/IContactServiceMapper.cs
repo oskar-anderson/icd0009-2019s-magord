@@ -7,6 +7,6 @@ namespace Contracts.BLL.App.Mappers
 {
     public interface IContactServiceMapper : IBaseMapper<DALAppDTO.Contact, BLLAppDTO.Contact>
     {
-        
+        BLLAppDTO.ContactView MapContactView(DALAppDTO.ContactView inObject);
     }
 }

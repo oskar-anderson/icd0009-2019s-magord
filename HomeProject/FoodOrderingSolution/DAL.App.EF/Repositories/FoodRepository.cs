@@ -23,7 +23,8 @@ namespace DAL.App.EF.Repositories
         {
             var query = PrepareQuery(userId, noTracking);
             query = query
-                .Include(f => f.FoodType);
+                .Include(f => f.FoodType)
+                .Include(f => f.Price);
             var domainEntities = await query.ToListAsync();
             var result = domainEntities.Select(e => Mapper.Map(e));
             return result;
@@ -34,10 +35,47 @@ namespace DAL.App.EF.Repositories
             var query = PrepareQuery(userId, noTracking);
             query = query
                 .Include(f => f.FoodType)
+                .Include(f => f.Price)
                 .Where(r => r.Id == id);
             var domainEntity = await query.FirstOrDefaultAsync(e => e.Id.Equals(id));
             var result = Mapper.Map(domainEntity);
             return result;
+        }
+        
+        public virtual async Task<IEnumerable<FoodView>> GetAllForViewAsync()
+        {
+            return await RepoDbSet
+                .Include(f => f.FoodType)
+                .Include(f => f.Price)
+                .Select(a => new FoodView()
+                {
+                    Id = a.Id,
+                    Name = a.Name,
+                    Size = a.Size,
+                    Amount = a.Amount,
+                    Description = a.Description,
+                    FoodType = a.FoodType!.Name,
+                    Price = a.Price!.Value,
+                }).ToListAsync();
+        }
+
+        public virtual async Task<FoodView> FirstOrDefaultForViewAsync(Guid id)
+        {
+            return await RepoDbSet
+                .Include(f => f.FoodType)
+                .Include(f => f.Price)
+                .Where(r => r.Id == id)
+                .Select(a => new FoodView()
+                {
+                    Id = a.Id,
+                    Name = a.Name,
+                    Size = a.Size,
+                    Amount = a.Amount,
+                    Description = a.Description,
+                    FoodType = a.FoodType!.Name,
+                    Price = a.Price!.Value,
+                })
+                .FirstOrDefaultAsync();
         }
 
         /*

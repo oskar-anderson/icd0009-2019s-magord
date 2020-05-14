@@ -1,4 +1,9 @@
-﻿using BLL.App.Mappers;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using BLL.App.DTO;
+using BLL.App.Mappers;
 using BLL.Base.Services;
 using Contracts.BLL.App.Mappers;
 using Contracts.BLL.App.Services;
@@ -12,6 +17,16 @@ namespace BLL.App.Services
     {
         public DrinkService(IAppUnitOfWork uow) : base(uow, uow.Drinks, new DrinkServiceMapper())
         {
+        }
+        
+        public virtual async Task<IEnumerable<DrinkView>> GetAllForViewAsync()
+        {
+            return (await Repository.GetAllForViewAsync()).Select(e => Mapper.MapDrinkView(e));
+        }
+        
+        public virtual async Task<DrinkView> FirstOrDefaultForViewAsync(Guid id)
+        {
+            return Mapper.MapDrinkView(await Repository.FirstOrDefaultForViewAsync(id));
         }
     }
 }

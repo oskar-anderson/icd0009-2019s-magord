@@ -26,7 +26,7 @@ namespace WebApp.Areas.Admin.Controllers
         // GET: Contacts
         public async Task<IActionResult> Index()
         {
-            var appDbContext = _context.Contacts.Include(c => c.ContactType).Include(c => c.Person);
+            var appDbContext = _context.Contacts.Include(c => c.ContactType);
             return View(await appDbContext.ToListAsync());
         }
 
@@ -40,7 +40,6 @@ namespace WebApp.Areas.Admin.Controllers
 
             var contact = await _context.Contacts
                 .Include(c => c.ContactType)
-                .Include(c => c.Person)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (contact == null)
             {
@@ -72,7 +71,6 @@ namespace WebApp.Areas.Admin.Controllers
                 return RedirectToAction(nameof(Index));
             }
             ViewData["ContactTypeId"] = new SelectList(_context.ContactTypes, "Id", "Id", contact.ContactTypeId);
-            ViewData["PersonId"] = new SelectList(_context.Persons, "Id", "Id", contact.PersonId);
             return View(contact);
         }
 
@@ -90,7 +88,6 @@ namespace WebApp.Areas.Admin.Controllers
                 return NotFound();
             }
             ViewData["ContactTypeId"] = new SelectList(_context.ContactTypes, "Id", "Id", contact.ContactTypeId);
-            ViewData["PersonId"] = new SelectList(_context.Persons, "Id", "Id", contact.PersonId);
             return View(contact);
         }
 
@@ -127,7 +124,6 @@ namespace WebApp.Areas.Admin.Controllers
                 return RedirectToAction(nameof(Index));
             }
             ViewData["ContactTypeId"] = new SelectList(_context.ContactTypes, "Id", "Id", contact.ContactTypeId);
-            ViewData["PersonId"] = new SelectList(_context.Persons, "Id", "Id", contact.PersonId);
             return View(contact);
         }
 
@@ -141,7 +137,6 @@ namespace WebApp.Areas.Admin.Controllers
 
             var contact = await _context.Contacts
                 .Include(c => c.ContactType)
-                .Include(c => c.Person)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (contact == null)
             {
