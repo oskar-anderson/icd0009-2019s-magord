@@ -11,6 +11,8 @@ ProjectSection(SolutionItems) = preProject
 	README.md = README.md
 	.gitignore = ../../.gitignore
 	Directory.Build.props = Directory.Build.props
+	Dockerfile = Dockerfile
+	.dockerignore = .dockerignore
 EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Contracts.DAL.Base", "Contracts.DAL.Base\Contracts.DAL.Base.csproj", "{2F8BD455-4FB7-48DE-9EA0-86976303E9D7}"

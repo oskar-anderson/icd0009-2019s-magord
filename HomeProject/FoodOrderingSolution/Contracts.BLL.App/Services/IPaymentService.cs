@@ -5,7 +5,7 @@ using Contracts.DAL.App.Repositories;
 
 namespace Contracts.BLL.App.Services
 {
-    public interface IPaymentService : IBaseEntityService<Payment>, IPaymentRepositoryCustom
+    public interface IPaymentService : IBaseEntityService<Payment>, IPaymentRepositoryCustom<PaymentView>
     {
         // TODO: add custom methods
     }

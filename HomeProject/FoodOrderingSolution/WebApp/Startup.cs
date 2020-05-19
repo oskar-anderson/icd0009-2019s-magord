@@ -190,7 +190,7 @@ namespace WebApp
             if (Configuration.GetValue<bool>("AppDataInitialization:SeedData"))
             {
                 Console.WriteLine("SeedData");
-                DAL.App.EF.Helpers.DataInitializers.SeedData(ctx);
+                DAL.App.EF.Helpers.DataInitializers.SeedData(ctx, userManager);
             }
         }
     }

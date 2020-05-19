@@ -12,9 +12,6 @@ namespace PublicApi.DTO.v1
         [MaxLength(256)] [MinLength(1)] public string OrderStatus { get; set; } = default!;
         public int Number { get; set; } = default!;
         public string TimeCreated { get; set; } = default!;
-        public Guid FoodId { get; set; }
-        public Guid IngredientId { get; set; }
-        public Guid DrinkId { get; set; }
         public Guid RestaurantId { get; set; }
         public Guid OrderTypeId { get; set; }
         public Guid PersonId { get; set; }

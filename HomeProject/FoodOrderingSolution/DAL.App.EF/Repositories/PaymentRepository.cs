@@ -43,6 +43,42 @@ namespace DAL.App.EF.Repositories
             var result = Mapper.Map(domainEntity);
             return result;
         }
+        
+        public virtual async Task<IEnumerable<PaymentView>> GetAllForViewAsync()
+        {
+            return await RepoDbSet
+                .Include(r => r.Person)
+                .Include(r => r.Bill)
+                .Include(r => r.PaymentType)
+                .Select(a => new PaymentView()
+                {
+                    Id = a.Id,
+                    Amount = a.Amount,
+                    TimeMade = a.TimeMade,
+                    Person = a.Person!.FirstName,
+                    Bill = a.Bill!.Number,
+                    PaymentType = a.PaymentType!.Name,
+                }).ToListAsync();
+        }
+
+        public virtual async Task<PaymentView> FirstOrDefaultForViewAsync(Guid id)
+        {
+            return await RepoDbSet
+                .Include(r => r.Person)
+                .Include(r => r.Bill)
+                .Include(r => r.PaymentType)
+                .Where(r => r.Id == id)
+                .Select(a => new PaymentView()
+                {
+                    Id = a.Id,
+                    Amount = a.Amount,
+                    TimeMade = a.TimeMade,
+                    Person = a.Person!.FirstName,
+                    Bill = a.Bill!.Number,
+                    PaymentType = a.PaymentType!.Name,
+                })
+                .FirstOrDefaultAsync();
+        }
 
         /*
         public async Task<IEnumerable<PaymentDTO>> DTOAllAsync()

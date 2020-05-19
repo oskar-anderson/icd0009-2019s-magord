@@ -15,6 +15,7 @@ namespace Contracts.DAL.App
         IFoodTypeRepository FoodTypes { get; }
         IIngredientRepository Ingredients { get; }
         IOrderRepository Orders { get; }
+        IOrderItemRepository OrderItems { get; }
         IOrderTypeRepository OrderTypes { get; }
         IPaymentRepository Payments { get; }
         IPaymentTypeRepository PaymentTypes { get; }

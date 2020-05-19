@@ -18,6 +18,5 @@ namespace BLL.App.DTO
         public AppUser? AppUser { get; set; }
         public Guid PersonId { get; set; } = default!;
         public Person? Person { get; set; }
-        public ICollection<Payment>? Payments { get; set; }
     }
 }

@@ -21,7 +21,8 @@ namespace Domain
         public Guid FoodTypeId { get; set; } = default!;
         public FoodType? FoodType { get; set; }
 
-        public ICollection<Order>? Orders { get; set; }
+        public ICollection<OrderItem>? OrderItems { get; set; }
+
         
         // New
         public Guid PriceId { get; set; } = default!;

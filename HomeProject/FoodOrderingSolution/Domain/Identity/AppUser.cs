@@ -8,12 +8,19 @@ namespace Domain.Identity
 {
     public class AppUser : IdentityUser<Guid>, IDomainEntityId
     {
-        //public Guid? PersonId { get; set; }
-        //public Person? Person { get; set; }
+        [MaxLength(128)]
+        [MinLength(1)]
+        public string FirstName { get; set; } = default!;
+
+        [MaxLength(128)]
+        [MinLength(1)]
+        public string LastName { get; set; } = default!;
         
         public ICollection<Person>? Persons { get; set; }
 
         public ICollection<Order>? Orders { get; set; }
+        
+        public ICollection<OrderItem>? OrderItems { get; set; }
 
         public ICollection<Bill>? Bills { get; set; }
     }

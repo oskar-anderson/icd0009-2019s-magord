@@ -16,5 +16,7 @@ namespace PublicApi.DTO.v1
         public string ClosedFrom { get; set; } = default!;
         
         public string Area { get; set; } = default!;
+        
+        public string Town { get; set; } = default!;
     }
 }

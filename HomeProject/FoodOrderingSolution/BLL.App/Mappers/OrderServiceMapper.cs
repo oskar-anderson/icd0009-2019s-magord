@@ -10,14 +10,17 @@ namespace BLL.App.Mappers
     {
         public OrderServiceMapper() : base()
         {
-            MapperConfigurationExpression.CreateMap<DALAppDTO.Food, BLLAppDTO.Food>();
-            MapperConfigurationExpression.CreateMap<DALAppDTO.Ingredient, BLLAppDTO.Ingredient>();
-            MapperConfigurationExpression.CreateMap<DALAppDTO.Drink, BLLAppDTO.Drink>();
             MapperConfigurationExpression.CreateMap<DALAppDTO.Restaurant, BLLAppDTO.Restaurant>();
+            MapperConfigurationExpression.CreateMap<DALAppDTO.OrderView, BLLAppDTO.OrderView>();
             MapperConfigurationExpression.CreateMap<DALAppDTO.OrderType, BLLAppDTO.OrderType>();
             MapperConfigurationExpression.CreateMap<DALAppDTO.Person, BLLAppDTO.Person>();
             MapperConfigurationExpression.CreateMap<DALAppDTO.Identity.AppUser, BLLAppDTO.Identity.AppUser>();
             Mapper = new Mapper(new MapperConfiguration(MapperConfigurationExpression));
+        }
+        
+        public BLLAppDTO.OrderView MapOrderView(DALAppDTO.OrderView inObject)
+        {
+            return Mapper.Map<BLLAppDTO.OrderView>(inObject);
         }
         
     }

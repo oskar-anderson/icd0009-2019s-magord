@@ -15,6 +15,7 @@ namespace DAL.App.EF.Mappers
             
             // From Domain to DALAppDTO
             MapperConfigurationExpression.CreateMap<Domain.ContactType, DAL.App.DTO.ContactType>();
+            MapperConfigurationExpression.CreateMap<Domain.OrderItem, DAL.App.DTO.OrderItem>();
             MapperConfigurationExpression.CreateMap<Domain.Price, DAL.App.DTO.Price>();
             MapperConfigurationExpression.CreateMap<Domain.PaymentType, DAL.App.DTO.PaymentType>();
             MapperConfigurationExpression.CreateMap<Domain.Bill, DAL.App.DTO.Bill>();
@@ -28,6 +29,7 @@ namespace DAL.App.EF.Mappers
             MapperConfigurationExpression.CreateMap<Domain.FoodType, DAL.App.DTO.FoodType>();
             MapperConfigurationExpression.CreateMap<Domain.Person, DAL.App.DTO.Person>();
             MapperConfigurationExpression.CreateMap<Domain.Area, DAL.App.DTO.Area>();
+            MapperConfigurationExpression.CreateMap<Domain.OrderType, DAL.App.DTO.OrderType>();
             MapperConfigurationExpression.CreateMap<Domain.Town, DAL.App.DTO.Town>();
             MapperConfigurationExpression.CreateMap<Domain.Identity.AppUser, DAL.App.DTO.Identity.AppUser>();
             

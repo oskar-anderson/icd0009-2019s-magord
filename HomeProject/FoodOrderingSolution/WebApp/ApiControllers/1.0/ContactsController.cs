@@ -44,7 +44,7 @@ namespace WebApp.ApiControllers._1._0
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<V1DTO.ContactView>))]
         public async Task<ActionResult<IEnumerable<V1DTO.ContactView>>> GetContacts()
         {
-            return Ok((await _bll.Contacts.GetAllForViewAsync()).Select(e => _mapper.MapContactView(e)));
+            return Ok((await _bll.Contacts.GetAllForViewAsync(User.UserId())).Select(e => _mapper.MapContactView(e)));
         }
 
         /// <summary>

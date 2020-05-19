@@ -15,6 +15,7 @@ namespace Contracts.BLL.App
         public IFoodTypeService FoodTypes { get; }
         public IIngredientService Ingredients { get; }
         public IOrderService Orders { get; }
+        public IOrderItemService OrderItems { get; }
         public IOrderTypeService OrderTypes { get; }
         public IPaymentService Payments { get; }
         public IPaymentTypeService PaymentTypes { get; }

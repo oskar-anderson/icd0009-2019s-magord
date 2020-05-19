@@ -25,6 +25,7 @@ namespace DAL.App.EF
         public DbSet<Payment> Payments { get; set; } = default!;
         public DbSet<OrderType> OrderTypes { get; set; } = default!;
         public DbSet<Order> Orders { get; set; } = default!;
+        public DbSet<OrderItem> OrderItems { get; set; } = default!;
         public DbSet<Ingredient> Ingredients { get; set; } = default!;
         public DbSet<FoodType> FoodTypes { get; set; } = default!;
         public DbSet<Food> Foods { get; set; } = default!;

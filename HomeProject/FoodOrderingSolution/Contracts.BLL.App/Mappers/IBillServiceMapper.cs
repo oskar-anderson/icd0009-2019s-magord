@@ -7,6 +7,6 @@ namespace Contracts.BLL.App.Mappers
 {
     public interface IBillServiceMapper : IBaseMapper<DALAppDTO.Bill, BLLAppDTO.Bill>
     {
-        
+        BLLAppDTO.BillView MapBillView(DALAppDTO.BillView inObject);
     }
 }

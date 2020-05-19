@@ -16,9 +16,9 @@ namespace Domain
         
 
         // NEW
-        public ICollection<Ingredient>? Ingredients { get; set; }
-        public ICollection<Food>? Foods { get; set; }
-        public ICollection<Drink>? Drinks { get; set; }
+        public ICollection<Ingredient>? Ingredients { get; set; } = default!;
+        public ICollection<Food>? Foods { get; set; }  = default!;
+        public ICollection<Drink>? Drinks { get; set; }  = default!;
         
         
         /* OLD

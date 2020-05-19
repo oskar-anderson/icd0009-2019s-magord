@@ -41,10 +41,10 @@ namespace WebApp.ApiControllers._1._0
         [HttpGet]
         [Produces("application/json")]
         [Consumes("application/json")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<V1DTO.Area>))]
-        public async Task<ActionResult<IEnumerable<V1DTO.Payment>>> GetPayments()
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<V1DTO.PaymentView>))]
+        public async Task<ActionResult<IEnumerable<V1DTO.PaymentView>>> GetPayments()
         {
-            return Ok((await _bll.Payments.GetAllAsync()).Select(e => _mapper.Map(e)));
+            return Ok((await _bll.Payments.GetAllForViewAsync()).Select(e => _mapper.MapPaymentView(e)));
         }
 
         /// <summary>
@@ -57,14 +57,14 @@ namespace WebApp.ApiControllers._1._0
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<V1DTO.Payment>> GetPayment(Guid id)
         {
-            var payment = await _bll.Payments.FirstOrDefaultAsync(id);
+            var payment = await _bll.Payments.FirstOrDefaultForViewAsync(id);
             
             if (payment == null)
             {
                 return NotFound(new {message = "Payment not found"});
             }
 
-            return Ok(_mapper.Map(payment));
+            return Ok(_mapper.MapPaymentView(payment));
         }
 
         /// <summary>
@@ -106,6 +106,7 @@ namespace WebApp.ApiControllers._1._0
         public async Task<ActionResult<V1DTO.Payment>> PostPayment(V1DTO.Payment payment)
         {
             payment.AppUserId = User.UserId();
+            payment.TimeMade = DateTime.Now.ToString("dd/MM/yyyy HH:mm");
 
             var bllEntity = _mapper.Map(payment);
             _bll.Payments.Add(bllEntity);
@@ -129,7 +130,7 @@ namespace WebApp.ApiControllers._1._0
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<V1DTO.Payment>> DeletePayment(Guid id)
         {
-            var payment = await _bll.Towns.FirstOrDefaultAsync(id, User.UserId());
+            var payment = await _bll.Payments.FirstOrDefaultAsync(id, User.UserId());
             if (payment == null)
             {
                 return NotFound(new {message = "Payment not found"});

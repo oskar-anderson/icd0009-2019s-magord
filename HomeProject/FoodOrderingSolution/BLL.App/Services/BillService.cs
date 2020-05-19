@@ -1,4 +1,9 @@
-﻿using BLL.App.Mappers;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using BLL.App.DTO;
+using BLL.App.Mappers;
 using BLL.Base.Services;
 using Contracts.BLL.App.Mappers;
 using Contracts.BLL.App.Services;
@@ -12,6 +17,16 @@ namespace BLL.App.Services
     {
         public BillService(IAppUnitOfWork uow) : base(uow, uow.Bills, new BillServiceMapper())
         {
+        }
+        
+        public virtual async Task<IEnumerable<BillView>> GetAllForViewAsync()
+        {
+            return (await Repository.GetAllForViewAsync()).Select(e => Mapper.MapBillView(e));
+        }
+        
+        public virtual async Task<BillView> FirstOrDefaultForViewAsync(Guid id)
+        {
+            return Mapper.MapBillView(await Repository.FirstOrDefaultForViewAsync(id));
         }
     }
 }

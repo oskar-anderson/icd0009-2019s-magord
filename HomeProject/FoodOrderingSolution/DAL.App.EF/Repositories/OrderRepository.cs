@@ -24,9 +24,6 @@ namespace DAL.App.EF.Repositories
             query = query
                 .Include(o => o.Person)
                 .Include(o => o.Restaurant)
-                .Include(o => o.Ingredient)
-                .Include(o => o.Food)
-                .Include(o => o.Drink)
                 .Include(o => o.AppUser)
                 .Include(o => o.OrderType);
             var domainEntities = await query.ToListAsync();
@@ -40,15 +37,52 @@ namespace DAL.App.EF.Repositories
             query = query
                 .Include(o => o.Person)
                 .Include(o => o.Restaurant)
-                .Include(o => o.Ingredient)
-                .Include(o => o.Food)
-                .Include(o => o.Drink)
                 .Include(o => o.AppUser)
                 .Include(o => o.OrderType)
                 .Where(r => r.Id == id);
             var domainEntity = await query.FirstOrDefaultAsync(e => e.Id.Equals(id));
             var result = Mapper.Map(domainEntity);
             return result;
+        }
+        
+        public virtual async Task<IEnumerable<OrderView>> GetAllForViewAsync(object? userId = null, bool noTracking = true)
+        {
+            var query = PrepareQuery(userId, noTracking);
+            return await query 
+                    .Include(o => o.Person)
+                    .Include(o => o.Restaurant)
+                    .Include(o => o.OrderType)
+                .Select(a => new OrderView()
+                {
+                    Id = a.Id,
+                    Number = a.Number,
+                    OrderStatus = a.OrderStatus,
+                    TimeCreated = a.TimeCreated,
+                    OrderType = a.OrderType!.Name,
+                    Person = a.Person!.FirstName,
+                    Restaurant = a.Restaurant!.Name,
+                }).ToListAsync();
+        }
+
+        public virtual async Task<OrderView> FirstOrDefaultForViewAsync(Guid id, object? userId = null, bool noTracking = true)
+        {
+            var query = PrepareQuery(userId, noTracking);
+            return await query
+                .Include(o => o.Person)
+                .Include(o => o.Restaurant)
+                .Include(o => o.OrderType)
+                .Where(r => r.Id == id)
+                .Select(a => new OrderView()
+                {
+                    Id = a.Id,
+                    Number = a.Number,
+                    OrderStatus = a.OrderStatus,
+                    TimeCreated = a.TimeCreated,
+                    OrderType = a.OrderType!.Name,
+                    Person = a.Person!.FirstName,
+                    Restaurant = a.Restaurant!.Name,
+                })
+                .FirstOrDefaultAsync();
         }
         
         /*

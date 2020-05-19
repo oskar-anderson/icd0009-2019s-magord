@@ -11,7 +11,5 @@ namespace BLL.App.DTO
         
         public string Name { get; set; } = default!;
         public string? Comment { get; set; }
-
-        public ICollection<Order>? Orders { get; set; }
     }
 }

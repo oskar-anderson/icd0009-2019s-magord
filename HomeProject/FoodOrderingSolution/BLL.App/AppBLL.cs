@@ -42,6 +42,9 @@ namespace BLL.App
 
         public IOrderService Orders =>
             GetService<IOrderService>(() => new OrderService(UnitOfWork));
+        
+        public IOrderItemService OrderItems =>
+            GetService<IOrderItemService>(() => new OrderItemService(UnitOfWork));
 
         public IOrderTypeService OrderTypes =>
             GetService<IOrderTypeService>(() => new OrderTypeService(UnitOfWork));

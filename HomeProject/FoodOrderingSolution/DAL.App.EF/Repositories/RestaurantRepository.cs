@@ -24,7 +24,8 @@ namespace DAL.App.EF.Repositories
         {
             var query = PrepareQuery(userId, noTracking);
             query = query
-                .Include(r => r.Area);
+                .Include(r => r.Area)
+                .ThenInclude(r => r!.Town);
             var domainEntities = await query.ToListAsync();
             var result = domainEntities.Select(e => Mapper.Map(e));
             return result;
@@ -35,6 +36,7 @@ namespace DAL.App.EF.Repositories
             var query = PrepareQuery(userId, noTracking);
             query = query
                 .Include(r => r.Area)
+                .ThenInclude(r => r!.Town)
                 .Where(r => r.Id == id);
             var domainEntity = await query.FirstOrDefaultAsync(e => e.Id.Equals(id));
             var result = Mapper.Map(domainEntity);
@@ -45,6 +47,7 @@ namespace DAL.App.EF.Repositories
         {
             return await RepoDbSet
                 .Include(a => a.Area)
+                .ThenInclude(r => r!.Town)
                 .Select(a => new RestaurantView()
                 {
                     Id = a.Id,
@@ -53,6 +56,7 @@ namespace DAL.App.EF.Repositories
                     OpenedFrom = a.OpenedFrom,
                     ClosedFrom = a.ClosedFrom,
                     Area = a.Area!.Name,
+                    Town = a.Area.Town!.Name
                 }).ToListAsync();
         }
 
@@ -69,6 +73,7 @@ namespace DAL.App.EF.Repositories
                     OpenedFrom = a.OpenedFrom,
                     ClosedFrom = a.ClosedFrom,
                     Area = a.Area!.Name,
+                    Town = a.Area.Town!.Name
                 })
                 .FirstOrDefaultAsync();
         }

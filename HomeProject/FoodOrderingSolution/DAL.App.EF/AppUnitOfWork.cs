@@ -22,6 +22,7 @@ namespace DAL.App.EF
         public IFoodTypeRepository FoodTypes => GetRepository<IFoodTypeRepository>(() => new FoodTypeRepository(UowDbContext));
         public IIngredientRepository Ingredients => GetRepository<IIngredientRepository>(() => new IngredientRepository(UowDbContext));
         public IOrderRepository Orders => GetRepository<IOrderRepository>(() => new OrderRepository(UowDbContext));
+        public IOrderItemRepository OrderItems => GetRepository<IOrderItemRepository>(() => new OrderItemRepository(UowDbContext));
         public IOrderTypeRepository OrderTypes => GetRepository<IOrderTypeRepository>(() => new OrderTypeRepository(UowDbContext));
         public IPaymentRepository Payments => GetRepository<IPaymentRepository>(() => new PaymentRepository(UowDbContext));
         public IPaymentTypeRepository PaymentTypes => GetRepository<IPaymentTypeRepository>(() => new PaymentTypeRepository(UowDbContext));

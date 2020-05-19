@@ -41,10 +41,10 @@ namespace WebApp.ApiControllers._1._0
         [HttpGet]
         [Produces("application/json")]
         [Consumes("application/json")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<V1DTO.Order>))]
-        public async Task<ActionResult<IEnumerable<V1DTO.Order>>> GetOrders()
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<V1DTO.OrderView>))]
+        public async Task<ActionResult<IEnumerable<V1DTO.OrderView>>> GetOrders()
         {
-            return Ok((await _bll.Orders.GetAllAsync()).Select(e => _mapper.Map(e)));
+            return Ok((await _bll.Orders.GetAllForViewAsync(User.UserId())).Select(e => _mapper.MapOrderView(e)));
         }
 
         /// <summary>
@@ -57,14 +57,14 @@ namespace WebApp.ApiControllers._1._0
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<V1DTO.Order>> GetOrder(Guid id)
         {
-            var order = await _bll.Orders.FirstOrDefaultAsync(id);
+            var order = await _bll.Orders.FirstOrDefaultForViewAsync(id);
             
             if (order == null)
             {
                 return NotFound(new {message = "Order not found"});
             }
 
-            return Ok(_mapper.Map(order));
+            return Ok(_mapper.MapOrderView(order));
         }
 
         /// <summary>
@@ -106,7 +106,10 @@ namespace WebApp.ApiControllers._1._0
         public async Task<ActionResult<V1DTO.Order>> PostOrder(V1DTO.Order order)
         {
             order.AppUserId = User.UserId();
-
+            order.TimeCreated = DateTime.Now.ToString("dd/MM/yyyy HH:mm");
+            order.Number = new Random().Next(100, 10000000);
+            order.OrderStatus = "Underway";
+            
             var bllEntity = _mapper.Map(order);
             _bll.Orders.Add(bllEntity);
             await _bll.SaveChangesAsync();

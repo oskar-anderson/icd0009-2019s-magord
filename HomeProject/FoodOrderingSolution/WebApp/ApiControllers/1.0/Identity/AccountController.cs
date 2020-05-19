@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Domain.Identity;
 using Extensions;
 using Microsoft.AspNetCore.Http;
@@ -115,6 +116,39 @@ namespace WebApp.ApiControllers._1._0.Identity
         }
         
         /// <summary>
+        /// Endpoint for user change-names (jwt generation)
+        /// </summary>
+        /// <param name="model">user data</param>
+        /// <returns></returns>
+        [HttpPost]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> ChangeNames([FromBody] ChangeNamesDTO model)
+        {
+            var user = await _userManager.FindByEmailAsync(model.Email);
+            if (user == null)
+            {
+                _logger.LogInformation($"Web-Api email change. User {model.Email} not found!");
+                return StatusCode(404, new {message = "Changing user email failed! User not found!"});
+            }
+
+            user.FirstName = model.FirstName;
+            user.LastName = model.LastName;
+
+            await _userManager.UpdateAsync(user);
+            
+            
+            var claimsPrincipal = await _signInManager.CreateUserPrincipalAsync(user); //get the User analog
+            var jwt = IdentityExtensions.GenerateJWT(claimsPrincipal.Claims,
+                _configuration["JWT:SigningKey"],
+                _configuration["JWT:Issuer"],
+                _configuration.GetValue<int>("JWT:ExpirationInDays"));
+            _logger.LogInformation($"New token generated for user {model.Email}");
+            return Ok(new {token = jwt, status = "Names changed!", firstName = model.FirstName, lastName = model.LastName});
+        }
+        
+        /// <summary>
         /// Endpoint for user log-in (jwt generation)
         /// </summary>
         /// <param name="model">login data</param>
@@ -144,7 +178,7 @@ namespace WebApp.ApiControllers._1._0.Identity
                     _configuration.GetValue<int>("JWT:ExpirationInDays")
                 );
                 _logger.LogInformation($"Token generated for user {model.Email}");
-                return Ok(new {token = jwt, status = "Logged in"});
+                return Ok(new {token = jwt, status = "Logged in", firstName = appUser.FirstName, lastName = appUser.LastName});
             }
 
             _logger.LogInformation($"Web-Api login. User {model.Email} attempted to log-in with bad password!");
@@ -176,7 +210,9 @@ namespace WebApp.ApiControllers._1._0.Identity
             appUser = new Domain.Identity.AppUser() 
             {
                 UserName = model.Email, 
-                Email = model.Email
+                Email = model.Email,
+                FirstName = model.FirstName,
+                LastName = model.LastName
             };
             
             var result = await _userManager.CreateAsync(appUser, model.Password);
@@ -201,7 +237,7 @@ namespace WebApp.ApiControllers._1._0.Identity
             );
 
             _logger.LogInformation($"Web-Api register. User {appUser.Email} registration successful!");
-            return Ok(new {token = jwt, status = $"User {appUser.Email} created and logged in!"});
+            return Ok(new {token = jwt, status = $"User {appUser.Email} created and logged in!", firstName = appUser.FirstName, lastName = appUser.LastName});
         }
     }
 }

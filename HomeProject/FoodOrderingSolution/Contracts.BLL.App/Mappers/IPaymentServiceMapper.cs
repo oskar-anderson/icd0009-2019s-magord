@@ -8,5 +8,6 @@ namespace Contracts.BLL.App.Mappers
     public interface IPaymentServiceMapper : IBaseMapper<DALAppDTO.Payment, BLLAppDTO.Payment>
     {
         
+        BLLAppDTO.PaymentView MapPaymentView(DALAppDTO.PaymentView inObject);
     }
 }

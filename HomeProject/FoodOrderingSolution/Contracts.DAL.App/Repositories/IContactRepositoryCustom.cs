@@ -11,8 +11,8 @@ namespace Contracts.DAL.App.Repositories
     
     public interface IContactRepositoryCustom<TContactView>
     {
-        Task<IEnumerable<TContactView>> GetAllForViewAsync();
-        Task<TContactView> FirstOrDefaultForViewAsync(Guid id);
+        Task<IEnumerable<TContactView>> GetAllForViewAsync(object? userId = null, bool noTracking = true);
+        Task<TContactView> FirstOrDefaultForViewAsync(Guid id, object? userId = null, bool noTracking = true);
     }
     
 }

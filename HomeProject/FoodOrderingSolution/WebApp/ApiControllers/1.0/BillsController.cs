@@ -41,10 +41,10 @@ namespace WebApp.ApiControllers._1._0
         [HttpGet]
         [Produces("application/json")]
         [Consumes("application/json")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<V1DTO.Bill>))]
-        public async Task<ActionResult<IEnumerable<V1DTO.Bill>>> GetBills()
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<V1DTO.BillView>))]
+        public async Task<ActionResult<IEnumerable<V1DTO.BillView>>> GetBills()
         {
-            return Ok((await _bll.Bills.GetAllAsync()).Select(e => _mapper.Map(e)));
+            return Ok((await _bll.Bills.GetAllForViewAsync()).Select(e => _mapper.MapBillView(e)));
         }
 
         /// <summary>
@@ -57,14 +57,14 @@ namespace WebApp.ApiControllers._1._0
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<V1DTO.Bill>> GetBill(Guid id)
         {
-            var bill = await _bll.Bills.FirstOrDefaultAsync(id);
+            var bill = await _bll.Bills.FirstOrDefaultForViewAsync(id);
             
             if (bill == null)
             {
                 return NotFound(new {message = "Bill not found"});
             }
 
-            return Ok(_mapper.Map(bill));
+            return Ok(_mapper.MapBillView(bill));
         }
 
         /// <summary>
@@ -107,6 +107,8 @@ namespace WebApp.ApiControllers._1._0
         public async Task<ActionResult<V1DTO.Bill>> PostBill(V1DTO.Bill bill)
         {
             bill.AppUserId = User.UserId();
+            bill.TimeIssued = DateTime.Now.ToString("dd/MM/yyyy");
+            bill.Number = new Random().Next(100, 10000000);
 
             var bllEntity = _mapper.Map(bill);
             _bll.Bills.Add(bllEntity);

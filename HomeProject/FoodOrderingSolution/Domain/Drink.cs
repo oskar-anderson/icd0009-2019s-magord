@@ -15,7 +15,7 @@ namespace Domain
 
         public int Amount { get; set; } = default!;
         
-        public ICollection<Order>? Orders { get; set; }
+        public ICollection<OrderItem>? OrderItems { get; set; }
 
         
         

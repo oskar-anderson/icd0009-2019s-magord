@@ -19,14 +19,14 @@ namespace BLL.App.Services
         {
         }
         
-        public virtual async Task<IEnumerable<ContactView>> GetAllForViewAsync()
+        public virtual async Task<IEnumerable<ContactView>> GetAllForViewAsync(object? userId = null, bool noTracking = true)
         {
-            return (await Repository.GetAllForViewAsync()).Select(e => Mapper.MapContactView(e));
+            return (await Repository.GetAllForViewAsync(userId)).Select(e => Mapper.MapContactView(e));
         }
         
-        public virtual async Task<ContactView> FirstOrDefaultForViewAsync(Guid id)
+        public virtual async Task<ContactView> FirstOrDefaultForViewAsync(Guid id, object? userId = null, bool noTracking = true)
         {
-            return Mapper.MapContactView(await Repository.FirstOrDefaultForViewAsync(id));
+            return Mapper.MapContactView(await Repository.FirstOrDefaultForViewAsync(id, userId));
         }
     }
 }

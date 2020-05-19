@@ -5,7 +5,7 @@ using Contracts.DAL.App.Repositories;
 
 namespace Contracts.BLL.App.Services
 {
-    public interface IOrderService : IBaseEntityService<Order>, IOrderRepositoryCustom
+    public interface IOrderService : IBaseEntityService<Order>, IOrderRepositoryCustom<OrderView>
 
     {
         // TODO: add custom methods

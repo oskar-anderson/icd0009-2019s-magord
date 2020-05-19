@@ -17,20 +17,11 @@ namespace DAL.App.DTO
 
         public string DateOfBirth { get; set; } = default!;
 
-        public ICollection<PersonInRestaurant>? PersonInRestaurants { get; set; }
-
-        public ICollection<Order>? Orders { get; set; }
-
-        public ICollection<Payment>? Payments { get; set; }
-
-        public ICollection<Bill>? Bills { get; set; }
-
         //public ICollection<AppUser>? AppUsers { get; set; }
 
         public Guid AppUserId { get; set; } = default!;
         public AppUser? AppUser { get; set; }
         
-        public ICollection<Contact>? Contacts { get; set; }
     }
     
 }

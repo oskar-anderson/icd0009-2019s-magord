@@ -15,5 +15,6 @@ namespace DAL.App.DTO
         public string ClosedFrom { get; set; } = default!;
 
         public string Area { get; set; } = default!;
+        public string Town { get; set; } = default!;
     }
 }

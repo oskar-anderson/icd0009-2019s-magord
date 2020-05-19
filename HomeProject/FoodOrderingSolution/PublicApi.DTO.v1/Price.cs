@@ -14,7 +14,7 @@ namespace PublicApi.DTO.v1
         public decimal Value { get; set; } = default!;
         
         public Guid? CampaignId { get; set; }
-        
+
         public Guid AppUserId { get; set; }
     }
 }

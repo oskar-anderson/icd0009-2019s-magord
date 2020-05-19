@@ -42,9 +42,10 @@ namespace DAL.App.EF.Repositories
             return result;
         }
         
-        public virtual async Task<IEnumerable<ContactView>> GetAllForViewAsync()
+        public virtual async Task<IEnumerable<ContactView>> GetAllForViewAsync(object? userId = null, bool noTracking = true)
         {
-            return await RepoDbSet
+            var query = PrepareQuery(userId, noTracking);
+            return await query
                 .Include(a => a.ContactType)
                 .Include(a => a.AppUser)
                 .Select(a => new ContactView()
@@ -55,9 +56,10 @@ namespace DAL.App.EF.Repositories
                 }).ToListAsync();
         }
 
-        public virtual async Task<ContactView> FirstOrDefaultForViewAsync(Guid id)
+        public virtual async Task<ContactView> FirstOrDefaultForViewAsync(Guid id, object? userId = null, bool noTracking = true)
         {
-            return await RepoDbSet
+            var query = PrepareQuery(userId, noTracking);
+            return await query
                 .Include(a => a.ContactType)
                 .Include(a => a.AppUser)
                 .Where(r => r.Id == id)

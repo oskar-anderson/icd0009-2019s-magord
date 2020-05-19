@@ -15,16 +15,7 @@ namespace DAL.App.DTO
         public int Number { get; set; } = default!;
 
         public string TimeCreated { get; set; } = default!;
-
-        public Guid FoodId { get; set; } = default!;
-        public Food? Food { get; set; }
-
-        public Guid IngredientId { get; set; } = default!;
-        public Ingredient? Ingredient { get; set; }
-
-        public Guid DrinkId { get; set; } = default!;
-        public Drink? Drink { get; set; }
-
+        
         public Guid RestaurantId { get; set; } = default!;
         public Restaurant? Restaurant { get; set; }
 
@@ -36,9 +27,5 @@ namespace DAL.App.DTO
 
         public Guid PersonId { get; set; } = default!;
         public Person? Person { get; set; }
-
-        public ICollection<Price>? Prices { get; set; }
-
-        public ICollection<Bill>? Bills { get; set; }
     }
 }

@@ -43,6 +43,40 @@ namespace DAL.App.EF.Repositories
             var result = Mapper.Map(domainEntity);
             return result;
         }
+        
+        public virtual async Task<IEnumerable<BillView>> GetAllForViewAsync()
+        {
+            return await RepoDbSet
+                .Include(b => b.Person)
+                .Include(b => b.Order)
+                .Select(a => new BillView()
+                {
+                    Id = a.Id,
+                    Number = a.Number,
+                    Sum = a.Sum,
+                    TimeIssued = a.TimeIssued,
+                    Order = a.Order!.Number,
+                    Person = a.Person!.FirstName,
+                }).ToListAsync();
+        }
+
+        public virtual async Task<BillView> FirstOrDefaultForViewAsync(Guid id)
+        {
+            return await RepoDbSet
+                .Include(b => b.Person)
+                .Include(b => b.Order)
+                .Where(r => r.Id == id)
+                .Select(a => new BillView()
+                {
+                    Id = a.Id,
+                    Number = a.Number,
+                    Sum = a.Sum,
+                    TimeIssued = a.TimeIssued,
+                    Order = a.Order!.Number,
+                    Person = a.Person!.FirstName,
+                })
+                .FirstOrDefaultAsync();
+        }
 
         /*
         public async Task<IEnumerable<BillDTO>> DTOAllAsync(Guid? userId = null)

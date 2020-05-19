@@ -7,6 +7,7 @@ namespace Contracts.BLL.App.Mappers
 {
     public interface IOrderServiceMapper : IBaseMapper<DALAppDTO.Order, BLLAppDTO.Order>
     {
+        BLLAppDTO.OrderView MapOrderView(DALAppDTO.OrderView inObject);
         
     }
 }
