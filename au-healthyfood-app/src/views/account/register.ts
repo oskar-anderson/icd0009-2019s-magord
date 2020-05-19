@@ -9,6 +9,8 @@ export class AccountRegister {
     private _email: string = "";
     private _password: string = "";
     private _confirmPassword: string = "";
+    private _firstName: string = "";
+    private _lastName: string = "";
     private _errorMessage: string | null = null;
 
 
@@ -30,13 +32,15 @@ export class AccountRegister {
         console.log(this._email, this._password);
         event.preventDefault();
 
-        this.accountService.register(this._email, this._password).then(
+        this.accountService.register(this._email, this._password, this._firstName, this._lastName).then(
             response => {
                 console.log(response);
                 if (response.statusCode == 200) {
                     this.appState.jwt = response.data!.token;
                     this.appState.password = this._password;
                     this.appState.email = this._email;
+                    this.appState.firstName = response.data!.firstName;
+                    this.appState.lastName = response.data!.lastName;
                     this.router!.navigateToRoute('home');
                 } else {
                     this._errorMessage = response.statusCode.toString()

@@ -1,0 +1,47 @@
+<template>
+
+    <require from="../../components/alert"></require>
+
+    <alert alert-data.bind="_alert"></alert>
+
+
+    <h1>Create</h1>
+    <h4>Bill</h4>
+    <hr />
+    <div class="row">
+        <div class="col-md-4">
+            <form submit.trigger="onSubmit($event)">
+                <div class="form-group">
+                    <label class="control-label" for="Sum">Sum</label>
+                    <input class="form-control" type="text" id="Sum" maxlength="256" value.bind="bill.sum" />
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label" for="OrderId">Order</label>
+                    <select class="form-control" data-val="true", type="text" id="OrderId" maxlength="256" value.bind="bill.orderId">
+                    <option model.bind="null">Choose order</option>
+                    <option repeat.for="order of _orders" model.bind="order.id">#${order.number}</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label" for="PersonId">Person</label>
+                    <select class="form-control" data-val="true", type="text" id="PersonId" maxlength="256" value.bind="bill.personId">
+                    <option model.bind="null">Choose a person</option>
+                    <option repeat.for="person of _persons" model.bind="person.id">${person.firstName}</option>
+                    </select>
+                </div>
+                
+
+                <div class="form-group">
+                    <input type="submit" value="Create" class="btn btn-primary" />
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div>
+        <a route-href="route: bills-index; params.bind: { }">Back to List</a>
+    </div>
+
+</template>

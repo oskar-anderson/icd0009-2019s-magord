@@ -33,13 +33,12 @@ export class App {
             { route: ['areas/edit/:id?'], name: 'areas-edit', moduleId: PLATFORM.moduleName('views/areas/edit'), nav: false, title: 'Areas Edit' },
             { route: ['areas/create'], name: 'areas-create', moduleId: PLATFORM.moduleName('views/areas/create'), nav: false, title: 'Areas Create' },
 
-            /*
+            
             {route: ['bills', 'bills/index'], name: 'bills-index', moduleId: PLATFORM.moduleName('views/bills/index'), nav: true, title: 'Bills'},
             {route: ['bills/details/:id'], name: 'bills-details', moduleId: PLATFORM.moduleName('views/bills/details'), nav: false, title: 'Bills details'},
             { route: ['bills/edit/:id'], name: 'bills-edit', moduleId: PLATFORM.moduleName('views/bills/edit'), nav: false, title: 'Bills Edit' },
-            { route: ['bills/delete/:id'], name: 'bills-delete', moduleId: PLATFORM.moduleName('views/bills/delete'), nav: false, title: 'Bills Delete' },
             { route: ['bills/create'], name: 'bills-create', moduleId: PLATFORM.moduleName('views/bills/create'), nav: false, title: 'Bills Create' },
-            */
+            
 
             {route: ['campaigns', 'campaigns/index'], name: 'campaigns-index', moduleId: PLATFORM.moduleName('views/campaigns/index'), nav: true, title: 'Campaigns'},
             {route: ['campaigns/details/:id?'], name: 'campaigns-details', moduleId: PLATFORM.moduleName('views/campaigns/details'), nav: false, title: 'Campaigns details'},
@@ -86,15 +85,20 @@ export class App {
             { route: ['ingredients/edit/:id?'], name: 'ingredients-edit', moduleId: PLATFORM.moduleName('views/ingredients/edit'), nav: false, title: 'Ingredients Edit' },
             { route: ['ingredients/create'], name: 'ingredients-create', moduleId: PLATFORM.moduleName('views/ingredients/create'), nav: false, title: 'Ingredients Create' },
             
-            /*
-
-            {route: ['orders', 'orders/index'], name: 'orders-index', moduleId: PLATFORM.moduleName('views/orders/index'), nav: true, title: 'Orders'},
-            {route: ['orders/details/:id'], name: 'orders-details', moduleId: PLATFORM.moduleName('views/orders/details'), nav: false, title: 'Orders details'},
-            { route: ['orders/edit/:id'], name: 'orders-edit', moduleId: PLATFORM.moduleName('views/orders/edit'), nav: false, title: 'Orders Edit' },
-            { route: ['orders/delete/:id'], name: 'orders-delete', moduleId: PLATFORM.moduleName('views/orders/delete'), nav: false, title: 'Orders Delete' },
+            
+            {route: ['orders', 'orders/index'], name: 'orders-index', moduleId: PLATFORM.moduleName('views/orders/index'), nav: true, title: 'My Orders'},
+            {route: ['orders/details/:id?'], name: 'orders-details', moduleId: PLATFORM.moduleName('views/orders/details'), nav: false, title: 'Orders details'},
+            { route: ['orders/edit/:id?'], name: 'orders-edit', moduleId: PLATFORM.moduleName('views/orders/edit'), nav: false, title: 'Orders Edit' },
             { route: ['orders/create'], name: 'orders-create', moduleId: PLATFORM.moduleName('views/orders/create'), nav: false, title: 'Orders Create' },
 
-            */
+
+            
+            {route: ['orderitems', 'orderitems/index'], name: 'orderitems-index', moduleId: PLATFORM.moduleName('views/orderitems/index'), nav: true, title: 'Order items'},
+            {route: ['orderitems/details/:id?'], name: 'orderitems-details', moduleId: PLATFORM.moduleName('views/orderitems/details'), nav: false, title: 'Order items details'},
+            { route: ['orderitems/edit/:id?'], name: 'orderitems-edit', moduleId: PLATFORM.moduleName('views/orderitems/edit'), nav: false, title: 'Order items Edit' },
+            { route: ['orderitems/create'], name: 'orderitems-create', moduleId: PLATFORM.moduleName('views/orderitems/create'), nav: false, title: 'Order items Create' },
+            
+
 
             {route: ['ordertypes', 'ordertypes/index'], name: 'ordertypes-index', moduleId: PLATFORM.moduleName('views/ordertypes/index'), nav: true, title: 'Order types'},
             {route: ['ordertypes/details/:id?'], name: 'ordertypes-details', moduleId: PLATFORM.moduleName('views/ordertypes/details'), nav: false, title: 'Order Types details'},
@@ -103,13 +107,12 @@ export class App {
             { route: ['ordertypes/create'], name: 'ordertypes-create', moduleId: PLATFORM.moduleName('views/ordertypes/create'), nav: false, title: 'Order Types Create' },
 
 
-            /*
+            
             {route: ['payments', 'payments/index'], name: 'payments-index', moduleId: PLATFORM.moduleName('views/payments/index'), nav: true, title: 'Payments'},
-            {route: ['payments/details/:id'], name: 'payments-details', moduleId: PLATFORM.moduleName('views/payments/details'), nav: false, title: 'Payments details'},
-            { route: ['payments/edit/:id'], name: 'payments-edit', moduleId: PLATFORM.moduleName('views/payments/edit'), nav: false, title: 'Payments Edit' },
-            { route: ['payments/delete/:id'], name: 'payments-delete', moduleId: PLATFORM.moduleName('views/payments/delete'), nav: false, title: 'Payments Delete' },
+            {route: ['payments/details/:id?'], name: 'payments-details', moduleId: PLATFORM.moduleName('views/payments/details'), nav: false, title: 'Payments details'},
+            { route: ['payments/edit/:id?'], name: 'payments-edit', moduleId: PLATFORM.moduleName('views/payments/edit'), nav: false, title: 'Payments Edit' },
             { route: ['payments/create'], name: 'payments-create', moduleId: PLATFORM.moduleName('views/payments/create'), nav: false, title: 'Payments Create' },
-            */
+            
 
             {route: ['paymenttypes', 'paymenttypes/index'], name: 'paymenttypes-index', moduleId: PLATFORM.moduleName('views/paymenttypes/index'), nav: true, title: 'Payment types'},
             {route: ['paymenttypes/details/:id?'], name: 'paymenttypes-details', moduleId: PLATFORM.moduleName('views/paymenttypes/details'), nav: false, title: 'Payment Types details'},

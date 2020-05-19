@@ -1,0 +1,61 @@
+<template>
+
+    <require from="../../components/alert"></require>
+
+    <alert alert-data.bind="_alert"></alert>
+
+
+    <h1>Order items Index</h1>
+
+    <p>
+        <a if.bind="isAdmin" route-href="route: orderitems-create; params.bind: {}">Create New</a>
+    </p>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    Food
+                </th>
+                <th>
+                    Drink
+                </th>
+                <th>
+                    Ingredient
+                </th>
+                <th>
+                    Order
+                </th>
+                <th>
+                    Quantity
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr repeat.for="orderItem of _orderItems">
+                <td>
+                    ${orderItem.food}
+                </td>
+                <td>
+                    ${orderItem.drink}
+                </td>
+                <td>
+                    ${orderItem.ingredient}
+                </td>
+                <td>
+                    ${orderItem.order}
+                </td>
+                <td>
+                    ${orderItem.quantity}
+                </td>
+                <td>
+                    <a if.bind="isAdmin" route-href="route: orderitems-edit; params.bind: { id: orderItem.id }">Edit</a>
+                    <span if.bind="isAdmin">|</span>
+                    <a route-href="route: orderitems-details; params.bind: { id: orderItem.id }">Details</a> 
+                    <button style="float: right" if.bind="isAdmin" click.trigger="deleteOnClick(orderItem)" type="button"
+                        class="btn btn-danger">Delete</button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</template>

@@ -45,6 +45,7 @@ export class DrinksCreate {
 
     onSubmit(event: Event) {
         this.drink!.amount = Number(this.drink!.amount);
+        this.drink!.size = Number(this.drink!.size)
         event.preventDefault();
         console.log(event);
         this.drinkService

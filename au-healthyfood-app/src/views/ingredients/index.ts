@@ -22,7 +22,7 @@ export class IngredientsIndex {
 
     }
 
-
+    
     attached() {
         this.ingredientService.getIngredients().then(
             response => {
@@ -62,7 +62,4 @@ export class IngredientsIndex {
             }
         );
     }
-
-
-
 }

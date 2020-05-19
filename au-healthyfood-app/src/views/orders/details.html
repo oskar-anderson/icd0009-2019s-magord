@@ -1,0 +1,56 @@
+<template>
+
+    <require from="../../components/alert"></require>
+
+    <alert alert-data.bind="_alert"></alert>
+
+
+    <h1>Details</h1>
+
+    <div>
+        <h4>Order</h4>
+        <hr />
+        <dl class="row">
+            <dt class="col-sm-2">
+                Number
+            </dt>
+            <dd class="col-sm-10">
+                ${order.number}
+            </dd>
+            <dt class="col-sm-2">
+                Order status
+            </dt>
+            <dd class="col-sm-10">
+                ${order.orderStatus}
+            </dd>
+            <dt class="col-sm-2">
+                Time created
+            </dt>
+            <dd class="col-sm-10">
+                ${order.timeCreated}
+            </dd>
+            <dt class="col-sm-2">
+                Restaurant
+            </dt>
+            <dd class="col-sm-10">
+                ${order.restaurant}
+            </dd>
+            <dt class="col-sm-2">
+                Order type
+            </dt>
+            <dd class="col-sm-10">
+                ${order.orderType}
+            </dd>
+            <dt class="col-sm-2">
+                Person
+            </dt>
+            <dd class="col-sm-10">
+                ${order.person}
+            </dd>
+        </dl>
+    </div>
+    <div>
+        <a route-href="route: orders-edit; params.bind: { id: order.id }">Edit</a> |
+        <a route-href="route: orders-index; params.bind: { }">Back to List</a>
+    </div>
+</template>

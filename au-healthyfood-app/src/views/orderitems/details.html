@@ -1,0 +1,50 @@
+<template>
+
+    <require from="../../components/alert"></require>
+
+    <alert alert-data.bind="_alert"></alert>
+
+
+    <h1>Details</h1>
+
+    <div>
+        <h4>Order Item</h4>
+        <hr />
+        <dl class="row">
+            <dt class="col-sm-2">
+                Quantity
+            </dt>
+            <dd class="col-sm-10">
+                ${orderItem.quantity}
+            </dd>
+            <dt class="col-sm-2">
+                Food
+            </dt>
+            <dd class="col-sm-10">
+                ${orderItem.food}
+            </dd>
+            <dt class="col-sm-2">
+                Drink
+            </dt>
+            <dd class="col-sm-10">
+                ${orderItem.drink}
+            </dd>
+            <dt class="col-sm-2">
+                Ingredient
+            </dt>
+            <dd class="col-sm-10">
+                ${orderItem.ingredient}
+            </dd>
+            <dt class="col-sm-2">
+                Order
+            </dt>
+            <dd class="col-sm-10">
+                ${orderItem.order}
+            </dd>
+        </dl>
+    </div>
+    <div>
+        <a route-href="route: orderitems-edit; params.bind: { id: orderItem.id }">Edit</a> |
+        <a route-href="route: orderitems-index; params.bind: { }">Back to List</a>
+    </div>
+</template>

@@ -46,18 +46,39 @@
                     ${food.size}
                 </td>
                 <td>
-                    ${food.amount}
+                    <div class="form-group">
+                        <input style="width: 50px; text-align:center" type="text" value.bind="food.amount" />
+                    </div>
                 </td>
                 <td>
                     ${food.foodType}
                 </td>
                 <td>
-                    ${food.price}
+                    ${food.price}€
+                </td>
+                <td>
+                    <div class="dropdown">
+                        <a href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true"
+                            aria-expanded="false">
+                            Add to cart
+                        </a>
+                        <div class="dropdown-menu">
+                            <a style="margin:10px; padding:20px" class="dropdown-item" repeat.for="ingredient of _ingredients"
+                                if.bind="food.name === ingredient.food">
+                                ${ingredient.name} ${ingredient.price}€
+                                <div style="float:right" class="checkbox">
+                                    <label><input type="checkbox" model.bind="ingredient.id" checked.bind="selectedIngredients"></label>
+                                </div>
+                            </a>
+                            <br>
+                            <button style="margin:auto; display:block" type="button" class="btn btn-primary" click.delegate="addToCart(food)">Add to cart</button>
+                        </div>
+                    </div>
                 </td>
                 <td>
                     <a if.bind="isAdmin" route-href="route: foods-edit; params.bind: { id: food.id }">Edit</a>
                     <span if.bind="isAdmin">|</span>
-                    <a route-href="route: foods-details; params.bind: { id: food.id }">Details</a> 
+                    <a route-href="route: foods-details; params.bind: { id: food.id }">Details</a>
                     <button style="float: right" if.bind="isAdmin" click.trigger="deleteOnClick(food)" type="button"
                         class="btn btn-danger">Delete</button>
                 </td>

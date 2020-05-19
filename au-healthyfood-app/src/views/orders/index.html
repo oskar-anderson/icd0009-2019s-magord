@@ -1,3 +1,67 @@
 <template>
-    Orders index
+
+    <require from="../../components/alert"></require>
+
+    <alert alert-data.bind="_alert"></alert>
+
+
+    <h1>Orders Index</h1>
+
+    <p>
+        <a if.bind="isAdmin" route-href="route: orders-create; params.bind: {}">Create New</a>
+    </p>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    Number
+                </th>
+                <th>
+                    Order status
+                </th>
+                <th>
+                    Time created
+                </th>
+                <th>
+                    Restaurant
+                </th>
+                <th>
+                    Order type
+                </th>
+                <th>
+                    Person
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr repeat.for="order of _orders">
+                <td>
+                    #${order.number}
+                </td>
+                <td>
+                    ${order.orderStatus}
+                </td>
+                <td>
+                    ${order.timeCreated}
+                </td>
+                <td>
+                    ${order.restaurant}
+                </td>
+                <td>
+                    ${order.orderType}
+                </td>
+                <td>
+                    ${order.person}
+                </td>
+                <td>
+                    <a if.bind="isAdmin" route-href="route: orders-edit; params.bind: { id: order.id }">Edit</a>
+                    <span if.bind="isAdmin">|</span>
+                    <a route-href="route: orders-details; params.bind: { id: order.id }">Details</a> 
+                    <button style="float: right" if.bind="isAdmin" click.trigger="deleteOnClick(order)" type="button"
+                        class="btn btn-danger">Delete</button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
 </template>

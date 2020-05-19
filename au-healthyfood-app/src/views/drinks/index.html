@@ -25,6 +25,9 @@
                 <th>
                     Price
                 </th>
+                <th>
+                    
+                </th>
                 <th></th>
             </tr>
         </thead>
@@ -34,13 +37,18 @@
                     ${drink.name}
                 </td>
                 <td>
-                    ${drink.size}
+                    ${drink.size}L
                 </td>
                 <td>
-                    ${drink.amount}
+                    <div class="form-group">
+                        <input style="width: 50px; text-align:center" type="text" value.bind="drink.amount" />
+                    </div>
                 </td>
                 <td>
-                    ${drink.price}
+                    ${drink.price}€
+                </td>
+                <td>
+                    <button click.trigger="addToCart(drink)" style="margin:auto; display:block" type="button" class="btn btn-primary">Add to cart</button>
                 </td>
                 <td>
                     <a if.bind="isAdmin" route-href="route: drinks-edit; params.bind: { id: drink.id }">Edit</a>

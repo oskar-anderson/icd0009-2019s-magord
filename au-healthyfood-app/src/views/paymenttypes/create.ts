@@ -8,7 +8,7 @@ import { PaymentTypeService } from './../../service/Paymenttype-service';
 
 
 @autoinject
-export class PaymentsCreate {
+export class PaymentTypesCreate {
 
     private _alert: IAlertData | null = null;
 

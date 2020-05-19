@@ -1,0 +1,63 @@
+<template>
+
+    <require from="../../components/alert"></require>
+
+    <alert alert-data.bind="_alert"></alert>
+
+
+    <h1>Edit</h1>
+
+    <h4>Order item</h4>
+    <hr />
+    <div class="row">
+        <div class="col-md-4">
+            <form submit.trigger="onSubmit($event)">
+                <div class="form-group">
+                    <label class="control-label" for="Quantity">Quantity</label>
+                    <input class="form-control" type="text" id="Quantity" maxlength="256" value.bind="orderItem.quantity" />
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label" for="FoodId">Food</label>
+                    <select class="form-control" data-val="true", type="text" id="FoodId" maxlength="256" value.bind="orderItem.foodId">
+                    <option model.bind="null">Choose food</option>
+                    <option repeat.for="food of _foods" model.bind="food.id">${food.name}</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label" for="IngredientId">Ingredient</label>
+                    <select class="form-control" data-val="true", type="text" id="IngredientId" maxlength="256" value.bind="orderItem.ingredientId">
+                    <option model.bind="null">Choose ingredient</option>
+                    <option repeat.for="ingredient of _ingredients" model.bind="ingredient.id">${ingredient.name}</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label" for="DrinkId">Drink</label>
+                    <select class="form-control" data-val="true", type="text" id="DrinkId" maxlength="256" value.bind="orderItem.drinkId">
+                    <option model.bind="null">Choose drink</option>
+                    <option repeat.for="drink of _drinks" model.bind="drink.id">${drink.name}</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label" for="OrderId">Order</label>
+                    <select class="form-control" data-val="true", type="text" id="OrderId" maxlength="256" value.bind="orderItem.orderId">
+                    <option model.bind="null">Choose order</option>
+                    <option repeat.for="order of _orders" model.bind="order.id">${order.number}</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <input type="submit" value="Submit" class="btn btn-primary" />
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div>
+        <a route-href="route: orderitems-index; params.bind: { }">Back to List</a>
+    </div>
+
+</template>

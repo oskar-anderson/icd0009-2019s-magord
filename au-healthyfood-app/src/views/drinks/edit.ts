@@ -62,6 +62,7 @@ export class DrinksEdit {
         event.preventDefault();
         console.log(event);
         this._drink!.amount = Number(this._drink!.amount);
+        this._drink!.size = Number(this._drink!.size)
         this.drinkService
             .updateDrink(this._drink!)
             .then(

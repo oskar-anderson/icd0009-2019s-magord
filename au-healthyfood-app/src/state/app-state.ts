@@ -46,6 +46,32 @@ export class AppState {
         }
     }
 
+    get firstName(): string | null {
+        return localStorage.getItem('firstName')
+    }
+
+    set firstName(value: string | null) {
+        if(value) {
+            localStorage.setItem('firstName', value);
+        } else {
+            localStorage.removeItem('firstName');
+        }
+    }
+
+
+    get lastName(): string | null {
+        return localStorage.getItem('lastName')
+    }
+
+    set lastName(value: string | null) {
+        if(value) {
+            localStorage.setItem('lastName', value);
+        } else {
+            localStorage.removeItem('lastName');
+        }
+    }
+
+    
     get isAdmin(): boolean {
         if (this.jwt) {
             const decoded = JwtDecode(this.jwt) as Record<string, string>;

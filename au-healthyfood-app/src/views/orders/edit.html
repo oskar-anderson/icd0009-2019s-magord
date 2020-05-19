@@ -1,0 +1,65 @@
+<template>
+
+    <require from="../../components/alert"></require>
+
+    <alert alert-data.bind="_alert"></alert>
+
+
+    <h1>Edit</h1>
+
+    <h4>Order</h4>
+    <hr />
+    <div class="row">
+        <div class="col-md-4">
+            <form submit.trigger="onSubmit($event)">
+                <div class="form-group">
+                    <label class="control-label" for="Number">Number</label>
+                    <input class="form-control" type="text" id="Number" maxlength="256" value.bind="order.number"/>
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label" for="OrderStatus">Order status</label>
+                    <input class="form-control" type="text" id="OrderStatus" maxlength="256" value.bind="order.orderStatus"/>
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label" for="TimeCreated">Time created</label>
+                    <input class="form-control" type="text" id="TimeCreated" maxlength="256" value.bind="order.timeCreated"/>
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label" for="RestaurantId">Restaurant</label>
+                    <select class="form-control" data-val="true", type="text" id="RestaurantId" maxlength="256" value.bind="order.restaurantId">
+                    <option model.bind="null">Choose a restaurant</option>
+                    <option repeat.for="restaurant of _restaurants" model.bind="restaurant.id">${restaurant.name}</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label" for="OrderTypeId">Order type</label>
+                    <select class="form-control" data-val="true", type="text" id="OrderTypeId" maxlength="256" value.bind="order.orderTypeId">
+                    <option model.bind="null">Choose order type</option>
+                    <option repeat.for="orderType of _orderTypes" model.bind="orderType.id">${orderType.name}</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label" for="PersonId">Person</label>
+                    <select class="form-control" data-val="true", type="text" id="PersonId" maxlength="256" value.bind="order.personId">
+                    <option model.bind="null">Choose person</option>
+                    <option repeat.for="person of _persons" model.bind="person.id">${person.firstName}</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <input type="submit" value="Submit" class="btn btn-primary" />
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div>
+        <a route-href="route: orders-index; params.bind: { }">Back to List</a>
+    </div>
+
+</template>

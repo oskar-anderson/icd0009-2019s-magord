@@ -11,10 +11,9 @@ export class AccountService {
 
     constructor(
         private appState: AppState,
-        private httpClient: HttpClient) 
-        {
-            this.httpClient.baseUrl = this.appState.baseUrl;
-        }
+        private httpClient: HttpClient) {
+        this.httpClient.baseUrl = this.appState.baseUrl;
+    }
 
 
     async login(email: string, password: string): Promise<IFetchResponse<ILoginResponse>> {
@@ -42,7 +41,7 @@ export class AccountService {
                 errorMessage: response.statusText
             }
 
-            
+
         }
         catch (reason) {
             return {
@@ -53,11 +52,13 @@ export class AccountService {
     }
 
 
-    async register(email: string, password: string): Promise<IFetchResponse<ILoginResponse>> {
+    async register(email: string, password: string, firstName: string, lastName: string): Promise<IFetchResponse<ILoginResponse>> {
         try {
             const response = await this.httpClient.post('account/register', JSON.stringify({
                 email: email,
                 password: password,
+                firstName: firstName,
+                lastName: lastName
             }), {
                 cache: 'no-store'
             });
@@ -83,6 +84,40 @@ export class AccountService {
                 errorMessage: JSON.stringify(reason)
             }
         }
+    }
+
+    async changeNames(email: string, firstName: string, lastName: string): Promise<IFetchResponse<ILoginResponse>> {
+        try {
+            const response = await this.httpClient.post('account/changeNames', JSON.stringify({
+                email: email,
+                firstName: firstName,
+                lastName: lastName,
+            }), {
+                cache: 'no-store'
+            });
+
+            // Everything went well!
+            if (response.status >= 200 && response.status < 300) {
+                const data = (await response.json()) as ILoginResponse;
+                return {
+                    statusCode: response.status,
+                    data: data
+                }
+            }
+
+            // Something went wrong!!
+            return {
+                statusCode: response.status,
+                errorMessage: response.statusText
+            }
+        }
+        catch (reason) {
+            return {
+                statusCode: 0,
+                errorMessage: JSON.stringify(reason)
+            }
+        }
+
     }
 
 
@@ -118,7 +153,7 @@ export class AccountService {
             }
         }
 
-    } 
+    }
 
 
     async changeEmail(email: string, newEmail: string): Promise<IFetchResponse<ILoginResponse>> {
@@ -151,5 +186,5 @@ export class AccountService {
                 errorMessage: JSON.stringify(reason)
             }
         }
-    } 
+    }
 }

@@ -7,4 +7,7 @@ export interface IRestaurant {
     
     areaId: string;
     area: string
+
+    townId: string;
+    town: string;
 }

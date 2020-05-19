@@ -24,6 +24,8 @@ export class AccountLogin {
                     this.appState.jwt = response.data!.token;
                     this.appState.password = this._password;
                     this.appState.email = this._email;
+                    this.appState.firstName = response.data!.firstName;
+                    this.appState.lastName = response.data!.lastName;
                     this.router!.navigateToRoute('home');
                 } else {
                     this._errorMessage = response.statusCode.toString()

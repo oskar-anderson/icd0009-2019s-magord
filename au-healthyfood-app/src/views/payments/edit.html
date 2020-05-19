@@ -1,0 +1,59 @@
+<template>
+
+    <require from="../../components/alert"></require>
+
+    <alert alert-data.bind="_alert"></alert>
+
+
+    <h1>Edit</h1>
+
+    <h4>Payment</h4>
+    <hr />
+    <div class="row">
+        <div class="col-md-4">
+            <form submit.trigger="onSubmit($event)">
+                <div class="form-group">
+                    <label class="control-label" for="Amount">Amount</label>
+                    <input class="form-control" type="text" id="Amount" maxlength="256" value.bind="payment.amount" />
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label" for="TimeMade">Time made</label>
+                    <input class="form-control" type="text" id="TimeMade" maxlength="256" value.bind="payment.timeMade" />
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label" for="PersonId">Person</label>
+                    <select class="form-control" data-val="true", type="text" id="PersonId" maxlength="256" value.bind="payment.personId">
+                    <option model.bind="null">Choose a person</option>
+                    <option repeat.for="person of _persons" model.bind="person.id">${person.firstName}</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label" for="BillId">Bill</label>
+                    <select class="form-control" data-val="true", type="text" id="BillId" maxlength="256" value.bind="payment.billId">
+                    <option model.bind="null">Choose a bill</option>
+                    <option repeat.for="bill of _bills" model.bind="bill.id">${bill.number}</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label" for="PaymentTypeId">Payment type</label>
+                    <select class="form-control" data-val="true", type="text" id="PaymentTypeId" maxlength="256" value.bind="payment.paymentTypeId">
+                    <option model.bind="null">Choose a payment type</option>
+                    <option repeat.for="paymentType of _paymentTypes" model.bind="paymentType.id">${paymentType.name}</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <input type="submit" value="Submit" class="btn btn-primary" />
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div>
+        <a route-href="route: payments-index; params.bind: { }">Back to List</a>
+    </div>
+
+</template>

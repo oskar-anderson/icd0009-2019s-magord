@@ -1,3 +1,23 @@
 <template>
-    Home index
+    <h1>Welcome to Healthy-Me!</h1>
+
+    <br>
+    <br>
+
+    <div class="dropdown">
+        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          Restaurants
+        </button>
+        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+          <a repeat.for="restaurant of restaurants" class="dropdown-item" href="#">${restaurant.town}, ${restaurant.address}</a>
+        </div>
+
+        <div>
+            <a route-href="route: orders-index; params.bind: { }">Click here to create your order!</a>
+        </div>
+
+        <div>
+            <a route-href="route: campaigns-index; params.bind: { }">Click here to see ongoing campaings!</a>
+        </div>
+      </div> 
 </template>
