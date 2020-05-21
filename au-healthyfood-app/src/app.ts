@@ -1,13 +1,36 @@
+import { RestaurantService } from './service/restaurant-service';
+import { IRestaurant } from './domain/IRestaurant/IRestaurant';
 import { AppState } from './state/app-state';
 import { autoinject, PLATFORM } from 'aurelia-framework';
 import {RouterConfiguration, Router} from 'aurelia-router';
+import { IAlertData } from 'types/IAlertData';
+import { AlertType } from 'types/AlertType';
 
 @autoinject
 export class App {
     router?: Router;
+    private _restaurants: IRestaurant[] = []
+    private _alert: IAlertData | null = null;
 
-    constructor(private appState: AppState) {
+    constructor(private appState: AppState, private restaurantService: RestaurantService) {
 
+    }
+
+    attached() {
+        this.restaurantService.getRestaurants().then(
+            response => {
+                if (response.statusCode >= 200 && response.statusCode < 300) {
+                    this._restaurants = response.data!;
+                } else {
+                    // show error message
+                    this._alert = {
+                        message: response.statusCode.toString() + ' - ' + response.errorMessage,
+                        type: AlertType.Danger,
+                        dismissable: true,
+                    }
+                }
+            }
+        );
     }
 
 
@@ -93,7 +116,7 @@ export class App {
 
 
             
-            {route: ['orderitems', 'orderitems/index'], name: 'orderitems-index', moduleId: PLATFORM.moduleName('views/orderitems/index'), nav: true, title: 'Order items'},
+            {route: ['orderitems', 'orderitems/index'], name: 'orderitems-index', moduleId: PLATFORM.moduleName('views/orderitems/index'), nav: true, title: 'My cart'},
             {route: ['orderitems/details/:id?'], name: 'orderitems-details', moduleId: PLATFORM.moduleName('views/orderitems/details'), nav: false, title: 'Order items details'},
             { route: ['orderitems/edit/:id?'], name: 'orderitems-edit', moduleId: PLATFORM.moduleName('views/orderitems/edit'), nav: false, title: 'Order items Edit' },
             { route: ['orderitems/create'], name: 'orderitems-create', moduleId: PLATFORM.moduleName('views/orderitems/create'), nav: false, title: 'Order items Create' },
@@ -119,22 +142,6 @@ export class App {
             { route: ['paymenttypes/edit/:id?'], name: 'paymenttypes-edit', moduleId: PLATFORM.moduleName('views/paymenttypes/edit'), nav: false, title: 'Payment Types Edit' },
             { route: ['paymenttypes/create'], name: 'paymenttypes-create', moduleId: PLATFORM.moduleName('views/paymenttypes/create'), nav: false, title: 'Payment Types Create' },
 
-
-            /*
-            {route: ['personinrestaurants', 'personinrestaurants/index'], name: 'personinrestaurants-index', moduleId: PLATFORM.moduleName('views/personinrestaurants/index'), nav: true, title: 'PersonInRestaurants'},
-            {route: ['personinrestaurants/details/:id'], name: 'personinrestaurants-details', moduleId: PLATFORM.moduleName('views/personinrestaurants/details'), nav: false, title: 'Person In Restaurants details'},
-            { route: ['personinrestaurants/edit/:id'], name: 'personinrestaurants-edit', moduleId: PLATFORM.moduleName('views/personinrestaurants/edit'), nav: false, title: 'Person In Restaurants Edit' },
-            { route: ['personinrestaurants/delete/:id'], name: 'personinrestaurants-delete', moduleId: PLATFORM.moduleName('views/personinrestaurants/delete'), nav: false, title: 'Person In Restaurants Delete' },
-            { route: ['personinrestaurants/create'], name: 'personinrestaurants-create', moduleId: PLATFORM.moduleName('views/personinrestaurants/create'), nav: false, title: 'Person In Restaurants Create' },
-            
-            */
-
-            {route: ['persons', 'persons/index'], name: 'persons-index', moduleId: PLATFORM.moduleName('views/persons/index'), nav: true, title: 'Persons'},
-            {route: ['persons/details/:id?'], name: 'persons-details', moduleId: PLATFORM.moduleName('views/persons/details'), nav: false, title: 'Persons details'},
-            { route: ['persons/edit/:id?'], name: 'persons-edit', moduleId: PLATFORM.moduleName('views/persons/edit'), nav: false, title: 'Persons Edit' },
-            { route: ['persons/delete/:id?'], name: 'persons-delete', moduleId: PLATFORM.moduleName('views/persons/delete'), nav: false, title: 'Persons Delete' },
-            { route: ['persons/create'], name: 'persons-create', moduleId: PLATFORM.moduleName('views/persons/create'), nav: false, title: 'Persons Create' },
-            
 
             {route: ['prices', 'prices/index'], name: 'prices-index', moduleId: PLATFORM.moduleName('views/prices/index'), nav: true, title: 'Prices'},
             {route: ['prices/details/:id?'], name: 'prices-details', moduleId: PLATFORM.moduleName('views/prices/details'), nav: false, title: 'Prices details'},

@@ -3,9 +3,25 @@
     <require from="../../components/alert"></require>
 
     <alert alert-data.bind="_alert"></alert>
+    
 
 
-    <h1>Drinks Index</h1>
+    <h1 class="text-center">Drinks</h1>
+    <div>
+        <h4 class="text-center">Select your order</h4>
+        <h6 class="text-center">P.S if the list is empty please go and create an order for yourself by clicking here ->
+            <a route-href="route: orders-create; params.bind: { }">Click me</a></h6>
+        
+
+    </div>
+    <div class="form-group">
+        <label class="control-label" for="OrderId"></label>
+        <select class="form-control" data-val="true" , type="text" id="OrderId" maxlength="256"
+            value.bind="selectedOrderId">
+            <option repeat.for="order of orders" model.bind="order.id">[Number #${order.number}] \/ [Created at:
+                ${order.timeCreated}]</option>
+        </select>
+    </div>
 
     <p>
         <a if.bind="isAdmin" route-href="route: drinks-create; params.bind: {}">Create New</a>
@@ -20,19 +36,19 @@
                     Size
                 </th>
                 <th>
-                    Amount
+                    <a style="margin-left:33px">Amount</a>
                 </th>
                 <th>
                     Price
                 </th>
                 <th>
-                    
+
                 </th>
                 <th></th>
             </tr>
         </thead>
         <tbody>
-        <tr repeat.for="drink of _drinks">
+            <tr repeat.for="drink of _drinks">
                 <td>
                     ${drink.name}
                 </td>
@@ -40,20 +56,19 @@
                     ${drink.size}L
                 </td>
                 <td>
-                    <div class="form-group">
-                        <input style="width: 50px; text-align:center" type="text" value.bind="drink.amount" />
-                    </div>
+                    <button style="font-size: 10px; margin-right:30px" class="btn btn-primary btn-sm" click.trigger="decrement(drink.id)" type="button"> <span class ="fa fa-minus"></span></button>
+                    ${drink.amount}
+                    <button style="font-size: 10px; margin-left:30px" class="btn btn-primary btn-sm" click.trigger="increment(drink.id)" type="button"> <span class ="fa fa-plus"></span></button>
                 </td>
                 <td>
                     ${drink.price}€
                 </td>
                 <td>
-                    <button click.trigger="addToCart(drink)" style="margin:auto; display:block" type="button" class="btn btn-primary">Add to cart</button>
+                    <button click.trigger="addToCart(drink)" style="margin:auto; display:block" type="button"
+                        class="btn btn-success">Add to cart</button>
                 </td>
                 <td>
                     <a if.bind="isAdmin" route-href="route: drinks-edit; params.bind: { id: drink.id }">Edit</a>
-                    <span if.bind="isAdmin">|</span>
-                    <a route-href="route: drinks-details; params.bind: { id: drink.id }">Details</a> 
                     <button style="float: right" if.bind="isAdmin" click.trigger="deleteOnClick(drink)" type="button"
                         class="btn btn-danger">Delete</button>
                 </td>

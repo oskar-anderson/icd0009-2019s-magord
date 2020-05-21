@@ -1,4 +1,3 @@
-import { PersonService } from './../../service/person-service';
 import { OrderTypeService } from './../../service/orderType-service';
 import { RestaurantService } from './../../service/restaurant-service';
 import { OrderService } from './../../service/order-service';
@@ -9,7 +8,6 @@ import { RouteConfig, NavigationInstruction, Router } from 'aurelia-router';
 import { IAlertData } from 'types/IAlertData';
 import { AlertType } from 'types/AlertType';
 import { IOrderCreate } from 'domain/IOrder/IOrderCreate';
-import { IPerson } from 'domain/IPerson/IPerson';
 
 
 @autoinject
@@ -20,11 +18,10 @@ export class OrdersCreate {
     order: IOrderCreate | null = null;
     _restaurants: IRestaurant[] | null = null;
     _orderTypes: IOrderType[] | null = null;
-    _persons: IPerson[] | null = null;
 
 
     constructor(private orderService: OrderService, private router: Router, private restaurantService: RestaurantService,
-         private orderTypeService: OrderTypeService, private personService: PersonService) {
+         private orderTypeService: OrderTypeService) {
     }
 
     attached() {
@@ -60,22 +57,7 @@ export class OrdersCreate {
                 }
             }
         );
-        this.personService.getPersons()
-            .then(response => {
-                if (response.statusCode >= 200 && response.statusCode < 300) {
-                    console.log({ response: response.data! });
-                    this._alert = null;
-                    this._persons = response.data!;
-                } else {
-                    // show error message
-                    this._alert = {
-                        message: response.statusCode.toString() + ' - ' + response.errorMessage,
-                        type: AlertType.Danger,
-                        dismissable: true,
-                    }
-                }
-            }
-        );
+        
     }
 
     activate(params: any, routeConfig: RouteConfig, navigationInstruction: NavigationInstruction) {

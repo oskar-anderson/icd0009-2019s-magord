@@ -9,5 +9,5 @@ export interface IFood {
     foodType: string
 
     priceId: string;
-    price: number
+    price: number;
 }

@@ -1,4 +1,3 @@
-import { IPerson } from './../../domain/IPerson/IPerson';
 import { autoinject } from 'aurelia-framework';
 import { RouteConfig, NavigationInstruction, Router } from 'aurelia-router';
 import { IAlertData } from 'types/IAlertData';
@@ -7,7 +6,6 @@ import { IBillEdit } from 'domain/IBill/IBillEdit';
 import { IOrder } from 'domain/IOrder/IOrder';
 import { BillService } from 'service/bill-service';
 import { OrderService } from 'service/order-service';
-import { PersonService } from 'service/person-service';
 
 
 @autoinject
@@ -17,9 +15,8 @@ export class BillsEdit {
 
     bill: IBillEdit | null = null;
     _orders: IOrder[] | null = null;
-    _persons: IPerson[] | null = null;
 
-    constructor(private billService: BillService, private router: Router, private orderService: OrderService, private personService: PersonService) {
+    constructor(private billService: BillService, private router: Router, private orderService: OrderService) {
     }
 
     attached() {
@@ -39,22 +36,7 @@ export class BillsEdit {
                 }
             }
         );
-        this.personService.getPersons()
-            .then(response => {
-                if (response.statusCode >= 200 && response.statusCode < 300) {
-                    console.log({ response: response.data! });
-                    this._alert = null;
-                    this._persons = response.data!;
-                } else {
-                    // show error message
-                    this._alert = {
-                        message: response.statusCode.toString() + ' - ' + response.errorMessage,
-                        type: AlertType.Danger,
-                        dismissable: true,
-                    }
-                }
-            }
-        );
+        
     }
 
     activate(params: any, routeConfig: RouteConfig, navigationInstruction: NavigationInstruction) {

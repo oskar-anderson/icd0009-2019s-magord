@@ -4,6 +4,7 @@ import { RestaurantService } from './../../service/restaurant-service';
 import { IRestaurant } from './../../domain/IRestaurant/IRestaurant';
 import { AlertType } from 'types/AlertType';
 import { IAlertData } from 'types/IAlertData';
+var $ = require('jquery')
 
 @autoinject
 export class HomeIndex {
@@ -17,22 +18,21 @@ export class HomeIndex {
 
     attached() {
         this.restaurantService.getRestaurants()
-        .then(response => {
-            if (response.statusCode >= 200 && response.statusCode < 300) {
-                console.log({ response: response.data! });
-                this._alert = null;
-                this.restaurants = response.data!;
-            } else {
-                // show error message
-                this._alert = {
-                    message: response.statusCode.toString() + ' - ' + response.errorMessage,
-                    type: AlertType.Danger,
-                    dismissable: true,
+            .then(response => {
+                if (response.statusCode >= 200 && response.statusCode < 300) {
+                    console.log({ response: response.data! });
+                    this._alert = null;
+                    this.restaurants = response.data!;
+                } else {
+                    // show error message
+                    this._alert = {
+                        message: response.statusCode.toString() + ' - ' + response.errorMessage,
+                        type: AlertType.Danger,
+                        dismissable: true,
+                    }
                 }
             }
-        }
-    );
-
+        );
     }
 
 }

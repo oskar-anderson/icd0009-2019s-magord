@@ -5,28 +5,30 @@
     <alert alert-data.bind="_alert"></alert>
 
 
-    <h1>Order items Index</h1>
+    <h1 class="text-center">Cart items</h1>
 
+    <div>
+        <h5 class="text-center"> </h5>
+    </div>
+    <br>
+    <br>
     <p>
         <a if.bind="isAdmin" route-href="route: orderitems-create; params.bind: {}">Create New</a>
     </p>
     <table class="table">
-        <thead>
+        <thead class="thead-light">
             <tr>
                 <th>
-                    Food
-                </th>
-                <th>
-                    Drink
-                </th>
-                <th>
-                    Ingredient
+                    Items
                 </th>
                 <th>
                     Order
                 </th>
                 <th>
-                    Quantity
+                    <a style="margin-left:33px">Quantity</a
+                </th>
+                <th>
+                    Price
                 </th>
                 <th></th>
             </tr>
@@ -34,28 +36,81 @@
         <tbody>
             <tr repeat.for="orderItem of _orderItems">
                 <td>
-                    ${orderItem.food}
+                    <h6>${orderItem.food}</h6>
+                    <h6>${orderItem.drink}</h6>
+                    <em>${orderItem.ingredient}</em>
                 </td>
                 <td>
-                    ${orderItem.drink}
+                    #${orderItem.order}
                 </td>
                 <td>
-                    ${orderItem.ingredient}
-                </td>
-                <td>
-                    ${orderItem.order}
-                </td>
-                <td>
+                    <button style="font-size: 10px; margin-right:30px" class="btn btn-primary btn-sm"
+                        click.trigger="decrement(orderItem.id)" type="button"> <span
+                            class="fa fa-minus"></span></button>
                     ${orderItem.quantity}
+                    <button style="font-size: 10px; margin-left:30px" class="btn btn-primary btn-sm"
+                        click.trigger="increment(orderItem.id)" type="button"> <span class="fa fa-plus"></span></button>
                 </td>
                 <td>
-                    <a if.bind="isAdmin" route-href="route: orderitems-edit; params.bind: { id: orderItem.id }">Edit</a>
-                    <span if.bind="isAdmin">|</span>
-                    <a route-href="route: orderitems-details; params.bind: { id: orderItem.id }">Details</a> 
-                    <button style="float: right" if.bind="isAdmin" click.trigger="deleteOnClick(orderItem)" type="button"
+                    <p if.bind="orderItem.foodPrice > 0" value.bind="foodPrice">${(orderItem.quantity *
+                        (orderItem.foodPrice +
+                        orderItem.ingredientPrice)).toFixed(2)}€</p>
+                    <p if.bind="orderItem.drinkPrice > 0">${(orderItem.quantity * (orderItem.drinkPrice)).toFixed(2)}€
+                    </p>
+                </td>
+                <td>
+                    <button style="float: right" click.trigger="deleteOnClick(orderItem)" type="button"
                         class="btn btn-danger">Delete</button>
                 </td>
             </tr>
         </tbody>
     </table>
+
+    <br>
+    <br>
+    <br>
+    <table class="table table-borderless">
+        <th>
+            <h4 class="text-center">Your current total: ${totalSum.toFixed(2)}€</h4>
+        </th>
+    </table>
+
+    <div class="text-center">
+        <!-- Button to trigger modal -->
+        <button if.bind="_orderItems.length > 0" data-toggle="modal" data-target="#staticBackdrop" type="button"
+            class="btn btn-success">Proceed to checkout </button>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="staticBackdrop" data-backdrop="static" tabindex="-1" role="dialog"
+        aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="staticBackdropLabel">Please enter your contact details</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <h3>
+                        Please enter your contact details ${firstName}
+                    </h3>
+
+                    <p>
+                        Address
+                    </p>
+                    <p>
+                        Phone nr
+                    </p>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary">Finish</button>
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </template>

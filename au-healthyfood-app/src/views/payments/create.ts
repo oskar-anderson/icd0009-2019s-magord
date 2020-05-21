@@ -1,7 +1,6 @@
 import { BillService } from './../../service/bill-service';
 import { PaymentTypeService } from './../../service/paymenttype-service';
 import { IPaymentType } from './../../domain/IPaymentType/IPaymentType';
-import { IPerson } from './../../domain/IPerson/IPerson';
 import { autoinject } from 'aurelia-framework';
 import { RouteConfig, NavigationInstruction, Router } from 'aurelia-router';
 import { IAlertData } from 'types/IAlertData';
@@ -10,7 +9,6 @@ import { AlertType } from 'types/AlertType';
 import { IPaymentCreate } from './../../domain/IPayment/IPaymentCreate';
 import { PaymentService } from './../../service/Payment-service';
 import { IBill } from 'domain/IBill/IBill';
-import { PersonService } from 'service/person-service';
 
 
 @autoinject
@@ -19,32 +17,15 @@ export class PaymentsCreate {
     private _alert: IAlertData | null = null;
 
     payment: IPaymentCreate | null = null;
-    _persons: IPerson[] | null = null;
     _bills: IBill[] | null = null;
     _paymentTypes: IPaymentType[] | null = null;
 
 
-    constructor(private billService: BillService, private router: Router, private paymentTypeService: PaymentTypeService, private personService: PersonService,
+    constructor(private billService: BillService, private router: Router, private paymentTypeService: PaymentTypeService,
          private paymentService: PaymentService) {
     }
 
     attached() {
-        this.personService.getPersons()
-            .then(response => {
-                if (response.statusCode >= 200 && response.statusCode < 300) {
-                    console.log({ response: response.data! });
-                    this._alert = null;
-                    this._persons = response.data!;
-                } else {
-                    // show error message
-                    this._alert = {
-                        message: response.statusCode.toString() + ' - ' + response.errorMessage,
-                        type: AlertType.Danger,
-                        dismissable: true,
-                    }
-                }
-            }
-        );
         this.billService.getBills()
             .then(response => {
                 if (response.statusCode >= 200 && response.statusCode < 300) {

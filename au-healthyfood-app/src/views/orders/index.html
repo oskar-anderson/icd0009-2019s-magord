@@ -5,11 +5,18 @@
     <alert alert-data.bind="_alert"></alert>
 
 
-    <h1>Orders Index</h1>
+    <h1 class="text-center">Orders</h1>
 
     <p>
-        <a if.bind="isAdmin" route-href="route: orders-create; params.bind: {}">Create New</a>
+        <a route-href="route: orders-create; params.bind: {}">Create a new order</a>
     </p>
+
+    <div>
+        <a route-href="route: foods-index; params.bind: {}">Back to foods</a>
+    </div>
+    <div>
+        <a route-href="route: drinks-index; params.bind: {}">Back to drinks</a>
+    </div>
     <table class="table">
         <thead>
             <tr>
@@ -27,9 +34,6 @@
                 </th>
                 <th>
                     Order type
-                </th>
-                <th>
-                    Person
                 </th>
                 <th></th>
             </tr>
@@ -50,9 +54,6 @@
                 </td>
                 <td>
                     ${order.orderType}
-                </td>
-                <td>
-                    ${order.person}
                 </td>
                 <td>
                     <a if.bind="isAdmin" route-href="route: orders-edit; params.bind: { id: order.id }">Edit</a>

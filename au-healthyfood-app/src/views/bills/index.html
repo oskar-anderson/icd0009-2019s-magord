@@ -46,9 +46,6 @@
                     #${bill.order}
                 </td>
                 <td>
-                    ${bill.person}
-                </td>
-                <td>
                     <a if.bind="isAdmin" route-href="route: bills-edit; params.bind: { id: bill.id }">Edit</a>
                     <span if.bind="isAdmin">|</span>
                     <a route-href="route: bills-details; params.bind: { id: bill.id }">Details</a> 

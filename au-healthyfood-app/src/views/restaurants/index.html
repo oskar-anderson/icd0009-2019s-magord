@@ -5,7 +5,7 @@
     <alert alert-data.bind="_alert"></alert>
 
 
-    <h1>Restaurants Index</h1>
+    <h1>Healthy-Me restaurants across Estonia</h1>
 
     <p>
         <a if.bind="isAdmin" route-href="route: restaurants-create; params.bind: {}">Create New</a>
@@ -13,9 +13,6 @@
     <table class="table">
         <thead>
             <tr>
-                <th>
-                    Name
-                </th>
                 <th>
                     Address
                 </th>
@@ -28,14 +25,14 @@
                 <th>
                     Area
                 </th>
+                <th>
+                    Town
+                </th>
                 <th></th>
             </tr>
         </thead>
         <tbody>
             <tr repeat.for="restaurant of _restaurants">
-                <td>
-                    ${restaurant.name}
-                </td>
                 <td>
                     ${restaurant.address}
                 </td>
@@ -49,9 +46,10 @@
                     ${restaurant.area}
                 </td>
                 <td>
+                    ${restaurant.town}
+                </td>
+                <td>
                     <a if.bind="isAdmin" route-href="route: restaurants-edit; params.bind: { id: restaurant.id }">Edit</a>
-                    <span if.bind="isAdmin">|</span>
-                    <a route-href="route: restaurants-details; params.bind: { id: restaurant.id }">Details</a> 
                     <button style="float: right" if.bind="isAdmin" click.trigger="deleteOnClick(restaurant)" type="button"
                         class="btn btn-danger">Delete</button>
                 </td>

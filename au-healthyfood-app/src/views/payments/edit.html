@@ -23,14 +23,6 @@
                 </div>
 
                 <div class="form-group">
-                    <label class="control-label" for="PersonId">Person</label>
-                    <select class="form-control" data-val="true", type="text" id="PersonId" maxlength="256" value.bind="payment.personId">
-                    <option model.bind="null">Choose a person</option>
-                    <option repeat.for="person of _persons" model.bind="person.id">${person.firstName}</option>
-                    </select>
-                </div>
-
-                <div class="form-group">
                     <label class="control-label" for="BillId">Bill</label>
                     <select class="form-control" data-val="true", type="text" id="BillId" maxlength="256" value.bind="payment.billId">
                     <option model.bind="null">Choose a bill</option>

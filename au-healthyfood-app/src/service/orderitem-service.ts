@@ -27,7 +27,6 @@ export class OrderItemService {
             // happy case
             if (response.status >= 200 && response.status < 300) {
                 const data = (await response.json()) as IOrderItem[];
-                console.log(data);
                 return {
                     statusCode: response.status,
                     data: data

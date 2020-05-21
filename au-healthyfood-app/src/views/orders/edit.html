@@ -44,14 +44,6 @@
                 </div>
 
                 <div class="form-group">
-                    <label class="control-label" for="PersonId">Person</label>
-                    <select class="form-control" data-val="true", type="text" id="PersonId" maxlength="256" value.bind="order.personId">
-                    <option model.bind="null">Choose person</option>
-                    <option repeat.for="person of _persons" model.bind="person.id">${person.firstName}</option>
-                    </select>
-                </div>
-
-                <div class="form-group">
                     <input type="submit" value="Submit" class="btn btn-primary" />
                 </div>
             </form>
