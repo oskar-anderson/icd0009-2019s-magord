@@ -29,8 +29,7 @@ namespace WebApp.Areas.Admin.Controllers
         {
             var appDbContext = _context.Bills
                 .Include(b => b.AppUser)
-                .Include(b => b.Order)
-                .Include(b => b.Person);
+                .Include(b => b.Order);
             return View(await appDbContext.ToListAsync());
         }
 
@@ -45,7 +44,6 @@ namespace WebApp.Areas.Admin.Controllers
             var bill = await _context.Bills
                 .Include(b => b.AppUser)
                 .Include(b => b.Order)
-                .Include(b => b.Person)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (bill == null)
             {
@@ -60,7 +58,6 @@ namespace WebApp.Areas.Admin.Controllers
         {
             //ViewData["AppUserId"] = new SelectList(_context.Users, "Id", "Id");
             ViewData["OrderId"] = new SelectList(_context.Orders, "Id", "Id");
-            ViewData["PersonId"] = new SelectList(_context.Persons, "Id", "Id");
             return View();
         }
 
@@ -81,7 +78,6 @@ namespace WebApp.Areas.Admin.Controllers
                 return RedirectToAction(nameof(Index));
             }
             ViewData["OrderId"] = new SelectList(_context.Orders, "Id", "Id", bill.OrderId);
-            ViewData["PersonId"] = new SelectList(_context.Persons, "Id", "Id", bill.PersonId);
             return View(bill);
         }
 
@@ -100,7 +96,6 @@ namespace WebApp.Areas.Admin.Controllers
             }
             ViewData["AppUserId"] = new SelectList(_context.Users, "Id", "Id", bill.AppUserId);
             ViewData["OrderId"] = new SelectList(_context.Orders, "Id", "Id", bill.OrderId);
-            ViewData["PersonId"] = new SelectList(_context.Persons, "Id", "Id", bill.PersonId);
             return View(bill);
         }
 
@@ -138,7 +133,6 @@ namespace WebApp.Areas.Admin.Controllers
             }
             ViewData["AppUserId"] = new SelectList(_context.Users, "Id", "Id", bill.AppUserId);
             ViewData["OrderId"] = new SelectList(_context.Orders, "Id", "Id", bill.OrderId);
-            ViewData["PersonId"] = new SelectList(_context.Persons, "Id", "Id", bill.PersonId);
             return View(bill);
         }
 
@@ -153,7 +147,6 @@ namespace WebApp.Areas.Admin.Controllers
             var bill = await _context.Bills
                 .Include(b => b.AppUser)
                 .Include(b => b.Order)
-                .Include(b => b.Person)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (bill == null)
             {

@@ -20,8 +20,6 @@ namespace Domain
         public Guid AreaId { get; set; } = default!;
         public Area? Area { get; set; }
 
-        public ICollection<PersonInRestaurant>? PersonInRestaurants { get; set; }
-
         public ICollection<Order>? Orders { get; set; }
     }
 }

@@ -15,5 +15,11 @@ namespace BLL.App.DTO
         public string? Drink { get; set; }
         
         public int Order { get; set; } = default!;
+        
+        public decimal FoodPrice { get; set; }
+        
+        public decimal DrinkPrice { get; set; }
+        
+        public decimal IngredientPrice { get; set; }
     }
 }

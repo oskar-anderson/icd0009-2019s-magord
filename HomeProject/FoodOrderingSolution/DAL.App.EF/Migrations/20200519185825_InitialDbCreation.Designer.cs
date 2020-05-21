@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DAL.App.EF.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20200518082622_InitialDbCreation")]
+    [Migration("20200519185825_InitialDbCreation")]
     partial class InitialDbCreation
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -83,9 +83,6 @@ namespace DAL.App.EF.Migrations
                     b.Property<Guid>("OrderId")
                         .HasColumnType("char(36)");
 
-                    b.Property<Guid>("PersonId")
-                        .HasColumnType("char(36)");
-
                     b.Property<decimal>("Sum")
                         .HasColumnType("decimal(65,30)");
 
@@ -98,8 +95,6 @@ namespace DAL.App.EF.Migrations
                     b.HasIndex("AppUserId");
 
                     b.HasIndex("OrderId");
-
-                    b.HasIndex("PersonId");
 
                     b.ToTable("Bills");
                 });
@@ -177,16 +172,11 @@ namespace DAL.App.EF.Migrations
                         .HasColumnType("varchar(256) CHARACTER SET utf8mb4")
                         .HasMaxLength(256);
 
-                    b.Property<Guid?>("PersonId")
-                        .HasColumnType("char(36)");
-
                     b.HasKey("Id");
 
                     b.HasIndex("AppUserId");
 
                     b.HasIndex("ContactTypeId");
-
-                    b.HasIndex("PersonId");
 
                     b.ToTable("Contacts");
                 });
@@ -522,9 +512,6 @@ namespace DAL.App.EF.Migrations
                     b.Property<Guid>("OrderTypeId")
                         .HasColumnType("char(36)");
 
-                    b.Property<Guid>("PersonId")
-                        .HasColumnType("char(36)");
-
                     b.Property<Guid>("RestaurantId")
                         .HasColumnType("char(36)");
 
@@ -537,8 +524,6 @@ namespace DAL.App.EF.Migrations
                     b.HasIndex("AppUserId");
 
                     b.HasIndex("OrderTypeId");
-
-                    b.HasIndex("PersonId");
 
                     b.HasIndex("RestaurantId");
 
@@ -664,9 +649,6 @@ namespace DAL.App.EF.Migrations
                     b.Property<Guid>("PaymentTypeId")
                         .HasColumnType("char(36)");
 
-                    b.Property<Guid>("PersonId")
-                        .HasColumnType("char(36)");
-
                     b.Property<string>("TimeMade")
                         .IsRequired()
                         .HasColumnType("longtext CHARACTER SET utf8mb4");
@@ -678,8 +660,6 @@ namespace DAL.App.EF.Migrations
                     b.HasIndex("BillId");
 
                     b.HasIndex("PaymentTypeId");
-
-                    b.HasIndex("PersonId");
 
                     b.ToTable("Payments");
                 });
@@ -712,107 +692,6 @@ namespace DAL.App.EF.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("PaymentTypes");
-                });
-
-            modelBuilder.Entity("Domain.Person", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("char(36)");
-
-                    b.Property<Guid>("AppUserId")
-                        .HasColumnType("char(36)");
-
-                    b.Property<DateTime>("ChangedAt")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<string>("ChangedBy")
-                        .HasColumnType("varchar(256) CHARACTER SET utf8mb4")
-                        .HasMaxLength(256);
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("varchar(256) CHARACTER SET utf8mb4")
-                        .HasMaxLength(256);
-
-                    b.Property<string>("DateOfBirth")
-                        .IsRequired()
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
-
-                    b.Property<string>("FirstName")
-                        .IsRequired()
-                        .HasColumnType("varchar(128) CHARACTER SET utf8mb4")
-                        .HasMaxLength(128);
-
-                    b.Property<string>("LastName")
-                        .IsRequired()
-                        .HasColumnType("varchar(128) CHARACTER SET utf8mb4")
-                        .HasMaxLength(128);
-
-                    b.Property<string>("Sex")
-                        .IsRequired()
-                        .HasColumnType("varchar(1) CHARACTER SET utf8mb4");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("AppUserId");
-
-                    b.ToTable("Persons");
-                });
-
-            modelBuilder.Entity("Domain.PersonInRestaurant", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("char(36)");
-
-                    b.Property<Guid>("AppUserId")
-                        .HasColumnType("char(36)");
-
-                    b.Property<DateTime>("ChangedAt")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<string>("ChangedBy")
-                        .HasColumnType("varchar(256) CHARACTER SET utf8mb4")
-                        .HasMaxLength(256);
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("varchar(256) CHARACTER SET utf8mb4")
-                        .HasMaxLength(256);
-
-                    b.Property<string>("From")
-                        .IsRequired()
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
-
-                    b.Property<Guid>("PersonId")
-                        .HasColumnType("char(36)");
-
-                    b.Property<Guid>("RestaurantId")
-                        .HasColumnType("char(36)");
-
-                    b.Property<string>("Role")
-                        .IsRequired()
-                        .HasColumnType("varchar(256) CHARACTER SET utf8mb4")
-                        .HasMaxLength(256);
-
-                    b.Property<string>("To")
-                        .IsRequired()
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("AppUserId");
-
-                    b.HasIndex("PersonId");
-
-                    b.HasIndex("RestaurantId");
-
-                    b.ToTable("PersonInRestaurants");
                 });
 
             modelBuilder.Entity("Domain.Price", b =>
@@ -1060,12 +939,6 @@ namespace DAL.App.EF.Migrations
                         .HasForeignKey("OrderId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
-
-                    b.HasOne("Domain.Person", "Person")
-                        .WithMany("Bills")
-                        .HasForeignKey("PersonId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("Domain.Contact", b =>
@@ -1081,11 +954,6 @@ namespace DAL.App.EF.Migrations
                         .HasForeignKey("ContactTypeId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
-
-                    b.HasOne("Domain.Person", null)
-                        .WithMany("Contacts")
-                        .HasForeignKey("PersonId")
-                        .OnDelete(DeleteBehavior.Restrict);
                 });
 
             modelBuilder.Entity("Domain.Drink", b =>
@@ -1138,12 +1006,6 @@ namespace DAL.App.EF.Migrations
                     b.HasOne("Domain.OrderType", "OrderType")
                         .WithMany("Orders")
                         .HasForeignKey("OrderTypeId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("Domain.Person", "Person")
-                        .WithMany("Orders")
-                        .HasForeignKey("PersonId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
@@ -1201,42 +1063,6 @@ namespace DAL.App.EF.Migrations
                     b.HasOne("Domain.PaymentType", "PaymentType")
                         .WithMany("Payments")
                         .HasForeignKey("PaymentTypeId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("Domain.Person", "Person")
-                        .WithMany("Payments")
-                        .HasForeignKey("PersonId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("Domain.Person", b =>
-                {
-                    b.HasOne("Domain.Identity.AppUser", "AppUser")
-                        .WithMany("Persons")
-                        .HasForeignKey("AppUserId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("Domain.PersonInRestaurant", b =>
-                {
-                    b.HasOne("Domain.Identity.AppUser", "AppUser")
-                        .WithMany()
-                        .HasForeignKey("AppUserId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("Domain.Person", "Person")
-                        .WithMany("PersonInRestaurants")
-                        .HasForeignKey("PersonId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("Domain.Restaurant", "Restaurant")
-                        .WithMany("PersonInRestaurants")
-                        .HasForeignKey("RestaurantId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
                 });

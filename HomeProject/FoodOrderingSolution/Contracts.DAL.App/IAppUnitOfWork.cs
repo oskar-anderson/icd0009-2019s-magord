@@ -19,8 +19,6 @@ namespace Contracts.DAL.App
         IOrderTypeRepository OrderTypes { get; }
         IPaymentRepository Payments { get; }
         IPaymentTypeRepository PaymentTypes { get; }
-        IPersonInRestaurantRepository PersonsInRestaurants { get; }
-        IPersonRepository Persons { get; }
         IPriceRepository Prices { get; }
         IRestaurantRepository Restaurants { get; }
         ITownRepository Towns { get; }

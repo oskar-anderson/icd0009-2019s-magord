@@ -26,8 +26,6 @@ namespace DAL.App.EF
         public IOrderTypeRepository OrderTypes => GetRepository<IOrderTypeRepository>(() => new OrderTypeRepository(UowDbContext));
         public IPaymentRepository Payments => GetRepository<IPaymentRepository>(() => new PaymentRepository(UowDbContext));
         public IPaymentTypeRepository PaymentTypes => GetRepository<IPaymentTypeRepository>(() => new PaymentTypeRepository(UowDbContext));
-        public IPersonInRestaurantRepository PersonsInRestaurants => GetRepository<IPersonInRestaurantRepository>(() => new PersonInRestaurantRepository(UowDbContext));
-        public IPersonRepository Persons => GetRepository<IPersonRepository>(() => new PersonRepository(UowDbContext));
         public IPriceRepository Prices => GetRepository<IPriceRepository>(() => new PriceRepository(UowDbContext));
         public IRestaurantRepository Restaurants => GetRepository<IRestaurantRepository>(() => new RestaurantRepository(UowDbContext));
         public ITownRepository Towns => GetRepository<ITownRepository>(() => new TownRepository(UowDbContext));

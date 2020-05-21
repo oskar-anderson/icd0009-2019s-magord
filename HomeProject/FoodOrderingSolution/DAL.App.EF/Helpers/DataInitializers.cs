@@ -562,14 +562,6 @@ namespace DAL.App.EF.Helpers
                 },
                 new Ingredient()
                 {
-                    Id = new Guid("00000000-0000-0000-0000-000000000005"),
-                    Name =  "Extra caesar-sauce",
-                    Amount = 1,
-                    Price = prices[4],
-                    Food = foods[2],
-                },
-                new Ingredient()
-                {
                     Id = new Guid("00000000-0000-0000-0000-000000000007"),
                     Name =  "Extra croutons",
                     Amount = 1,
@@ -616,6 +608,22 @@ namespace DAL.App.EF.Helpers
                     Price = prices[4],
                     Food = foods[5],
                 },
+                new Ingredient()
+                {
+                    Id = new Guid("00000000-0000-0000-0000-000000000018"),
+                    Name =  "Extra pumpkin",
+                    Amount = 1,
+                    Price = prices[4],
+                    Food = foods[9],
+                },
+                new Ingredient()
+                {
+                    Id = new Guid("00000000-0000-0000-0000-000000000019"),
+                    Name =  "Honey lime dressing",
+                    Amount = 1,
+                    Price = prices[4],
+                    Food = foods[7],
+                },
             };
 
             foreach (var ingredient in ingredients)
@@ -628,24 +636,26 @@ namespace DAL.App.EF.Helpers
 
             context.SaveChanges();
             
-            var persons = new Person[]
+            
+            var contactTypes = new ContactType[]
             {
-                new Person()
+                new ContactType()
                 {
                     Id = new Guid("00000000-0000-0000-0000-000000000001"),
-                    FirstName =  "Oskar",
-                    LastName = "Luts",
-                    AppUserId = user.Id,
-                    Sex = Char.Parse("M"),
-                    DateOfBirth = "05/06/1999",
+                    Name = "E-mail"
+                },
+                new ContactType()
+                {
+                    Id = new Guid("00000000-0000-0000-0000-000000000002"),
+                    Name = "Phone"
                 },
             };
 
-            foreach (var person in persons)
+            foreach (var contactType in contactTypes)
             {
-                if (!context.Persons.Any(l => l.Id == person.Id))
+                if (!context.ContactTypes.Any(l => l.Id == contactType.Id))
                 {
-                    context.Persons.Add(person);
+                    context.ContactTypes.Add(contactType);
                 }
             }
 
@@ -656,13 +666,13 @@ namespace DAL.App.EF.Helpers
                 new Order()
                 {
                     Id = new Guid("00000000-0000-0000-0000-000000000001"),
-                    Number = 123124,
+                    Number = 222,
+                    TimeCreated = "3333",
                     Restaurant = restaurants[0],
-                    Person = persons[0],
-                    OrderStatus = "Underway",
                     OrderType = orderTypes[0],
-                    TimeCreated = DateTime.Now.ToString("dd/MM/yyyy HH:mm"),
-                    AppUserId = user.Id,
+                    OrderStatus = "Underway",
+                    AppUserId = user.Id
+                    
                 },
             };
 
@@ -684,7 +694,7 @@ namespace DAL.App.EF.Helpers
                     Quantity = 1,
                     Drink = drinks[0],
                     Order = orders[0],
-                    AppUserId = user.Id,
+                    AppUserId = user.Id
                 },
             };
 
@@ -698,25 +708,25 @@ namespace DAL.App.EF.Helpers
 
             context.SaveChanges();
             
-            var contactTypes = new ContactType[]
+            var paymentTypes = new PaymentType[]
             {
-                new ContactType()
+                new PaymentType()
                 {
                     Id = new Guid("00000000-0000-0000-0000-000000000001"),
-                    Name = "E-mail"
+                    Name = "By card",
                 },
-                new ContactType()
+                new PaymentType()
                 {
                     Id = new Guid("00000000-0000-0000-0000-000000000002"),
-                    Name = "Phone"
+                    Name = "By cash",
                 },
             };
 
-            foreach (var contactType in contactTypes)
+            foreach (var paymentType in paymentTypes)
             {
-                if (!context.ContactTypes.Any(l => l.Id == contactType.Id))
+                if (!context.PaymentTypes.Any(l => l.Id == paymentType.Id))
                 {
-                    context.ContactTypes.Add(contactType);
+                    context.PaymentTypes.Add(paymentType);
                 }
             }
 

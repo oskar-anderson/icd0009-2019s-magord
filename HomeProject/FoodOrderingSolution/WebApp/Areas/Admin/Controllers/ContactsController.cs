@@ -53,7 +53,6 @@ namespace WebApp.Areas.Admin.Controllers
         public IActionResult Create()
         {
             ViewData["ContactTypeId"] = new SelectList(_context.ContactTypes, "Id", "Id");
-            ViewData["PersonId"] = new SelectList(_context.Persons, "Id", "Id");
             return View();
         }
 

@@ -23,7 +23,6 @@ namespace DAL.App.EF.Repositories
         {
             var query = PrepareQuery(userId, noTracking);
             query = query
-                .Include(r => r.Person)
                 .Include(r => r.Bill)
                 .Include(r => r.PaymentType);
             var domainEntities = await query.ToListAsync();
@@ -35,7 +34,6 @@ namespace DAL.App.EF.Repositories
         {
             var query = PrepareQuery(userId, noTracking);
             query = query
-                .Include(r => r.Person)
                 .Include(r => r.Bill)
                 .Include(r => r.PaymentType)
                 .Where(r => r.Id == id);
@@ -47,7 +45,6 @@ namespace DAL.App.EF.Repositories
         public virtual async Task<IEnumerable<PaymentView>> GetAllForViewAsync()
         {
             return await RepoDbSet
-                .Include(r => r.Person)
                 .Include(r => r.Bill)
                 .Include(r => r.PaymentType)
                 .Select(a => new PaymentView()
@@ -55,7 +52,6 @@ namespace DAL.App.EF.Repositories
                     Id = a.Id,
                     Amount = a.Amount,
                     TimeMade = a.TimeMade,
-                    Person = a.Person!.FirstName,
                     Bill = a.Bill!.Number,
                     PaymentType = a.PaymentType!.Name,
                 }).ToListAsync();
@@ -64,7 +60,6 @@ namespace DAL.App.EF.Repositories
         public virtual async Task<PaymentView> FirstOrDefaultForViewAsync(Guid id)
         {
             return await RepoDbSet
-                .Include(r => r.Person)
                 .Include(r => r.Bill)
                 .Include(r => r.PaymentType)
                 .Where(r => r.Id == id)
@@ -73,7 +68,6 @@ namespace DAL.App.EF.Repositories
                     Id = a.Id,
                     Amount = a.Amount,
                     TimeMade = a.TimeMade,
-                    Person = a.Person!.FirstName,
                     Bill = a.Bill!.Number,
                     PaymentType = a.PaymentType!.Name,
                 })

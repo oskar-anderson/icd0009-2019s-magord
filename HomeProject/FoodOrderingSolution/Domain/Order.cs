@@ -20,9 +20,6 @@ namespace Domain
         public Guid OrderTypeId { get; set; } = default!;
         public OrderType? OrderType { get; set; }
         
-        public Guid PersonId { get; set; } = default!;
-        public Person? Person { get; set; }
-
         public ICollection<Bill>? Bills { get; set; }
         
         public ICollection<OrderItem>? OrderItems { get; set; }

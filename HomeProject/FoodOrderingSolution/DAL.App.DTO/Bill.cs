@@ -17,8 +17,6 @@ namespace DAL.App.DTO
 
         public Guid AppUserId { get; set; } = default!;
         public AppUser? AppUser { get; set; }
-        public Guid PersonId { get; set; } = default!;
-        public Person? Person { get; set; }
     }
     
 }

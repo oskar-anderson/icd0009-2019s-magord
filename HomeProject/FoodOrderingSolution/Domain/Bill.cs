@@ -18,8 +18,6 @@ namespace Domain
         public Guid OrderId { get; set; } = default!;
         public Order? Order { get; set; }
         
-        public Guid PersonId { get; set; } = default!;
-        public Person? Person { get; set; }
 
         public ICollection<Payment>? Payments { get; set; }
         

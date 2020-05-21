@@ -17,6 +17,7 @@ namespace BLL.App.Mappers
             MapperConfigurationExpression.CreateMap<DALAppDTO.Drink, BLLAppDTO.Drink>();
             MapperConfigurationExpression.CreateMap<DALAppDTO.Order, BLLAppDTO.Order>();
             MapperConfigurationExpression.CreateMap<DALAppDTO.Identity.AppUser, BLLAppDTO.Identity.AppUser>();
+            MapperConfigurationExpression.CreateMap<DALAppDTO.Price, BLLAppDTO.Price>();
             Mapper = new Mapper(new MapperConfiguration(MapperConfigurationExpression));
         }
         

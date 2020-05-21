@@ -27,7 +27,6 @@ namespace DAL.App.EF.Mappers
             MapperConfigurationExpression.CreateMap<Domain.Drink, DAL.App.DTO.Drink>();
             MapperConfigurationExpression.CreateMap<Domain.Food, DAL.App.DTO.Food>();
             MapperConfigurationExpression.CreateMap<Domain.FoodType, DAL.App.DTO.FoodType>();
-            MapperConfigurationExpression.CreateMap<Domain.Person, DAL.App.DTO.Person>();
             MapperConfigurationExpression.CreateMap<Domain.Area, DAL.App.DTO.Area>();
             MapperConfigurationExpression.CreateMap<Domain.OrderType, DAL.App.DTO.OrderType>();
             MapperConfigurationExpression.CreateMap<Domain.Town, DAL.App.DTO.Town>();

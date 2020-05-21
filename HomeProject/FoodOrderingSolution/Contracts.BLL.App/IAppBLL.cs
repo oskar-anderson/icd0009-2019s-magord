@@ -19,8 +19,6 @@ namespace Contracts.BLL.App
         public IOrderTypeService OrderTypes { get; }
         public IPaymentService Payments { get; }
         public IPaymentTypeService PaymentTypes { get; }
-        public IPersonService Persons { get; }
-        public IPersonInRestaurantService PersonInRestaurants { get; }
         public IPriceService Prices { get; }
         public IRestaurantService Restaurants { get; }
         public ITownService Towns { get; }

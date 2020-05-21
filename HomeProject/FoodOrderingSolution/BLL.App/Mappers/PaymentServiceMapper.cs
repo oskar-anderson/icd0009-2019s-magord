@@ -12,7 +12,6 @@ namespace BLL.App.Mappers
         {
             
             MapperConfigurationExpression.CreateMap<DALAppDTO.Identity.AppUser, BLLAppDTO.Identity.AppUser>();
-            MapperConfigurationExpression.CreateMap<DALAppDTO.Person, BLLAppDTO.Person>();
             MapperConfigurationExpression.CreateMap<DALAppDTO.PaymentView, BLLAppDTO.PaymentView>();
             MapperConfigurationExpression.CreateMap<DALAppDTO.Bill, BLLAppDTO.Bill>();
             MapperConfigurationExpression.CreateMap<DALAppDTO.PaymentType, BLLAppDTO.PaymentType>();

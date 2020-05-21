@@ -16,8 +16,6 @@ namespace Domain.Identity
         [MinLength(1)]
         public string LastName { get; set; } = default!;
         
-        public ICollection<Person>? Persons { get; set; }
-
         public ICollection<Order>? Orders { get; set; }
         
         public ICollection<OrderItem>? OrderItems { get; set; }

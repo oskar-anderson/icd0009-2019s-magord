@@ -26,7 +26,7 @@ namespace WebApp.Areas.Admin.Controllers
         // GET: Orders
         public async Task<IActionResult> Index()
         {
-            var appDbContext = _context.Orders.Include(o => o.AppUser).Include(o => o.OrderType).Include(o => o.Person).Include(o => o.Restaurant);
+            var appDbContext = _context.Orders.Include(o => o.AppUser).Include(o => o.OrderType).Include(o => o.Restaurant);
             return View(await appDbContext.ToListAsync());
         }
 
@@ -41,7 +41,6 @@ namespace WebApp.Areas.Admin.Controllers
             var order = await _context.Orders
                 .Include(o => o.AppUser)
                 .Include(o => o.OrderType)
-                .Include(o => o.Person)
                 .Include(o => o.Restaurant)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (order == null)
@@ -60,7 +59,6 @@ namespace WebApp.Areas.Admin.Controllers
             ViewData["FoodId"] = new SelectList(_context.Foods, "Id", "Id");
             ViewData["IngredientId"] = new SelectList(_context.Ingredients, "Id", "Id");
             ViewData["OrderTypeId"] = new SelectList(_context.OrderTypes, "Id", "Id");
-            ViewData["PersonId"] = new SelectList(_context.Persons, "Id", "Id");
             ViewData["RestaurantId"] = new SelectList(_context.Restaurants, "Id", "Id");
             return View();
         }
@@ -80,7 +78,6 @@ namespace WebApp.Areas.Admin.Controllers
             }
             ViewData["AppUserId"] = new SelectList(_context.Users, "Id", "Id", order.AppUserId);
             ViewData["OrderTypeId"] = new SelectList(_context.OrderTypes, "Id", "Id", order.OrderTypeId);
-            ViewData["PersonId"] = new SelectList(_context.Persons, "Id", "Id", order.PersonId);
             ViewData["RestaurantId"] = new SelectList(_context.Restaurants, "Id", "Id", order.RestaurantId);
             return View(order);
         }
@@ -100,7 +97,6 @@ namespace WebApp.Areas.Admin.Controllers
             }
             ViewData["AppUserId"] = new SelectList(_context.Users, "Id", "Id", order.AppUserId);
             ViewData["OrderTypeId"] = new SelectList(_context.OrderTypes, "Id", "Id", order.OrderTypeId);
-            ViewData["PersonId"] = new SelectList(_context.Persons, "Id", "Id", order.PersonId);
             ViewData["RestaurantId"] = new SelectList(_context.Restaurants, "Id", "Id", order.RestaurantId);
             return View(order);
         }
@@ -139,7 +135,6 @@ namespace WebApp.Areas.Admin.Controllers
             }
             ViewData["AppUserId"] = new SelectList(_context.Users, "Id", "Id", order.AppUserId);
             ViewData["OrderTypeId"] = new SelectList(_context.OrderTypes, "Id", "Id", order.OrderTypeId);
-            ViewData["PersonId"] = new SelectList(_context.Persons, "Id", "Id", order.PersonId);
             ViewData["RestaurantId"] = new SelectList(_context.Restaurants, "Id", "Id", order.RestaurantId);
             return View(order);
         }
@@ -155,7 +150,6 @@ namespace WebApp.Areas.Admin.Controllers
             var order = await _context.Orders
                 .Include(o => o.AppUser)
                 .Include(o => o.OrderType)
-                .Include(o => o.Person)
                 .Include(o => o.Restaurant)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (order == null)

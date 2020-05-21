@@ -22,7 +22,6 @@ namespace DAL.App.EF.Repositories
         {
             var query = PrepareQuery(userId, noTracking);
             query = query
-                .Include(o => o.Person)
                 .Include(o => o.Restaurant)
                 .Include(o => o.AppUser)
                 .Include(o => o.OrderType);
@@ -35,7 +34,6 @@ namespace DAL.App.EF.Repositories
         {
             var query = PrepareQuery(userId, noTracking);
             query = query
-                .Include(o => o.Person)
                 .Include(o => o.Restaurant)
                 .Include(o => o.AppUser)
                 .Include(o => o.OrderType)
@@ -49,7 +47,6 @@ namespace DAL.App.EF.Repositories
         {
             var query = PrepareQuery(userId, noTracking);
             return await query 
-                    .Include(o => o.Person)
                     .Include(o => o.Restaurant)
                     .Include(o => o.OrderType)
                 .Select(a => new OrderView()
@@ -59,7 +56,6 @@ namespace DAL.App.EF.Repositories
                     OrderStatus = a.OrderStatus,
                     TimeCreated = a.TimeCreated,
                     OrderType = a.OrderType!.Name,
-                    Person = a.Person!.FirstName,
                     Restaurant = a.Restaurant!.Name,
                 }).ToListAsync();
         }
@@ -68,7 +64,6 @@ namespace DAL.App.EF.Repositories
         {
             var query = PrepareQuery(userId, noTracking);
             return await query
-                .Include(o => o.Person)
                 .Include(o => o.Restaurant)
                 .Include(o => o.OrderType)
                 .Where(r => r.Id == id)
@@ -79,7 +74,6 @@ namespace DAL.App.EF.Repositories
                     OrderStatus = a.OrderStatus,
                     TimeCreated = a.TimeCreated,
                     OrderType = a.OrderType!.Name,
-                    Person = a.Person!.FirstName,
                     Restaurant = a.Restaurant!.Name,
                 })
                 .FirstOrDefaultAsync();

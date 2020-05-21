@@ -55,12 +55,6 @@ namespace BLL.App
         public IPaymentTypeService PaymentTypes =>
             GetService<IPaymentTypeService>(() => new PaymentTypeService(UnitOfWork));
 
-        public IPersonInRestaurantService PersonInRestaurants =>
-            GetService<IPersonInRestaurantService>(() => new PersonInRestaurantService(UnitOfWork));
-
-        public IPersonService Persons =>
-            GetService<IPersonService>(() => new PersonService(UnitOfWork));
-
         public IPriceService Prices =>
             GetService<IPriceService>(() => new PriceService(UnitOfWork));
 

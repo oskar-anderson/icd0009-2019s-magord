@@ -26,7 +26,7 @@ namespace WebApp.Areas.Admin.Controllers
         // GET: Payments
         public async Task<IActionResult> Index()
         {
-            var appDbContext = _context.Payments.Include(p => p.Bill).Include(p => p.PaymentType).Include(p => p.Person);
+            var appDbContext = _context.Payments.Include(p => p.Bill).Include(p => p.PaymentType);
             return View(await appDbContext.ToListAsync());
         }
 
@@ -41,7 +41,6 @@ namespace WebApp.Areas.Admin.Controllers
             var payment = await _context.Payments
                 .Include(p => p.Bill)
                 .Include(p => p.PaymentType)
-                .Include(p => p.Person)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (payment == null)
             {
@@ -56,7 +55,6 @@ namespace WebApp.Areas.Admin.Controllers
         {
             ViewData["BillId"] = new SelectList(_context.Bills, "Id", "Id");
             ViewData["PaymentTypeId"] = new SelectList(_context.PaymentTypes, "Id", "Id");
-            ViewData["PersonId"] = new SelectList(_context.Persons, "Id", "Id");
             return View();
         }
 
@@ -75,7 +73,6 @@ namespace WebApp.Areas.Admin.Controllers
             }
             ViewData["BillId"] = new SelectList(_context.Bills, "Id", "Id", payment.BillId);
             ViewData["PaymentTypeId"] = new SelectList(_context.PaymentTypes, "Id", "Id", payment.PaymentTypeId);
-            ViewData["PersonId"] = new SelectList(_context.Persons, "Id", "Id", payment.PersonId);
             return View(payment);
         }
 
@@ -94,7 +91,6 @@ namespace WebApp.Areas.Admin.Controllers
             }
             ViewData["BillId"] = new SelectList(_context.Bills, "Id", "Id", payment.BillId);
             ViewData["PaymentTypeId"] = new SelectList(_context.PaymentTypes, "Id", "Id", payment.PaymentTypeId);
-            ViewData["PersonId"] = new SelectList(_context.Persons, "Id", "Id", payment.PersonId);
             return View(payment);
         }
 
@@ -132,7 +128,6 @@ namespace WebApp.Areas.Admin.Controllers
             }
             ViewData["BillId"] = new SelectList(_context.Bills, "Id", "Id", payment.BillId);
             ViewData["PaymentTypeId"] = new SelectList(_context.PaymentTypes, "Id", "Id", payment.PaymentTypeId);
-            ViewData["PersonId"] = new SelectList(_context.Persons, "Id", "Id", payment.PersonId);
             return View(payment);
         }
 
@@ -147,7 +142,6 @@ namespace WebApp.Areas.Admin.Controllers
             var payment = await _context.Payments
                 .Include(p => p.Bill)
                 .Include(p => p.PaymentType)
-                .Include(p => p.Person)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (payment == null)
             {

@@ -23,7 +23,6 @@ namespace DAL.App.EF.Repositories
         {
             var query = PrepareQuery(userId, noTracking);
             query = query
-                .Include(b => b.Person)
                 .Include(b => b.Order)
                 .Include(b => b.AppUser);
             var domainEntities = await query.ToListAsync();
@@ -35,7 +34,6 @@ namespace DAL.App.EF.Repositories
         {
             var query = PrepareQuery(userId, noTracking);
             query = query
-                    .Include(b => b.Person)
                     .Include(b => b.Order)
                     .Include(b => b.AppUser)
                     .Where(r => r.Id == id);
@@ -47,7 +45,6 @@ namespace DAL.App.EF.Repositories
         public virtual async Task<IEnumerable<BillView>> GetAllForViewAsync()
         {
             return await RepoDbSet
-                .Include(b => b.Person)
                 .Include(b => b.Order)
                 .Select(a => new BillView()
                 {
@@ -56,14 +53,12 @@ namespace DAL.App.EF.Repositories
                     Sum = a.Sum,
                     TimeIssued = a.TimeIssued,
                     Order = a.Order!.Number,
-                    Person = a.Person!.FirstName,
                 }).ToListAsync();
         }
 
         public virtual async Task<BillView> FirstOrDefaultForViewAsync(Guid id)
         {
             return await RepoDbSet
-                .Include(b => b.Person)
                 .Include(b => b.Order)
                 .Where(r => r.Id == id)
                 .Select(a => new BillView()
@@ -73,7 +68,6 @@ namespace DAL.App.EF.Repositories
                     Sum = a.Sum,
                     TimeIssued = a.TimeIssued,
                     Order = a.Order!.Number,
-                    Person = a.Person!.FirstName,
                 })
                 .FirstOrDefaultAsync();
         }

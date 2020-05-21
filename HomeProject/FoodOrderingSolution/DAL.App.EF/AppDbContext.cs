@@ -18,9 +18,7 @@ namespace DAL.App.EF
         public DbSet<Restaurant> Restaurants { get; set; } = default!;
         public DbSet<Town> Towns { get; set; } = default!;
         public DbSet<Area> Areas { get; set; } = default!;
-        public DbSet<Person> Persons { get; set; } = default!;
         public DbSet<Price> Prices { get; set; } = default!;
-        public DbSet<PersonInRestaurant> PersonInRestaurants { get; set; } = default!;
         public DbSet<PaymentType> PaymentTypes { get; set; } = default!;
         public DbSet<Payment> Payments { get; set; } = default!;
         public DbSet<OrderType> OrderTypes { get; set; } = default!;
