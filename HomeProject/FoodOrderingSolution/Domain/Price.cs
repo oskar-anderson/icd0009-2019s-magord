@@ -5,7 +5,7 @@ using Domain.Identity;
 
 namespace Domain
 {
-    public class Price : DomainEntityIdMetadataUser<AppUser>
+    public class Price : DomainEntityIdMetadata
     {
         public decimal Value { get; set; } = default!;
         public string From { get; set; } = default!;
@@ -13,27 +13,9 @@ namespace Domain
         public Guid? CampaignId { get; set; }
         public Campaign? Campaign { get; set; }
         
-        
-
-        // NEW
         public ICollection<Ingredient>? Ingredients { get; set; } = default!;
         public ICollection<Food>? Foods { get; set; }  = default!;
         public ICollection<Drink>? Drinks { get; set; }  = default!;
-        
-        
-        /* OLD
-        public Guid IngredientId { get; set; } = default!;
-        public Ingredient? Ingredient { get; set; }
-
-        public Guid FoodId { get; set; } = default!;
-        public Food? Food { get; set; }
-        
-        public Guid DrinkId { get; set; } = default!;
-        public Drink? Drink { get; set; }
-        
-        public Guid OrderId { get; set; } = default!;
-        public Order? Order { get; set; }
-        */
     }
     
 }

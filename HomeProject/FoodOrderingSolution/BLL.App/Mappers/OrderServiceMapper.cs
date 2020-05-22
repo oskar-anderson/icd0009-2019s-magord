@@ -13,6 +13,7 @@ namespace BLL.App.Mappers
             MapperConfigurationExpression.CreateMap<DALAppDTO.Restaurant, BLLAppDTO.Restaurant>();
             MapperConfigurationExpression.CreateMap<DALAppDTO.OrderView, BLLAppDTO.OrderView>();
             MapperConfigurationExpression.CreateMap<DALAppDTO.OrderType, BLLAppDTO.OrderType>();
+            MapperConfigurationExpression.CreateMap<DALAppDTO.PaymentType, BLLAppDTO.PaymentType>();
             MapperConfigurationExpression.CreateMap<DALAppDTO.Identity.AppUser, BLLAppDTO.Identity.AppUser>();
             Mapper = new Mapper(new MapperConfiguration(MapperConfigurationExpression));
         }

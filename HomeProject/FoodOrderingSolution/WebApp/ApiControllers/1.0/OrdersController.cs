@@ -108,7 +108,8 @@ namespace WebApp.ApiControllers._1._0
             order.AppUserId = User.UserId();
             order.TimeCreated = DateTime.Now.ToString("dd/MM/yyyy HH:mm");
             order.Number = new Random().Next(100, 10000000);
-            order.OrderStatus = "In process";
+            order.OrderStatus = "Waiting for confirmation";
+            order.Completed = false;
             
             var bllEntity = _mapper.Map(order);
             _bll.Orders.Add(bllEntity);

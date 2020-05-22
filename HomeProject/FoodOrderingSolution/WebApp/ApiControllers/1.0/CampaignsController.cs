@@ -38,7 +38,6 @@ namespace WebApp.ApiControllers._1._0
         /// </summary>
         /// <returns>List of Campaigns</returns>
         [HttpGet]
-        [AllowAnonymous]
         [Produces("application/json")]
         [Consumes("application/json")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<V1DTO.Campaign>))]
@@ -54,7 +53,6 @@ namespace WebApp.ApiControllers._1._0
         /// <param name="id">Campaign Id</param>
         /// <returns>Campaign object</returns>
         [HttpGet("{id}")]
-        [AllowAnonymous]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(V1DTO.Campaign))]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<V1DTO.Campaign>> GetCampaign(Guid id)

@@ -21,5 +21,7 @@ namespace BLL.App.DTO
         public decimal DrinkPrice { get; set; }
         
         public decimal IngredientPrice { get; set; }
+        
+        public string OrderType { get; set; } = default!;
     }
 }

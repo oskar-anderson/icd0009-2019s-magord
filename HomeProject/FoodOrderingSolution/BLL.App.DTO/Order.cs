@@ -13,6 +13,8 @@ namespace BLL.App.DTO
 
         public int Number { get; set; } = default!;
 
+        public bool Completed { get; set; }
+
         public string TimeCreated { get; set; } = default!;
         
         public Guid RestaurantId { get; set; } = default!;
@@ -24,7 +26,7 @@ namespace BLL.App.DTO
         public Guid AppUserId { get; set; } = default!;
         public AppUser? AppUser { get; set; }
 
-        public Guid PersonId { get; set; } = default!;
-        public Person? Person { get; set; }
+        public Guid PaymentTypeId { get; set; } = default!;
+        public PaymentType? PaymentType { get; set; }
     }
 }

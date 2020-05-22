@@ -492,6 +492,9 @@ namespace DAL.App.EF.Migrations
                         .HasColumnType("varchar(256) CHARACTER SET utf8mb4")
                         .HasMaxLength(256);
 
+                    b.Property<bool>("Completed")
+                        .HasColumnType("tinyint(1)");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime(6)");
 
@@ -510,6 +513,9 @@ namespace DAL.App.EF.Migrations
                     b.Property<Guid>("OrderTypeId")
                         .HasColumnType("char(36)");
 
+                    b.Property<Guid>("PaymentTypeId")
+                        .HasColumnType("char(36)");
+
                     b.Property<Guid>("RestaurantId")
                         .HasColumnType("char(36)");
 
@@ -522,6 +528,8 @@ namespace DAL.App.EF.Migrations
                     b.HasIndex("AppUserId");
 
                     b.HasIndex("OrderTypeId");
+
+                    b.HasIndex("PaymentTypeId");
 
                     b.HasIndex("RestaurantId");
 
@@ -698,9 +706,6 @@ namespace DAL.App.EF.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("char(36)");
 
-                    b.Property<Guid>("AppUserId")
-                        .HasColumnType("char(36)");
-
                     b.Property<Guid?>("CampaignId")
                         .HasColumnType("char(36)");
 
@@ -730,8 +735,6 @@ namespace DAL.App.EF.Migrations
                         .HasColumnType("decimal(65,30)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("AppUserId");
 
                     b.HasIndex("CampaignId");
 
@@ -1007,6 +1010,12 @@ namespace DAL.App.EF.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("Domain.PaymentType", "PaymentType")
+                        .WithMany()
+                        .HasForeignKey("PaymentTypeId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("Domain.Restaurant", "Restaurant")
                         .WithMany("Orders")
                         .HasForeignKey("RestaurantId")
@@ -1067,12 +1076,6 @@ namespace DAL.App.EF.Migrations
 
             modelBuilder.Entity("Domain.Price", b =>
                 {
-                    b.HasOne("Domain.Identity.AppUser", "AppUser")
-                        .WithMany()
-                        .HasForeignKey("AppUserId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.HasOne("Domain.Campaign", "Campaign")
                         .WithMany("Prices")
                         .HasForeignKey("CampaignId")

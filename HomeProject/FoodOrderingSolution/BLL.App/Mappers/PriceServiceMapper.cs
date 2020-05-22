@@ -10,7 +10,6 @@ namespace BLL.App.Mappers
     {
         public PriceServiceMapper(): base()
         {
-            MapperConfigurationExpression.CreateMap<DALAppDTO.Identity.AppUser, BLLAppDTO.Identity.AppUser>();
             MapperConfigurationExpression.CreateMap<DALAppDTO.Campaign, BLLAppDTO.Campaign>();
             MapperConfigurationExpression.CreateMap<DALAppDTO.PriceView, BLLAppDTO.PriceView>();
 

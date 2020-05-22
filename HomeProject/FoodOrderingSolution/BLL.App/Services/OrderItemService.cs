@@ -19,9 +19,9 @@ namespace BLL.App.Services
         {
         }
         
-        public virtual async Task<IEnumerable<OrderItemView>> GetAllForViewAsync(object? userId = null, bool noTracking = true)
+        public virtual async Task<IEnumerable<OrderItemView>> GetAllForViewAsync(Guid? orderId, object? userId = null, bool noTracking = true)
         {
-            return (await Repository.GetAllForViewAsync(userId)).Select(e => Mapper.MapOrderItemView(e));
+            return (await Repository.GetAllForViewAsync(orderId, userId, noTracking)).Select(e => Mapper.MapOrderItemView(e));
         }
         
         public virtual async Task<OrderItemView> FirstOrDefaultForViewAsync(Guid id, object? userId = null, bool noTracking = true)

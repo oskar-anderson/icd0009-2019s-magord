@@ -167,7 +167,6 @@ namespace DAL.App.EF.Helpers
                     Value =  6.90M,
                     From = DateTime.Now.ToString("dd/MM/yyyy"),
                     To = new DateTime(3000, 01, 01).ToString("dd/MM/yyyy"),
-                    AppUserId = user.Id
                 },
                 new Price()
                 {
@@ -175,7 +174,6 @@ namespace DAL.App.EF.Helpers
                     Value =  5.90M,
                     From = DateTime.Now.ToString("dd/MM/yyyy"),
                     To = new DateTime(3000, 01, 01).ToString("dd/MM/yyyy"),
-                    AppUserId = user.Id
                 },
                 new Price()
                 {
@@ -183,7 +181,6 @@ namespace DAL.App.EF.Helpers
                     Value =  1.50M,
                     From = DateTime.Now.ToString("dd/MM/yyyy"),
                     To = new DateTime(3000, 01, 01).ToString("dd/MM/yyyy"),
-                    AppUserId = user.Id
                 },
                 new Price()
                 {
@@ -191,7 +188,6 @@ namespace DAL.App.EF.Helpers
                     Value =  2.50M,
                     From = DateTime.Now.ToString("dd/MM/yyyy"),
                     To = new DateTime(3000, 01, 01).ToString("dd/MM/yyyy"),
-                    AppUserId = user.Id
                 },
                 new Price()
                 {
@@ -199,7 +195,6 @@ namespace DAL.App.EF.Helpers
                     Value =  0.70M,
                     From = DateTime.Now.ToString("dd/MM/yyyy"),
                     To = new DateTime(3000, 01, 01).ToString("dd/MM/yyyy"),
-                    AppUserId = user.Id
                 },
                 new Price()
                 {
@@ -207,7 +202,6 @@ namespace DAL.App.EF.Helpers
                     Value =  3.50M,
                     From = DateTime.Now.ToString("dd/MM/yyyy"),
                     To = new DateTime(3000, 01, 01).ToString("dd/MM/yyyy"),
-                    AppUserId = user.Id
                 },
                 new Price()
                 {
@@ -215,7 +209,6 @@ namespace DAL.App.EF.Helpers
                     Value =  4.00M,
                     From = DateTime.Now.ToString("dd/MM/yyyy"),
                     To = new DateTime(3000, 01, 01).ToString("dd/MM/yyyy"),
-                    AppUserId = user.Id
                 },
                 new Price()
                 {
@@ -223,7 +216,6 @@ namespace DAL.App.EF.Helpers
                     Value =  2.00M,
                     From = DateTime.Now.ToString("dd/MM/yyyy"),
                     To = new DateTime(3000, 01, 01).ToString("dd/MM/yyyy"),
-                    AppUserId = user.Id
                 },
                 new Price()
                 {
@@ -231,7 +223,6 @@ namespace DAL.App.EF.Helpers
                     Value =  3.00M,
                     From = DateTime.Now.ToString("dd/MM/yyyy"),
                     To = new DateTime(3000, 01, 01).ToString("dd/MM/yyyy"),
-                    AppUserId = user.Id
                 },
                 new Price()
                 {
@@ -239,7 +230,6 @@ namespace DAL.App.EF.Helpers
                     Value =  3.90M,
                     From = DateTime.Now.ToString("dd/MM/yyyy"),
                     To = new DateTime(3000, 01, 01).ToString("dd/MM/yyyy"),
-                    AppUserId = user.Id
                 },
             };
 
@@ -642,12 +632,12 @@ namespace DAL.App.EF.Helpers
                 new ContactType()
                 {
                     Id = new Guid("00000000-0000-0000-0000-000000000001"),
-                    Name = "E-mail"
+                    Name = "Address"
                 },
                 new ContactType()
                 {
                     Id = new Guid("00000000-0000-0000-0000-000000000002"),
-                    Name = "Phone"
+                    Name = "Phone number"
                 },
             };
 
@@ -660,65 +650,18 @@ namespace DAL.App.EF.Helpers
             }
 
             context.SaveChanges();
-            
-            var orders = new Order[]
-            {
-                new Order()
-                {
-                    Id = new Guid("00000000-0000-0000-0000-000000000001"),
-                    Number = 222,
-                    TimeCreated = "3333",
-                    Restaurant = restaurants[0],
-                    OrderType = orderTypes[0],
-                    OrderStatus = "Underway",
-                    AppUserId = user.Id
-                    
-                },
-            };
 
-            foreach (var order in orders)
-            {
-                if (!context.Orders.Any(l => l.Id == order.Id))
-                {
-                    context.Orders.Add(order);
-                }
-            }
-
-            context.SaveChanges();
-            
-            var orderItems = new OrderItem[]
-            {
-                new OrderItem()
-                {
-                    Id = new Guid("00000000-0000-0000-0000-000000000001"),
-                    Quantity = 1,
-                    Drink = drinks[0],
-                    Order = orders[0],
-                    AppUserId = user.Id
-                },
-            };
-
-            foreach (var orderItem in orderItems)
-            {
-                if (!context.OrderItems.Any(l => l.Id == orderItem.Id))
-                {
-                    context.OrderItems.Add(orderItem);
-                }
-            }
-
-            context.SaveChanges();
-            
             var paymentTypes = new PaymentType[]
             {
                 new PaymentType()
                 {
                     Id = new Guid("00000000-0000-0000-0000-000000000001"),
-                    Name = "By card",
+                    Name = "By cash/card",
                 },
                 new PaymentType()
                 {
                     Id = new Guid("00000000-0000-0000-0000-000000000002"),
-                    Name = "By cash",
+                    Name = "By transfer",
                 },
             };
 
@@ -732,6 +675,28 @@ namespace DAL.App.EF.Helpers
 
             context.SaveChanges();
             
+            
+            var campaigns = new Campaign[]
+            {
+                new Campaign()
+                {
+                    Id = new Guid("00000000-0000-0000-0000-000000000001"),
+                    Name = "State-of-emergency campaign",
+                    Comment = "Every item is 25% off!!",
+                    From = "15-03-2020",
+                    To = "17-03-2020"
+                },
+            };
+
+            foreach (var campaign in campaigns)
+            {
+                if (!context.Campaigns.Any(l => l.Id == campaign.Id))
+                {
+                    context.Campaigns.Add(campaign);
+                }
+            }
+
+            context.SaveChanges();
         }
     }
 }

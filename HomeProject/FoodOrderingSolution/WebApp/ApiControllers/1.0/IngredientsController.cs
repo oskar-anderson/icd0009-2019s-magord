@@ -39,7 +39,6 @@ namespace WebApp.ApiControllers._1._0
         /// </summary>
         /// <returns>List of Ingredients</returns>
         [HttpGet]
-        [AllowAnonymous]
         [Produces("application/json")]
         [Consumes("application/json")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<V1DTO.IngredientView>))]
@@ -54,7 +53,6 @@ namespace WebApp.ApiControllers._1._0
         /// <param name="id">Ingredient Id</param>
         /// <returns>Ingredient object</returns>
         [HttpGet("{id}")]
-        [AllowAnonymous]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(V1DTO.Ingredient))]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<V1DTO.Ingredient>> GetIngredient(Guid id)

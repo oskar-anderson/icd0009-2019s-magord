@@ -11,10 +11,12 @@ namespace PublicApi.DTO.v1
         
         [MaxLength(256)] [MinLength(1)] public string OrderStatus { get; set; } = default!;
         public int Number { get; set; } = default!;
+
+        public bool Completed { get; set; }
         public string TimeCreated { get; set; } = default!;
         public Guid RestaurantId { get; set; }
         public Guid OrderTypeId { get; set; }
-        public Guid PersonId { get; set; }
+        public Guid PaymentTypeId { get; set; }
         public Guid AppUserId { get; set; }
         
     }

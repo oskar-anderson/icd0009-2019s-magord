@@ -39,13 +39,22 @@ namespace WebApp.ApiControllers._1._0
         /// </summary>
         /// <returns>List of OrderItems</returns>
         [HttpGet]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [Produces("application/json")]
         [Consumes("application/json")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<V1DTO.OrderItemView>))]
-        public async Task<ActionResult<IEnumerable<V1DTO.OrderItemView>>> GetOrderItems()
+        public async Task<ActionResult<IEnumerable<V1DTO.OrderItemView>>> GetOrderItems(Guid? orderId)
         {
-            return Ok((await _bll.OrderItems.GetAllForViewAsync(User.UserId())).Select(e => _mapper.MapOrderItemView(e)));
+            if (orderId == null)
+            {
+                return Ok((await _bll.OrderItems.GetAllForViewAsync(orderId ,User.UserId())).Select(e => _mapper.MapOrderItemView(e)));
+            }
+            
+            if (!await _bll.Orders.ExistsAsync(orderId!.Value))
+            {
+                return NotFound(new {message = $"Order with id {orderId} was not found"});
+            }
+            
+            return Ok((await _bll.OrderItems.GetAllForViewAsync(orderId ,User.UserId())).Select(e => _mapper.MapOrderItemView(e)));
         }
 
         /// <summary>

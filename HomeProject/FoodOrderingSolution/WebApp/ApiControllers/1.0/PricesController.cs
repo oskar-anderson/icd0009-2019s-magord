@@ -81,14 +81,12 @@ namespace WebApp.ApiControllers._1._0
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> PutPrice(Guid id, V1DTO.Price price)
         {
-            price.AppUserId = User.UserId();
-            
             if (id != price.Id)
             {
                 return BadRequest(new {message = "The id and price.id do not match!"});
             }
 
-            await _bll.Prices.UpdateAsync(_mapper.Map(price), User.UserId());
+            await _bll.Prices.UpdateAsync(_mapper.Map(price));
             await _bll.SaveChangesAsync();
 
             return NoContent();
@@ -105,8 +103,6 @@ namespace WebApp.ApiControllers._1._0
         [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(V1DTO.Price))]
         public async Task<ActionResult<V1DTO.Price>> PostPrice(V1DTO.Price price)
         {
-            price.AppUserId = User.UserId();
-
             var bllEntity = _mapper.Map(price);
             _bll.Prices.Add(bllEntity);
             await _bll.SaveChangesAsync();
@@ -129,7 +125,7 @@ namespace WebApp.ApiControllers._1._0
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<V1DTO.Price>> DeletePrice(Guid id)
         {
-            var price = await _bll.Prices.FirstOrDefaultAsync(id, User.UserId());
+            var price = await _bll.Prices.FirstOrDefaultAsync(id);
             if (price == null)
             {
                 return NotFound(new {message = "Price not found"});

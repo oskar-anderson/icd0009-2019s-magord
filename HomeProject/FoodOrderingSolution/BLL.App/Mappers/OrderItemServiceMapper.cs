@@ -12,6 +12,7 @@ namespace BLL.App.Mappers
         {
             
             MapperConfigurationExpression.CreateMap<DALAppDTO.Food, BLLAppDTO.Food>();
+            MapperConfigurationExpression.CreateMap<DALAppDTO.PaymentType, BLLAppDTO.PaymentType>();
             MapperConfigurationExpression.CreateMap<DALAppDTO.OrderItemView, BLLAppDTO.OrderItemView>();
             MapperConfigurationExpression.CreateMap<DALAppDTO.Ingredient, BLLAppDTO.Ingredient>();
             MapperConfigurationExpression.CreateMap<DALAppDTO.Drink, BLLAppDTO.Drink>();

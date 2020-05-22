@@ -39,7 +39,6 @@ namespace WebApp.ApiControllers._1._0
         /// </summary>
         /// <returns>List of Foods</returns>
         [HttpGet]
-        [AllowAnonymous]
         [Produces("application/json")]
         [Consumes("application/json")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<V1DTO.FoodView>))]
@@ -54,7 +53,6 @@ namespace WebApp.ApiControllers._1._0
         /// <param name="id">Food Id</param>
         /// <returns>Food object</returns>
         [HttpGet("{id}")]
-        [AllowAnonymous]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(V1DTO.Food))]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<V1DTO.Food>> GetFood(Guid id)
@@ -118,7 +116,7 @@ namespace WebApp.ApiControllers._1._0
         }
 
         /// <summary>
-        /// Delete an Food
+        /// Delete a Food
         /// </summary>
         /// <param name="id">Food Id</param>
         /// <returns>Deleted Food object</returns>

@@ -19,5 +19,7 @@ namespace PublicApi.DTO.v1
         public decimal FoodPrice { get; set; }
         public decimal DrinkPrice { get; set; }
         public decimal IngredientPrice { get; set; }
+
+        public string OrderType { get; set; } = default!;
     }
 }

@@ -56,19 +56,47 @@ namespace DAL.App.EF.Repositories
             return result;
         }
 
-        public virtual async Task<IEnumerable<OrderItemView>> GetAllForViewAsync(object? userId = null,
+        public virtual async Task<IEnumerable<OrderItemView>> GetAllForViewAsync(Guid? orderId, object? userId = null,
             bool noTracking = true)
         {
             var query = PrepareQuery(userId, noTracking);
+
+            if (orderId == null)
+            {
+                return await query
+                    .Include(o => o.Food)
+                    .ThenInclude(o => o!.Price)
+                    .Include(o => o.Ingredient)
+                    .ThenInclude(o => o!.Price)
+                    .Include(o => o.Order)
+                    .ThenInclude(o => o!.OrderType)
+                    .Include(o => o.Drink)
+                    .ThenInclude(o => o!.Price)
+                    .Select(a => new OrderItemView()
+                    {
+                        Id = a.Id,
+                        Food = a.Food!.Name,
+                        Ingredient = a.Ingredient!.Name,
+                        Drink = a.Drink!.Name,
+                        Order = a.Order!.Number,
+                        Quantity = a.Quantity,
+                        DrinkPrice = a.Drink.Price!.Value,
+                        FoodPrice = a.Food.Price!.Value,
+                        IngredientPrice = a.Ingredient.Price!.Value,
+                        OrderType = a.Order.OrderType!.Name,
+                    }).ToListAsync();
+            }
+
             return await query
                 .Include(o => o.Food)
                 .ThenInclude(o => o!.Price)
                 .Include(o => o.Ingredient)
                 .ThenInclude(o => o!.Price)
                 .Include(o => o.Order)
+                .ThenInclude(o => o!.OrderType)
                 .Include(o => o.Drink)
                 .ThenInclude(o => o!.Price)
-                
+                .Where(o => o.OrderId == orderId)
                 .Select(a => new OrderItemView()
                 {
                     Id = a.Id,
@@ -79,7 +107,8 @@ namespace DAL.App.EF.Repositories
                     Quantity = a.Quantity,
                     DrinkPrice = a.Drink.Price!.Value,
                     FoodPrice = a.Food.Price!.Value,
-                    IngredientPrice = a.Ingredient.Price!.Value
+                    IngredientPrice = a.Ingredient.Price!.Value,
+                    OrderType = a.Order.OrderType!.Name,
                 }).ToListAsync();
         }
 
@@ -93,6 +122,7 @@ namespace DAL.App.EF.Repositories
                 .Include(o => o.Ingredient)
                 .ThenInclude(o => o!.Price)
                 .Include(o => o.Order)
+                .ThenInclude(o => o!.OrderType)
                 .Include(o => o.Drink)
                 .ThenInclude(o => o!.Price)
                 .Where(r => r.Id == id)
@@ -104,6 +134,10 @@ namespace DAL.App.EF.Repositories
                     Drink = a.Drink!.Name,
                     Order = a.Order!.Number,
                     Quantity = a.Quantity,
+                    DrinkPrice = a.Drink.Price!.Value,
+                    FoodPrice = a.Food.Price!.Value,
+                    IngredientPrice = a.Ingredient.Price!.Value,
+                    OrderType = a.Order.OrderType!.Name,
                 })
                 .FirstOrDefaultAsync();
         }

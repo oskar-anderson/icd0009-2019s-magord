@@ -38,7 +38,6 @@ namespace WebApp.ApiControllers._1._0
         /// </summary>
         /// <returns>List of Areas</returns>
         [HttpGet]
-        [AllowAnonymous]
         [Produces("application/json")]
         [Consumes("application/json")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<V1DTO.AreaView>))]
@@ -53,7 +52,6 @@ namespace WebApp.ApiControllers._1._0
         /// <param name="id">Area Id</param>
         /// <returns>Area object</returns>
         [HttpGet("{id}")]
-        [AllowAnonymous]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(V1DTO.Area))]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<V1DTO.Area>> GetArea(Guid id)

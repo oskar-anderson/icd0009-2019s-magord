@@ -40,7 +40,6 @@ namespace WebApp.ApiControllers._1._0
         /// </summary>
         /// <returns>List of ContactTypes</returns>
         [HttpGet]
-        [AllowAnonymous]
         [Produces("application/json")]
         [Consumes("application/json")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<V1DTO.ContactType>))]
@@ -55,7 +54,6 @@ namespace WebApp.ApiControllers._1._0
         /// <param name="id">ContactType Id</param>
         /// <returns>ContactType object</returns>
         [HttpGet("{id}")]
-        [AllowAnonymous]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(V1DTO.ContactType))]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<V1DTO.ContactType>> GetContactType(Guid id)

@@ -264,7 +264,6 @@ namespace DAL.App.EF.Migrations
                     CreatedAt = table.Column<DateTime>(nullable: false),
                     ChangedBy = table.Column<string>(maxLength: 256, nullable: true),
                     ChangedAt = table.Column<DateTime>(nullable: false),
-                    AppUserId = table.Column<Guid>(nullable: false),
                     Value = table.Column<decimal>(nullable: false),
                     From = table.Column<string>(nullable: false),
                     To = table.Column<string>(nullable: false),
@@ -273,12 +272,6 @@ namespace DAL.App.EF.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Prices", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Prices_AspNetUsers_AppUserId",
-                        column: x => x.AppUserId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_Prices_Campaigns_CampaignId",
                         column: x => x.CampaignId,
@@ -467,9 +460,11 @@ namespace DAL.App.EF.Migrations
                     AppUserId = table.Column<Guid>(nullable: false),
                     OrderStatus = table.Column<string>(maxLength: 256, nullable: false),
                     Number = table.Column<int>(nullable: false),
+                    Completed = table.Column<bool>(nullable: false),
                     TimeCreated = table.Column<string>(nullable: false),
                     RestaurantId = table.Column<Guid>(nullable: false),
-                    OrderTypeId = table.Column<Guid>(nullable: false)
+                    OrderTypeId = table.Column<Guid>(nullable: false),
+                    PaymentTypeId = table.Column<Guid>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -484,6 +479,12 @@ namespace DAL.App.EF.Migrations
                         name: "FK_Orders_OrderTypes_OrderTypeId",
                         column: x => x.OrderTypeId,
                         principalTable: "OrderTypes",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Orders_PaymentTypes_PaymentTypeId",
+                        column: x => x.PaymentTypeId,
+                        principalTable: "PaymentTypes",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
@@ -738,6 +739,11 @@ namespace DAL.App.EF.Migrations
                 column: "OrderTypeId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Orders_PaymentTypeId",
+                table: "Orders",
+                column: "PaymentTypeId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Orders_RestaurantId",
                 table: "Orders",
                 column: "RestaurantId");
@@ -756,11 +762,6 @@ namespace DAL.App.EF.Migrations
                 name: "IX_Payments_PaymentTypeId",
                 table: "Payments",
                 column: "PaymentTypeId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Prices_AppUserId",
-                table: "Prices",
-                column: "AppUserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Prices_CampaignId",
@@ -815,9 +816,6 @@ namespace DAL.App.EF.Migrations
                 name: "Bills");
 
             migrationBuilder.DropTable(
-                name: "PaymentTypes");
-
-            migrationBuilder.DropTable(
                 name: "Foods");
 
             migrationBuilder.DropTable(
@@ -830,13 +828,16 @@ namespace DAL.App.EF.Migrations
                 name: "Prices");
 
             migrationBuilder.DropTable(
+                name: "AspNetUsers");
+
+            migrationBuilder.DropTable(
                 name: "OrderTypes");
 
             migrationBuilder.DropTable(
-                name: "Restaurants");
+                name: "PaymentTypes");
 
             migrationBuilder.DropTable(
-                name: "AspNetUsers");
+                name: "Restaurants");
 
             migrationBuilder.DropTable(
                 name: "Campaigns");
