@@ -79,8 +79,16 @@ export class DrinksIndex {
                 if (response.statusCode >= 200 && response.statusCode < 300) {
                     this.isAdmin = this.appState.isAdmin
                     this._alert = null;
+
                     this.orders = response.data!;
 
+                    for (const order of this.orders) {
+                        if(order.completed === false) {
+                            this.selectedOrderId = order.id
+                            break;
+                        }
+                    }
+                    
                     if (this.orders.length < 1) {
                         this.ordersEmpty = true;
                     }

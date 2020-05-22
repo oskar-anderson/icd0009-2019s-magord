@@ -1,3 +1,5 @@
+import { PaymentTypeService } from './../../service/paymenttype-service';
+import { IPaymentType } from './../../domain/IPaymentType/IPaymentType';
 import { IOrderEdit } from './../../domain/IOrder/IOrderEdit';
 import { autoinject } from 'aurelia-framework';
 import { RouteConfig, NavigationInstruction, Router } from 'aurelia-router';
@@ -18,9 +20,10 @@ export class OrdersEdit {
     order: IOrderEdit | null = null;
     _restaurants: IRestaurant[] | null = null;
     _orderTypes: IOrderType[] | null = null;
+    _paymentTypes: IPaymentType[] | null = null;
 
     constructor(private orderService: OrderService, private router: Router, private restaurantService: RestaurantService,
-        private orderTypeService: OrderTypeService) {
+        private orderTypeService: OrderTypeService, private paymentTypeService: PaymentTypeService) {
     }
 
     attached() {
@@ -39,7 +42,7 @@ export class OrdersEdit {
                     }
                 }
             }
-            );
+        );
         this.orderTypeService.getOrderTypes()
             .then(response => {
                 if (response.statusCode >= 200 && response.statusCode < 300) {
@@ -55,7 +58,23 @@ export class OrdersEdit {
                     }
                 }
             }
-            );
+        );
+        this.paymentTypeService.getPaymentTypes()
+            .then(response => {
+                if (response.statusCode >= 200 && response.statusCode < 300) {
+                    console.log({ response: response.data! });
+                    this._alert = null;
+                    this._paymentTypes = response.data!;
+                } else {
+                    // show error message
+                    this._alert = {
+                        message: response.statusCode.toString() + ' - ' + response.errorMessage,
+                        type: AlertType.Danger,
+                        dismissable: true,
+                    }
+                }
+            }
+        );
     }
 
     activate(params: any, routeConfig: RouteConfig, navigationInstruction: NavigationInstruction) {

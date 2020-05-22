@@ -84,7 +84,16 @@ export class FoodsIndex {
                 if (response.statusCode >= 200 && response.statusCode < 300) {
                     this.isAdmin = this.appState.isAdmin
                     this._alert = null;
+
                     this._orders = response.data!;
+
+                    for (const order of this._orders) {
+                        if(order.completed === false) {
+                            this.selectedOrderId = order.id
+                            break;
+                        }
+                    }
+
                     if (this._orders.length < 1) {
                         this.ordersEmpty = true;
                     }

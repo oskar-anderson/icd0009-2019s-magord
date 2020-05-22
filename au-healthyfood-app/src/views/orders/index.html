@@ -6,19 +6,20 @@
 
 
     <h1 class="text-center">Orders</h1>
-
-    <p>
-        <a route-href="route: orders-create; params.bind: {}">Create a new order</a>
+    <br>
+    <p class="text-center">
+        <button click.delegate="createOrder($event)" class="btn btn-success">Create a new order</button>
     </p>
-
-    <div>
+    <br>
+    <div class="text-center">
         <a route-href="route: foods-index; params.bind: {}">Back to foods</a>
     </div>
-    <div>
+    <div class="text-center">
         <a route-href="route: drinks-index; params.bind: {}">Back to drinks</a>
     </div>
+    <br>
     <table class="table">
-        <thead>
+        <thead class="thead-light">
             <tr>
                 <th>
                     Number
@@ -35,13 +36,16 @@
                 <th>
                     Order type
                 </th>
+                <th>
+                    Payment type
+                </th>
                 <th></th>
             </tr>
         </thead>
         <tbody>
             <tr repeat.for="order of _orders">
                 <td>
-                    #${order.number}
+                    <a route-href="route: orderitems-index; params.bind: { id: order.id }">#${order.number}</a>
                 </td>
                 <td>
                     ${order.orderStatus}
@@ -56,9 +60,12 @@
                     ${order.orderType}
                 </td>
                 <td>
+                    ${order.paymentType}
+                </td>
+                <td>
                     <a if.bind="isAdmin" route-href="route: orders-edit; params.bind: { id: order.id }">Edit</a>
                     <span if.bind="isAdmin">|</span>
-                    <a route-href="route: orders-details; params.bind: { id: order.id }">Details</a> 
+                    <a route-href="route: orders-details; params.bind: { id: order.id }">Details</a>
                     <button style="float: right" if.bind="isAdmin" click.trigger="deleteOnClick(order)" type="button"
                         class="btn btn-danger">Delete</button>
                 </td>

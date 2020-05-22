@@ -55,13 +55,37 @@ export class ContactsCreate {
             }
             return null;
         }
+    
+        if (this.contact!.name.length < 0) {
+            this._alert = {
+                message: "Please fill all the required fields!",
+                type: AlertType.Danger,
+                dismissable: true,
+            }
+            return null;
+        }
+    
+        if (this.contact!.contactTypeId === "00000000-0000-0000-0000-000000000002") {
+            let isCorrectNr = /^\d{5,}$/.test(this.contact!.name)
+
+            if(isCorrectNr == false) {
+                this._alert = {
+                    message: "Please enter a correct phone number!",
+                    type: AlertType.Danger,
+                    dismissable: true,
+                }
+                return null;
+            }
+        }
+             
+
         this.contactService
             .createContact(this.contact!)
             .then(
                 response => {
                     if (response.statusCode >= 200 && response.statusCode < 300) {
                         this._alert = null;
-                        this.router.navigateToRoute('contacts-index', {});
+                        this.router.navigateToRoute('account-manageContacts', {});
                     } else {
                         // show error message
                         this._alert = {

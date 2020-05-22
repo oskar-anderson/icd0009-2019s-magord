@@ -27,6 +27,39 @@ export class OrderItemService {
             // happy case
             if (response.status >= 200 && response.status < 300) {
                 const data = (await response.json()) as IOrderItem[];
+                console.log(data)
+                return {
+                    statusCode: response.status,
+                    data: data
+                }
+            }
+
+            // something went wrong
+            return {
+                statusCode: response.status,
+                errorMessage: response.statusText
+            }
+
+        } catch (reason) {
+            return {
+                statusCode: 0,
+                errorMessage: JSON.stringify(reason)
+            }
+        }
+    }
+
+    async getAllForOrder(orderId: string): Promise<IFetchResponse<IOrderItem[]>> {
+        try {
+            const response = await this.httpClient
+                .fetch(this._baseUrl + '?orderId=' + orderId, {
+                    cache: "no-store",
+                    headers: {
+                        authorization: "Bearer " + this.appState.jwt
+                    }
+                });
+            // happy case
+            if (response.status >= 200 && response.status < 300) {
+                const data = (await response.json()) as IOrderItem[];
                 return {
                     statusCode: response.status,
                     data: data

@@ -71,6 +71,29 @@ export class AppState {
         }
     }
 
+    get address(): string | null {
+        return localStorage.getItem('address')
+    }
+
+    set address(value: string | null) {
+        if(value) {
+            localStorage.setItem('address', value);
+        } else {
+            localStorage.removeItem('address');
+        }
+    }
+
+    get phoneNr(): string | null {
+        return localStorage.getItem('phoneNr')
+    }
+
+    set phoneNr(value: string | null) {
+        if(value) {
+            localStorage.setItem('phoneNr', value);
+        } else {
+            localStorage.removeItem('phoneNr');
+        }
+    }
     
     get isAdmin(): boolean {
         if (this.jwt) {

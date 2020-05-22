@@ -93,7 +93,7 @@ export class AccountRegister {
         let isAlphanumeric = /^[a-z0-9]+$/i.test(password)
 
         if(isAlphanumeric !== false) {
-            alert("Passowrd must include a nonalphanumeric symbol!")
+            alert("Password must include a nonalphanumeric symbol!")
             answer = false;
         }
 

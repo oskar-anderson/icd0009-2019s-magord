@@ -20,7 +20,6 @@
                 <div class="form-group">
                     <label class="control-label" for="ContactTypeId">Contact type</label>
                     <select class="form-control" data-val="true", type="text" id="ContactTypeId" maxlength="256" value.bind="contact.contactTypeId">
-                    <option model.bind="null"> Choose a contact type</option>
                     <option repeat.for="contactType of _contactTypes" model.bind="contactType.id">${contactType.name}</option>
                     </select>
                 </div>
@@ -33,7 +32,7 @@
     </div>
 
     <div>
-        <a route-href="route: contacts-index; params.bind: { }">Back to List</a>
+        <a route-href="route: account-manageContacts ; params.bind: { }">Back to List</a>
     </div>
 
 </template>

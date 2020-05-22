@@ -3,6 +3,7 @@ export interface IOrder {
     number: number;
     orderStatus: string;
     timeCreated: string;
+    completed: boolean;
 
     restaurantId: string;
     restaurant: string;
@@ -10,6 +11,6 @@ export interface IOrder {
     orderTypeId: string;
     orderType: string;
 
-    personId: string;
-    person: string;
+    paymentTypeId: string;
+    paymentType: string;
 }

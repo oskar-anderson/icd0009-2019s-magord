@@ -1,3 +1,4 @@
+import { PaymentTypeService } from './../../service/paymenttype-service';
 import { OrderTypeService } from './../../service/orderType-service';
 import { RestaurantService } from './../../service/restaurant-service';
 import { OrderService } from './../../service/order-service';
@@ -8,6 +9,7 @@ import { RouteConfig, NavigationInstruction, Router } from 'aurelia-router';
 import { IAlertData } from 'types/IAlertData';
 import { AlertType } from 'types/AlertType';
 import { IOrderCreate } from 'domain/IOrder/IOrderCreate';
+import { IPaymentType } from 'domain/IPaymentType/IPaymentType';
 
 
 @autoinject
@@ -18,10 +20,11 @@ export class OrdersCreate {
     order: IOrderCreate | null = null;
     _restaurants: IRestaurant[] | null = null;
     _orderTypes: IOrderType[] | null = null;
+    _paymentTypes: IPaymentType[] | null = null;
 
 
     constructor(private orderService: OrderService, private router: Router, private restaurantService: RestaurantService,
-         private orderTypeService: OrderTypeService) {
+         private orderTypeService: OrderTypeService, private paymentTypeService: PaymentTypeService) {
     }
 
     attached() {
@@ -57,6 +60,22 @@ export class OrdersCreate {
                 }
             }
         );
+        this.paymentTypeService.getPaymentTypes()
+            .then(response => {
+                if (response.statusCode >= 200 && response.statusCode < 300) {
+                    console.log({ response: response.data! });
+                    this._alert = null;
+                    this._paymentTypes = response.data!;
+                } else {
+                    // show error message
+                    this._alert = {
+                        message: response.statusCode.toString() + ' - ' + response.errorMessage,
+                        type: AlertType.Danger,
+                        dismissable: true,
+                    }
+                }
+            }
+        );
         
     }
 
@@ -68,6 +87,7 @@ export class OrdersCreate {
         this.order!.number = 1;
         this.order!.orderStatus = "a";
         this.order!.timeCreated = "12"
+        this.order!.completed = false;
         this.orderService
             .createOrder(this.order!)
             .then(

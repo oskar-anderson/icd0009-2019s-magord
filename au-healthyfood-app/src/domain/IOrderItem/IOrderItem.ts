@@ -18,4 +18,7 @@ export interface IOrderItem {
 
     orderId: string | null;
     order: string | null;
+
+    orderTypeId: string;
+    orderType: string;
 }

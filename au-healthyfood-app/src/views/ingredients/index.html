@@ -40,7 +40,7 @@
                     ${ingredient.food}
                 </td>
                 <td>
-                    ${ingredient.price}
+                    ${ingredient.price.toFixed(2)}€
                 </td>
                 <td>
                     <a if.bind="isAdmin" route-href="route: ingredients-edit; params.bind: { id: ingredient.id }">Edit</a>

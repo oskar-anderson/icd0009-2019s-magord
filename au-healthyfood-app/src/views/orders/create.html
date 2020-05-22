@@ -14,7 +14,6 @@
                 <div class="form-group">
                     <label class="control-label" for="RestaurantId">Restaurant</label>
                     <select class="form-control" data-val="true", type="text" id="RestaurantId" maxlength="256" value.bind="order.restaurantId">
-                    <option model.bind="null">Choose a restaurant</option>
                     <option repeat.for="restaurant of _restaurants" model.bind="restaurant.id">${restaurant.name} - ${restaurant.address}</option>
                     </select>
                 </div>
@@ -22,8 +21,14 @@
                 <div class="form-group">
                     <label class="control-label" for="OrderTypeId">Order type</label>
                     <select class="form-control" data-val="true", type="text" id="OrderTypeId" maxlength="256" value.bind="order.orderTypeId">
-                    <option model.bind="null">Choose order type</option>
                     <option repeat.for="orderType of _orderTypes" model.bind="orderType.id">${orderType.name}</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label" for="PaymentTypeId">Payment type</label>
+                    <select class="form-control" data-val="true", type="text" id="PaymentTypeId" maxlength="256" value.bind="order.paymentTypeId">
+                    <option repeat.for="paymentType of _paymentTypes" model.bind="paymentType.id">${paymentType.name}</option>
                     </select>
                 </div>
 

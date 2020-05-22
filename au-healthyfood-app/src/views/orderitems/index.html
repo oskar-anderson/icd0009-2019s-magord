@@ -25,8 +25,7 @@
                     Order
                 </th>
                 <th>
-                    <a style="margin-left:33px">Quantity</a
-                </th>
+                    <a style="margin-left:33px">Quantity</a </th>
                 <th>
                     Price
                 </th>
@@ -68,7 +67,6 @@
 
     <br>
     <br>
-    <br>
     <table class="table table-borderless">
         <th>
             <h4 class="text-center">Your current total: ${totalSum.toFixed(2)}€</h4>
@@ -77,36 +75,50 @@
 
     <div class="text-center">
         <!-- Button to trigger modal -->
-        <button if.bind="_orderItems.length > 0" data-toggle="modal" data-target="#staticBackdrop" type="button"
+        <button if.bind="_orderItems.length > 0" data-toggle="modal" data-target="#exampleModal" type="button"
             class="btn btn-success">Proceed to checkout </button>
     </div>
 
+    <br>
+    <br>
+
     <!-- Modal -->
-    <div class="modal fade" id="staticBackdrop" data-backdrop="static" tabindex="-1" role="dialog"
-        aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel1"
+        aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="staticBackdropLabel">Please enter your contact details</h5>
+                    <h5 class="modal-title" id="exampleModalLabel1">Please enter your contact details ${firstName}</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
                 <div class="modal-body">
-                    <h3>
-                        Please enter your contact details ${firstName}
-                    </h3>
 
                     <p>
                         Address
+                        <input if.bind="addressIsSet() == false">
+                        <b if.bind"addressIsSet()">${address}</b>
                     </p>
                     <p>
-                        Phone nr
+                        Phone number
+                        <input if.bind="phoneNrIsSet() == false">
+                        <b if.bind"phoneNrIsSet()">${phoneNr}</b>
+                    </p>
+                    <p>
+                        Order type - 
+                    <b>${orderType}</b>
+                    </p>
+                    <p>
+                        Payment type
+                        <label repeat.for="paymentType of _paymentTypes">
+                            <input type="radio" name="group1"><a>${paymentType.name}</a>
+                        </label>
                     </p>
 
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary">Finish</button>
+                    <button type="button" class="btn btn-success">Checkout</button>
                     <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
                 </div>
             </div>
