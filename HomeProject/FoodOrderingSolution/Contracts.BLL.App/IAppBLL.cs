@@ -6,7 +6,6 @@ namespace Contracts.BLL.App
     public interface IAppBLL : IBaseBLL
     {
         public IAreaService Areas { get; }
-        public IBillService Bills { get; }
         public ICampaignService Campaigns { get; }
         public IContactService Contacts { get; }
         public IContactTypeService ContactTypes { get; }
@@ -17,7 +16,6 @@ namespace Contracts.BLL.App
         public IOrderService Orders { get; }
         public IOrderItemService OrderItems { get; }
         public IOrderTypeService OrderTypes { get; }
-        public IPaymentService Payments { get; }
         public IPaymentTypeService PaymentTypes { get; }
         public IPriceService Prices { get; }
         public IRestaurantService Restaurants { get; }

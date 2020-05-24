@@ -10,6 +10,6 @@ namespace Domain
     {
         [MaxLength(128)] [MinLength(1)] public string Name { get; set; } = default!;
 
-        public ICollection<Payment>? Payments { get; set; }
+        public ICollection<OrderItem>? OrderItems { get; set; }
     }
 }

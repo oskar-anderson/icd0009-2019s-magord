@@ -25,8 +25,6 @@ namespace Domain
         public Guid PaymentTypeId { get; set; } = default!;
         public PaymentType? PaymentType { get; set; }
         
-        public ICollection<Bill>? Bills { get; set; }
-        
         public ICollection<OrderItem>? OrderItems { get; set; }
     }
 }

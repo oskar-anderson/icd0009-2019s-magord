@@ -496,38 +496,6 @@ namespace DAL.App.EF.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Bills",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(nullable: false),
-                    CreatedBy = table.Column<string>(maxLength: 256, nullable: true),
-                    CreatedAt = table.Column<DateTime>(nullable: false),
-                    ChangedBy = table.Column<string>(maxLength: 256, nullable: true),
-                    ChangedAt = table.Column<DateTime>(nullable: false),
-                    AppUserId = table.Column<Guid>(nullable: false),
-                    TimeIssued = table.Column<string>(nullable: false),
-                    Number = table.Column<int>(nullable: false),
-                    Sum = table.Column<decimal>(nullable: false),
-                    OrderId = table.Column<Guid>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Bills", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Bills_AspNetUsers_AppUserId",
-                        column: x => x.AppUserId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_Bills_Orders_OrderId",
-                        column: x => x.OrderId,
-                        principalTable: "Orders",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "OrderItems",
                 columns: table => new
                 {
@@ -541,7 +509,8 @@ namespace DAL.App.EF.Migrations
                     FoodId = table.Column<Guid>(nullable: true),
                     IngredientId = table.Column<Guid>(nullable: true),
                     DrinkId = table.Column<Guid>(nullable: true),
-                    OrderId = table.Column<Guid>(nullable: false)
+                    OrderId = table.Column<Guid>(nullable: false),
+                    PaymentTypeId = table.Column<Guid>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -576,40 +545,8 @@ namespace DAL.App.EF.Migrations
                         principalTable: "Orders",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Payments",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(nullable: false),
-                    CreatedBy = table.Column<string>(maxLength: 256, nullable: true),
-                    CreatedAt = table.Column<DateTime>(nullable: false),
-                    ChangedBy = table.Column<string>(maxLength: 256, nullable: true),
-                    ChangedAt = table.Column<DateTime>(nullable: false),
-                    AppUserId = table.Column<Guid>(nullable: false),
-                    Amount = table.Column<int>(nullable: false),
-                    TimeMade = table.Column<string>(nullable: false),
-                    BillId = table.Column<Guid>(nullable: false),
-                    PaymentTypeId = table.Column<Guid>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Payments", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Payments_AspNetUsers_AppUserId",
-                        column: x => x.AppUserId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_Payments_Bills_BillId",
-                        column: x => x.BillId,
-                        principalTable: "Bills",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_Payments_PaymentTypes_PaymentTypeId",
+                        name: "FK_OrderItems_PaymentTypes_PaymentTypeId",
                         column: x => x.PaymentTypeId,
                         principalTable: "PaymentTypes",
                         principalColumn: "Id",
@@ -657,16 +594,6 @@ namespace DAL.App.EF.Migrations
                 table: "AspNetUsers",
                 column: "NormalizedUserName",
                 unique: true);
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Bills_AppUserId",
-                table: "Bills",
-                column: "AppUserId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Bills_OrderId",
-                table: "Bills",
-                column: "OrderId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Contacts_AppUserId",
@@ -729,6 +656,11 @@ namespace DAL.App.EF.Migrations
                 column: "OrderId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_OrderItems_PaymentTypeId",
+                table: "OrderItems",
+                column: "PaymentTypeId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Orders_AppUserId",
                 table: "Orders",
                 column: "AppUserId");
@@ -747,21 +679,6 @@ namespace DAL.App.EF.Migrations
                 name: "IX_Orders_RestaurantId",
                 table: "Orders",
                 column: "RestaurantId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Payments_AppUserId",
-                table: "Payments",
-                column: "AppUserId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Payments_BillId",
-                table: "Payments",
-                column: "BillId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Payments_PaymentTypeId",
-                table: "Payments",
-                column: "PaymentTypeId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Prices_CampaignId",
@@ -798,9 +715,6 @@ namespace DAL.App.EF.Migrations
                 name: "OrderItems");
 
             migrationBuilder.DropTable(
-                name: "Payments");
-
-            migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
@@ -813,19 +727,10 @@ namespace DAL.App.EF.Migrations
                 name: "Ingredients");
 
             migrationBuilder.DropTable(
-                name: "Bills");
-
-            migrationBuilder.DropTable(
-                name: "Foods");
-
-            migrationBuilder.DropTable(
                 name: "Orders");
 
             migrationBuilder.DropTable(
-                name: "FoodTypes");
-
-            migrationBuilder.DropTable(
-                name: "Prices");
+                name: "Foods");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");
@@ -840,10 +745,16 @@ namespace DAL.App.EF.Migrations
                 name: "Restaurants");
 
             migrationBuilder.DropTable(
-                name: "Campaigns");
+                name: "FoodTypes");
+
+            migrationBuilder.DropTable(
+                name: "Prices");
 
             migrationBuilder.DropTable(
                 name: "Areas");
+
+            migrationBuilder.DropTable(
+                name: "Campaigns");
 
             migrationBuilder.DropTable(
                 name: "Towns");

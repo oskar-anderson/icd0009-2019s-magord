@@ -19,7 +19,5 @@ namespace Domain.Identity
         public ICollection<Order>? Orders { get; set; }
         
         public ICollection<OrderItem>? OrderItems { get; set; }
-
-        public ICollection<Bill>? Bills { get; set; }
     }
 }

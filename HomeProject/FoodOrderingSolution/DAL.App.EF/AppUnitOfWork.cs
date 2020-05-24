@@ -13,7 +13,6 @@ namespace DAL.App.EF
         }
         
         public IAreaRepository Areas => GetRepository<IAreaRepository>(() => new AreaRepository(UowDbContext));
-        public IBillRepository Bills => GetRepository<IBillRepository>(() => new BillRepository(UowDbContext));
         public ICampaignRepository Campaigns => GetRepository<ICampaignRepository>(() => new CampaignRepository(UowDbContext));
         public IContactRepository Contacts => GetRepository<IContactRepository>(() => new ContactRepository(UowDbContext));
         public IContactTypeRepository ContactTypes => GetRepository<IContactTypeRepository>(() => new ContactTypeRepository(UowDbContext));
@@ -24,7 +23,6 @@ namespace DAL.App.EF
         public IOrderRepository Orders => GetRepository<IOrderRepository>(() => new OrderRepository(UowDbContext));
         public IOrderItemRepository OrderItems => GetRepository<IOrderItemRepository>(() => new OrderItemRepository(UowDbContext));
         public IOrderTypeRepository OrderTypes => GetRepository<IOrderTypeRepository>(() => new OrderTypeRepository(UowDbContext));
-        public IPaymentRepository Payments => GetRepository<IPaymentRepository>(() => new PaymentRepository(UowDbContext));
         public IPaymentTypeRepository PaymentTypes => GetRepository<IPaymentTypeRepository>(() => new PaymentTypeRepository(UowDbContext));
         public IPriceRepository Prices => GetRepository<IPriceRepository>(() => new PriceRepository(UowDbContext));
         public IRestaurantRepository Restaurants => GetRepository<IRestaurantRepository>(() => new RestaurantRepository(UowDbContext));

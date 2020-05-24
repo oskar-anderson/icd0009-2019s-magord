@@ -101,8 +101,6 @@ export class AppState {
             let userRole = decoded["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"];
             if (userRole.includes('Admin')) {
                 userRole = 'Admin';
-            }
-            if(userRole === 'Admin') {
                 return true;
             }
             return false;

@@ -20,7 +20,6 @@ namespace DAL.App.EF
         public DbSet<Area> Areas { get; set; } = default!;
         public DbSet<Price> Prices { get; set; } = default!;
         public DbSet<PaymentType> PaymentTypes { get; set; } = default!;
-        public DbSet<Payment> Payments { get; set; } = default!;
         public DbSet<OrderType> OrderTypes { get; set; } = default!;
         public DbSet<Order> Orders { get; set; } = default!;
         public DbSet<OrderItem> OrderItems { get; set; } = default!;
@@ -31,7 +30,6 @@ namespace DAL.App.EF
         public DbSet<ContactType> ContactTypes { get; set; } = default!;
         public DbSet<Contact> Contacts { get; set; } = default!;
         public DbSet<Campaign> Campaigns { get; set; } = default!;
-        public DbSet<Bill> Bills { get; set; } = default!;
 
         private readonly Dictionary<IDomainEntityId<Guid>, IDomainEntityId<Guid>> _entityTracker =
             new Dictionary<IDomainEntityId<Guid>, IDomainEntityId<Guid>>();

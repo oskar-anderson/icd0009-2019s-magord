@@ -1,3 +1,4 @@
+import { AppState } from 'state/app-state';
 import { autoinject } from 'aurelia-framework';
 import { Router } from 'aurelia-router';
 import { RestaurantService } from './../../service/restaurant-service';
@@ -13,7 +14,7 @@ export class HomeIndex {
     private _alert: IAlertData | null = null;
 
 
-    constructor(private restaurantService: RestaurantService, private router: Router) {
+    constructor(private restaurantService: RestaurantService, private router: Router, private appState: AppState) {
     }
 
     attached() {

@@ -18,7 +18,6 @@ namespace DAL.App.EF.Mappers
             MapperConfigurationExpression.CreateMap<Domain.OrderItem, DAL.App.DTO.OrderItem>();
             MapperConfigurationExpression.CreateMap<Domain.Price, DAL.App.DTO.Price>();
             MapperConfigurationExpression.CreateMap<Domain.PaymentType, DAL.App.DTO.PaymentType>();
-            MapperConfigurationExpression.CreateMap<Domain.Bill, DAL.App.DTO.Bill>();
             MapperConfigurationExpression.CreateMap<Domain.OrderType, DAL.App.DTO.OrderType>();
             MapperConfigurationExpression.CreateMap<Domain.Restaurant, DAL.App.DTO.Restaurant>();
             MapperConfigurationExpression.CreateMap<Domain.Campaign, DAL.App.DTO.Campaign>();

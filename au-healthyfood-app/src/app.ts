@@ -1,36 +1,23 @@
-import { RestaurantService } from './service/restaurant-service';
-import { IRestaurant } from './domain/IRestaurant/IRestaurant';
 import { AppState } from './state/app-state';
 import { autoinject, PLATFORM } from 'aurelia-framework';
-import { RouterConfiguration, Router } from 'aurelia-router';
 import { IAlertData } from 'types/IAlertData';
 import { AlertType } from 'types/AlertType';
+import {
+    NavigationInstruction,
+    Next,
+    PipelineStep,
+    Redirect,
+    RouterConfiguration,
+    Router
+  } from 'aurelia-router';
 
 @autoinject
 export class App {
     router?: Router;
-    private _restaurants: IRestaurant[] = []
     private _alert: IAlertData | null = null;
 
-    constructor(private appState: AppState, private restaurantService: RestaurantService) {
+    constructor(private appState: AppState) {
 
-    }
-
-    attached() {
-        this.restaurantService.getRestaurants().then(
-            response => {
-                if (response.statusCode >= 200 && response.statusCode < 300) {
-                    this._restaurants = response.data!;
-                } else {
-                    // show error message
-                    this._alert = {
-                        message: response.statusCode.toString() + ' - ' + response.errorMessage,
-                        type: AlertType.Danger,
-                        dismissable: true,
-                    }
-                }
-            }
-        );
     }
 
 
@@ -38,136 +25,118 @@ export class App {
         this.router = router;
 
         config.title = "HealthyFood";
-
+        config.addAuthorizeStep(AuthorizeStep);
+        
         config.map([
-            { route: ['', 'home', 'home/index'], name: 'home', moduleId: PLATFORM.moduleName('views/home/index'), nav: true, title: 'Home' },
-
-            { route: ['account/login'], name: 'account-login', moduleId: PLATFORM.moduleName('views/account/login'), nav: false, title: 'Login' },
-            { route: ['account/register'], name: 'account-register', moduleId: PLATFORM.moduleName('views/account/register'), nav: false, title: 'Register' },
-
-            { route: ['account/manage'], name: 'account-manage', moduleId: PLATFORM.moduleName('views/account/manage/index'), nav: false, title: 'Manage account' },
-            { route: ['account/manageEmail'], name: 'account-manageEmail', moduleId: PLATFORM.moduleName('views/account/manage/email'), nav: false, title: 'Manage email' },
-            { route: ['account/managePassword'], name: 'account-managePassword', moduleId: PLATFORM.moduleName('views/account/manage/password'), nav: false, title: 'Manage password' },
-            { route: ['account/manageContacts'], name: 'account-manageContacts', moduleId: PLATFORM.moduleName('views/account/manage/contacts'), nav: false, title: 'Manage contacts' },
+            { route: ['', 'home', 'home/index'], name: 'home', moduleId: PLATFORM.moduleName('views/home/index'), nav: true, title: 'Home', settings: { roles: [] } },
 
 
-
-            { route: ['areas', 'areas/index'], name: 'areas-index', moduleId: PLATFORM.moduleName('views/areas/index'), nav: true, title: 'Areas' },
-            { route: ['areas/details/:id?'], name: 'areas-details', moduleId: PLATFORM.moduleName('views/areas/details'), nav: false, title: 'Areas details' },
-            { route: ['areas/edit/:id?'], name: 'areas-edit', moduleId: PLATFORM.moduleName('views/areas/edit'), nav: false, title: 'Areas Edit' },
-            { route: ['areas/create'], name: 'areas-create', moduleId: PLATFORM.moduleName('views/areas/create'), nav: false, title: 'Areas Create' },
+            { route: ['account/login'], name: 'account-login', moduleId: PLATFORM.moduleName('views/account/login'), nav: false, title: 'Login', settings: { roles: [] } },
+            { route: ['account/register'], name: 'account-register', moduleId: PLATFORM.moduleName('views/account/register'), nav: false, title: 'Register', settings: { roles: [] } },
 
 
-            { route: ['bills', 'bills/index'], name: 'bills-index', moduleId: PLATFORM.moduleName('views/bills/index'), nav: true, title: 'Bills' },
-            { route: ['bills/details/:id'], name: 'bills-details', moduleId: PLATFORM.moduleName('views/bills/details'), nav: false, title: 'Bills details' },
-            { route: ['bills/edit/:id'], name: 'bills-edit', moduleId: PLATFORM.moduleName('views/bills/edit'), nav: false, title: 'Bills Edit' },
-            { route: ['bills/create'], name: 'bills-create', moduleId: PLATFORM.moduleName('views/bills/create'), nav: false, title: 'Bills Create' },
+            { route: ['account/manage'], name: 'account-manage', moduleId: PLATFORM.moduleName('views/account/manage/index'), nav: false, title: 'Manage account', settings: { roles: [] } },
+            { route: ['account/manageEmail'], name: 'account-manageEmail', moduleId: PLATFORM.moduleName('views/account/manage/email'), nav: false, title: 'Manage email', settings: { roles: [] } },
+            { route: ['account/managePassword'], name: 'account-managePassword', moduleId: PLATFORM.moduleName('views/account/manage/password'), nav: false, title: 'Manage password', settings: { roles: [] } },
+            { route: ['account/manageContacts'], name: 'account-manageContacts', moduleId: PLATFORM.moduleName('views/account/manage/contacts'), nav: false, title: 'Manage contacts', settings: { roles: [] } },
 
 
-            { route: ['campaigns', 'campaigns/index'], name: 'campaigns-index', moduleId: PLATFORM.moduleName('views/campaigns/index'), nav: true, title: 'Campaigns' },
-            { route: ['campaigns/details/:id?'], name: 'campaigns-details', moduleId: PLATFORM.moduleName('views/campaigns/details'), nav: false, title: 'Campaigns details' },
-            { route: ['campaigns/edit/:id?'], name: 'campaigns-edit', moduleId: PLATFORM.moduleName('views/campaigns/edit'), nav: false, title: 'Campaigns Edit' },
-            { route: ['campaigns/create'], name: 'campaigns-create', moduleId: PLATFORM.moduleName('views/campaigns/create'), nav: false, title: 'Campaigns Create' },
+            { route: ['areas', 'areas/index'], name: 'areas-index', moduleId: PLATFORM.moduleName('views/areas/index'), nav: true, title: 'Areas', settings: { roles: ['admin'] } },
+            { route: ['areas/details/:id?'], name: 'areas-details', moduleId: PLATFORM.moduleName('views/areas/details'), nav: false, title: 'Areas details', settings: { roles: ['admin'] } },
+            { route: ['areas/edit/:id?'], name: 'areas-edit', moduleId: PLATFORM.moduleName('views/areas/edit'), nav: false, title: 'Areas Edit', settings: { roles: ['admin'] } },
+            { route: ['areas/create'], name: 'areas-create', moduleId: PLATFORM.moduleName('views/areas/create'), nav: false, title: 'Areas Create', settings: { roles: ['admin'] } },
 
 
-            { route: ['contacts/details/:id?'], name: 'contacts-details', moduleId: PLATFORM.moduleName('views/contacts/details'), nav: false, title: 'Contacts details' },
-            { route: ['contacts/edit/:id?'], name: 'contacts-edit', moduleId: PLATFORM.moduleName('views/contacts/edit'), nav: false, title: 'Contacts Edit' },
-            { route: ['contacts/create'], name: 'contacts-create', moduleId: PLATFORM.moduleName('views/contacts/create'), nav: false, title: 'Contacts Create' },
+            { route: ['campaigns', 'campaigns/index'], name: 'campaigns-index', moduleId: PLATFORM.moduleName('views/campaigns/index'), nav: true, title: 'Campaigns', settings: { roles: [] } },
+            { route: ['campaigns/details/:id?'], name: 'campaigns-details', moduleId: PLATFORM.moduleName('views/campaigns/details'), nav: false, title: 'Campaigns details', settings: { roles: [] } },
+            { route: ['campaigns/edit/:id?'], name: 'campaigns-edit', moduleId: PLATFORM.moduleName('views/campaigns/edit'), nav: false, title: 'Campaigns Edit', settings: { roles: [] } },
+            { route: ['campaigns/create'], name: 'campaigns-create', moduleId: PLATFORM.moduleName('views/campaigns/create'), nav: false, title: 'Campaigns Create', settings: { roles: [] } },
 
 
-
-            { route: ['contacttypes', 'contacttypes/index'], name: 'contacttypes-index', moduleId: PLATFORM.moduleName('views/contacttypes/index'), nav: true, title: 'Contact types' },
-            { route: ['contacttypes/details/:id?'], name: 'contacttypes-details', moduleId: PLATFORM.moduleName('views/contacttypes/details'), nav: false, title: 'Contact Types details' },
-            { route: ['contacttypes/edit/:id?'], name: 'contacttypes-edit', moduleId: PLATFORM.moduleName('views/contacttypes/edit'), nav: false, title: 'Contact Types Edit' },
-            { route: ['contacttypes/create'], name: 'contacttypes-create', moduleId: PLATFORM.moduleName('views/contacttypes/create'), nav: false, title: 'Contact Types Create' },
+            { route: ['contacts/details/:id?'], name: 'contacts-details', moduleId: PLATFORM.moduleName('views/contacts/details'), nav: false, title: 'Contacts details', settings: { roles: [] } },
+            { route: ['contacts/edit/:id?'], name: 'contacts-edit', moduleId: PLATFORM.moduleName('views/contacts/edit'), nav: false, title: 'Contacts Edit', settings: { roles: [] } },
+            { route: ['contacts/create'], name: 'contacts-create', moduleId: PLATFORM.moduleName('views/contacts/create'), nav: false, title: 'Contacts Create', settings: { roles: [] } },
 
 
-            { route: ['drinks', 'drinks/index'], name: 'drinks-index', moduleId: PLATFORM.moduleName('views/drinks/index'), nav: true, title: 'Drinks' },
-            { route: ['drinks/details/:id?'], name: 'drinks-details', moduleId: PLATFORM.moduleName('views/drinks/details'), nav: false, title: 'Drinks details' },
-            { route: ['drinks/edit/:id?'], name: 'drinks-edit', moduleId: PLATFORM.moduleName('views/drinks/edit'), nav: false, title: 'Drinks Edit' },
-            { route: ['drinks/create'], name: 'drinks-create', moduleId: PLATFORM.moduleName('views/drinks/create'), nav: false, title: 'Drinks Create' },
+            { route: ['contacttypes', 'contacttypes/index'], name: 'contacttypes-index', moduleId: PLATFORM.moduleName('views/contacttypes/index'), nav: true, title: 'Contact types' , settings: { roles: ['admin'] } },
+            { route: ['contacttypes/details/:id?'], name: 'contacttypes-details', moduleId: PLATFORM.moduleName('views/contacttypes/details'), nav: false, title: 'Contact Types details' , settings: { roles: ['admin'] } },
+            { route: ['contacttypes/edit/:id?'], name: 'contacttypes-edit', moduleId: PLATFORM.moduleName('views/contacttypes/edit'), nav: false, title: 'Contact Types Edit' , settings: { roles: ['admin'] } },
+            { route: ['contacttypes/create'], name: 'contacttypes-create', moduleId: PLATFORM.moduleName('views/contacttypes/create'), nav: false, title: 'Contact Types Create', settings: { roles: ['admin'] } },
 
 
-
-            { route: ['foods', 'foods/index'], name: 'foods-index', moduleId: PLATFORM.moduleName('views/foods/index'), nav: true, title: 'Foods' },
-            { route: ['foods/details/:id?'], name: 'foods-details', moduleId: PLATFORM.moduleName('views/foods/details'), nav: false, title: 'Foods details' },
-            { route: ['foods/edit/:id?'], name: 'foods-edit', moduleId: PLATFORM.moduleName('views/foods/edit'), nav: false, title: 'Foods Edit' },
-            { route: ['foods/create'], name: 'foods-create', moduleId: PLATFORM.moduleName('views/foods/create'), nav: false, title: 'Foods Create' },
-
+            { route: ['drinks', 'drinks/index'], name: 'drinks-index', moduleId: PLATFORM.moduleName('views/drinks/index'), nav: true, title: 'Drinks', settings: { roles: [] } },
+            { route: ['drinks/details/:id?'], name: 'drinks-details', moduleId: PLATFORM.moduleName('views/drinks/details'), nav: false, title: 'Drinks details', settings: { roles: [] } },
+            { route: ['drinks/edit/:id?'], name: 'drinks-edit', moduleId: PLATFORM.moduleName('views/drinks/edit'), nav: false, title: 'Drinks Edit', settings: { roles: [] } },
+            { route: ['drinks/create'], name: 'drinks-create', moduleId: PLATFORM.moduleName('views/drinks/create'), nav: false, title: 'Drinks Create', settings: { roles: [] } },
 
 
-            { route: ['foodtypes', 'foodtypes/index'], name: 'foodtypes-index', moduleId: PLATFORM.moduleName('views/foodtypes/index'), nav: true, title: 'Food types' },
-            { route: ['foodtypes/details/:id?'], name: 'foodtypes-details', moduleId: PLATFORM.moduleName('views/foodtypes/details'), nav: false, title: 'Food Types details' },
-            { route: ['foodtypes/edit/:id?'], name: 'foodtypes-edit', moduleId: PLATFORM.moduleName('views/foodtypes/edit'), nav: false, title: 'Food Types Edit' },
-            { route: ['foodtypes/delete/:id?'], name: 'foodtypes-delete', moduleId: PLATFORM.moduleName('views/foodtypes/delete'), nav: false, title: 'Food Types Delete' },
-            { route: ['foodtypes/create'], name: 'foodtypes-create', moduleId: PLATFORM.moduleName('views/foodtypes/create'), nav: false, title: 'Food Types Create' },
+            { route: ['foods', 'foods/index'], name: 'foods-index', moduleId: PLATFORM.moduleName('views/foods/index'), nav: true, title: 'Foods', settings: { roles: [] } },
+            { route: ['foods/details/:id?'], name: 'foods-details', moduleId: PLATFORM.moduleName('views/foods/details'), nav: false, title: 'Foods details', settings: { roles: [] } },
+            { route: ['foods/edit/:id?'], name: 'foods-edit', moduleId: PLATFORM.moduleName('views/foods/edit'), nav: false, title: 'Foods Edit', settings: { roles: [] } },
+            { route: ['foods/create'], name: 'foods-create', moduleId: PLATFORM.moduleName('views/foods/create'), nav: false, title: 'Foods Create', settings: { roles: [] } },
 
 
-            { route: ['ingredients', 'ingredients/index'], name: 'ingredients-index', moduleId: PLATFORM.moduleName('views/ingredients/index'), nav: true, title: 'Ingredients' },
-            { route: ['ingredients/details/:id?'], name: 'ingredients-details', moduleId: PLATFORM.moduleName('views/ingredients/details'), nav: false, title: 'Ingredients details' },
-            { route: ['ingredients/edit/:id?'], name: 'ingredients-edit', moduleId: PLATFORM.moduleName('views/ingredients/edit'), nav: false, title: 'Ingredients Edit' },
-            { route: ['ingredients/create'], name: 'ingredients-create', moduleId: PLATFORM.moduleName('views/ingredients/create'), nav: false, title: 'Ingredients Create' },
+            { route: ['foodtypes', 'foodtypes/index'], name: 'foodtypes-index', moduleId: PLATFORM.moduleName('views/foodtypes/index'), nav: true, title: 'Food types' , settings: { roles: ['admin'] } },
+            { route: ['foodtypes/details/:id?'], name: 'foodtypes-details', moduleId: PLATFORM.moduleName('views/foodtypes/details'), nav: false, title: 'Food Types details' , settings: { roles: ['admin'] } },
+            { route: ['foodtypes/edit/:id?'], name: 'foodtypes-edit', moduleId: PLATFORM.moduleName('views/foodtypes/edit'), nav: false, title: 'Food Types Edit' , settings: { roles: ['admin'] } },
+            { route: ['foodtypes/delete/:id?'], name: 'foodtypes-delete', moduleId: PLATFORM.moduleName('views/foodtypes/delete'), nav: false, title: 'Food Types Delete' , settings: { roles: ['admin'] } },
+            { route: ['foodtypes/create'], name: 'foodtypes-create', moduleId: PLATFORM.moduleName('views/foodtypes/create'), nav: false, title: 'Food Types Create', settings: { roles: ['admin'] } },
 
 
-            { route: ['orders', 'orders/index'], name: 'orders-index', moduleId: PLATFORM.moduleName('views/orders/index'), nav: true, title: 'My Orders' },
-            { route: ['orders/details/:id?'], name: 'orders-details', moduleId: PLATFORM.moduleName('views/orders/details'), nav: false, title: 'Orders details' },
-            { route: ['orders/edit/:id?'], name: 'orders-edit', moduleId: PLATFORM.moduleName('views/orders/edit'), nav: false, title: 'Orders Edit' },
-            { route: ['orders/create'], name: 'orders-create', moduleId: PLATFORM.moduleName('views/orders/create'), nav: false, title: 'Orders Create' },
+            { route: ['ingredients', 'ingredients/index'], name: 'ingredients-index', moduleId: PLATFORM.moduleName('views/ingredients/index'), nav: true, title: 'Ingredients', settings: { roles: [] } },
+            { route: ['ingredients/details/:id?'], name: 'ingredients-details', moduleId: PLATFORM.moduleName('views/ingredients/details'), nav: false, title: 'Ingredients details', settings: { roles: [] } },
+            { route: ['ingredients/edit/:id?'], name: 'ingredients-edit', moduleId: PLATFORM.moduleName('views/ingredients/edit'), nav: false, title: 'Ingredients Edit', settings: { roles: [] } },
+            { route: ['ingredients/create'], name: 'ingredients-create', moduleId: PLATFORM.moduleName('views/ingredients/create'), nav: false, title: 'Ingredients Create', settings: { roles: [] } },
 
 
-
-            { route: ['orderitems', 'orderitems/index'], name: 'orderitems-index', moduleId: PLATFORM.moduleName('views/orderitems/index'), nav: true, title: 'My cart' },
-            { route: ['orderitems/details/:id?'], name: 'orderitems-details', moduleId: PLATFORM.moduleName('views/orderitems/details'), nav: false, title: 'Order items details' },
-            { route: ['orderitems/edit/:id?'], name: 'orderitems-edit', moduleId: PLATFORM.moduleName('views/orderitems/edit'), nav: false, title: 'Order items Edit' },
-            { route: ['orderitems/create'], name: 'orderitems-create', moduleId: PLATFORM.moduleName('views/orderitems/create'), nav: false, title: 'Order items Create' },
-
+            { route: ['orders', 'orders/index'], name: 'orders-index', moduleId: PLATFORM.moduleName('views/orders/index'), nav: true, title: 'My Orders', settings: { roles: [] } },
+            { route: ['orders/details/:id?'], name: 'orders-details', moduleId: PLATFORM.moduleName('views/orders/details'), nav: false, title: 'Orders details', settings: { roles: [] } },
+            { route: ['orders/edit/:id?'], name: 'orders-edit', moduleId: PLATFORM.moduleName('views/orders/edit'), nav: false, title: 'Orders Edit', settings: { roles: [] } },
+            { route: ['orders/create'], name: 'orders-create', moduleId: PLATFORM.moduleName('views/orders/create'), nav: false, title: 'Orders Create', settings: { roles: [] } },
 
 
-            { route: ['ordertypes', 'ordertypes/index'], name: 'ordertypes-index', moduleId: PLATFORM.moduleName('views/ordertypes/index'), nav: true, title: 'Order types' },
-            { route: ['ordertypes/details/:id?'], name: 'ordertypes-details', moduleId: PLATFORM.moduleName('views/ordertypes/details'), nav: false, title: 'Order Types details' },
-            { route: ['ordertypes/edit/:id?'], name: 'ordertypes-edit', moduleId: PLATFORM.moduleName('views/ordertypes/edit'), nav: false, title: 'Order Types Edit' },
-            { route: ['ordertypes/delete/:id?'], name: 'ordertypes-delete', moduleId: PLATFORM.moduleName('views/ordertypes/delete'), nav: false, title: 'Order Types Delete' },
-            { route: ['ordertypes/create'], name: 'ordertypes-create', moduleId: PLATFORM.moduleName('views/ordertypes/create'), nav: false, title: 'Order Types Create' },
+            { route: ['orderitems', 'orderitems/index'], name: 'orderitems-index', moduleId: PLATFORM.moduleName('views/orderitems/index'), nav: true, title: 'My cart', settings: { roles: [] } },
+            { route: ['orderitems/details/:id?'], name: 'orderitems-details', moduleId: PLATFORM.moduleName('views/orderitems/details'), nav: false, title: 'Order items details', settings: { roles: [] } },
+            { route: ['orderitems/edit/:id?'], name: 'orderitems-edit', moduleId: PLATFORM.moduleName('views/orderitems/edit'), nav: false, title: 'Order items Edit', settings: { roles: [] } },
+            { route: ['orderitems/create'], name: 'orderitems-create', moduleId: PLATFORM.moduleName('views/orderitems/create'), nav: false, title: 'Order items Create', settings: { roles: [] } },
 
 
-
-            { route: ['payments', 'payments/index'], name: 'payments-index', moduleId: PLATFORM.moduleName('views/payments/index'), nav: true, title: 'Payments' },
-            { route: ['payments/details/:id?'], name: 'payments-details', moduleId: PLATFORM.moduleName('views/payments/details'), nav: false, title: 'Payments details' },
-            { route: ['payments/edit/:id?'], name: 'payments-edit', moduleId: PLATFORM.moduleName('views/payments/edit'), nav: false, title: 'Payments Edit' },
-            { route: ['payments/create'], name: 'payments-create', moduleId: PLATFORM.moduleName('views/payments/create'), nav: false, title: 'Payments Create' },
-
-
-            { route: ['paymenttypes', 'paymenttypes/index'], name: 'paymenttypes-index', moduleId: PLATFORM.moduleName('views/paymenttypes/index'), nav: true, title: 'Payment types' },
-            { route: ['paymenttypes/details/:id?'], name: 'paymenttypes-details', moduleId: PLATFORM.moduleName('views/paymenttypes/details'), nav: false, title: 'Payment Types details' },
-            { route: ['paymenttypes/edit/:id?'], name: 'paymenttypes-edit', moduleId: PLATFORM.moduleName('views/paymenttypes/edit'), nav: false, title: 'Payment Types Edit' },
-            { route: ['paymenttypes/create'], name: 'paymenttypes-create', moduleId: PLATFORM.moduleName('views/paymenttypes/create'), nav: false, title: 'Payment Types Create' },
+            { route: ['ordertypes', 'ordertypes/index'], name: 'ordertypes-index', moduleId: PLATFORM.moduleName('views/ordertypes/index'), nav: true, title: 'Order types' , settings: { roles: ['admin'] } },
+            { route: ['ordertypes/details/:id?'], name: 'ordertypes-details', moduleId: PLATFORM.moduleName('views/ordertypes/details'), nav: false, title: 'Order Types details' , settings: { roles: ['admin'] } },
+            { route: ['ordertypes/edit/:id?'], name: 'ordertypes-edit', moduleId: PLATFORM.moduleName('views/ordertypes/edit'), nav: false, title: 'Order Types Edit' , settings: { roles: ['admin'] } },
+            { route: ['ordertypes/delete/:id?'], name: 'ordertypes-delete', moduleId: PLATFORM.moduleName('views/ordertypes/delete'), nav: false, title: 'Order Types Delete' , settings: { roles: ['admin'] } },
+            { route: ['ordertypes/create'], name: 'ordertypes-create', moduleId: PLATFORM.moduleName('views/ordertypes/create'), nav: false, title: 'Order Types Create', settings: { roles: ['admin'] } },
 
 
-            { route: ['prices', 'prices/index'], name: 'prices-index', moduleId: PLATFORM.moduleName('views/prices/index'), nav: true, title: 'Prices' },
-            { route: ['prices/details/:id?'], name: 'prices-details', moduleId: PLATFORM.moduleName('views/prices/details'), nav: false, title: 'Prices details' },
-            { route: ['prices/edit/:id?'], name: 'prices-edit', moduleId: PLATFORM.moduleName('views/prices/edit'), nav: false, title: 'Prices Edit' },
-            { route: ['prices/create'], name: 'prices-create', moduleId: PLATFORM.moduleName('views/prices/create'), nav: false, title: 'Prices Create' },
+            { route: ['paymenttypes', 'paymenttypes/index'], name: 'paymenttypes-index', moduleId: PLATFORM.moduleName('views/paymenttypes/index'), nav: true, title: 'Payment types' , settings: { roles: ['admin'] } },
+            { route: ['paymenttypes/details/:id?'], name: 'paymenttypes-details', moduleId: PLATFORM.moduleName('views/paymenttypes/details'), nav: false, title: 'Payment Types details' , settings: { roles: ['admin'] } },
+            { route: ['paymenttypes/edit/:id?'], name: 'paymenttypes-edit', moduleId: PLATFORM.moduleName('views/paymenttypes/edit'), nav: false, title: 'Payment Types Edit' , settings: { roles: ['admin'] } },
+            { route: ['paymenttypes/create'], name: 'paymenttypes-create', moduleId: PLATFORM.moduleName('views/paymenttypes/create'), nav: false, title: 'Payment Types Create', settings: { roles: ['admin'] } },
 
 
-            { route: ['restaurants', 'restaurants/index'], name: 'restaurants-index', moduleId: PLATFORM.moduleName('views/restaurants/index'), nav: true, title: 'Restaurants' },
-            { route: ['restaurants/details/:id?'], name: 'restaurants-details', moduleId: PLATFORM.moduleName('views/restaurants/details'), nav: false, title: 'Restaurants details' },
-            { route: ['restaurants/edit/:id?'], name: 'restaurants-edit', moduleId: PLATFORM.moduleName('views/restaurants/edit'), nav: false, title: 'Restaurants Edit' },
-            { route: ['restaurants/create'], name: 'restaurants-create', moduleId: PLATFORM.moduleName('views/restaurants/create'), nav: false, title: 'Restaurants Create' },
+            { route: ['prices', 'prices/index'], name: 'prices-index', moduleId: PLATFORM.moduleName('views/prices/index'), nav: true, title: 'Prices' , settings: { roles: ['admin'] } },
+            { route: ['prices/details/:id?'], name: 'prices-details', moduleId: PLATFORM.moduleName('views/prices/details'), nav: false, title: 'Prices details' , settings: { roles: ['admin'] } },
+            { route: ['prices/edit/:id?'], name: 'prices-edit', moduleId: PLATFORM.moduleName('views/prices/edit'), nav: false, title: 'Prices Edit' , settings: { roles: ['admin'] } },
+            { route: ['prices/create'], name: 'prices-create', moduleId: PLATFORM.moduleName('views/prices/create'), nav: false, title: 'Prices Create', settings: { roles: ['admin'] } },
 
 
-            { route: ['towns', 'towns/index'], name: 'towns-index', moduleId: PLATFORM.moduleName('views/towns/index'), nav: true, title: 'Towns' },
-            { route: ['towns/details/:id?'], name: 'towns-details', moduleId: PLATFORM.moduleName('views/towns/details'), nav: false, title: 'Towns Details' },
-            { route: ['towns/edit/:id?'], name: 'towns-edit', moduleId: PLATFORM.moduleName('views/towns/edit'), nav: false, title: 'Towns Edit' },
-            { route: ['towns/delete/:id?'], name: 'towns-delete', moduleId: PLATFORM.moduleName('views/towns/delete'), nav: false, title: 'Towns Delete' },
-            { route: ['towns/create'], name: 'towns-create', moduleId: PLATFORM.moduleName('views/towns/create'), nav: false, title: 'Towns Create' }
-        ]
-        );
+            { route: ['restaurants', 'restaurants/index'], name: 'restaurants-index', moduleId: PLATFORM.moduleName('views/restaurants/index'), nav: true, title: 'Restaurants', settings: { roles: [] } },
+            { route: ['restaurants/details/:id?'], name: 'restaurants-details', moduleId: PLATFORM.moduleName('views/restaurants/details'), nav: false, title: 'Restaurants details', settings: { roles: [] } },
+            { route: ['restaurants/edit/:id?'], name: 'restaurants-edit', moduleId: PLATFORM.moduleName('views/restaurants/edit'), nav: false, title: 'Restaurants Edit', settings: { roles: [] } },
+            { route: ['restaurants/create'], name: 'restaurants-create', moduleId: PLATFORM.moduleName('views/restaurants/create'), nav: false, title: 'Restaurants Create', settings: { roles: [] } },
 
-        if (this.appState.jwt !== null) {
-            config.mapUnknownRoutes('views/home/index');
-        } else {
-            config.mapUnknownRoutes('views/account/login')
-        }
+
+            { route: ['towns', 'towns/index'], name: 'towns-index', moduleId: PLATFORM.moduleName('views/towns/index'), nav: true, title: 'Towns' , settings: { roles: ['admin'] } },
+            { route: ['towns/details/:id?'], name: 'towns-details', moduleId: PLATFORM.moduleName('views/towns/details'), nav: false, title: 'Towns Details' , settings: { roles: ['admin'] } },
+            { route: ['towns/edit/:id?'], name: 'towns-edit', moduleId: PLATFORM.moduleName('views/towns/edit'), nav: false, title: 'Towns Edit' , settings: { roles: ['admin'] } },
+            { route: ['towns/delete/:id?'], name: 'towns-delete', moduleId: PLATFORM.moduleName('views/towns/delete'), nav: false, title: 'Towns Delete' , settings: { roles: ['admin'] } },
+            { route: ['towns/create'], name: 'towns-create', moduleId: PLATFORM.moduleName('views/towns/create'), nav: false, title: 'Towns Create', settings: { roles: ['admin'] } }
+        ]);
+
+
+        config.mapUnknownRoutes('views/home/index');
+        config.fallbackRoute('views/home/index')
+        
     }
 
     logoutOnClick() {
@@ -176,3 +145,27 @@ export class App {
     }
 
 }
+
+
+class AuthorizeStep {
+
+    constructor(private appState: AppState) {
+
+    }
+
+    public run(navigationInstruction: NavigationInstruction, next: Next): Promise<any> {
+      if (navigationInstruction.getAllInstructions().some(i => {console.log(i); return i.config.settings.roles.indexOf('admin') !== -1;})) {
+        let isAdmin = this.appState.isAdmin;
+        if (!isAdmin) {
+          return next.cancel(new Redirect('welcome'));
+        }
+      }
+  
+      return next();
+    }
+  }
+  
+
+  
+
+  

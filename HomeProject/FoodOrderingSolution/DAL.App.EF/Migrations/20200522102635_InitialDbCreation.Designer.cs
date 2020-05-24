@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DAL.App.EF.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20200522094115_InitialDbCreation")]
+    [Migration("20200522102635_InitialDbCreation")]
     partial class InitialDbCreation
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -52,51 +52,6 @@ namespace DAL.App.EF.Migrations
                     b.HasIndex("TownId");
 
                     b.ToTable("Areas");
-                });
-
-            modelBuilder.Entity("Domain.Bill", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("char(36)");
-
-                    b.Property<Guid>("AppUserId")
-                        .HasColumnType("char(36)");
-
-                    b.Property<DateTime>("ChangedAt")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<string>("ChangedBy")
-                        .HasColumnType("varchar(256) CHARACTER SET utf8mb4")
-                        .HasMaxLength(256);
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("varchar(256) CHARACTER SET utf8mb4")
-                        .HasMaxLength(256);
-
-                    b.Property<int>("Number")
-                        .HasColumnType("int");
-
-                    b.Property<Guid>("OrderId")
-                        .HasColumnType("char(36)");
-
-                    b.Property<decimal>("Sum")
-                        .HasColumnType("decimal(65,30)");
-
-                    b.Property<string>("TimeIssued")
-                        .IsRequired()
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("AppUserId");
-
-                    b.HasIndex("OrderId");
-
-                    b.ToTable("Bills");
                 });
 
             modelBuilder.Entity("Domain.Campaign", b =>
@@ -573,6 +528,9 @@ namespace DAL.App.EF.Migrations
                     b.Property<Guid>("OrderId")
                         .HasColumnType("char(36)");
 
+                    b.Property<Guid?>("PaymentTypeId")
+                        .HasColumnType("char(36)");
+
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
 
@@ -587,6 +545,8 @@ namespace DAL.App.EF.Migrations
                     b.HasIndex("IngredientId");
 
                     b.HasIndex("OrderId");
+
+                    b.HasIndex("PaymentTypeId");
 
                     b.ToTable("OrderItems");
                 });
@@ -623,53 +583,6 @@ namespace DAL.App.EF.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("OrderTypes");
-                });
-
-            modelBuilder.Entity("Domain.Payment", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("char(36)");
-
-                    b.Property<int>("Amount")
-                        .HasColumnType("int");
-
-                    b.Property<Guid>("AppUserId")
-                        .HasColumnType("char(36)");
-
-                    b.Property<Guid>("BillId")
-                        .HasColumnType("char(36)");
-
-                    b.Property<DateTime>("ChangedAt")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<string>("ChangedBy")
-                        .HasColumnType("varchar(256) CHARACTER SET utf8mb4")
-                        .HasMaxLength(256);
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("varchar(256) CHARACTER SET utf8mb4")
-                        .HasMaxLength(256);
-
-                    b.Property<Guid>("PaymentTypeId")
-                        .HasColumnType("char(36)");
-
-                    b.Property<string>("TimeMade")
-                        .IsRequired()
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("AppUserId");
-
-                    b.HasIndex("BillId");
-
-                    b.HasIndex("PaymentTypeId");
-
-                    b.ToTable("Payments");
                 });
 
             modelBuilder.Entity("Domain.PaymentType", b =>
@@ -929,21 +842,6 @@ namespace DAL.App.EF.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Domain.Bill", b =>
-                {
-                    b.HasOne("Domain.Identity.AppUser", "AppUser")
-                        .WithMany("Bills")
-                        .HasForeignKey("AppUserId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("Domain.Order", "Order")
-                        .WithMany("Bills")
-                        .HasForeignKey("OrderId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("Domain.Contact", b =>
                 {
                     b.HasOne("Domain.Identity.AppUser", "AppUser")
@@ -1053,27 +951,11 @@ namespace DAL.App.EF.Migrations
                         .HasForeignKey("OrderId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
-                });
 
-            modelBuilder.Entity("Domain.Payment", b =>
-                {
-                    b.HasOne("Domain.Identity.AppUser", "AppUser")
-                        .WithMany()
-                        .HasForeignKey("AppUserId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("Domain.Bill", "Bill")
-                        .WithMany("Payments")
-                        .HasForeignKey("BillId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("Domain.PaymentType", "PaymentType")
-                        .WithMany("Payments")
+                    b.HasOne("Domain.PaymentType", null)
+                        .WithMany("OrderItems")
                         .HasForeignKey("PaymentTypeId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
                 });
 
             modelBuilder.Entity("Domain.Price", b =>

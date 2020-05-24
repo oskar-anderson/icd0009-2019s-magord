@@ -1,31 +1,23 @@
 <template>
-    <h1>Welcome to Healthy-Me!</h1>
+    <h1 class="text-center">Welcome to Healthy-Me!</h1>
 
     <br>
     <br>
+    <div class="text-center" if.bind="appState.jwt == null">
+        <h3>Please register or log in to start ordering some tasty food</h3>
+    </div>
 
-    <div class="dropdown">
-        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          Restaurants
-        </button>
-        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-          <a repeat.for="restaurant of restaurants" class="dropdown-item" href="#">${restaurant.town}, ${restaurant.address}</a>
-        </div>
-
+    <div if.bind="appState.jwt !== null" class="text-center">
         <div>
             <a route-href="route: orders-index; params.bind: { }">Click here to create your order!</a>
         </div>
-
+    
         <div>
             <a route-href="route: campaigns-index; params.bind: { }">Click here to see ongoing campaings!</a>
         </div>
-
+    
         <div>
             <a route-href="route: restaurants-index; params.bind: { }">Click here to see our restaurants!</a>
         </div>
-
-        <div>
-            
-        </div>
-      </div> 
+    </div>
 </template>

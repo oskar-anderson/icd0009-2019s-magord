@@ -16,9 +16,6 @@ namespace BLL.App
         public IAreaService Areas =>
             GetService<IAreaService>(() => new AreaService(UnitOfWork));
         
-        public IBillService Bills =>
-            GetService<IBillService>(() => new BillService(UnitOfWork));
-
         public ICampaignService Campaigns =>
             GetService<ICampaignService>(() => new CampaignService(UnitOfWork));
 
@@ -48,9 +45,6 @@ namespace BLL.App
 
         public IOrderTypeService OrderTypes =>
             GetService<IOrderTypeService>(() => new OrderTypeService(UnitOfWork));
-
-        public IPaymentService Payments =>
-            GetService<IPaymentService>(() => new PaymentService(UnitOfWork));
 
         public IPaymentTypeService PaymentTypes =>
             GetService<IPaymentTypeService>(() => new PaymentTypeService(UnitOfWork));

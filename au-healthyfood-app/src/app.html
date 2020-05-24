@@ -34,9 +34,7 @@
                         </li>
                     </ul>
 
-
-
-                    <ul class="navbar-nav flex-grow-1">
+                    <ul if.bind="appState.jwt != null" class="navbar-nav flex-grow-1">
                         <li repeat.for='nav of router.navigation' class="nav-item ${nav.isActive ? 'active' : ''}">
                             <a class="nav-link text-dark" href.bind="nav.href">${nav.title}</a>
                         </li>
