@@ -128,7 +128,6 @@ export class OrderItemsIndex {
 
     addressIsSet() {
         if(this.appState.address == null){
-            console.log("aaa" + this.orderType)
             return false;
             
         }

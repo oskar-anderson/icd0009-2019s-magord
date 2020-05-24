@@ -15,6 +15,8 @@ namespace DAL.App.DTO
         public string TimeCreated { get; set; } = default!;
 
         public string Restaurant { get; set; } = default!;
+        public string Area { get; set; } = default!;
+        public string Town { get; set; } = default!;
 
         public string OrderType { get; set; } = default!;
 

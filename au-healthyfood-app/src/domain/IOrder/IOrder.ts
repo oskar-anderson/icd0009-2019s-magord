@@ -8,6 +8,12 @@ export interface IOrder {
     restaurantId: string;
     restaurant: string;
 
+    areaId: string;
+    area: string;
+
+    townId: string;
+    town: string;
+
     orderTypeId: string;
     orderType: string;
 

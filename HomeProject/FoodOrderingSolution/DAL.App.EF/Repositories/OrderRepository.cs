@@ -50,6 +50,8 @@ namespace DAL.App.EF.Repositories
             var query = PrepareQuery(userId, noTracking);
             return await query 
                     .Include(o => o.Restaurant)
+                    .ThenInclude(o => o!.Area)
+                    .ThenInclude(o => o!.Town)
                     .Include(o => o.OrderType)
                     .Include(o => o.PaymentType)
                 .Select(a => new OrderView()
@@ -59,7 +61,9 @@ namespace DAL.App.EF.Repositories
                     OrderStatus = a.OrderStatus,
                     TimeCreated = a.TimeCreated,
                     OrderType = a.OrderType!.Name,
-                    Restaurant = a.Restaurant!.Name,
+                    Restaurant = a.Restaurant!.Address,
+                    Area = a.Restaurant.Area!.Name,
+                    Town = a.Restaurant.Area.Town!.Name,
                     Completed = a.Completed,
                     PaymentType = a.PaymentType!.Name
                 }).ToListAsync();
@@ -70,6 +74,8 @@ namespace DAL.App.EF.Repositories
             var query = PrepareQuery(userId, noTracking);
             return await query
                 .Include(o => o.Restaurant)
+                .ThenInclude(o => o!.Area)
+                .ThenInclude(o => o!.Town)
                 .Include(o => o.OrderType)
                 .Include(o => o.PaymentType)
                 .Where(r => r.Id == id)
@@ -81,6 +87,8 @@ namespace DAL.App.EF.Repositories
                     TimeCreated = a.TimeCreated,
                     OrderType = a.OrderType!.Name,
                     Restaurant = a.Restaurant!.Name,
+                    Area = a.Restaurant.Area!.Name,
+                    Town = a.Restaurant.Area.Town!.Name,
                     Completed = a.Completed,
                     PaymentType = a.PaymentType!.Name
                 })

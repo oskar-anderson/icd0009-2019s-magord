@@ -14,7 +14,7 @@
                 <div class="form-group">
                     <label class="control-label" for="RestaurantId">Restaurant</label>
                     <select class="form-control" data-val="true", type="text" id="RestaurantId" maxlength="256" value.bind="order.restaurantId">
-                    <option repeat.for="restaurant of _restaurants" model.bind="restaurant.id">${restaurant.name} - ${restaurant.address}</option>
+                    <option repeat.for="restaurant of _restaurants" model.bind="restaurant.id">${restaurant.address} | ${restaurant.area} | ${restaurant.town}</option>
                     </select>
                 </div>
 

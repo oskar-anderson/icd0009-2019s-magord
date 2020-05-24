@@ -80,8 +80,8 @@ export class OrdersIndex {
         event.preventDefault;
         if(this._orderInProgess) {
             this._alert = {
-                message: "Uh oh! It looks like you already have an order in progress!",
-                type: AlertType.Danger,
+                message: "Uh oh! It looks like you already have an order in the making!",
+                type: AlertType.Warning,
                 dismissable: true,
             }
             return null;
