@@ -21,4 +21,10 @@ export interface IOrderItem {
 
     orderTypeId: string;
     orderType: string;
+
+    paymentTypeId: string;
+    paymentType: string;
+
+    restaurantId: string;
+    restaurant: string;
 }

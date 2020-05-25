@@ -5,34 +5,43 @@
     <alert alert-data.bind="_alert"></alert>
 
 
-    <h1>Healthy-Me restaurants across Estonia</h1>
-
+    <div>
+        <h1 class="text-center">Healthy-Me restaurants across Estonia</h1>
+    </div>
+    <br>
+    <br>
     <p>
         <a if.bind="isAdmin" route-href="route: restaurants-create; params.bind: {}">Create New</a>
     </p>
     <table class="table">
-        <thead>
+        <thead class="thead-light">
             <tr>
                 <th>
-                    Address
-                </th>
-                <th>
-                    Opened from
-                </th>
-                <th>
-                    Closed from
+                    Town
                 </th>
                 <th>
                     Area
                 </th>
                 <th>
-                    Town
+                    Address
+                </th>
+                <th>
+                    Opens from
+                </th>
+                <th>
+                    Closes at
                 </th>
                 <th></th>
             </tr>
         </thead>
         <tbody>
             <tr repeat.for="restaurant of _restaurants">
+                <td>
+                    ${restaurant.town}
+                </td>
+                <td>
+                    ${restaurant.area}
+                </td>
                 <td>
                     ${restaurant.address}
                 </td>
@@ -41,12 +50,6 @@
                 </td>
                 <td>
                     ${restaurant.closedFrom}
-                </td>
-                <td>
-                    ${restaurant.area}
-                </td>
-                <td>
-                    ${restaurant.town}
                 </td>
                 <td>
                     <a if.bind="isAdmin" route-href="route: restaurants-edit; params.bind: { id: restaurant.id }">Edit</a>

@@ -56,6 +56,18 @@ namespace DAL.App.EF
             {
                 relationship.DeleteBehavior = DeleteBehavior.Restrict;
             }
+            
+            // Enable cascade delete on Order->OrderItem
+            builder.Entity<Order>()
+                .HasMany(s => s.OrderItems)
+                .WithOne(l => l.Order!)
+                .OnDelete(DeleteBehavior.Cascade);
+            
+            // Indexes
+            builder.Entity<Order>().HasIndex(i => i.CreatedAt);
+            builder.Entity<OrderItem>().HasIndex(i => i.CreatedAt);
+
+
         }
 
         private void SaveChangesMetadataUpdate()

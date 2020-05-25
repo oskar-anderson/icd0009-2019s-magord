@@ -482,6 +482,8 @@ namespace DAL.App.EF.Migrations
 
                     b.HasIndex("AppUserId");
 
+                    b.HasIndex("CreatedAt");
+
                     b.HasIndex("OrderTypeId");
 
                     b.HasIndex("PaymentTypeId");
@@ -535,6 +537,8 @@ namespace DAL.App.EF.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("AppUserId");
+
+                    b.HasIndex("CreatedAt");
 
                     b.HasIndex("DrinkId");
 
@@ -947,7 +951,7 @@ namespace DAL.App.EF.Migrations
                     b.HasOne("Domain.Order", "Order")
                         .WithMany("OrderItems")
                         .HasForeignKey("OrderId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Domain.PaymentType", null)

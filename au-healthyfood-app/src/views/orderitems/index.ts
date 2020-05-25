@@ -16,14 +16,16 @@ export class OrderItemsIndex {
     private _orderItems: IOrderItem[] = [];
     private _paymentTypes: IPaymentType[] = [];
     private orderType: string = "";
+    private pickUpOrder: boolean | null = null;
 
     private order: IOrder | null = null;
+
+    private selectedPaymentType: string = "";
+    private restaurantAddress: string = "";
 
     private totalSum = 0;
 
     private firstName = "";
-    private address = "";
-    private phoneNr = "";
 
     private isAdmin: boolean = false;
 
@@ -62,6 +64,11 @@ export class OrderItemsIndex {
                     this._orderItems = response.data!;
                     for (const orderItem of this._orderItems) {
                         this.orderType = orderItem.orderType
+                        this.selectedPaymentType = orderItem.paymentType;
+                        this.restaurantAddress = orderItem.restaurant;
+                        if(this.orderType === "Pick-up order") {
+                            this.pickUpOrder = true;
+                        }
                     }
                     this.calculatePrice();
                 } else {
@@ -92,8 +99,6 @@ export class OrderItemsIndex {
             }
         );
         this.firstName = this.appState.firstName as string;
-        this.address = this.appState.address as string;
-        this.phoneNr = this.appState.phoneNr as string
     }
 
 
@@ -160,6 +165,13 @@ export class OrderItemsIndex {
                         }
                     }
                 }
-            );
+        );
+    }
+
+    onSubmit() {
+        if(this.orderType === 'Pick-up order') {
+            console.log(this.orderType)
+        }
+        
     }
 }

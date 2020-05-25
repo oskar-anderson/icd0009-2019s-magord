@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DAL.App.EF.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20200522102635_InitialDbCreation")]
+    [Migration("20200524180930_InitialDbCreation")]
     partial class InitialDbCreation
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -484,6 +484,8 @@ namespace DAL.App.EF.Migrations
 
                     b.HasIndex("AppUserId");
 
+                    b.HasIndex("CreatedAt");
+
                     b.HasIndex("OrderTypeId");
 
                     b.HasIndex("PaymentTypeId");
@@ -537,6 +539,8 @@ namespace DAL.App.EF.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("AppUserId");
+
+                    b.HasIndex("CreatedAt");
 
                     b.HasIndex("DrinkId");
 
@@ -949,7 +953,7 @@ namespace DAL.App.EF.Migrations
                     b.HasOne("Domain.Order", "Order")
                         .WithMany("OrderItems")
                         .HasForeignKey("OrderId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Domain.PaymentType", null)

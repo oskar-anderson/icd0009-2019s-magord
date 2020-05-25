@@ -544,7 +544,7 @@ namespace DAL.App.EF.Migrations
                         column: x => x.OrderId,
                         principalTable: "Orders",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_OrderItems_PaymentTypes_PaymentTypeId",
                         column: x => x.PaymentTypeId,
@@ -636,6 +636,11 @@ namespace DAL.App.EF.Migrations
                 column: "AppUserId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_OrderItems_CreatedAt",
+                table: "OrderItems",
+                column: "CreatedAt");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_OrderItems_DrinkId",
                 table: "OrderItems",
                 column: "DrinkId");
@@ -664,6 +669,11 @@ namespace DAL.App.EF.Migrations
                 name: "IX_Orders_AppUserId",
                 table: "Orders",
                 column: "AppUserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Orders_CreatedAt",
+                table: "Orders",
+                column: "CreatedAt");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Orders_OrderTypeId",

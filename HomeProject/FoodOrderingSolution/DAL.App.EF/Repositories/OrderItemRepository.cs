@@ -69,7 +69,11 @@ namespace DAL.App.EF.Repositories
                     .Include(o => o.Ingredient)
                     .ThenInclude(o => o!.Price)
                     .Include(o => o.Order)
+                    .ThenInclude(o => o!.PaymentType)
+                    .Include(o => o.Order)
                     .ThenInclude(o => o!.OrderType)
+                    .Include(o => o.Order)
+                    .ThenInclude(o => o!.Restaurant)
                     .Include(o => o.Drink)
                     .ThenInclude(o => o!.Price)
                     .Select(a => new OrderItemView()
@@ -84,6 +88,8 @@ namespace DAL.App.EF.Repositories
                         FoodPrice = a.Food.Price!.Value,
                         IngredientPrice = a.Ingredient.Price!.Value,
                         OrderType = a.Order.OrderType!.Name,
+                        PaymentType = a.Order.PaymentType!.Name,
+                        Restaurant = a.Order.Restaurant!.Address
                     }).ToListAsync();
             }
 
@@ -96,6 +102,8 @@ namespace DAL.App.EF.Repositories
                 .ThenInclude(o => o!.OrderType)
                 .Include(o => o.Drink)
                 .ThenInclude(o => o!.Price)
+                .Include(o => o.Order)
+                .ThenInclude(o => o!.PaymentType)
                 .Where(o => o.OrderId == orderId)
                 .Select(a => new OrderItemView()
                 {
@@ -109,6 +117,8 @@ namespace DAL.App.EF.Repositories
                     FoodPrice = a.Food.Price!.Value,
                     IngredientPrice = a.Ingredient.Price!.Value,
                     OrderType = a.Order.OrderType!.Name,
+                    PaymentType = a.Order.PaymentType!.Name,
+                    Restaurant = a.Order.Restaurant!.Address
                 }).ToListAsync();
         }
 

@@ -122,7 +122,7 @@ namespace WebApp.ApiControllers._1._0
         }
 
         /// <summary>
-        /// Delete an Order
+        /// Delete an Order with all its OrderItems
         /// </summary>
         /// <param name="id">Order Id</param>
         /// <returns>Deleted Order object</returns>
@@ -139,7 +139,7 @@ namespace WebApp.ApiControllers._1._0
                 return NotFound(new {message = "Order not found"});
             }
 
-            await _bll.Orders.RemoveAsync(id);
+            await _bll.Orders.RemoveAsync(order, User.UserId());
             await _bll.SaveChangesAsync();
 
             return Ok(order);

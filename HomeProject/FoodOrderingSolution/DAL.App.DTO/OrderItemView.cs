@@ -19,5 +19,7 @@ namespace DAL.App.DTO
         public decimal DrinkPrice { get; set; }
         public decimal IngredientPrice { get; set; }
         public string OrderType { get; set; } = default!;
+        public string PaymentType { get; set; } = default!;
+        public string Restaurant { get; set; } = default!;
     }
 }

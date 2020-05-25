@@ -10,6 +10,13 @@ namespace BLL.App.Mappers
     {
         public OrderServiceMapper() : base()
         {
+            // From BLLAllDTO to DALAppDTO
+            MapperConfigurationExpression.CreateMap<BLLAppDTO.Restaurant, DALAppDTO.Restaurant>();
+            MapperConfigurationExpression.CreateMap<BLLAppDTO.OrderType, DALAppDTO.OrderType>();
+            MapperConfigurationExpression.CreateMap<BLLAppDTO.PaymentType, DALAppDTO.PaymentType>();
+            MapperConfigurationExpression.CreateMap<BLLAppDTO.Identity.AppUser, DALAppDTO.Identity.AppUser>();
+            
+            // From DALAppDTO to BLLAppDTO
             MapperConfigurationExpression.CreateMap<DALAppDTO.Restaurant, BLLAppDTO.Restaurant>();
             MapperConfigurationExpression.CreateMap<DALAppDTO.OrderView, BLLAppDTO.OrderView>();
             MapperConfigurationExpression.CreateMap<DALAppDTO.OrderType, BLLAppDTO.OrderType>();

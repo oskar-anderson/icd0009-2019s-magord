@@ -2,14 +2,7 @@ import { AppState } from './state/app-state';
 import { autoinject, PLATFORM } from 'aurelia-framework';
 import { IAlertData } from 'types/IAlertData';
 import { AlertType } from 'types/AlertType';
-import {
-    NavigationInstruction,
-    Next,
-    PipelineStep,
-    Redirect,
-    RouterConfiguration,
-    Router
-} from 'aurelia-router';
+import {RouterConfiguration, Router} from 'aurelia-router';
 import { AuthorizeStep} from 'resources/authorizeStep'
 
 @autoinject
@@ -133,7 +126,6 @@ export class App {
             { route: ['towns/delete/:id?'], name: 'towns-delete', moduleId: PLATFORM.moduleName('views/towns/delete'), nav: false, title: 'Towns Delete', settings: { roles: ['admin'] } },
             { route: ['towns/create'], name: 'towns-create', moduleId: PLATFORM.moduleName('views/towns/create'), nav: false, title: 'Towns Create', settings: { roles: ['admin'] } }
         ]);
-
 
         config.mapUnknownRoutes('views/home/index');
         config.fallbackRoute('views/home/index')
