@@ -10,5 +10,6 @@ namespace DAL.App.DTO.Identity
         public string UserName { get; set; } = default!;
         public string FirstName { get; set; } = default!;
         public string LastName { get; set; } = default!;
+        public string PhoneNumber { get; set; } = default!;
     }
 }

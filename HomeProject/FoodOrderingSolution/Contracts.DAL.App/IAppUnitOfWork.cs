@@ -7,8 +7,6 @@ namespace Contracts.DAL.App
     {
         IAreaRepository Areas { get; }
         ICampaignRepository Campaigns { get; }
-        IContactRepository Contacts { get; }
-        IContactTypeRepository ContactTypes { get; }
         IDrinkRepository Drinks { get; }
         IFoodRepository Foods { get; }
         IFoodTypeRepository FoodTypes { get; }

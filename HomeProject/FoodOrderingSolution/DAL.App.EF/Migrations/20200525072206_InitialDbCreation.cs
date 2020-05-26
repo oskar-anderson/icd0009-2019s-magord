@@ -35,14 +35,14 @@ namespace DAL.App.EF.Migrations
                     PasswordHash = table.Column<string>(nullable: true),
                     SecurityStamp = table.Column<string>(nullable: true),
                     ConcurrencyStamp = table.Column<string>(nullable: true),
-                    PhoneNumber = table.Column<string>(nullable: true),
                     PhoneNumberConfirmed = table.Column<bool>(nullable: false),
                     TwoFactorEnabled = table.Column<bool>(nullable: false),
                     LockoutEnd = table.Column<DateTimeOffset>(nullable: true),
                     LockoutEnabled = table.Column<bool>(nullable: false),
                     AccessFailedCount = table.Column<int>(nullable: false),
                     FirstName = table.Column<string>(maxLength: 128, nullable: false),
-                    LastName = table.Column<string>(maxLength: 128, nullable: false)
+                    LastName = table.Column<string>(maxLength: 128, nullable: false),
+                    PhoneNumber = table.Column<string>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -66,22 +66,6 @@ namespace DAL.App.EF.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Campaigns", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "ContactTypes",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(nullable: false),
-                    CreatedBy = table.Column<string>(maxLength: 256, nullable: true),
-                    CreatedAt = table.Column<DateTime>(nullable: false),
-                    ChangedBy = table.Column<string>(maxLength: 256, nullable: true),
-                    ChangedAt = table.Column<DateTime>(nullable: false),
-                    Name = table.Column<string>(maxLength: 256, nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ContactTypes", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -276,36 +260,6 @@ namespace DAL.App.EF.Migrations
                         name: "FK_Prices_Campaigns_CampaignId",
                         column: x => x.CampaignId,
                         principalTable: "Campaigns",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Contacts",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(nullable: false),
-                    CreatedBy = table.Column<string>(maxLength: 256, nullable: true),
-                    CreatedAt = table.Column<DateTime>(nullable: false),
-                    ChangedBy = table.Column<string>(maxLength: 256, nullable: true),
-                    ChangedAt = table.Column<DateTime>(nullable: false),
-                    AppUserId = table.Column<Guid>(nullable: false),
-                    Name = table.Column<string>(maxLength: 256, nullable: false),
-                    ContactTypeId = table.Column<Guid>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Contacts", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Contacts_AspNetUsers_AppUserId",
-                        column: x => x.AppUserId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_Contacts_ContactTypes_ContactTypeId",
-                        column: x => x.ContactTypeId,
-                        principalTable: "ContactTypes",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
@@ -596,16 +550,6 @@ namespace DAL.App.EF.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_Contacts_AppUserId",
-                table: "Contacts",
-                column: "AppUserId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Contacts_ContactTypeId",
-                table: "Contacts",
-                column: "ContactTypeId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Drinks_PriceId",
                 table: "Drinks",
                 column: "PriceId");
@@ -719,16 +663,10 @@ namespace DAL.App.EF.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "Contacts");
-
-            migrationBuilder.DropTable(
                 name: "OrderItems");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
-
-            migrationBuilder.DropTable(
-                name: "ContactTypes");
 
             migrationBuilder.DropTable(
                 name: "Drinks");

@@ -27,8 +27,6 @@ namespace DAL.App.EF
         public DbSet<FoodType> FoodTypes { get; set; } = default!;
         public DbSet<Food> Foods { get; set; } = default!;
         public DbSet<Drink> Drinks { get; set; } = default!;
-        public DbSet<ContactType> ContactTypes { get; set; } = default!;
-        public DbSet<Contact> Contacts { get; set; } = default!;
         public DbSet<Campaign> Campaigns { get; set; } = default!;
 
         private readonly Dictionary<IDomainEntityId<Guid>, IDomainEntityId<Guid>> _entityTracker =

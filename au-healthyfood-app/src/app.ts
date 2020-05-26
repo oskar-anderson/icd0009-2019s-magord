@@ -1,3 +1,5 @@
+import { IOrder } from './domain/IOrder/IOrder';
+import { OrderService } from './service/order-service';
 import { AppState } from './state/app-state';
 import { autoinject, PLATFORM } from 'aurelia-framework';
 import { IAlertData } from 'types/IAlertData';
@@ -9,9 +11,33 @@ import { AuthorizeStep} from 'resources/authorizeStep'
 export class App {
     router?: Router;
     private _alert: IAlertData | null = null;
+    private _orders: IOrder[] = [];
 
-    constructor(private appState: AppState) {
+    constructor(private appState: AppState, private orderService: OrderService) {
 
+    }
+    
+    attached() {
+        this.orderService.getOrders().then(
+            response => {
+                if (response.statusCode >= 200 && response.statusCode < 300) {
+                    this._alert = null;
+                    for (const order of response.data!) {
+                        if(order.completed === false) {
+                            this._orders.push(order)
+                            console.log(order)
+                        }
+                    }
+                } else {
+                    // show error message
+                    this._alert = {
+                        message: response.statusCode.toString() + ' - ' + response.errorMessage,
+                        type: AlertType.Danger,
+                        dismissable: true,
+                    }
+                }
+            }
+        );
     }
 
 
@@ -32,7 +58,7 @@ export class App {
             { route: ['account/manage'], name: 'account-manage', moduleId: PLATFORM.moduleName('views/account/manage/index'), nav: false, title: 'Manage account', settings: { roles: [] } },
             { route: ['account/manageEmail'], name: 'account-manageEmail', moduleId: PLATFORM.moduleName('views/account/manage/email'), nav: false, title: 'Manage email', settings: { roles: [] } },
             { route: ['account/managePassword'], name: 'account-managePassword', moduleId: PLATFORM.moduleName('views/account/manage/password'), nav: false, title: 'Manage password', settings: { roles: [] } },
-            { route: ['account/manageContacts'], name: 'account-manageContacts', moduleId: PLATFORM.moduleName('views/account/manage/contacts'), nav: false, title: 'Manage contacts', settings: { roles: [] } },
+            { route: ['account/managePhoneNumber'], name: 'account-managePhoneNumber', moduleId: PLATFORM.moduleName('views/account/manage/phoneNumber'), nav: false, title: 'Manage phone number', settings: { roles: [] } },
 
 
             { route: ['areas', 'areas/index'], name: 'areas-index', moduleId: PLATFORM.moduleName('views/areas/index'), nav: true, title: 'Areas', settings: { roles: ['admin'], appState: this.appState } },
@@ -45,17 +71,6 @@ export class App {
             { route: ['campaigns/details/:id?'], name: 'campaigns-details', moduleId: PLATFORM.moduleName('views/campaigns/details'), nav: false, title: 'Campaigns details', settings: { roles: [] } },
             { route: ['campaigns/edit/:id?'], name: 'campaigns-edit', moduleId: PLATFORM.moduleName('views/campaigns/edit'), nav: false, title: 'Campaigns Edit', settings: { roles: [] } },
             { route: ['campaigns/create'], name: 'campaigns-create', moduleId: PLATFORM.moduleName('views/campaigns/create'), nav: false, title: 'Campaigns Create', settings: { roles: [] } },
-
-
-            { route: ['contacts/details/:id?'], name: 'contacts-details', moduleId: PLATFORM.moduleName('views/contacts/details'), nav: false, title: 'Contacts details', settings: { roles: [] } },
-            { route: ['contacts/edit/:id?'], name: 'contacts-edit', moduleId: PLATFORM.moduleName('views/contacts/edit'), nav: false, title: 'Contacts Edit', settings: { roles: [] } },
-            { route: ['contacts/create'], name: 'contacts-create', moduleId: PLATFORM.moduleName('views/contacts/create'), nav: false, title: 'Contacts Create', settings: { roles: [] } },
-
-
-            { route: ['contacttypes', 'contacttypes/index'], name: 'contacttypes-index', moduleId: PLATFORM.moduleName('views/contacttypes/index'), nav: true, title: 'Contact types', settings: { roles: ['admin'], appState: this.appState } },
-            { route: ['contacttypes/details/:id?'], name: 'contacttypes-details', moduleId: PLATFORM.moduleName('views/contacttypes/details'), nav: false, title: 'Contact Types details', settings: { roles: ['admin'], appState: this.appState } },
-            { route: ['contacttypes/edit/:id?'], name: 'contacttypes-edit', moduleId: PLATFORM.moduleName('views/contacttypes/edit'), nav: false, title: 'Contact Types Edit', settings: { roles: ['admin'], appState: this.appState } },
-            { route: ['contacttypes/create'], name: 'contacttypes-create', moduleId: PLATFORM.moduleName('views/contacttypes/create'), nav: false, title: 'Contact Types Create', settings: { roles: ['admin'], appState: this.appState } },
 
 
             { route: ['drinks', 'drinks/index'], name: 'drinks-index', moduleId: PLATFORM.moduleName('views/drinks/index'), nav: true, title: 'Drinks', settings: { roles: [] } },

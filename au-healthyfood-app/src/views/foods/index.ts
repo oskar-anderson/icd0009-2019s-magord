@@ -24,6 +24,7 @@ export class FoodsIndex {
 
     private ordersEmpty: boolean = false;
     private selectedOrderId: string | null = null;
+    private orderStillActive: boolean = false;
 
     private orderItemFoods: string[] = []
 
@@ -90,7 +91,10 @@ export class FoodsIndex {
                     for (const order of this._orders) {
                         if(order.completed === false) {
                             this.selectedOrderId = order.id
-                            break;
+                            this.orderStillActive = true;
+                        }
+                        if(order.orderStatus === "Waiting for confirmation") {
+                            this.orderStillActive = false;
                         }
                     }
 
@@ -168,7 +172,17 @@ export class FoodsIndex {
     displayOrderError(): void {
         if (this._orders.length < 1) {
             this._alert = {
-                message: "Uh oh! It looks like you dont have an order created yet! Please go and create one!",
+                message: "Uh oh! It looks like you don't have an active order yet! Please go and create one!",
+                type: AlertType.Warning,
+                dismissable: true,
+            }
+        }
+    }
+
+    displayOrderActiveError(): void {
+        if (this.orderStillActive === true) {
+            this._alert = {
+                message: "Uh oh! It looks like you already have an order in progress! Please wait for it to get finished!",
                 type: AlertType.Warning,
                 dismissable: true,
             }
@@ -229,7 +243,7 @@ export class FoodsIndex {
             orderId: this.selectedOrderId
         };
 
-        if (this.ordersEmpty === false && this.isInCart === false && this.correctAmount === true)
+        if (this.ordersEmpty === false && this.isInCart === false && this.correctAmount === true  && this.orderStillActive === false)
         {
             this.orderItemService
             .createOrderItem(this.orderItem!)
@@ -258,6 +272,7 @@ export class FoodsIndex {
         }
 
         this.displayOrderError();
+        this.displayOrderActiveError();
         this.selectedIngredients = [];
     }
 }

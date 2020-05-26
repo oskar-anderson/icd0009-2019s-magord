@@ -7,8 +7,6 @@ namespace Contracts.BLL.App
     {
         public IAreaService Areas { get; }
         public ICampaignService Campaigns { get; }
-        public IContactService Contacts { get; }
-        public IContactTypeService ContactTypes { get; }
         public IDrinkService Drinks { get; }
         public IFoodService Foods { get; }
         public IFoodTypeService FoodTypes { get; }

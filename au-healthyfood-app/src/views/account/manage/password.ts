@@ -48,8 +48,10 @@ export class AccountManagePassword {
                 if (response.statusCode == 200) {
                     this.appState.jwt = response.data!.token;
                     this.appState.password = this.newPassword;
+                    this.newPassword = "";
+                    this.confirmPassword = "";
+                    this.attached();
                     alert("Password changed!")
-                    this.router!.navigateToRoute('account-manage');
                 } else {
                     this._errorMessage = response.statusCode.toString()
                         + ' ' 

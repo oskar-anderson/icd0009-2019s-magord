@@ -15,6 +15,8 @@ namespace Domain.Identity
         [MaxLength(128)]
         [MinLength(1)]
         public string LastName { get; set; } = default!;
+
+        public override string PhoneNumber { get; set; } = default!;
         
         public ICollection<Order>? Orders { get; set; }
         

@@ -19,12 +19,6 @@ namespace BLL.App
         public ICampaignService Campaigns =>
             GetService<ICampaignService>(() => new CampaignService(UnitOfWork));
 
-        public IContactService Contacts =>
-            GetService<IContactService>(() => new ContactService(UnitOfWork));
-
-        public IContactTypeService ContactTypes =>
-            GetService<IContactTypeService>(() => new ContactTypeService(UnitOfWork));
-
         public IDrinkService Drinks =>
             GetService<IDrinkService>(() => new DrinkService(UnitOfWork));
 

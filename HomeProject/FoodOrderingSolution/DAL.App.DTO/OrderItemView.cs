@@ -14,6 +14,7 @@ namespace DAL.App.DTO
 
         public string? Drink { get; set; }
         public int Order { get; set; } = default!;
+        public Guid OrderId { get; set; }
 
         public decimal FoodPrice { get; set; }
         public decimal DrinkPrice { get; set; }

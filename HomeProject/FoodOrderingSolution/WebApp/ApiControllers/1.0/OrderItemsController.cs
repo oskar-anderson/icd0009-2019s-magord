@@ -153,5 +153,28 @@ namespace WebApp.ApiControllers._1._0
 
             return Ok(orderItem);
         }
+        
+        /// <summary>
+        /// Delete all Order Items
+        /// </summary>
+        /// <returns></returns>
+        [HttpDelete]
+        [Produces("application/json")]
+        [Consumes("application/json")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(V1DTO.OrderItem))]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<V1DTO.OrderItem>> DeleteAllOrderItems()
+        {
+            var orderItems = await _bll.OrderItems.GetAllAsync(User.UserId());
+
+            foreach (var orderItem in orderItems)
+            {
+                await _bll.OrderItems.RemoveAsync(orderItem.Id);
+            }
+            
+            await _bll.SaveChangesAsync();
+
+            return NoContent();
+        }
     }
 }

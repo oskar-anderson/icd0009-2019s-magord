@@ -176,10 +176,39 @@ export class OrderItemService {
 
 
     async deleteOrderItem(id: string): Promise<IFetchResponse<string>> {
-
         try {
             const response = await this.httpClient
             .delete(this._baseUrl + '/' + id, null, {
+                cache: 'no-store',
+                headers: {
+                        authorization: "Bearer " + this.appState.jwt
+                    }
+            });
+
+            if (response.status >= 200 && response.status < 300) {
+                return {
+                    statusCode: response.status
+                    // no data
+                }
+            }
+            return {
+                statusCode: response.status,
+                errorMessage: response.statusText
+            }
+        }
+        catch (reason) {
+            return {
+                statusCode: 0,
+                errorMessage: JSON.stringify(reason)
+            }
+        }
+    }
+
+
+    async deleteAllOrderItems(): Promise<IFetchResponse<string>> {
+        try {
+            const response = await this.httpClient
+            .delete(this._baseUrl, null, {
                 cache: 'no-store',
                 headers: {
                         authorization: "Bearer " + this.appState.jwt

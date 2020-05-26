@@ -14,8 +14,6 @@ namespace DAL.App.EF
         
         public IAreaRepository Areas => GetRepository<IAreaRepository>(() => new AreaRepository(UowDbContext));
         public ICampaignRepository Campaigns => GetRepository<ICampaignRepository>(() => new CampaignRepository(UowDbContext));
-        public IContactRepository Contacts => GetRepository<IContactRepository>(() => new ContactRepository(UowDbContext));
-        public IContactTypeRepository ContactTypes => GetRepository<IContactTypeRepository>(() => new ContactTypeRepository(UowDbContext));
         public IDrinkRepository Drinks => GetRepository<IDrinkRepository>(() => new DrinkRepository(UowDbContext));
         public IFoodRepository Foods => GetRepository<IFoodRepository>(() => new FoodRepository(UowDbContext));
         public IFoodTypeRepository FoodTypes => GetRepository<IFoodTypeRepository>(() => new FoodTypeRepository(UowDbContext));

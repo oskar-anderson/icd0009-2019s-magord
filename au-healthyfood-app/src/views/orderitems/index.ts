@@ -1,3 +1,4 @@
+import { OrderService } from './../../service/order-service';
 import { PaymentTypeService } from './../../service/paymenttype-service';
 import { IPaymentType } from './../../domain/IPaymentType/IPaymentType';
 import { IOrder } from 'domain/IOrder/IOrder';
@@ -18,24 +19,26 @@ export class OrderItemsIndex {
     private orderType: string = "";
     private pickUpOrder: boolean | null = null;
 
-    private order: IOrder | null = null;
+    private orderId: string | null = null;
+    private order: IOrder | null = null
 
     private selectedPaymentType: string = "";
     private restaurantAddress: string = "";
 
     private totalSum = 0;
 
-    private firstName = "";
+    private phoneNumber = "";
 
     private isAdmin: boolean = false;
 
     constructor(private orderItemService: OrderItemService, private appState: AppState, private router: Router,
-        private paymentTypeService: PaymentTypeService) {
+        private paymentTypeService: PaymentTypeService, private orderService: OrderService) {
 
     }
 
     activate(params: any, routeConfig: RouteConfig, navigationInstruction: NavigationInstruction) {
         if (params.id && typeof (params.id) == 'string') {
+            console.log(params.id)
             this.orderItemService.getAllForOrder(params.id).then(
                 response => {
                     if (response.statusCode >= 200 && response.statusCode < 300) {
@@ -66,7 +69,8 @@ export class OrderItemsIndex {
                         this.orderType = orderItem.orderType
                         this.selectedPaymentType = orderItem.paymentType;
                         this.restaurantAddress = orderItem.restaurant;
-                        if(this.orderType === "Pick-up order") {
+                        this.orderId = orderItem.orderId
+                        if (this.orderType === "Pick-up order") {
                             this.pickUpOrder = true;
                         }
                     }
@@ -98,7 +102,7 @@ export class OrderItemsIndex {
                 }
             }
         );
-        this.firstName = this.appState.firstName as string;
+        this.phoneNumber = this.appState.phoneNumber as string;
     }
 
 
@@ -115,7 +119,7 @@ export class OrderItemsIndex {
     decrement(id: string) {
         for (const item of this._orderItems) {
             if (item.id === id) {
-                if(item.quantity != 1)
+                if (item.quantity != 1)
                     --item.quantity;
             }
             this.calculatePrice();
@@ -129,21 +133,6 @@ export class OrderItemsIndex {
             }
             this.calculatePrice();
         };
-    }
-
-    addressIsSet() {
-        if(this.appState.address == null){
-            return false;
-            
-        }
-        return true;
-    }
-
-    phoneNrIsSet() {
-        if(this.appState.phoneNr == null){
-            return false;
-        }
-        return true;
     }
 
     deleteOnClick(orderItem: IOrderItem) {
@@ -165,13 +154,66 @@ export class OrderItemsIndex {
                         }
                     }
                 }
-        );
+            );
     }
 
     onSubmit() {
-        if(this.orderType === 'Pick-up order') {
-            console.log(this.orderType)
+        console.log(this.orderId)
+        if (this.selectedPaymentType == "By cash/card") {
+            this.orderService
+                .getOrder(this.orderId!)
+                .then(
+                    response => {
+                        if (response.statusCode >= 200 && response.statusCode < 300) {
+                            this._alert = null;
+                            this.order = response.data!
+                            this.order.orderStatus = "Order accepted"
+                            this.orderService.updateOrder(this.order)
+                                .then(
+                                    response => {
+                                        if (response.statusCode >= 200 && response.statusCode < 300) {
+                                            this.orderItemService.deleteAllOrderItems()
+                                                .then(
+                                                    response => {
+                                                        if (response.statusCode >= 200 && response.statusCode < 300) {
+                                                            this._alert = null;
+                                                            alert("Thank you for ordering from us!")
+                                                            this.router.navigateToRoute('home')
+                                                        }
+                                                        else {
+                                                            // show error message
+                                                            this._alert = {
+                                                                message: response.statusCode.toString() + ' - ' + response.errorMessage,
+                                                                type: AlertType.Danger,
+                                                                dismissable: true,
+                                                            }
+                                                        }
+                                                    }
+                                                )
+                                        }
+                                        else {
+                                            // show error message
+                                            this._alert = {
+                                                message: response.statusCode.toString() + ' - ' + response.errorMessage,
+                                                type: AlertType.Danger,
+                                                dismissable: true,
+                                            }
+                                        }
+                                    })
+                        }
+                        else {
+                            // show error message
+                            this._alert = {
+                                message: response.statusCode.toString() + ' - ' + response.errorMessage,
+                                type: AlertType.Danger,
+                                dismissable: true,
+                            }
+                        }
+                    }
+                )
         }
-        
+        else {
+            // Goes to bank link to pay via transfer
+        }
     }
 }

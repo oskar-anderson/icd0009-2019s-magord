@@ -42,6 +42,7 @@ namespace DAL.App.EF.Helpers
             var passWord = "Kala.maja.2020";
             var firstName = "Marko";
             var lastName = "Gordejev";
+            var phoneNumber = "53848490";
 
             var user = userManager.FindByNameAsync(userName).Result;
             if (user == null)
@@ -51,6 +52,7 @@ namespace DAL.App.EF.Helpers
                 user.UserName = userName;
                 user.FirstName = firstName;
                 user.LastName = lastName;
+                user.PhoneNumber = phoneNumber;
 
                 var result = userManager.CreateAsync(user, passWord).Result;
                 if (!result.Succeeded)
@@ -626,30 +628,6 @@ namespace DAL.App.EF.Helpers
 
             context.SaveChanges();
             
-            
-            var contactTypes = new ContactType[]
-            {
-                new ContactType()
-                {
-                    Id = new Guid("00000000-0000-0000-0000-000000000001"),
-                    Name = "Address"
-                },
-                new ContactType()
-                {
-                    Id = new Guid("00000000-0000-0000-0000-000000000002"),
-                    Name = "Phone number"
-                },
-            };
-
-            foreach (var contactType in contactTypes)
-            {
-                if (!context.ContactTypes.Any(l => l.Id == contactType.Id))
-                {
-                    context.ContactTypes.Add(contactType);
-                }
-            }
-
-            context.SaveChanges();
 
             var paymentTypes = new PaymentType[]
             {

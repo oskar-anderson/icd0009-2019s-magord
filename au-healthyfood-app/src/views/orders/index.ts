@@ -42,6 +42,7 @@ export class OrdersIndex {
                             break;
                         }
                     }
+                    console.log(this._orderInProgess)
                 } else {
                     // show error message
                     this._alert = {
@@ -80,7 +81,7 @@ export class OrdersIndex {
         event.preventDefault;
         if(this._orderInProgess) {
             this._alert = {
-                message: "Uh oh! It looks like you already have an order in the making!",
+                message: "Uh oh! It looks like you already have an active order in progress! Please wait for it to get finished!",
                 type: AlertType.Warning,
                 dismissable: true,
             }

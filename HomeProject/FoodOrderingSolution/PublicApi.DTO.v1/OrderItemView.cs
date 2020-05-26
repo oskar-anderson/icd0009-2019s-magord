@@ -13,7 +13,8 @@ namespace PublicApi.DTO.v1
         public string? Ingredient { get; set; }
 
         public string? Drink { get; set; }
-        
+
+        public Guid OrderId { get; set; }
         public int Order { get; set; } = default!;
         
         public decimal FoodPrice { get; set; }

@@ -93,26 +93,25 @@
 
 
                     <p if.bind="!pickUpOrder">
-                        Address to deliver
+                        <b>Address to deliver to:</b>
                         <input>
                     </p>
 
                     <p>
-                        Phone number
-                        <input if.bind="pickUpOrder">
-                        <b if.bind"phoneNrIsSet()">${phoneNr}</b>
+                        <b>Phone number:</b>
+                        ${phoneNumber}
                     </p>
 
                     <p>
-                        Order type -
-                        <b>${orderType}</b>
+                        <b>Order type:</b>
+                        ${orderType}
                     </p>
                     <p>
-                        Restaurant -
-                        <b>${restaurantAddress}</b>
+                        <b>Restaurant:</b>
+                        ${restaurantAddress}
                     </p>
                     <p>
-                        Payment type
+                        Payment type:
                         <label repeat.for="paymentType of _paymentTypes">
                             <input model.bind="paymentType.name" checked.bind="selectedPaymentType" type="radio"
                                 name="group1"><a>${paymentType.name}</a>
@@ -121,8 +120,12 @@
 
                 </div>
                 <div class="modal-footer">
-                    <button if.bind="pickUpOrder" click.trigger="onSubmit()" type="button"
-                        class="btn btn-success">Checkout</button>
+                    <button click.trigger="onSubmit()" type="button"
+                        class="btn btn-success" data-dismiss="modal" if.bind="selectedPaymentType == 'By cash/card'">Checkout
+                    </button>
+                    <button type="button"
+                        class="btn btn-success" if.bind="selectedPaymentType == 'By transfer'">Checkout
+                    </button>
                     <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
                 </div>
             </div>

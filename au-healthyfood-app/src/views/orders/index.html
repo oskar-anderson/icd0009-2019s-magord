@@ -12,10 +12,10 @@
     </p>
     <br>
     <div class="text-center">
-        <a route-href="route: foods-index; params.bind: {}">Back to foods</a>
+        <a route-href="route: foods-index; params.bind: {}">To foods</a>
     </div>
     <div class="text-center">
-        <a route-href="route: drinks-index; params.bind: {}">Back to drinks</a>
+        <a route-href="route: drinks-index; params.bind: {}">To drinks</a>
     </div>
     <br>
     <table class="table">
@@ -45,7 +45,7 @@
         <tbody>
             <tr repeat.for="order of _orders">
                 <td>
-                    <a route-href="route: orderitems-index; params.bind: { id: order.id }">#${order.number}</a>
+                    <a>#${order.number}</a>
                 </td>
                 <td>
                     ${order.orderStatus}

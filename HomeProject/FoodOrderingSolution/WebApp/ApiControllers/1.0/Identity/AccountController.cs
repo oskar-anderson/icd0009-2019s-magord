@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Domain.Identity;
 using Extensions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using PublicApi.DTO.v1;
 using PublicApi.DTO.v1.Identity;
 
 
@@ -116,6 +114,43 @@ namespace WebApp.ApiControllers._1._0.Identity
         }
         
         /// <summary>
+        /// Endpoint for user change-phone number (jwt generation)
+        /// </summary>
+        /// <param name="model">user data</param>
+        /// <returns></returns>
+        [HttpPost]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> ChangePhoneNumber([FromBody] ChangePhoneNumberDTO model)
+        {
+            var user = await _userManager.FindByEmailAsync(model.Email);
+            if (user == null)
+            {
+                _logger.LogInformation($"Web-Api phone number change. User {model.Email} not found!");
+                return StatusCode(404, new {message = "Changing user phone number failed! User not found!"});
+            }
+
+            var token = await _userManager.GenerateChangePhoneNumberTokenAsync(user, model.NewPhoneNumber);
+            var result = await _userManager.ChangePhoneNumberAsync(user, model.NewPhoneNumber, token);
+            
+            if (result.Succeeded)
+            {
+                var claimsPrincipal = await _signInManager.CreateUserPrincipalAsync(user); //get the User analog
+                var jwt = IdentityExtensions.GenerateJWT(claimsPrincipal.Claims,
+                    _configuration["JWT:SigningKey"],
+                    _configuration["JWT:Issuer"],
+                    _configuration.GetValue<int>("JWT:ExpirationInDays")
+                );
+                _logger.LogInformation($"New token generated for user {model.Email}. Phone number changed!");
+                return Ok(new {token = jwt, status = "Phone number changed!"});
+            }
+            
+            _logger.LogInformation("Your phone number remains unchanged!");
+            return StatusCode(400, new {message = "User phone number not changed!"});
+        }
+        
+        /// <summary>
         /// Endpoint for user change-names (jwt generation)
         /// </summary>
         /// <param name="model">user data</param>
@@ -212,7 +247,8 @@ namespace WebApp.ApiControllers._1._0.Identity
                 UserName = model.Email, 
                 Email = model.Email,
                 FirstName = model.FirstName,
-                LastName = model.LastName
+                LastName = model.LastName,
+                PhoneNumber = model.PhoneNumber
             };
             
             var result = await _userManager.CreateAsync(appUser, model.Password);

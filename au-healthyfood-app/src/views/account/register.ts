@@ -11,6 +11,7 @@ export class AccountRegister {
     private _confirmPassword: string = "";
     private _firstName: string = "";
     private _lastName: string = "";
+    private _phoneNumber: string = "";
     private _errorMessage: string | null = null;
 
 
@@ -20,19 +21,23 @@ export class AccountRegister {
 
     onSubmit(event: Event) {
 
+        if(!(this.checkForValidPhoneNumber(this._phoneNumber))) {
+            return "";
+        }
+
         if (this._password !== this._confirmPassword) {
             alert("Passwords don't match!")
             return null;
         }
 
         if (!(this.checkForValidPassword(this._password))) {
-            return ""
+            return "";
         }
 
         console.log(this._email, this._password);
         event.preventDefault();
 
-        this.accountService.register(this._email, this._password, this._firstName, this._lastName).then(
+        this.accountService.register(this._email, this._password, this._firstName, this._lastName, this._phoneNumber).then(
             response => {
                 console.log(response);
                 if (response.statusCode == 200) {
@@ -41,6 +46,7 @@ export class AccountRegister {
                     this.appState.email = this._email;
                     this.appState.firstName = response.data!.firstName;
                     this.appState.lastName = response.data!.lastName;
+                    this.appState.phoneNumber = this._phoneNumber;
                     this.router!.navigateToRoute('home');
                 } else {
                     this._errorMessage = response.statusCode.toString()
@@ -49,6 +55,15 @@ export class AccountRegister {
                 }
             }
         );
+    }
+
+    checkForValidPhoneNumber(phoneNumber: string) {
+        if (/^\d{7,}$/.test(phoneNumber)) {
+            return true;
+        } else {
+            alert("Please enter a valid phone number!")
+            return false;
+        }
     }
 
     checkForValidPassword(password: string) {

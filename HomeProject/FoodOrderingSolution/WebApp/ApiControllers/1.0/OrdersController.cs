@@ -57,14 +57,14 @@ namespace WebApp.ApiControllers._1._0
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<V1DTO.Order>> GetOrder(Guid id)
         {
-            var order = await _bll.Orders.FirstOrDefaultForViewAsync(id);
+            var order = await _bll.Orders.FirstOrDefaultAsync(id);
             
             if (order == null)
             {
                 return NotFound(new {message = "Order not found"});
             }
 
-            return Ok(_mapper.MapOrderView(order));
+            return Ok(_mapper.Map(order));
         }
 
         /// <summary>

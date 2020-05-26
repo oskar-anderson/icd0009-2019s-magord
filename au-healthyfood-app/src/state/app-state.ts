@@ -71,27 +71,15 @@ export class AppState {
         }
     }
 
-    get address(): string | null {
-        return localStorage.getItem('address')
+    get phoneNumber(): string | null {
+        return localStorage.getItem('phoneNumber')
     }
 
-    set address(value: string | null) {
+    set phoneNumber(value: string | null) {
         if(value) {
-            localStorage.setItem('address', value);
+            localStorage.setItem('phoneNumber', value);
         } else {
-            localStorage.removeItem('address');
-        }
-    }
-
-    get phoneNr(): string | null {
-        return localStorage.getItem('phoneNr')
-    }
-
-    set phoneNr(value: string | null) {
-        if(value) {
-            localStorage.setItem('phoneNr', value);
-        } else {
-            localStorage.removeItem('phoneNr');
+            localStorage.removeItem('phoneNumber');
         }
     }
     

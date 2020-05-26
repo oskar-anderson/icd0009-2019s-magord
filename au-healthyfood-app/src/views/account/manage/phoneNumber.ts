@@ -2,13 +2,13 @@ import { Router } from 'aurelia-router';
 import { autoinject } from 'aurelia-framework';
 import { AccountService } from 'service/account-service';
 import { AppState } from 'state/app-state';
-import * as JwtDecode from 'jwt-decode';
 
 @autoinject
-export class AccountManageEmail {
+export class AccountManagePhoneNumber {
     
-    private _email: string = "";
-    private _newEmail: string = ""
+    private _email: string= "";
+    private _phoneNumber: string = "";
+    private _newPhoneNumber: string = ""
     private _errorMessage: string | null = null;
 
     constructor(private accountService: AccountService, private appState: AppState, private router: Router){
@@ -16,21 +16,21 @@ export class AccountManageEmail {
     }
 
     attached() {
+        this._phoneNumber = this.appState.phoneNumber as string;
         this._email = this.appState.email as string;
     }
 
     onSubmit(event: Event){
-        console.log(this._email, this._newEmail);
         event.preventDefault();
 
-        this.accountService.changeEmail(this._email, this._newEmail).then(
+        this.accountService.changePhoneNumber(this._email, this._phoneNumber, this._newPhoneNumber).then(
             response => {
                 if (response.statusCode == 200) {
                     this.appState.jwt = response.data!.token;
-                    this.appState.email = this._newEmail;
-                    this._newEmail = "";
+                    this.appState.phoneNumber = this._newPhoneNumber;
+                    this._newPhoneNumber = "";
                     this.attached();
-                    alert("Email changed!")
+                    alert("Phone number changed!")
                 } else {
                     this._errorMessage = response.statusCode.toString()
                         + ' ' 

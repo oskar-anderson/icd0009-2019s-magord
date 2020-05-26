@@ -60,6 +60,16 @@
     <_ContentIncludedByDefault Remove="Areas\Admin\Views\Payments\Details.cshtml" />
     <_ContentIncludedByDefault Remove="Areas\Admin\Views\Payments\Edit.cshtml" />
     <_ContentIncludedByDefault Remove="Areas\Admin\Views\Payments\Index.cshtml" />
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\Contacts\Create.cshtml" />
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\Contacts\Delete.cshtml" />
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\Contacts\Details.cshtml" />
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\Contacts\Edit.cshtml" />
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\Contacts\Index.cshtml" />
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\ContactTypes\Create.cshtml" />
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\ContactTypes\Delete.cshtml" />
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\ContactTypes\Details.cshtml" />
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\ContactTypes\Edit.cshtml" />
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\ContactTypes\Index.cshtml" />
   </ItemGroup>
   
   

@@ -18,8 +18,6 @@ namespace DAL.App.EF.Mappers
             
             
             // From Domain to DALAppDTO
-            MapperConfigurationExpression.CreateMap<Domain.ContactType, DAL.App.DTO.ContactType>();
-            MapperConfigurationExpression.CreateMap<Domain.Contact, DAL.App.DTO.Contact>();
             MapperConfigurationExpression.CreateMap<Domain.OrderItem, DAL.App.DTO.OrderItem>();
             MapperConfigurationExpression.CreateMap<Domain.Price, DAL.App.DTO.Price>();
             MapperConfigurationExpression.CreateMap<Domain.PaymentType, DAL.App.DTO.PaymentType>();
