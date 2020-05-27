@@ -7,24 +7,8 @@
 
 
     <h1 class="text-center">Drinks</h1>
-
-    <!--
-    <div>
-        <h4 class="text-center">Select your order</h4>
-        <h6 class="text-center">P.S if the list is empty please go and create an order for yourself by clicking here ->
-            <a route-href="route: orders-create; params.bind: { }">Click me</a></h6>
-    </div>
-    
-    <div class="form-group">
-        <label class="control-label" for="OrderId"></label>
-        <select class="form-control" data-val="true" , type="text" id="OrderId" maxlength="256"
-            value.bind="selectedOrderId">
-            <option repeat.for="order of orders" model.bind="order.id">[Number #${order.number}] \/ [Created at:
-                ${order.timeCreated}]</option>
-        </select>
-    </div>
-    -->
-
+    <br>
+    <br>
     <p>
         <a if.bind="isAdmin" route-href="route: drinks-create; params.bind: {}">Create New</a>
     </p>

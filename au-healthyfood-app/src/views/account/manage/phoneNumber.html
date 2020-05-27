@@ -22,9 +22,10 @@
             </div>
             <div class="col-md-9">
 
-
                 <h4>Manage Phone number</h4>
 
+                <h4 if.bind="_errorMessage != null" style="color:red;">${_errorMessage}</h4>
+                <h4 if.bind="_successMessage != null" style="color:green;">${_successMessage}</h4>
 
                 <div class="row">
                     <div class="col-md-6">

@@ -42,7 +42,6 @@ export class OrdersIndex {
                             break;
                         }
                     }
-                    console.log(this._orderInProgess)
                 } else {
                     // show error message
                     this._alert = {
@@ -56,7 +55,6 @@ export class OrdersIndex {
     }
 
     deleteOnClick(order: IOrder) {
-        console.log("Delete")
         this.orderService
         .deleteOrder(order.id)
         .then(
@@ -81,7 +79,7 @@ export class OrdersIndex {
         event.preventDefault;
         if(this._orderInProgess) {
             this._alert = {
-                message: "Uh oh! It looks like you already have an active order in progress! Please wait for it to get finished!",
+                message: "Uh oh! It looks like you already have an active order in progress!",
                 type: AlertType.Warning,
                 dismissable: true,
             }

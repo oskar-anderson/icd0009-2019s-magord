@@ -3,9 +3,9 @@ import { HttpClient } from 'aurelia-fetch-client';
 import { AppState } from 'state/app-state';
 import { IFetchResponse } from 'types/IFetchResponse';
 
-import { IPaymentTypeCreate } from './../domain/IPaymentType/IPaymentTypeCreate';
-import { IPaymentTypeEdit } from './../domain/IPaymentType/IPaymentTypeEdit';
-import { IPaymentType } from './../domain/IPaymentType/IPaymentType';
+import { IPaymentTypeCreate } from '../domain/IPaymentType/IPaymentTypeCreate';
+import { IPaymentTypeEdit } from '../domain/IPaymentType/IPaymentTypeEdit';
+import { IPaymentType } from '../domain/IPaymentType/IPaymentType';
 
 @autoinject
 export class PaymentTypeService {

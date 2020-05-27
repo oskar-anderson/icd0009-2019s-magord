@@ -3,7 +3,7 @@ import { HttpClient } from 'aurelia-fetch-client';
 import { AppState } from 'state/app-state';
 import { IFetchResponse } from 'types/IFetchResponse';
 
-import { IOrderType } from './../domain/IOrderType/IOrderType';
+import { IOrderType } from '../domain/IOrderType/IOrderType';
 import { IOrderTypeCreate } from 'domain/IOrderType/IOrderTypeCreate';
 import { IOrderTypeEdit } from 'domain/IOrderType/IOrderTypeEdit';
 

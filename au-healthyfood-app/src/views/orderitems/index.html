@@ -17,9 +17,7 @@
                 <th>
                     Items
                 </th>
-                <th>
-                    Order
-                </th>
+
                 <th>
                     <a style="margin-left:33px">Quantity</a </th>
                 <th>
@@ -35,9 +33,7 @@
                     <h6>${orderItem.drink}</h6>
                     <em>${orderItem.ingredient}</em>
                 </td>
-                <td>
-                    #${orderItem.order}
-                </td>
+
                 <td>
                     <button style="font-size: 10px; margin-right:30px" class="btn btn-primary btn-sm"
                         click.trigger="decrement(orderItem.id)" type="button"> <span
@@ -85,6 +81,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="exampleModalLabel1">Please confirm your order details</h5>
+                    <alert alert-data.bind="_modalAlert"></alert>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -94,7 +91,7 @@
 
                     <p if.bind="!pickUpOrder">
                         <b>Address to deliver to:</b>
-                        <input>
+                        <input value.bind="deliveryAddress">
                     </p>
 
                     <p>
@@ -111,7 +108,7 @@
                         ${restaurantAddress}
                     </p>
                     <p>
-                        Payment type:
+                        <b>Payment type:</b>
                         <label repeat.for="paymentType of _paymentTypes">
                             <input model.bind="paymentType.name" checked.bind="selectedPaymentType" type="radio"
                                 name="group1"><a>${paymentType.name}</a>
@@ -120,16 +117,27 @@
 
                 </div>
                 <div class="modal-footer">
-                    <button click.trigger="onSubmit()" type="button"
-                        class="btn btn-success" data-dismiss="modal" if.bind="selectedPaymentType == 'By cash/card'">Checkout
+                    <button click.trigger="onSubmit()" type="button" class="btn btn-success" data-dismiss="modal"
+                        if.bind="selectedPaymentType == 'By cash/card' && pickUpOrder">Checkout
                     </button>
-                    <button type="button"
-                        class="btn btn-success" if.bind="selectedPaymentType == 'By transfer'">Checkout
+                    <button click.trigger="onSubmit()" type="button" class="btn btn-success" data-dismiss="modal"
+                        if.bind="selectedPaymentType == 'By cash/card' && !pickUpOrder && deliveryAddress.length > 0">Checkout
+                    </button>
+                    <button click.trigger="onSubmit()" type="button" class="btn btn-success"
+                        if.bind="selectedPaymentType == 'By cash/card' && !pickUpOrder && deliveryAddress.length == 0">Checkout
+                    </button>
+                    <button click.trigger="showAddressError()" type="button" class="btn btn-success"
+                        if.bind="selectedPaymentType == 'By transfer' && !pickUpOrder && deliveryAddress.length == 0">Checkout
+                    </button>
+                    <button type="button" class="btn btn-success" click.trigger="onSubmit()"
+                        if.bind="selectedPaymentType == 'By transfer' && !pickUpOrder && deliveryAddress.length > 0">Checkout
+                    </button>
+                    <button click.trigger="onSubmit()" type="button" class="btn btn-success"
+                        if.bind="selectedPaymentType == 'By transfer' && pickUpOrder">Checkout
                     </button>
                     <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
                 </div>
             </div>
         </div>
     </div>
-
 </template>

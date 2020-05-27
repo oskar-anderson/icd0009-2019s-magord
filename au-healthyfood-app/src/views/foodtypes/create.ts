@@ -2,7 +2,7 @@ import { autoinject } from 'aurelia-framework';
 import { RouteConfig, NavigationInstruction, Router } from 'aurelia-router';
 import { IAlertData } from 'types/IAlertData';
 import { AlertType } from 'types/AlertType';
-import { FoodTypeService } from 'service/foodType-service';
+import { FoodTypeService } from 'service/foodtype-service';
 
 
 

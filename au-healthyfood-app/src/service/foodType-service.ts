@@ -3,7 +3,7 @@ import { HttpClient } from 'aurelia-fetch-client';
 import { AppState } from 'state/app-state';
 import { IFetchResponse } from 'types/IFetchResponse';
 
-import { IFoodType } from './../domain/IFoodType/IFoodType';
+import { IFoodType } from '../domain/IFoodType/IFoodType';
 import { IFoodTypeCreate } from 'domain/IFoodType/IFoodTypeCreate';
 import { IFoodTypeEdit } from 'domain/IFoodType/IFoodTypeEdit';
 

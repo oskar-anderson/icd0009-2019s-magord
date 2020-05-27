@@ -11,13 +11,6 @@
         <button click.delegate="createOrder($event)" class="btn btn-success">Create a new order</button>
     </p>
     <br>
-    <div class="text-center">
-        <a route-href="route: foods-index; params.bind: {}">To foods</a>
-    </div>
-    <div class="text-center">
-        <a route-href="route: drinks-index; params.bind: {}">To drinks</a>
-    </div>
-    <br>
     <table class="table">
         <thead class="thead-light">
             <tr>
@@ -63,8 +56,8 @@
                     ${order.paymentType}
                 </td>
                 <td>
-                    <a if.bind="isAdmin" route-href="route: orders-edit; params.bind: { id: order.id }">Edit</a>
-                    <button style="float: right" click.trigger="deleteOnClick(order)" type="button"
+                    <a if.bind="order.completed === false" route-href="route: orders-edit; params.bind:{ id: order.id }" class="btn btn-primary active" role="button">Edit</a>
+                    <button if.bind="order.completed === false" style="float: right" click.trigger="deleteOnClick(order)" type="button"
                         class="btn btn-danger">Delete</button>
                 </td>
             </tr>

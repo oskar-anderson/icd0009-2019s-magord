@@ -72,59 +72,5 @@ namespace DAL.App.EF.Repositories
                 })
                 .FirstOrDefaultAsync();
         }
-
-        /*
-        public async Task<IEnumerable<IngredientDTO>> DTOAllAsync()
-        {
-            var query = RepoDbSet
-                .Include(i => i.Food)
-                .AsQueryable();
-            
-            return await query
-                .Select(i => new IngredientDTO()
-                {
-                    Id = i.Id,
-                    Name = i.Name,
-                    Amount = i.Amount,
-                    FoodId = i.FoodId,
-                    Food = new FoodDTO()
-                    {
-                        Id = i.Food!.Id,
-                        Amount = i.Food.Amount,
-                        Description = i.Food.Description,
-                        FoodTypeId = i.Food.FoodTypeId,
-                        Name = i.Food.Name,
-                        Size = i.Food.Size
-                    }
-                })
-                .ToListAsync();
-        }
-
-        public async Task<IngredientDTO> DTOFirstOrDefaultAsync(Guid id)
-        {
-            var query = RepoDbSet
-                .Include(i => i.Food)
-                .Where(i => i.Id == id).AsQueryable();
-
-            var ingredientDTO = await query.Select(i => new IngredientDTO()
-            {
-                Id = i.Id,
-                Name = i.Name,
-                Amount = i.Amount,
-                FoodId = i.FoodId,
-                Food = new FoodDTO()
-                {
-                    Id = i.Food!.Id,
-                    Amount = i.Food.Amount,
-                    Description = i.Food.Description,
-                    FoodTypeId = i.Food.FoodTypeId,
-                    Name = i.Food.Name,
-                    Size = i.Food.Size
-                }
-            }).FirstOrDefaultAsync();
-
-            return ingredientDTO;
-        }
-        */
     }
 }

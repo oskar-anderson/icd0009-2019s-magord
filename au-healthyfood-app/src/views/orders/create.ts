@@ -1,5 +1,5 @@
-import { PaymentTypeService } from './../../service/paymenttype-service';
-import { OrderTypeService } from './../../service/orderType-service';
+import { PaymentTypeService } from '../../service/paymenttype-service';
+import { OrderTypeService } from '../../service/ordertype-service';
 import { RestaurantService } from './../../service/restaurant-service';
 import { OrderService } from './../../service/order-service';
 import { IOrderType } from './../../domain/IOrderType/IOrderType';
@@ -85,7 +85,7 @@ export class OrdersCreate {
     onSubmit(event: Event) {
         event.preventDefault();
         this.order!.number = 1;
-        this.order!.orderStatus = "a";
+        this.order!.orderStatus = "abc";
         this.order!.timeCreated = "12"
         this.order!.completed = false;
         this.orderService
@@ -104,6 +104,6 @@ export class OrdersCreate {
                         }
                     }
                 }
-            );
+        );
     }
 }

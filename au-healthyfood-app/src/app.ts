@@ -16,29 +16,6 @@ export class App {
     constructor(private appState: AppState, private orderService: OrderService) {
 
     }
-    
-    attached() {
-        this.orderService.getOrders().then(
-            response => {
-                if (response.statusCode >= 200 && response.statusCode < 300) {
-                    this._alert = null;
-                    for (const order of response.data!) {
-                        if(order.completed === false) {
-                            this._orders.push(order)
-                            console.log(order)
-                        }
-                    }
-                } else {
-                    // show error message
-                    this._alert = {
-                        message: response.statusCode.toString() + ' - ' + response.errorMessage,
-                        type: AlertType.Danger,
-                        dismissable: true,
-                    }
-                }
-            }
-        );
-    }
 
 
     configureRouter(config: RouterConfiguration, router: Router): void {
@@ -62,44 +39,36 @@ export class App {
 
 
             { route: ['areas', 'areas/index'], name: 'areas-index', moduleId: PLATFORM.moduleName('views/areas/index'), nav: true, title: 'Areas', settings: { roles: ['admin'], appState: this.appState } },
-            { route: ['areas/details/:id?'], name: 'areas-details', moduleId: PLATFORM.moduleName('views/areas/details'), nav: false, title: 'Areas details', settings: { roles: ['admin'], appState: this.appState } },
             { route: ['areas/edit/:id?'], name: 'areas-edit', moduleId: PLATFORM.moduleName('views/areas/edit'), nav: false, title: 'Areas Edit', settings: { roles: ['admin'], appState: this.appState } },
             { route: ['areas/create'], name: 'areas-create', moduleId: PLATFORM.moduleName('views/areas/create'), nav: false, title: 'Areas Create', settings: { roles: ['admin'], appState: this.appState } },
 
 
             { route: ['campaigns', 'campaigns/index'], name: 'campaigns-index', moduleId: PLATFORM.moduleName('views/campaigns/index'), nav: true, title: 'Campaigns', settings: { roles: [] } },
-            { route: ['campaigns/details/:id?'], name: 'campaigns-details', moduleId: PLATFORM.moduleName('views/campaigns/details'), nav: false, title: 'Campaigns details', settings: { roles: [] } },
             { route: ['campaigns/edit/:id?'], name: 'campaigns-edit', moduleId: PLATFORM.moduleName('views/campaigns/edit'), nav: false, title: 'Campaigns Edit', settings: { roles: [] } },
             { route: ['campaigns/create'], name: 'campaigns-create', moduleId: PLATFORM.moduleName('views/campaigns/create'), nav: false, title: 'Campaigns Create', settings: { roles: [] } },
 
 
             { route: ['drinks', 'drinks/index'], name: 'drinks-index', moduleId: PLATFORM.moduleName('views/drinks/index'), nav: true, title: 'Drinks', settings: { roles: [] } },
-            { route: ['drinks/details/:id?'], name: 'drinks-details', moduleId: PLATFORM.moduleName('views/drinks/details'), nav: false, title: 'Drinks details', settings: { roles: [] } },
             { route: ['drinks/edit/:id?'], name: 'drinks-edit', moduleId: PLATFORM.moduleName('views/drinks/edit'), nav: false, title: 'Drinks Edit', settings: { roles: [] } },
             { route: ['drinks/create'], name: 'drinks-create', moduleId: PLATFORM.moduleName('views/drinks/create'), nav: false, title: 'Drinks Create', settings: { roles: [] } },
 
 
             { route: ['foods', 'foods/index'], name: 'foods-index', moduleId: PLATFORM.moduleName('views/foods/index'), nav: true, title: 'Foods', settings: { roles: [] } },
-            { route: ['foods/details/:id?'], name: 'foods-details', moduleId: PLATFORM.moduleName('views/foods/details'), nav: false, title: 'Foods details', settings: { roles: [] } },
             { route: ['foods/edit/:id?'], name: 'foods-edit', moduleId: PLATFORM.moduleName('views/foods/edit'), nav: false, title: 'Foods Edit', settings: { roles: [] } },
             { route: ['foods/create'], name: 'foods-create', moduleId: PLATFORM.moduleName('views/foods/create'), nav: false, title: 'Foods Create', settings: { roles: [] } },
 
 
             { route: ['foodtypes', 'foodtypes/index'], name: 'foodtypes-index', moduleId: PLATFORM.moduleName('views/foodtypes/index'), nav: true, title: 'Food types', settings: { roles: ['admin'] } },
-            { route: ['foodtypes/details/:id?'], name: 'foodtypes-details', moduleId: PLATFORM.moduleName('views/foodtypes/details'), nav: false, title: 'Food Types details', settings: { roles: ['admin'] } },
             { route: ['foodtypes/edit/:id?'], name: 'foodtypes-edit', moduleId: PLATFORM.moduleName('views/foodtypes/edit'), nav: false, title: 'Food Types Edit', settings: { roles: ['admin'] } },
-            { route: ['foodtypes/delete/:id?'], name: 'foodtypes-delete', moduleId: PLATFORM.moduleName('views/foodtypes/delete'), nav: false, title: 'Food Types Delete', settings: { roles: ['admin'] } },
             { route: ['foodtypes/create'], name: 'foodtypes-create', moduleId: PLATFORM.moduleName('views/foodtypes/create'), nav: false, title: 'Food Types Create', settings: { roles: ['admin'] } },
 
 
             { route: ['ingredients', 'ingredients/index'], name: 'ingredients-index', moduleId: PLATFORM.moduleName('views/ingredients/index'), nav: true, title: 'Ingredients', settings: { roles: ['admin'] } },
-            { route: ['ingredients/details/:id?'], name: 'ingredients-details', moduleId: PLATFORM.moduleName('views/ingredients/details'), nav: false, title: 'Ingredients details', settings: { roles: ['admin'] } },
             { route: ['ingredients/edit/:id?'], name: 'ingredients-edit', moduleId: PLATFORM.moduleName('views/ingredients/edit'), nav: false, title: 'Ingredients Edit', settings: { roles: ['admin'] } },
             { route: ['ingredients/create'], name: 'ingredients-create', moduleId: PLATFORM.moduleName('views/ingredients/create'), nav: false, title: 'Ingredients Create', settings: { roles: ['admin'] } },
 
 
             { route: ['orders', 'orders/index'], name: 'orders-index', moduleId: PLATFORM.moduleName('views/orders/index'), nav: true, title: 'My Orders', settings: { roles: [] } },
-            { route: ['orders/details/:id?'], name: 'orders-details', moduleId: PLATFORM.moduleName('views/orders/details'), nav: false, title: 'Orders details', settings: { roles: [] } },
             { route: ['orders/edit/:id?'], name: 'orders-edit', moduleId: PLATFORM.moduleName('views/orders/edit'), nav: false, title: 'Orders Edit', settings: { roles: [] } },
             { route: ['orders/create'], name: 'orders-create', moduleId: PLATFORM.moduleName('views/orders/create'), nav: false, title: 'Orders Create', settings: { roles: [] } },
 
@@ -108,7 +77,7 @@ export class App {
             { route: ['orderitems/details/:id?'], name: 'orderitems-details', moduleId: PLATFORM.moduleName('views/orderitems/details'), nav: false, title: 'Order items details', settings: { roles: [] } },
             { route: ['orderitems/edit/:id?'], name: 'orderitems-edit', moduleId: PLATFORM.moduleName('views/orderitems/edit'), nav: false, title: 'Order items Edit', settings: { roles: [] } },
             { route: ['orderitems/create'], name: 'orderitems-create', moduleId: PLATFORM.moduleName('views/orderitems/create'), nav: false, title: 'Order items Create', settings: { roles: [] } },
-
+            { route: ['orderitems/orderCheckout'], name: 'orderitems-checkout', moduleId: PLATFORM.moduleName('views/orderitems/orderCheckout'), nav: false, title: 'Order items checkout', settings: { roles: [] } },
 
             { route: ['ordertypes', 'ordertypes/index'], name: 'ordertypes-index', moduleId: PLATFORM.moduleName('views/ordertypes/index'), nav: true, title: 'Order types', settings: { roles: ['admin'] } },
             { route: ['ordertypes/details/:id?'], name: 'ordertypes-details', moduleId: PLATFORM.moduleName('views/ordertypes/details'), nav: false, title: 'Order Types details', settings: { roles: ['admin'] } },
@@ -130,7 +99,6 @@ export class App {
 
 
             { route: ['restaurants', 'restaurants/index'], name: 'restaurants-index', moduleId: PLATFORM.moduleName('views/restaurants/index'), nav: true, title: 'Our restaurants', settings: { roles: [] } },
-            { route: ['restaurants/details/:id?'], name: 'restaurants-details', moduleId: PLATFORM.moduleName('views/restaurants/details'), nav: false, title: 'Restaurants details', settings: { roles: [] } },
             { route: ['restaurants/edit/:id?'], name: 'restaurants-edit', moduleId: PLATFORM.moduleName('views/restaurants/edit'), nav: false, title: 'Restaurants Edit', settings: { roles: [] } },
             { route: ['restaurants/create'], name: 'restaurants-create', moduleId: PLATFORM.moduleName('views/restaurants/create'), nav: false, title: 'Restaurants Create', settings: { roles: [] } },
 
@@ -149,7 +117,7 @@ export class App {
 
     logoutOnClick() {
         this.appState.jwt = null;
-        this.router!.navigateToRoute('account-login');
+        this.router!.navigateToRoute('home');
     }
 }
 

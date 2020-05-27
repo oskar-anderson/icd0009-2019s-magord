@@ -13,32 +13,15 @@
         <div class="col-md-4">
             <form submit.trigger="onSubmit($event)">
                 <div class="form-group">
-                    <label class="control-label" for="Number">Number</label>
-                    <input class="form-control" type="text" id="Number" maxlength="256" value.bind="order.number"/>
-                </div>
-
-                <div class="form-group">
-                    <label class="control-label" for="OrderStatus">Order status</label>
-                    <input class="form-control" type="text" id="OrderStatus" maxlength="256" value.bind="order.orderStatus"/>
-                </div>
-
-                <div class="form-group">
-                    <label class="control-label" for="TimeCreated">Time created</label>
-                    <input class="form-control" type="text" id="TimeCreated" maxlength="256" value.bind="order.timeCreated"/>
-                </div>
-
-                <div class="form-group">
                     <label class="control-label" for="RestaurantId">Restaurant</label>
                     <select class="form-control" data-val="true", type="text" id="RestaurantId" maxlength="256" value.bind="order.restaurantId">
-                    <option model.bind="null">Choose a restaurant</option>
-                    <option repeat.for="restaurant of _restaurants" model.bind="restaurant.id">${restaurant.name}</option>
+                    <option repeat.for="restaurant of _restaurants" model.bind="restaurant.id">${restaurant.address} | ${restaurant.area} | ${restaurant.town}</option>
                     </select>
                 </div>
 
                 <div class="form-group">
                     <label class="control-label" for="OrderTypeId">Order type</label>
                     <select class="form-control" data-val="true", type="text" id="OrderTypeId" maxlength="256" value.bind="order.orderTypeId">
-                    <option model.bind="null">Choose order type</option>
                     <option repeat.for="orderType of _orderTypes" model.bind="orderType.id">${orderType.name}</option>
                     </select>
                 </div>
@@ -46,20 +29,19 @@
                 <div class="form-group">
                     <label class="control-label" for="PaymentTypeId">Payment type</label>
                     <select class="form-control" data-val="true", type="text" id="PaymentTypeId" maxlength="256" value.bind="order.paymentTypeId">
-                    <option model.bind="null">Choose payment type</option>
                     <option repeat.for="paymentType of _paymentTypes" model.bind="paymentType.id">${paymentType.name}</option>
                     </select>
                 </div>
 
                 <div class="form-group">
-                    <input type="submit" value="Submit" class="btn btn-primary" />
+                    <input type="submit" value="Update" class="btn btn-primary" />
                 </div>
             </form>
         </div>
     </div>
 
     <div>
-        <a route-href="route: orders-index; params.bind: { }">Back to List</a>
+        <a route-href="route: orders-index; params.bind: { }">Back to orders</a>
     </div>
 
 </template>

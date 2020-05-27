@@ -1,4 +1,4 @@
-import { PaymentTypeService } from './../../service/paymenttype-service';
+import { PaymentTypeService } from '../../service/paymenttype-service';
 import { IPaymentType } from './../../domain/IPaymentType/IPaymentType';
 import { IOrderEdit } from './../../domain/IOrder/IOrderEdit';
 import { autoinject } from 'aurelia-framework';
@@ -8,7 +8,7 @@ import { AlertType } from 'types/AlertType';
 import { IRestaurant } from 'domain/IRestaurant/IRestaurant';
 import { IOrderType } from 'domain/IOrderType/IOrderType';
 import { OrderService } from 'service/order-service';
-import { OrderTypeService } from 'service/orderType-service';
+import { OrderTypeService } from 'service/ordertype-service';
 import { RestaurantService } from 'service/restaurant-service';
 
 
@@ -42,7 +42,7 @@ export class OrdersEdit {
                     }
                 }
             }
-        );
+            );
         this.orderTypeService.getOrderTypes()
             .then(response => {
                 if (response.statusCode >= 200 && response.statusCode < 300) {
@@ -58,7 +58,7 @@ export class OrdersEdit {
                     }
                 }
             }
-        );
+            );
         this.paymentTypeService.getPaymentTypes()
             .then(response => {
                 if (response.statusCode >= 200 && response.statusCode < 300) {
@@ -74,7 +74,7 @@ export class OrdersEdit {
                     }
                 }
             }
-        );
+            );
     }
 
     activate(params: any, routeConfig: RouteConfig, navigationInstruction: NavigationInstruction) {
@@ -83,7 +83,6 @@ export class OrdersEdit {
                 response => {
                     if (response.statusCode >= 200 && response.statusCode < 300) {
                         this._alert = null;
-                        console.log(response.data)
                         this.order = response.data!;
                     } else {
                         // show error message
@@ -100,7 +99,6 @@ export class OrdersEdit {
 
 
     onSubmit(event: Event) {
-        this.order!.number = Number(this.order!.number)
         event.preventDefault();
         this.orderService
             .updateOrder(this.order!)

@@ -57,7 +57,7 @@ namespace WebApp.ApiControllers._1._0
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<V1DTO.Order>> GetOrder(Guid id)
         {
-            var order = await _bll.Orders.FirstOrDefaultAsync(id);
+            var order = await _bll.Orders.FirstOrDefaultAsync(id, User.UserId());
             
             if (order == null)
             {
@@ -106,13 +106,9 @@ namespace WebApp.ApiControllers._1._0
         public async Task<ActionResult<V1DTO.Order>> PostOrder(V1DTO.Order order)
         {
             order.AppUserId = User.UserId();
-            order.TimeCreated = DateTime.Now.ToString("dd/MM/yyyy HH:mm");
-            order.Number = new Random().Next(100, 10000000);
-            order.OrderStatus = "Waiting for confirmation";
-            order.Completed = false;
             
             var bllEntity = _mapper.Map(order);
-            _bll.Orders.Add(bllEntity);
+            await _bll.Orders.AddNewOrder(bllEntity);
             await _bll.SaveChangesAsync();
             order.Id = bllEntity.Id;
             

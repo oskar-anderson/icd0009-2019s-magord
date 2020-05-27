@@ -16,39 +16,5 @@ namespace DAL.App.EF.Repositories
             new BaseMapper<Domain.Campaign, DAL.App.DTO.Campaign>())
         {
         }
-
-        /*
-        public async Task<IEnumerable<CampaignDTO>> DTOAllAsync()
-        {
-            var query = RepoDbSet.AsQueryable();
-            
-            return await query
-                .Select(c => new CampaignDTO()
-                {
-                    Id = c.Id,
-                    From = c.From,
-                    To = c.To,
-                    Name = c.Name,
-                    Comment = c.Comment
-                })
-                .ToListAsync();
-        }
-
-        public async Task<CampaignDTO> DTOFirstOrDefaultAsync(Guid id)
-        {
-            var query = RepoDbSet.Where(c => c.Id == id).AsQueryable();
-
-            var campaignDTO = await query.Select(c => new CampaignDTO()
-            {
-                Id = c.Id,
-                From = c.From,
-                To = c.To,
-                Name = c.Name,
-                Comment = c.Comment
-            }).FirstOrDefaultAsync();
-
-            return campaignDTO;
-        }
-        */
     }
 }

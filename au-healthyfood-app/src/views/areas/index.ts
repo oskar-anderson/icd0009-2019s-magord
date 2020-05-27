@@ -43,7 +43,6 @@ export class AreasIndex {
     }
 
     deleteOnClick(area: IArea) {
-        console.log("Delete")
         this.areaService
         .deleteArea(area.id)
         .then(
@@ -62,7 +61,4 @@ export class AreasIndex {
             }
         );
     }
-
-
-
 }

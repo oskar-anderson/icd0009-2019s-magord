@@ -137,6 +137,36 @@ namespace DAL.App.EF.Helpers
 
             context.SaveChanges();
             
+            var campaigns = new Campaign[]
+            {
+                new Campaign()
+                {
+                    Id = new Guid("00000000-0000-0000-0000-000000000001"),
+                    Name = "State-of-emergency campaign",
+                    Comment = "Every item is 25% off!!",
+                    From = "15-03-2020",
+                    To = "17-03-2020"
+                },
+                new Campaign()
+                {
+                    Id = new Guid("00000000-0000-0000-0000-000000000002"),
+                    Name = "Drink-all-you-can campaign",
+                    Comment = "Every drink is 50% off!!",
+                    From = "25-05-2020",
+                    To = "25-07-2020"
+                },
+            };
+
+            foreach (var campaign in campaigns)
+            {
+                if (!context.Campaigns.Any(l => l.Id == campaign.Id))
+                {
+                    context.Campaigns.Add(campaign);
+                }
+            }
+
+            context.SaveChanges();
+            
             var foodTypes = new FoodType[]
             {
                 new FoodType()
@@ -183,6 +213,7 @@ namespace DAL.App.EF.Helpers
                     Value =  1.50M,
                     From = DateTime.Now.ToString("dd/MM/yyyy"),
                     To = new DateTime(3000, 01, 01).ToString("dd/MM/yyyy"),
+                    Campaign = campaigns[1]
                 },
                 new Price()
                 {
@@ -218,6 +249,7 @@ namespace DAL.App.EF.Helpers
                     Value =  2.00M,
                     From = DateTime.Now.ToString("dd/MM/yyyy"),
                     To = new DateTime(3000, 01, 01).ToString("dd/MM/yyyy"),
+                    Campaign = campaigns[1]
                 },
                 new Price()
                 {
@@ -233,6 +265,39 @@ namespace DAL.App.EF.Helpers
                     From = DateTime.Now.ToString("dd/MM/yyyy"),
                     To = new DateTime(3000, 01, 01).ToString("dd/MM/yyyy"),
                 },
+                new Price()
+                {
+                    Id = new Guid("00000000-0000-0000-0000-000000000011"),
+                    Value =  0.75M,
+                    From = DateTime.Now.ToString("dd/MM/yyyy"),
+                    To = new DateTime(3000, 01, 01).ToString("dd/MM/yyyy"),
+                    Campaign = campaigns[1]
+                },
+                new Price()
+                {
+                    Id = new Guid("00000000-0000-0000-0000-000000000012"),
+                    Value =  1.25M,
+                    From = DateTime.Now.ToString("dd/MM/yyyy"),
+                    To = new DateTime(3000, 01, 01).ToString("dd/MM/yyyy"),
+                    Campaign = campaigns[1]
+                },
+                new Price()
+                {
+                    Id = new Guid("00000000-0000-0000-0000-000000000013"),
+                    Value =  1.75M,
+                    From = DateTime.Now.ToString("dd/MM/yyyy"),
+                    To = new DateTime(3000, 01, 01).ToString("dd/MM/yyyy"),
+                    Campaign = campaigns[1]
+                },
+                new Price()
+                {
+                    Id = new Guid("00000000-0000-0000-0000-000000000014"),
+                    Value =  1.00M,
+                    From = DateTime.Now.ToString("dd/MM/yyyy"),
+                    To = new DateTime(3000, 01, 01).ToString("dd/MM/yyyy"),
+                    Campaign = campaigns[1]
+                },
+                
             };
 
             foreach (var price in prices)
@@ -446,7 +511,7 @@ namespace DAL.App.EF.Helpers
                     Name =  "Water",
                     Size = 0.5F,
                     Amount = 1,
-                    Price = prices[2]
+                    Price = prices[10]
                 },
                 
                 new Drink()
@@ -455,7 +520,7 @@ namespace DAL.App.EF.Helpers
                     Name =  "Orange juice",
                     Size = 0.5F,
                     Amount = 1,
-                    Price = prices[3]
+                    Price = prices[11]
                 },
                 new Drink()
                 {
@@ -463,7 +528,7 @@ namespace DAL.App.EF.Helpers
                     Name =  "Apple juice",
                     Size = 0.5F,
                     Amount = 1,
-                    Price = prices[3]
+                    Price = prices[11]
                 },
                 new Drink()
                 {
@@ -471,7 +536,7 @@ namespace DAL.App.EF.Helpers
                     Name =  "Smoothie",
                     Size = 0.5F,
                     Amount = 1,
-                    Price = prices[5]
+                    Price = prices[12]
                 },
                 new Drink()
                 {
@@ -479,7 +544,7 @@ namespace DAL.App.EF.Helpers
                     Name =  "Home-made lemonade",
                     Size = 0.75F,
                     Amount = 1,
-                    Price = prices[6]
+                    Price = prices[7]
                 },
                 new Drink()
                 {
@@ -487,7 +552,7 @@ namespace DAL.App.EF.Helpers
                     Name =  "Ice tea",
                     Size = 0.75F,
                     Amount = 1,
-                    Price = prices[8]
+                    Price = prices[2]
                 },
                 new Drink()
                 {
@@ -495,7 +560,7 @@ namespace DAL.App.EF.Helpers
                     Name =  "Green tea",
                     Size = 0.3F,
                     Amount = 1,
-                    Price = prices[2]
+                    Price = prices[10]
                 },
                 new Drink()
                 {
@@ -503,7 +568,7 @@ namespace DAL.App.EF.Helpers
                     Name =  "Cappuccino",
                     Size = 0.3F,
                     Amount = 1,
-                    Price = prices[7]
+                    Price = prices[13]
                 },
                 new Drink()
                 {
@@ -511,7 +576,7 @@ namespace DAL.App.EF.Helpers
                     Name =  "Latte",
                     Size = 0.3F,
                     Amount = 1,
-                    Price = prices[7]
+                    Price = prices[13]
                 },
                 new Drink()
                 {
@@ -519,7 +584,7 @@ namespace DAL.App.EF.Helpers
                     Name =  "Black coffee",
                     Size = 0.3F,
                     Amount = 1,
-                    Price = prices[7]
+                    Price = prices[13]
                 },
             };
 
@@ -648,29 +713,6 @@ namespace DAL.App.EF.Helpers
                 if (!context.PaymentTypes.Any(l => l.Id == paymentType.Id))
                 {
                     context.PaymentTypes.Add(paymentType);
-                }
-            }
-
-            context.SaveChanges();
-            
-            
-            var campaigns = new Campaign[]
-            {
-                new Campaign()
-                {
-                    Id = new Guid("00000000-0000-0000-0000-000000000001"),
-                    Name = "State-of-emergency campaign",
-                    Comment = "Every item is 25% off!!",
-                    From = "15-03-2020",
-                    To = "17-03-2020"
-                },
-            };
-
-            foreach (var campaign in campaigns)
-            {
-                if (!context.Campaigns.Any(l => l.Id == campaign.Id))
-                {
-                    context.Campaigns.Add(campaign);
                 }
             }
 

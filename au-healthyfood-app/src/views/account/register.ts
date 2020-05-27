@@ -22,19 +22,23 @@ export class AccountRegister {
     onSubmit(event: Event) {
 
         if(!(this.checkForValidPhoneNumber(this._phoneNumber))) {
-            return "";
+            return null;
         }
 
         if (this._password !== this._confirmPassword) {
-            alert("Passwords don't match!")
+            this._errorMessage = "The passwords do not match!"
+            return null;
+        }
+
+        if(this._email.length < 1 || this._firstName.length < 1 || this._lastName.length < 1) {
+            this._errorMessage = "Please fill all the fields!"
             return null;
         }
 
         if (!(this.checkForValidPassword(this._password))) {
-            return "";
+            return null
         }
 
-        console.log(this._email, this._password);
         event.preventDefault();
 
         this.accountService.register(this._email, this._password, this._firstName, this._lastName, this._phoneNumber).then(
@@ -50,7 +54,7 @@ export class AccountRegister {
                     this.router!.navigateToRoute('home');
                 } else {
                     this._errorMessage = response.statusCode.toString()
-                        + ' REGISTER FAILED '
+                        + ' REGISTRATION FAILED '
                         + response.errorMessage!
                 }
             }
@@ -61,7 +65,7 @@ export class AccountRegister {
         if (/^\d{7,}$/.test(phoneNumber)) {
             return true;
         } else {
-            alert("Please enter a valid phone number!")
+            this._errorMessage = "Please enter a valid phone number!"
             return false;
         }
     }
@@ -71,8 +75,9 @@ export class AccountRegister {
         let answer = true;
 
         if (password.length < 6) {
-            alert("Password is too short!")
+            this._errorMessage = "The password is too short!"
             answer = false;
+            return null;
         }
 
         let lowerCounter = 0
@@ -89,27 +94,32 @@ export class AccountRegister {
         }
 
         if (lowerCounter == 0) {
-            alert("Password must include lowercase letter!")
+            this._errorMessage = "The password must include lowercase letter!"
             answer = false;
+            return null;
         }
 
         if (upperCounter == 0) {
-            alert("Password must include uppercase letter!")
+            this._errorMessage = "The password must include an uppercase letter!"
             answer = false;
+            return null;
         }
+        
 
         let isDigit = /\d/.test(password)
 
         if(isDigit == false) {
-            alert("Password must include a digit!")
+            this._errorMessage = "The password must include a digit!"
             answer = false;
+            return null;
         }
 
         let isAlphanumeric = /^[a-z0-9]+$/i.test(password)
 
         if(isAlphanumeric !== false) {
-            alert("Password must include a nonalphanumeric symbol!")
+            this._errorMessage = "The password must include a nonalphanumeric symbol!"
             answer = false;
+            return null;
         }
 
         return answer;

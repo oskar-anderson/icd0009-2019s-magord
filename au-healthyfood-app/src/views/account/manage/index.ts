@@ -9,6 +9,7 @@ export class AccountManage {
     private _firstName: string= "";
     private _lastName: string= "";
     private _errorMessage: string | null = null;
+    private _successMessage: string | null = null;
 
     constructor(private accountService: AccountService, private appState: AppState){
         
@@ -25,10 +26,11 @@ export class AccountManage {
         this.accountService.changeNames(this._email, this._firstName, this._lastName).then(
             response => {
                 if (response.statusCode == 200) {
+                    this._errorMessage = null;
                     this.appState.jwt = response.data!.token;
                     this.appState.firstName = response.data!.firstName;
                     this.appState.lastName = response.data!.lastName;
-                    alert("Names updated!")
+                    this._successMessage = "Your names have been successfully changed!"
                     this.attached();
                 } else {
                     this._errorMessage = response.statusCode.toString()

@@ -1,4 +1,4 @@
-import { PaymentTypeService } from './../../service/Paymenttype-service';
+import { PaymentTypeService } from '../../service/paymenttype-service';
 import { IPaymentTypeEdit } from './../../domain/IPaymentType/IPaymentTypeEdit';
 import { IPaymentType } from './../../domain/IPaymentType/IPaymentType';
 

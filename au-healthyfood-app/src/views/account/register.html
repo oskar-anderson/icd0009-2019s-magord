@@ -4,6 +4,8 @@
     <div class="row">
         <div class="col-md-4">
             <form method="post" submit.trigger="onSubmit($event)">
+                <h5 if.bind="_errorMessage != null" style="color:red;">${_errorMessage}</h5>
+                    <hr />
                 <h4>Create a new account.</h4>
                 <hr />
                 

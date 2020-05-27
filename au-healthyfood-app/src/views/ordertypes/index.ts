@@ -1,4 +1,4 @@
-import { OrderTypeService } from '../../service/OrderType-service';
+import { OrderTypeService } from '../../service/ordertype-service';
 import { IOrderType } from '../../domain/IOrderType/IOrderType';
 import { RouteConfig, NavigationInstruction } from 'aurelia-router';
 import { AlertType } from '../../types/AlertType';

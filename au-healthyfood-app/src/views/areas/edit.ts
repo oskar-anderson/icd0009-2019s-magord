@@ -3,7 +3,6 @@ import { TownService } from './../../service/town-service';
 import { autoinject } from 'aurelia-framework';
 import { RouteConfig, NavigationInstruction, Router } from 'aurelia-router';
 import { AreaService } from 'service/area-service';
-import { IArea } from 'domain/IArea/IArea';
 import { IAlertData } from 'types/IAlertData';
 import { AlertType } from 'types/AlertType';
 import { ITown } from 'domain/ITown/ITown';
@@ -62,11 +61,11 @@ export class AreasEdit {
 
     onSubmit(event: Event) {
         event.preventDefault();
-        if (this.area!.townId == null || this.area!.name == null ) {
+        if (this.area!.townId == null || this.area!.name == null) {
             this._alert = {
                 message: "Please fill all the cells",
                 type: AlertType.Danger,
-                dismissable:false,
+                dismissable: false,
             }
             return null;
         }
@@ -87,9 +86,5 @@ export class AreasEdit {
                     }
                 }
             );
-        event.preventDefault();
     }
-
-
-
 }

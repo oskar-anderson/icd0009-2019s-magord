@@ -1,5 +1,5 @@
 import { OrderService } from './../../service/order-service';
-import { PaymentTypeService } from './../../service/paymenttype-service';
+import { PaymentTypeService } from '../../service/paymenttype-service';
 import { IPaymentType } from './../../domain/IPaymentType/IPaymentType';
 import { IOrder } from 'domain/IOrder/IOrder';
 import { AppState } from './../../state/app-state';
@@ -13,11 +13,13 @@ import { IOrderItem } from 'domain/IOrderItem/IOrderItem';
 @autoinject
 export class OrderItemsIndex {
     private _alert: IAlertData | null = null;
+    private _modalAlert: IAlertData | null = null;
 
     private _orderItems: IOrderItem[] = [];
     private _paymentTypes: IPaymentType[] = [];
     private orderType: string = "";
     private pickUpOrder: boolean | null = null;
+    private deliveryAddress: string = "";
 
     private orderId: string | null = null;
     private order: IOrder | null = null
@@ -64,6 +66,7 @@ export class OrderItemsIndex {
                 if (response.statusCode >= 200 && response.statusCode < 300) {
                     this.isAdmin = this.appState.isAdmin
                     this._alert = null;
+                    this._modalAlert = null;
                     this._orderItems = response.data!;
                     for (const orderItem of this._orderItems) {
                         this.orderType = orderItem.orderType
@@ -157,63 +160,96 @@ export class OrderItemsIndex {
             );
     }
 
-    onSubmit() {
-        console.log(this.orderId)
-        if (this.selectedPaymentType == "By cash/card") {
-            this.orderService
-                .getOrder(this.orderId!)
-                .then(
-                    response => {
-                        if (response.statusCode >= 200 && response.statusCode < 300) {
-                            this._alert = null;
-                            this.order = response.data!
-                            this.order.orderStatus = "Order accepted"
-                            this.orderService.updateOrder(this.order)
-                                .then(
-                                    response => {
-                                        if (response.statusCode >= 200 && response.statusCode < 300) {
-                                            this.orderItemService.deleteAllOrderItems()
-                                                .then(
-                                                    response => {
-                                                        if (response.statusCode >= 200 && response.statusCode < 300) {
-                                                            this._alert = null;
-                                                            alert("Thank you for ordering from us!")
-                                                            this.router.navigateToRoute('home')
-                                                        }
-                                                        else {
-                                                            // show error message
-                                                            this._alert = {
-                                                                message: response.statusCode.toString() + ' - ' + response.errorMessage,
-                                                                type: AlertType.Danger,
-                                                                dismissable: true,
-                                                            }
-                                                        }
-                                                    }
-                                                )
-                                        }
-                                        else {
-                                            // show error message
-                                            this._alert = {
-                                                message: response.statusCode.toString() + ' - ' + response.errorMessage,
-                                                type: AlertType.Danger,
-                                                dismissable: true,
-                                            }
-                                        }
-                                    })
-                        }
-                        else {
-                            // show error message
-                            this._alert = {
-                                message: response.statusCode.toString() + ' - ' + response.errorMessage,
-                                type: AlertType.Danger,
-                                dismissable: true,
-                            }
+    completeOrder(orderId: string) {
+        this.orderService.getOrder(orderId)
+            .then(response => {
+                if (response.statusCode >= 200 && response.statusCode < 300) {
+                    this._alert = null;
+                    this.order = response.data!;
+                    this.order.completed = true;
+                    this.order.orderStatus = "Order accepted";
+                    this.updateOrder();
+                }
+                else {
+                    // show error message
+                    alert("a")
+                    this._alert = {
+                        message: response.statusCode.toString() + ' - ' + response.errorMessage,
+                        type: AlertType.Danger,
+                        dismissable: true,
+                    }
+                }
+            })
+    }
+
+    updateOrder() {
+        this.orderService.updateOrder(this.order!)
+            .then(
+                response => {
+                    if (response.statusCode >= 200 && response.statusCode < 300) {
+                        this.deleteAllOrderItems();
+                    }
+                    else {
+                        // show error message
+                        this._alert = {
+                            message: response.statusCode.toString() + ' - ' + response.errorMessage,
+                            type: AlertType.Danger,
+                            dismissable: true,
                         }
                     }
-                )
+                }
+            )
+    }
+
+    deleteAllOrderItems() {
+        this.orderItemService.deleteAllOrderItems()
+            .then(response => {
+                if (response.statusCode >= 200 && response.statusCode < 300) {
+                    this._alert = null;
+                    this.router.navigateToRoute('orderitems-checkout')
+                }
+                else {
+                    // show error message
+                    this._alert = {
+                        message: response.statusCode.toString() + ' - ' + response.errorMessage,
+                        type: AlertType.Danger,
+                        dismissable: true,
+                    }
+                }
+            })
+    }
+
+    showAddressError() {
+        this._modalAlert = {
+            message: "Please enter your delivery address!",
+            type: AlertType.Danger,
+            dismissable: true,
         }
-        else {
-            // Goes to bank link to pay via transfer
+    }
+
+
+    onSubmit() {
+        this._modalAlert = null;
+
+        if(!this.pickUpOrder && this.deliveryAddress.length < 1 && this.selectedPaymentType == "By transfer") {
+            this.showAddressError();
+        }
+
+        if((this.selectedPaymentType == 'By transfer' && this.pickUpOrder) || (this.selectedPaymentType == 'By transfer' && !this.pickUpOrder)) {
+            return null;
+        }
+
+        if(this.pickUpOrder) {
+            this.completeOrder(this.orderId!);
+        }
+
+        if(!this.pickUpOrder){
+            if(this.deliveryAddress.length > 0) {
+                this.completeOrder(this.orderId!);
+            }
+            else {
+                this.showAddressError();
+            }
         }
     }
 }

@@ -1,5 +1,5 @@
 import { PriceService } from './../../service/price-service';
-import { FoodTypeService } from './../../service/foodType-service';
+import { FoodTypeService } from '../../service/foodtype-service';
 import { FoodService } from './../../service/food-service';
 import { IPrice } from './../../domain/IPrice/IPrice';
 import { IFoodType } from './../../domain/IFoodType/IFoodType';

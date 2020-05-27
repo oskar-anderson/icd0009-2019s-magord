@@ -1,4 +1,4 @@
-import { FoodTypeService } from './../../service/foodType-service';
+import { FoodTypeService } from '../../service/foodtype-service';
 import { IFoodType } from './../../domain/IFoodType/IFoodType';
 import { autoinject } from 'aurelia-framework';
 import { RouteConfig, NavigationInstruction, Router } from 'aurelia-router';

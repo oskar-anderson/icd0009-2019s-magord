@@ -16,33 +16,5 @@ namespace DAL.App.EF.Repositories
             new BaseMapper<Domain.PaymentType, DAL.App.DTO.PaymentType>())
         {
         }
-
-        /*
-        public async Task<IEnumerable<PaymentTypeDTO>> DTOAllAsync()
-        {
-            var query = RepoDbSet.AsQueryable();
-            
-            return await query
-                .Select(p => new PaymentTypeDTO()
-                {
-                    Id = p.Id,
-                    Name = p.Name
-                })
-                .ToListAsync();
-        }
-
-        public async Task<PaymentTypeDTO> DTOFirstOrDefaultAsync(Guid id)
-        {
-            var query = RepoDbSet.Where(p => p.Id == id).AsQueryable();
-
-            var paymentTypeDTO = await query.Select(p => new PaymentTypeDTO()
-            {
-                Id = p.Id,
-                Name = p.Name
-            }).FirstOrDefaultAsync();
-
-            return paymentTypeDTO;
-        }
-        */
     }
 }

@@ -54,6 +54,7 @@ namespace DAL.App.EF.Repositories
                     .ThenInclude(o => o!.Town)
                     .Include(o => o.OrderType)
                     .Include(o => o.PaymentType)
+                    .OrderBy(o => o.TimeCreated)
                 .Select(a => new OrderView()
                 {
                     Id = a.Id,

@@ -1,5 +1,5 @@
 import { PriceService } from './../../service/price-service';
-import { FoodTypeService } from './../../service/foodType-service';
+import { FoodTypeService } from '../../service/foodtype-service';
 import { IFoodType } from './../../domain/IFoodType/IFoodType';
 import { IFoodCreate } from './../../domain/IFood/IFoodCreate';
 import { autoinject } from 'aurelia-framework';

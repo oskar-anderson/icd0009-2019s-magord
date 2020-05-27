@@ -4,7 +4,7 @@ import { IAlertData } from 'types/IAlertData';
 import { AlertType } from 'types/AlertType';
 
 import { IPaymentTypeCreate } from './../../domain/IPaymentType/IPaymentTypeCreate';
-import { PaymentTypeService } from './../../service/Paymenttype-service';
+import { PaymentTypeService } from '../../service/paymenttype-service';
 
 
 @autoinject

@@ -1,23 +1,62 @@
 <template>
+    <br>
     <h1 class="text-center">Welcome to Healthy-Me!</h1>
-
     <br>
     <br>
     <div class="text-center" if.bind="appState.jwt == null">
-        <h3>Please register or log in to start ordering some tasty food</h3>
+        <h3>Please register or log in to start ordering some tasty meals</h3>
     </div>
 
-    <div if.bind="appState.jwt !== null" class="text-center">
-        <div>
-            <a route-href="route: orders-index; params.bind: { }">Click here to view or create your order!</a>
+    <div class="text-center">
+        <div class="container" style="padding-right: 100px; padding-left: 100px;">
+            <div class="row">
+                <div class="col-sm-12">
+                    <div id="my-slider" class="carousel slide container-fluid px-0" data-ride="carousel">
+
+                        <ol class="carousel-indicators">
+                            <li data-target="#my-slider" data-slide-to="0" class="active"></li>
+                            <li data-target="#my-slider" data-slide-to="1"></li>
+                            <li data-target="#my-slider" data-slide-to="2"></li>
+                            <li data-target="#my-slider" data-slide-to="3"></li>
+                        </ol>
+
+                        <div class="carousel-inner" role="listbox">
+                            <div class="carousel-item active">
+                                <img class="img-fluid img-fluid w-100"
+                                    src="https://www.thespruceeats.com/thmb/bizAiJzILmPXTzCB0r_dAkzxli8=/960x720/filters:no_upscale():max_bytes(150000):strip_icc()/1-BLTWrapSandwich-Lauripatterson-gettyimages-5abd577943a1030036e99d50.jpg"
+                                    alt="Banner 1">
+                            </div>
+                            <div class="carousel-item">
+                                <img class="img-fluid img-fluid w-100"
+                                    src="https://therecipebandit.com/wp-content/uploads/2019/06/fullsizeoutput_20a8-960x720.jpeg"
+                                    alt="Banner 2">
+                            </div>
+                            <div class="carousel-item">
+                                <img class="img-fluid img-fluid w-100"
+                                    src="https://mooala.com/wp-content/uploads/2018/10/Avocado-Banana-Smoothie-960x720.jpg"
+                                    alt="Banner 3">
+                            </div>
+                            <div class="carousel-item">
+                                <img class="img-fluid img-fluid w-100"
+                                    src="https://i0.wp.com/see.news/wp-content/uploads/2019/07/Hayes-Coffee-Addiction.jpg"
+                                    alt="Banner 4">
+                            </div>
+
+                        </div>
+
+                        <a class="carousel-control-prev" href="#my-slider" role="button" data-slide="prev">
+                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                            <span class="sr-only">Previous</span>
+                        </a>
+                        <a class="carousel-control-next" href="#my-slider" role="button" data-slide="next">
+                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                            <span class="sr-only">Next</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
         </div>
-    
-        <div>
-            <a route-href="route: campaigns-index; params.bind: { }">Click here to see ongoing campaings!</a>
-        </div>
-    
-        <div>
-            <a route-href="route: restaurants-index; params.bind: { }">Click here to see our restaurants!</a>
-        </div>
+        <br>
+        <br>
     </div>
 </template>

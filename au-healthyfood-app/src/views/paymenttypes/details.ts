@@ -1,4 +1,4 @@
-import { PaymentTypeService } from './../../service/Paymenttype-service';
+import { PaymentTypeService } from '../../service/paymenttype-service';
 import { IPaymentType } from './../../domain/IPaymentType/IPaymentType';
 import { autoinject } from 'aurelia-framework';
 import { RouteConfig, NavigationInstruction } from 'aurelia-router';

@@ -2,7 +2,7 @@ import { autoinject } from 'aurelia-framework';
 import { RouteConfig, NavigationInstruction, Router } from 'aurelia-router';
 import { IAlertData } from 'types/IAlertData';
 import { AlertType } from 'types/AlertType';
-import { OrderTypeService } from 'service/OrderType-service';
+import { OrderTypeService } from 'service/ordertype-service';
 
 
 

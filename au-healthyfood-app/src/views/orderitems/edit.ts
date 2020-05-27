@@ -7,7 +7,7 @@ import { AlertType } from 'types/AlertType';
 import { IRestaurant } from 'domain/IRestaurant/IRestaurant';
 import { IOrderType } from 'domain/IOrderType/IOrderType';
 import { OrderService } from 'service/order-service';
-import { OrderTypeService } from 'service/orderType-service';
+import { OrderTypeService } from 'service/ordertype-service';
 import { RestaurantService } from 'service/restaurant-service';
 import { IOrderItemEdit } from 'domain/IOrderItem/IOrderItemEdit';
 import { IFood } from 'domain/IFood/IFood';
