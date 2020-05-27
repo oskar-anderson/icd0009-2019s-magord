@@ -381,7 +381,6 @@ namespace DAL.App.EF.Migrations
                     ChangedBy = table.Column<string>(maxLength: 256, nullable: true),
                     ChangedAt = table.Column<DateTime>(nullable: false),
                     Name = table.Column<string>(maxLength: 256, nullable: false),
-                    Amount = table.Column<int>(nullable: false),
                     FoodId = table.Column<Guid>(nullable: false),
                     PriceId = table.Column<Guid>(nullable: false)
                 },

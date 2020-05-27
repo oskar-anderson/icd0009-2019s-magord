@@ -2,9 +2,8 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Contracts.DAL.App;
 using DAL.App.EF;
-using Domain;
+using Domain.App;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;

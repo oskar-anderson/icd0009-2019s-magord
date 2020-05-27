@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.AspNetCore.Identity;
 
-namespace Contracts.DAL.Base
+namespace Contracts.Domain.Base
 {
     public interface IDomainEntityUser<TUser> : IDomainEntityUser<Guid, TUser>
         where TUser : IdentityUser<Guid>

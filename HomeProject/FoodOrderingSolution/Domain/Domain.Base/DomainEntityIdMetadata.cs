@@ -1,8 +1,8 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
-using Contracts.DAL.Base;
+using Contracts.Domain.Base;
 
-namespace DAL.Base
+namespace Domain.Base
 {
     public abstract class DomainEntityIdMetadata : DomainEntityIdMetadata<Guid>, IDomainEntityId, IDomainEntityMetadata
     {

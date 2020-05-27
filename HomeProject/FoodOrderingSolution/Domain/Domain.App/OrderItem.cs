@@ -1,8 +1,8 @@
 ﻿using System;
-using DAL.Base;
-using Domain.Identity;
+using Domain.App.Identity;
+using Domain.Base;
 
-namespace Domain
+namespace Domain.App
 {
     public class OrderItem : DomainEntityIdMetadataUser<AppUser>
     {

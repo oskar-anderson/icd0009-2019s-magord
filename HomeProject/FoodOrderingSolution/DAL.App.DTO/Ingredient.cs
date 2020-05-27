@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using Contracts.DAL.Base;
-using DAL.App.DTO.Identity;
+using Contracts.Domain.Base;
 
 
 namespace DAL.App.DTO
@@ -11,8 +9,6 @@ namespace DAL.App.DTO
         public Guid Id { get; set; } = default!;
         
         public string Name { get; set; } = default!;
-
-        public int Amount { get; set; } = default!;
 
         public Guid FoodId { get; set; } = default!;
         public Food? Food { get; set; }

@@ -11,10 +11,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DAL.App.EF.Repositories
 {
-    public class PriceRepository : EFBaseRepository<AppDbContext, Domain.Identity.AppUser, Domain.Price, DAL.App.DTO.Price>, IPriceRepository
+    public class PriceRepository : EFBaseRepository<AppDbContext, Domain.App.Identity.AppUser, Domain.App.Price, DAL.App.DTO.Price>, IPriceRepository
     {
         public PriceRepository(AppDbContext dbContext) : base(dbContext,
-            new DALMapper<Domain.Price, DAL.App.DTO.Price>())
+            new DALMapper<Domain.App.Price, DAL.App.DTO.Price>())
         {
         }
 

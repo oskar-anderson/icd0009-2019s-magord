@@ -1,15 +1,15 @@
 ﻿using System;
-using Contracts.DAL.Base;
+using Contracts.Domain.Base;
 using Microsoft.AspNetCore.Identity;
 
-namespace DAL.Base
+namespace Domain.Base
 {
-    public abstract class DomainEntityIdMetadataUser<TUser> : DomainEntityIdMetadataUser<Guid, TUser>, IDomainEntityUser<TUser>
+    public abstract class DomainEntityIdUser<TUser> : DomainEntityIdUser<Guid, TUser>,IDomainEntityId, IDomainEntityUser<TUser>
         where TUser : IdentityUser<Guid>
     {
     }
 
-    public abstract class DomainEntityIdMetadataUser<TKey, TUser> : DomainEntityIdMetadata<TKey>,
+    public abstract class DomainEntityIdUser<TKey, TUser> : DomainEntityId<TKey>,
         IDomainEntityUser<TKey, TUser>
         where TKey : IEquatable<TKey>
         where TUser: IdentityUser<TKey>

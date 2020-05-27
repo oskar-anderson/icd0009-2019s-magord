@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Contracts.DAL.Base
+namespace Contracts.Domain.Base
 {
     public interface IDomainEntityId : IDomainEntityId<Guid>
     {

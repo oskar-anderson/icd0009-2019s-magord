@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Linq;
-using System.Net.Http.Headers;
-using Domain;
-using Domain.Identity;
+using Domain.App;
+using Domain.App.Identity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -605,7 +604,6 @@ namespace DAL.App.EF.Helpers
                 {
                     Id = new Guid("00000000-0000-0000-0000-000000000001"),
                     Name =  "Extra chicken",
-                    Amount = 1,
                     Price = prices[4],
                     Food = foods[0],
                 },
@@ -613,7 +611,6 @@ namespace DAL.App.EF.Helpers
                 {
                     Id = new Guid("00000000-0000-0000-0000-000000000004"),
                     Name =  "Extra shrimp",
-                    Amount = 1,
                     Price = prices[4],
                     Food = foods[1],
                 },
@@ -621,7 +618,6 @@ namespace DAL.App.EF.Helpers
                 {
                     Id = new Guid("00000000-0000-0000-0000-000000000007"),
                     Name =  "Extra croutons",
-                    Amount = 1,
                     Price = prices[4],
                     Food = foods[2],
                 },
@@ -629,7 +625,6 @@ namespace DAL.App.EF.Helpers
                 {
                     Id = new Guid("00000000-0000-0000-0000-000000000009"),
                     Name =  "Extra onion",
-                    Amount = 1,
                     Price = prices[4],
                     Food = foods[4],
                 },
@@ -637,7 +632,6 @@ namespace DAL.App.EF.Helpers
                 {
                     Id = new Guid("00000000-0000-0000-0000-000000000013"),
                     Name =  "Extra blueberries",
-                    Amount = 1,
                     Price = prices[4],
                     Food = foods[6],
                 },
@@ -645,7 +639,6 @@ namespace DAL.App.EF.Helpers
                 {
                     Id = new Guid("00000000-0000-0000-0000-000000000015"),
                     Name =  "Extra Raisins",
-                    Amount = 1,
                     Price = prices[4],
                     Food = foods[8],
                 },
@@ -653,7 +646,6 @@ namespace DAL.App.EF.Helpers
                 {
                     Id = new Guid("00000000-0000-0000-0000-000000000016"),
                     Name =  "Extra turkey",
-                    Amount = 1,
                     Price = prices[4],
                     Food = foods[3],
                 },
@@ -661,7 +653,6 @@ namespace DAL.App.EF.Helpers
                 {
                     Id = new Guid("00000000-0000-0000-0000-000000000017"),
                     Name =  "Extra salmon",
-                    Amount = 1,
                     Price = prices[4],
                     Food = foods[5],
                 },
@@ -669,7 +660,6 @@ namespace DAL.App.EF.Helpers
                 {
                     Id = new Guid("00000000-0000-0000-0000-000000000018"),
                     Name =  "Extra pumpkin",
-                    Amount = 1,
                     Price = prices[4],
                     Food = foods[9],
                 },
@@ -677,7 +667,6 @@ namespace DAL.App.EF.Helpers
                 {
                     Id = new Guid("00000000-0000-0000-0000-000000000019"),
                     Name =  "Honey lime dressing",
-                    Amount = 1,
                     Price = prices[4],
                     Food = foods[7],
                 },

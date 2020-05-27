@@ -1,5 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Extensions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -20,9 +19,9 @@ namespace WebApp.ApiControllers._1._0.Identity
     public class AccountController : ControllerBase
     {
         private readonly IConfiguration _configuration;
-        private readonly UserManager<Domain.Identity.AppUser> _userManager;
+        private readonly UserManager<Domain.App.Identity.AppUser> _userManager;
         private readonly ILogger<AccountController> _logger;
-        private readonly SignInManager<Domain.Identity.AppUser> _signInManager;
+        private readonly SignInManager<Domain.App.Identity.AppUser> _signInManager;
 
         /// <summary>
         /// Constructor
@@ -31,8 +30,8 @@ namespace WebApp.ApiControllers._1._0.Identity
         /// <param name="userManager"></param>
         /// <param name="signInManager"></param>
         /// <param name="logger"></param>
-        public AccountController(IConfiguration configuration, UserManager<Domain.Identity.AppUser> userManager,
-            SignInManager<Domain.Identity.AppUser> signInManager, ILogger<AccountController> logger)
+        public AccountController(IConfiguration configuration, UserManager<Domain.App.Identity.AppUser> userManager,
+            SignInManager<Domain.App.Identity.AppUser> signInManager, ILogger<AccountController> logger)
         {
             _configuration = configuration;
             _userManager = userManager;
@@ -242,7 +241,7 @@ namespace WebApp.ApiControllers._1._0.Identity
                 return StatusCode(404, new {message = "User already registered!"});
             }
             
-            appUser = new Domain.Identity.AppUser() 
+            appUser = new Domain.App.Identity.AppUser() 
             {
                 UserName = model.Email, 
                 Email = model.Email,

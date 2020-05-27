@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -7,16 +6,15 @@ using Contracts.DAL.App.Repositories;
 using DAL.App.DTO;
 using DAL.App.EF.Mappers;
 using DAL.Base.EF.Repositories;
-using DAL.Base.Mappers;
 using Microsoft.EntityFrameworkCore;
 
 
 namespace DAL.App.EF.Repositories
 {
-    public class AreaRepository : EFBaseRepository<AppDbContext, Domain.Identity.AppUser, Domain.Area, DAL.App.DTO.Area>, IAreaRepository
+    public class AreaRepository : EFBaseRepository<AppDbContext, Domain.App.Identity.AppUser, Domain.App.Area, DAL.App.DTO.Area>, IAreaRepository
     {
         public AreaRepository(AppDbContext dbContext) : base(dbContext,
-            new DALMapper<Domain.Area, DAL.App.DTO.Area>())
+            new DALMapper<Domain.App.Area, DAL.App.DTO.Area>())
         {
         }
 

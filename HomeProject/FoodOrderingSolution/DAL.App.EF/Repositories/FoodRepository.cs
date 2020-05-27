@@ -12,10 +12,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DAL.App.EF.Repositories
 {
-    public class FoodRepository : EFBaseRepository<AppDbContext, Domain.Identity.AppUser, Domain.Food, DAL.App.DTO.Food>, IFoodRepository
+    public class FoodRepository : EFBaseRepository<AppDbContext, Domain.App.Identity.AppUser, Domain.App.Food, DAL.App.DTO.Food>, IFoodRepository
     {
         public FoodRepository(AppDbContext dbContext) : base(dbContext,
-            new DALMapper<Domain.Food, DAL.App.DTO.Food>())
+            new DALMapper<Domain.App.Food, DAL.App.DTO.Food>())
         {
         }
 

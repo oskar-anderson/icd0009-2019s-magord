@@ -8,8 +8,6 @@ namespace BLL.App.DTO
         
         public string Name { get; set; } = default!;
 
-        public int Amount { get; set; } = default!;
-
         public string Food { get; set; } = default!;
 
         public decimal Price { get; set; } = default!;

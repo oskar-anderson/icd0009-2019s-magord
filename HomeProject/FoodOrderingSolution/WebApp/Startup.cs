@@ -12,7 +12,7 @@ using Contracts.DAL.App.Repositories;
 using Contracts.DAL.Base;
 using DAL.App.EF;
 using DAL.App.EF.Repositories;
-using Domain.Identity;
+using Domain.App.Identity;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI;

@@ -6,6 +6,7 @@ using Contracts.BLL.Base.Mappers;
 using Contracts.BLL.Base.Services;
 using Contracts.DAL.Base;
 using Contracts.DAL.Base.Repositories;
+using Contracts.Domain.Base;
 
 namespace BLL.Base.Services
 {

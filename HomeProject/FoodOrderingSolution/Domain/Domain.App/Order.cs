@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using DAL.Base;
-using Domain.Identity;
+using Domain.App.Identity;
+using Domain.Base;
 
-namespace Domain
+namespace Domain.App
 {
     public class Order : DomainEntityIdMetadataUser<AppUser>
     {

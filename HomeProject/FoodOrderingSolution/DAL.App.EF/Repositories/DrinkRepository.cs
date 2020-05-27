@@ -11,10 +11,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DAL.App.EF.Repositories
 {
-    public class DrinkRepository : EFBaseRepository<AppDbContext, Domain.Identity.AppUser, Domain.Drink, DAL.App.DTO.Drink>, IDrinkRepository
+    public class DrinkRepository : EFBaseRepository<AppDbContext, Domain.App.Identity.AppUser, Domain.App.Drink, DAL.App.DTO.Drink>, IDrinkRepository
     {
         public DrinkRepository(AppDbContext dbContext) : base(dbContext,
-            new DALMapper<Domain.Drink, DAL.App.DTO.Drink>())
+            new DALMapper<Domain.App.Drink, DAL.App.DTO.Drink>())
         {
         }
         

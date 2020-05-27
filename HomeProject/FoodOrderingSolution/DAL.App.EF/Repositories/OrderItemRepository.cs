@@ -12,11 +12,11 @@ using Microsoft.EntityFrameworkCore;
 namespace DAL.App.EF.Repositories
 {
     public class OrderItemRepository :
-        EFBaseRepository<AppDbContext, Domain.Identity.AppUser, Domain.OrderItem, DAL.App.DTO.OrderItem>,
+        EFBaseRepository<AppDbContext, Domain.App.Identity.AppUser, Domain.App.OrderItem, DAL.App.DTO.OrderItem>,
         IOrderItemRepository
     {
         public OrderItemRepository(AppDbContext dbContext) : base(dbContext,
-            new DALMapper<Domain.OrderItem, DAL.App.DTO.OrderItem>())
+            new DALMapper<Domain.App.OrderItem, DAL.App.DTO.OrderItem>())
         {
         }
 

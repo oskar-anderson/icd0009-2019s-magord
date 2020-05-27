@@ -7,10 +7,10 @@ using Domain;
 
 namespace DAL.App.EF.Repositories
 {
-    public class TownRepository : EFBaseRepository<AppDbContext, Domain.Identity.AppUser, Domain.Town, DAL.App.DTO.Town>, ITownRepository
+    public class TownRepository : EFBaseRepository<AppDbContext, Domain.App.Identity.AppUser, Domain.App.Town, DAL.App.DTO.Town>, ITownRepository
     {
         public TownRepository(AppDbContext dbContext) : base(dbContext,
-            new BaseMapper<Domain.Town, DAL.App.DTO.Town>())
+            new BaseMapper<Domain.App.Town, DAL.App.DTO.Town>())
         {
         }
     }

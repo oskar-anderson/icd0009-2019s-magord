@@ -12,10 +12,10 @@ using Contracts.DAL.App.Repositories;
 
 namespace DAL.App.EF.Repositories
 {
-    public class RestaurantRepository : EFBaseRepository<AppDbContext, Domain.Identity.AppUser, Domain.Restaurant, DAL.App.DTO.Restaurant>, IRestaurantRepository
+    public class RestaurantRepository : EFBaseRepository<AppDbContext, Domain.App.Identity.AppUser, Domain.App.Restaurant, DAL.App.DTO.Restaurant>, IRestaurantRepository
     {
         public RestaurantRepository(AppDbContext dbContext) : base(dbContext,
-            new DALMapper<Domain.Restaurant, DAL.App.DTO.Restaurant>())
+            new DALMapper<Domain.App.Restaurant, DAL.App.DTO.Restaurant>())
         {
         }
         

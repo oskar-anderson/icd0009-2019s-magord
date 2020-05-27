@@ -1,7 +1,7 @@
 ﻿using System;
-using Contracts.DAL.Base;
+using Contracts.Domain.Base;
 
-namespace DAL.Base
+namespace Domain.Base
 {
     public abstract class DomainEntityId : DomainEntityId<Guid>, IDomainEntityId
     {

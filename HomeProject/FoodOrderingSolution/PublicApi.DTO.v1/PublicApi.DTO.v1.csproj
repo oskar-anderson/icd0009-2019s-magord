@@ -12,6 +12,7 @@
     <ItemGroup>
       <ProjectReference Include="..\BLL.App.DTO\BLL.App.DTO.csproj" />
       <ProjectReference Include="..\DAL.Base\DAL.Base.csproj" />
+      <ProjectReference Include="..\Domain\Contracts.Domain.Base\Contracts.Domain.Base.csproj" />
     </ItemGroup>
 
 </Project>

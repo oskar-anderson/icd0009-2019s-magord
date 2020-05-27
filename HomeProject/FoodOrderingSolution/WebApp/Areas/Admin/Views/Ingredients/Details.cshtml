@@ -1,4 +1,4 @@
-@model Domain.Ingredient
+@model Domain.App.Ingredient
 
 @{
     ViewData["Title"] = "Details";
@@ -15,12 +15,6 @@
         </dt>
         <dd class = "col-sm-10">
             @Html.DisplayFor(model => model.Name)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Amount)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Amount)
         </dd>
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.Food)

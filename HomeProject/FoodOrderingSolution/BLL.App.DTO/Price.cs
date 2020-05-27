@@ -1,6 +1,5 @@
 ﻿using System;
-using BLL.App.DTO.Identity;
-using Contracts.DAL.Base;
+using Contracts.Domain.Base;
 
 namespace BLL.App.DTO
 {

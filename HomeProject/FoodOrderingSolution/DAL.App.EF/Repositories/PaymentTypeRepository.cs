@@ -10,10 +10,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DAL.App.EF.Repositories
 {
-    public class PaymentTypeRepository : EFBaseRepository<AppDbContext, Domain.Identity.AppUser, Domain.PaymentType, DAL.App.DTO.PaymentType>, IPaymentTypeRepository
+    public class PaymentTypeRepository : EFBaseRepository<AppDbContext, Domain.App.Identity.AppUser, Domain.App.PaymentType, DAL.App.DTO.PaymentType>, IPaymentTypeRepository
     {
         public PaymentTypeRepository(AppDbContext dbContext) : base(dbContext,
-            new BaseMapper<Domain.PaymentType, DAL.App.DTO.PaymentType>())
+            new BaseMapper<Domain.App.PaymentType, DAL.App.DTO.PaymentType>())
         {
         }
     }

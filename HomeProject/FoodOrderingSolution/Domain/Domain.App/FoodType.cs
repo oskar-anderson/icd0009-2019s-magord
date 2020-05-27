@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using Contracts.DAL.Base;
-using DAL.Base;
-using Domain.Identity;
+using Domain.Base;
 
-namespace Domain
+namespace Domain.App
 {
     public class FoodType : DomainEntityIdMetadata
     {

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Contracts.DAL.Base;
+using Contracts.Domain.Base;
 
 namespace DAL.Base
 {

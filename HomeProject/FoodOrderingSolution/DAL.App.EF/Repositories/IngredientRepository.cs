@@ -12,10 +12,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DAL.App.EF.Repositories
 {
-    public class IngredientRepository : EFBaseRepository<AppDbContext, Domain.Identity.AppUser, Domain.Ingredient, DAL.App.DTO.Ingredient>, IIngredientRepository
+    public class IngredientRepository : EFBaseRepository<AppDbContext, Domain.App.Identity.AppUser, Domain.App.Ingredient, DAL.App.DTO.Ingredient>, IIngredientRepository
     {
         public IngredientRepository(AppDbContext dbContext) : base(dbContext,
-            new DALMapper<Domain.Ingredient, DAL.App.DTO.Ingredient>())
+            new DALMapper<Domain.App.Ingredient, DAL.App.DTO.Ingredient>())
         {
         }
 
@@ -50,7 +50,6 @@ namespace DAL.App.EF.Repositories
                 {
                     Id = a.Id,
                     Name = a.Name,
-                    Amount = a.Amount,
                     Food = a.Food!.Name,
                     Price = a.Price!.Value,
                 }).ToListAsync();
@@ -66,7 +65,6 @@ namespace DAL.App.EF.Repositories
                 {
                     Id = a.Id,
                     Name = a.Name,
-                    Amount = a.Amount,
                     Food = a.Food!.Name,
                     Price = a.Price!.Value,
                 })

@@ -1,7 +1,7 @@
 #pragma warning disable 1591
 using System;
 using DAL.App.EF;
-using Domain.Identity;
+using Domain.App.Identity;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI;

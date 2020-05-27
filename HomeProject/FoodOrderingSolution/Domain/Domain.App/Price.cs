@@ -1,9 +1,8 @@
-﻿﻿using System;
+﻿using System;
 using System.Collections.Generic;
-using DAL.Base;
-using Domain.Identity;
+using Domain.Base;
 
-namespace Domain
+namespace Domain.App
 {
     public class Price : DomainEntityIdMetadata
     {

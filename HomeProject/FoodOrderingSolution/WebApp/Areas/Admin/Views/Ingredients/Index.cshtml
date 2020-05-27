@@ -1,4 +1,4 @@
-@model IEnumerable<Domain.Ingredient>
+@model IEnumerable<Domain.App.Ingredient>
 
 @{
     ViewData["Title"] = "Index";
@@ -14,9 +14,6 @@
         <tr>
             <th>
                 @Html.DisplayNameFor(model => model.Name)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Amount)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Food)
@@ -41,9 +38,6 @@
         <tr>
             <td>
                 @Html.DisplayFor(modelItem => item.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Amount)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Food!.Name)

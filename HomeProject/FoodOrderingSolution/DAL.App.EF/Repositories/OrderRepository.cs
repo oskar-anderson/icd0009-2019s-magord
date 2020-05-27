@@ -11,10 +11,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DAL.App.EF.Repositories
 {
-    public class OrderRepository : EFBaseRepository<AppDbContext, Domain.Identity.AppUser, Domain.Order, DAL.App.DTO.Order>, IOrderRepository
+    public class OrderRepository : EFBaseRepository<AppDbContext, Domain.App.Identity.AppUser, Domain.App.Order, DAL.App.DTO.Order>, IOrderRepository
     {
         public OrderRepository(AppDbContext dbContext) : base(dbContext,
-            new DALMapper<Domain.Order, DAL.App.DTO.Order>())
+            new DALMapper<Domain.App.Order, DAL.App.DTO.Order>())
         {
         }
 

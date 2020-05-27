@@ -7,10 +7,10 @@ using Domain;
 
 namespace DAL.App.EF.Repositories
 {
-    public class FoodTypeRepository : EFBaseRepository<AppDbContext, Domain.Identity.AppUser, Domain.FoodType, DAL.App.DTO.FoodType>, IFoodTypeRepository
+    public class FoodTypeRepository : EFBaseRepository<AppDbContext, Domain.App.Identity.AppUser, Domain.App.FoodType, DAL.App.DTO.FoodType>, IFoodTypeRepository
     {
         public FoodTypeRepository(AppDbContext dbContext) : base(dbContext,
-            new BaseMapper<Domain.FoodType, DAL.App.DTO.FoodType>())
+            new BaseMapper<Domain.App.FoodType, DAL.App.DTO.FoodType>())
         {
         }
     }

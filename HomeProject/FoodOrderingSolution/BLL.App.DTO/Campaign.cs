@@ -1,6 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using Contracts.DAL.Base;
+using Contracts.Domain.Base;
 
 namespace BLL.App.DTO
 {

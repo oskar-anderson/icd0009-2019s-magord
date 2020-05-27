@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DAL.App.EF.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20200525072206_InitialDbCreation")]
+    [Migration("20200527130530_InitialDbCreation")]
     partial class InitialDbCreation
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -19,7 +19,7 @@ namespace DAL.App.EF.Migrations
                 .HasAnnotation("ProductVersion", "3.1.3")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
-            modelBuilder.Entity("Domain.Area", b =>
+            modelBuilder.Entity("Domain.App.Area", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -54,7 +54,7 @@ namespace DAL.App.EF.Migrations
                     b.ToTable("Areas");
                 });
 
-            modelBuilder.Entity("Domain.Campaign", b =>
+            modelBuilder.Entity("Domain.App.Campaign", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -96,7 +96,7 @@ namespace DAL.App.EF.Migrations
                     b.ToTable("Campaigns");
                 });
 
-            modelBuilder.Entity("Domain.Drink", b =>
+            modelBuilder.Entity("Domain.App.Drink", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -137,7 +137,7 @@ namespace DAL.App.EF.Migrations
                     b.ToTable("Drinks");
                 });
 
-            modelBuilder.Entity("Domain.Food", b =>
+            modelBuilder.Entity("Domain.App.Food", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -188,7 +188,7 @@ namespace DAL.App.EF.Migrations
                     b.ToTable("Foods");
                 });
 
-            modelBuilder.Entity("Domain.FoodType", b =>
+            modelBuilder.Entity("Domain.App.FoodType", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -218,7 +218,7 @@ namespace DAL.App.EF.Migrations
                     b.ToTable("FoodTypes");
                 });
 
-            modelBuilder.Entity("Domain.Identity.AppRole", b =>
+            modelBuilder.Entity("Domain.App.Identity.AppRole", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -245,7 +245,7 @@ namespace DAL.App.EF.Migrations
                     b.ToTable("AspNetRoles");
                 });
 
-            modelBuilder.Entity("Domain.Identity.AppUser", b =>
+            modelBuilder.Entity("Domain.App.Identity.AppUser", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -321,14 +321,11 @@ namespace DAL.App.EF.Migrations
                     b.ToTable("AspNetUsers");
                 });
 
-            modelBuilder.Entity("Domain.Ingredient", b =>
+            modelBuilder.Entity("Domain.App.Ingredient", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("char(36)");
-
-                    b.Property<int>("Amount")
-                        .HasColumnType("int");
 
                     b.Property<DateTime>("ChangedAt")
                         .HasColumnType("datetime(6)");
@@ -364,7 +361,7 @@ namespace DAL.App.EF.Migrations
                     b.ToTable("Ingredients");
                 });
 
-            modelBuilder.Entity("Domain.Order", b =>
+            modelBuilder.Entity("Domain.App.Order", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -426,7 +423,7 @@ namespace DAL.App.EF.Migrations
                     b.ToTable("Orders");
                 });
 
-            modelBuilder.Entity("Domain.OrderItem", b =>
+            modelBuilder.Entity("Domain.App.OrderItem", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -486,7 +483,7 @@ namespace DAL.App.EF.Migrations
                     b.ToTable("OrderItems");
                 });
 
-            modelBuilder.Entity("Domain.OrderType", b =>
+            modelBuilder.Entity("Domain.App.OrderType", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -520,7 +517,7 @@ namespace DAL.App.EF.Migrations
                     b.ToTable("OrderTypes");
                 });
 
-            modelBuilder.Entity("Domain.PaymentType", b =>
+            modelBuilder.Entity("Domain.App.PaymentType", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -550,7 +547,7 @@ namespace DAL.App.EF.Migrations
                     b.ToTable("PaymentTypes");
                 });
 
-            modelBuilder.Entity("Domain.Price", b =>
+            modelBuilder.Entity("Domain.App.Price", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -591,7 +588,7 @@ namespace DAL.App.EF.Migrations
                     b.ToTable("Prices");
                 });
 
-            modelBuilder.Entity("Domain.Restaurant", b =>
+            modelBuilder.Entity("Domain.App.Restaurant", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -639,7 +636,7 @@ namespace DAL.App.EF.Migrations
                     b.ToTable("Restaurants");
                 });
 
-            modelBuilder.Entity("Domain.Town", b =>
+            modelBuilder.Entity("Domain.App.Town", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -768,127 +765,127 @@ namespace DAL.App.EF.Migrations
                     b.ToTable("AspNetUserTokens");
                 });
 
-            modelBuilder.Entity("Domain.Area", b =>
+            modelBuilder.Entity("Domain.App.Area", b =>
                 {
-                    b.HasOne("Domain.Town", "Town")
+                    b.HasOne("Domain.App.Town", "Town")
                         .WithMany("Areas")
                         .HasForeignKey("TownId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Domain.Drink", b =>
+            modelBuilder.Entity("Domain.App.Drink", b =>
                 {
-                    b.HasOne("Domain.Price", "Price")
+                    b.HasOne("Domain.App.Price", "Price")
                         .WithMany("Drinks")
                         .HasForeignKey("PriceId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Domain.Food", b =>
+            modelBuilder.Entity("Domain.App.Food", b =>
                 {
-                    b.HasOne("Domain.FoodType", "FoodType")
+                    b.HasOne("Domain.App.FoodType", "FoodType")
                         .WithMany("Foods")
                         .HasForeignKey("FoodTypeId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("Domain.Price", "Price")
+                    b.HasOne("Domain.App.Price", "Price")
                         .WithMany("Foods")
                         .HasForeignKey("PriceId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Domain.Ingredient", b =>
+            modelBuilder.Entity("Domain.App.Ingredient", b =>
                 {
-                    b.HasOne("Domain.Food", "Food")
+                    b.HasOne("Domain.App.Food", "Food")
                         .WithMany()
                         .HasForeignKey("FoodId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("Domain.Price", "Price")
+                    b.HasOne("Domain.App.Price", "Price")
                         .WithMany("Ingredients")
                         .HasForeignKey("PriceId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Domain.Order", b =>
+            modelBuilder.Entity("Domain.App.Order", b =>
                 {
-                    b.HasOne("Domain.Identity.AppUser", "AppUser")
+                    b.HasOne("Domain.App.Identity.AppUser", "AppUser")
                         .WithMany("Orders")
                         .HasForeignKey("AppUserId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("Domain.OrderType", "OrderType")
+                    b.HasOne("Domain.App.OrderType", "OrderType")
                         .WithMany("Orders")
                         .HasForeignKey("OrderTypeId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("Domain.PaymentType", "PaymentType")
+                    b.HasOne("Domain.App.PaymentType", "PaymentType")
                         .WithMany()
                         .HasForeignKey("PaymentTypeId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("Domain.Restaurant", "Restaurant")
+                    b.HasOne("Domain.App.Restaurant", "Restaurant")
                         .WithMany("Orders")
                         .HasForeignKey("RestaurantId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Domain.OrderItem", b =>
+            modelBuilder.Entity("Domain.App.OrderItem", b =>
                 {
-                    b.HasOne("Domain.Identity.AppUser", "AppUser")
+                    b.HasOne("Domain.App.Identity.AppUser", "AppUser")
                         .WithMany("OrderItems")
                         .HasForeignKey("AppUserId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("Domain.Drink", "Drink")
+                    b.HasOne("Domain.App.Drink", "Drink")
                         .WithMany("OrderItems")
                         .HasForeignKey("DrinkId")
                         .OnDelete(DeleteBehavior.Restrict);
 
-                    b.HasOne("Domain.Food", "Food")
+                    b.HasOne("Domain.App.Food", "Food")
                         .WithMany("OrderItems")
                         .HasForeignKey("FoodId")
                         .OnDelete(DeleteBehavior.Restrict);
 
-                    b.HasOne("Domain.Ingredient", "Ingredient")
+                    b.HasOne("Domain.App.Ingredient", "Ingredient")
                         .WithMany("OrderItems")
                         .HasForeignKey("IngredientId")
                         .OnDelete(DeleteBehavior.Restrict);
 
-                    b.HasOne("Domain.Order", "Order")
+                    b.HasOne("Domain.App.Order", "Order")
                         .WithMany("OrderItems")
                         .HasForeignKey("OrderId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Domain.PaymentType", null)
+                    b.HasOne("Domain.App.PaymentType", null)
                         .WithMany("OrderItems")
                         .HasForeignKey("PaymentTypeId")
                         .OnDelete(DeleteBehavior.Restrict);
                 });
 
-            modelBuilder.Entity("Domain.Price", b =>
+            modelBuilder.Entity("Domain.App.Price", b =>
                 {
-                    b.HasOne("Domain.Campaign", "Campaign")
+                    b.HasOne("Domain.App.Campaign", "Campaign")
                         .WithMany("Prices")
                         .HasForeignKey("CampaignId")
                         .OnDelete(DeleteBehavior.Restrict);
                 });
 
-            modelBuilder.Entity("Domain.Restaurant", b =>
+            modelBuilder.Entity("Domain.App.Restaurant", b =>
                 {
-                    b.HasOne("Domain.Area", "Area")
+                    b.HasOne("Domain.App.Area", "Area")
                         .WithMany("Restaurants")
                         .HasForeignKey("AreaId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -897,7 +894,7 @@ namespace DAL.App.EF.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
                 {
-                    b.HasOne("Domain.Identity.AppRole", null)
+                    b.HasOne("Domain.App.Identity.AppRole", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -906,7 +903,7 @@ namespace DAL.App.EF.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<System.Guid>", b =>
                 {
-                    b.HasOne("Domain.Identity.AppUser", null)
+                    b.HasOne("Domain.App.Identity.AppUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -915,7 +912,7 @@ namespace DAL.App.EF.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<System.Guid>", b =>
                 {
-                    b.HasOne("Domain.Identity.AppUser", null)
+                    b.HasOne("Domain.App.Identity.AppUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -924,13 +921,13 @@ namespace DAL.App.EF.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<System.Guid>", b =>
                 {
-                    b.HasOne("Domain.Identity.AppRole", null)
+                    b.HasOne("Domain.App.Identity.AppRole", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("Domain.Identity.AppUser", null)
+                    b.HasOne("Domain.App.Identity.AppUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -939,7 +936,7 @@ namespace DAL.App.EF.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<System.Guid>", b =>
                 {
-                    b.HasOne("Domain.Identity.AppUser", null)
+                    b.HasOne("Domain.App.Identity.AppUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Restrict)

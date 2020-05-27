@@ -6,10 +6,10 @@ using Domain;
 
 namespace DAL.App.EF.Repositories
 {
-    public class OrderTypeRepository : EFBaseRepository<AppDbContext, Domain.Identity.AppUser, Domain.OrderType, DAL.App.DTO.OrderType>, IOrderTypeRepository
+    public class OrderTypeRepository : EFBaseRepository<AppDbContext, Domain.App.Identity.AppUser, Domain.App.OrderType, DAL.App.DTO.OrderType>, IOrderTypeRepository
     {
         public OrderTypeRepository(AppDbContext dbContext) : base(dbContext,
-            new BaseMapper<Domain.OrderType, DAL.App.DTO.OrderType>())
+            new BaseMapper<Domain.App.OrderType, DAL.App.DTO.OrderType>())
         {
         }
     }

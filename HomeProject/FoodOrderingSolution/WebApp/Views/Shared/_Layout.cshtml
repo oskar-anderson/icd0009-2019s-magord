@@ -1,4 +1,4 @@
-﻿@using Domain.Identity
+﻿@using Domain.App.Identity
 @using Microsoft.AspNetCore.Identity
 @inject SignInManager<AppUser> SignInManager
 @inject UserManager<AppUser> UserManager
@@ -39,9 +39,7 @@
                             <div class="dropdown-menu" aria-labelledby="navbarDropdownAdmin">
                                 <a class="dropdown-item text-dark" asp-area="Admin" asp-controller="Areas" asp-action="Index">Areas</a>
                                 <a class="dropdown-item text-dark" asp-area="Admin" asp-controller="Campaigns" asp-action="Index">Campaigns</a>
-                                <a class="dropdown-item text-dark" asp-area="Admin" asp-controller="Contacts" asp-action="Index">Contacts</a>
                                 <div class="dropdown-divider"></div>
-                                <a class="dropdown-item text-dark" asp-area="Admin" asp-controller="ContactTypes" asp-action="Index">ContactTypes</a>
                                 <a class="dropdown-item text-dark" asp-area="Admin" asp-controller="Drinks" asp-action="Index">Drinks</a>
                                 <div class="dropdown-divider"></div>
                                 <a class="dropdown-item text-dark" asp-area="Admin" asp-controller="Foods" asp-action="Index">Foods</a>
