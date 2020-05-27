@@ -23,7 +23,7 @@ export class CampaignsCreate {
         flatpickr('#From, #To', {
             altInput: true,
             altFormat: "F j, Y",
-            dateFormat: "d/m/Y"
+            dateFormat: "d.m.Y"
         })
     }
 

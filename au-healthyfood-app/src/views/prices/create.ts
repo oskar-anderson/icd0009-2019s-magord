@@ -25,7 +25,6 @@ export class PricesCreate {
         this.campaignService.getCampaigns()
             .then(response => {
                 if (response.statusCode >= 200 && response.statusCode < 300) {
-                    console.log({ response: response.data! });
                     this._alert = null;
                     this._campaigns = response.data!;
                 } else {
@@ -39,11 +38,11 @@ export class PricesCreate {
             }
             );
 
-            flatpickr('#From, #To', {
-                altInput: true,
-                altFormat: "F j, Y",
-                dateFormat: "d/m/Y"
-            })
+        flatpickr('#From, #To', {
+            altInput: true,
+            altFormat: "F j, Y",
+            dateFormat: "d.m.Y"
+        })
     }
 
     activate(params: any, routeConfig: RouteConfig, navigationInstruction: NavigationInstruction) {

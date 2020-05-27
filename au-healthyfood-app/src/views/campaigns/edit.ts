@@ -4,6 +4,7 @@ import { autoinject } from 'aurelia-framework';
 import { RouteConfig, NavigationInstruction, Router } from 'aurelia-router';
 import { IAlertData } from 'types/IAlertData';
 import { AlertType } from 'types/AlertType';
+import flatpickr from 'flatpickr';
 
 
 
@@ -18,10 +19,14 @@ export class CampaginsEdit {
     }
 
     attached() {
+        flatpickr('#From, #To', {
+            altInput: true,
+            altFormat: "F j, Y",
+            dateFormat: "d.m.Y"
+        })
     }
 
     activate(params: any, routeConfig: RouteConfig, navigationInstruction: NavigationInstruction) {
-        console.log(params);
         if (params.id && typeof (params.id) == 'string') {
             this.campaginService.getCampaign(params.id).then(
                 response => {
@@ -37,7 +42,6 @@ export class CampaginsEdit {
                         }
                     }
                 }
-
             );
         }
     }

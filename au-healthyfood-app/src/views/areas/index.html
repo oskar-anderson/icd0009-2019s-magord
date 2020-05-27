@@ -31,7 +31,8 @@
                     ${area.town}
                 </td>
                 <td>
-                    <a if.bind="isAdmin" route-href="route: areas-edit; params.bind: { id: area.id }" class="btn btn-primary active" role="button">Edit</a>
+                    <a if.bind="isAdmin" route-href="route: areas-edit; params.bind: { id: area.id }"
+                        class="btn btn-primary active" role="button">Edit</a>
                     <button style="float: right" if.bind="isAdmin" click.trigger="deleteOnClick(area)" type="button"
                         class="btn btn-danger">Delete</button>
                 </td>

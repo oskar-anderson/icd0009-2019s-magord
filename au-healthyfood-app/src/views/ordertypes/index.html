@@ -5,36 +5,38 @@
     <alert alert-data.bind="_alert"></alert>
 
 
-    <h1>Order types Index</h1>
+    <h1>Order types</h1>
 
-<p>
-    <a route-href="route: ordertypes-create; params.bind: {}">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                Name
-            </th>
-            <th>
-                Comment
-            </th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr repeat.for="orderType of _orderTypes">
-            <td>
-                ${orderType.name}
-            </td>
-            <td>
-                ${orderType.comment}
-            </td>
-            <td>
-                <a route-href="route: ordertypes-edit; params.bind: { id: orderType.id }">Edit</a> |
-                <a route-href="route: ordertypes-details; params.bind: { id: orderType.id }">Details</a> |
-                <a route-href="route: ordertypes-delete; params.bind: { id: orderType.id }">Delete</a>
-            </td>
-        </tr>
-    </tbody>
-</table>
+    <p>
+        <a route-href="route: ordertypes-create; params.bind: {}">Create New</a>
+    </p>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    Name
+                </th>
+                <th>
+                    Comment
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr repeat.for="orderType of _orderTypes">
+                <td>
+                    ${orderType.name}
+                </td>
+                <td>
+                    ${orderType.comment}
+                </td>
+                <td>
+                    <a if.bind="isAdmin" route-href="route: ordertypes-edit; params.bind: { id: orderType.id }"
+                        class="btn btn-primary active" role="button">Edit</a>
+                        <button style="float: right" if.bind="isAdmin" click.trigger="deleteOnClick(orderType)"
+                        type="button" class="btn btn-danger">Delete</button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
 </template>

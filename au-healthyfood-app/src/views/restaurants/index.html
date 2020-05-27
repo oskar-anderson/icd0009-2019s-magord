@@ -52,9 +52,10 @@
                     ${restaurant.closedFrom}
                 </td>
                 <td>
-                    <a if.bind="isAdmin" route-href="route: restaurants-edit; params.bind: { id: restaurant.id }">Edit</a>
-                    <button style="float: right" if.bind="isAdmin" click.trigger="deleteOnClick(restaurant)" type="button"
-                        class="btn btn-danger">Delete</button>
+                    <a if.bind="isAdmin" route-href="route: restaurants-edit; params.bind: { id: restaurant.id }"
+                        class="btn btn-primary active" role="button">Edit</a>
+                    <button style="float: right" if.bind="isAdmin" click.trigger="deleteOnClick(restaurant)"
+                        type="button" class="btn btn-danger">Delete</button>
                 </td>
             </tr>
         </tbody>

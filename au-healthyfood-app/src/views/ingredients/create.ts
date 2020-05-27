@@ -62,7 +62,6 @@ export class IngredientsCreate {
     }
 
     onSubmit(event: Event) {
-        this.ingredient!.amount = Number(this.ingredient!.amount);
         event.preventDefault();
         this.ingredientService
             .createIngredient(this.ingredient!)

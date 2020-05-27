@@ -50,6 +50,8 @@
                     </p>
                 </td>
                 <td>
+                    <a if.bind="isAdmin" route-href="route: orderitems-edit; params.bind: { id: orderItem.id }"
+                        class="btn btn-primary active" role="button">Edit</a>
                     <button style="float: right" click.trigger="deleteOnClick(orderItem)" type="button"
                         class="btn btn-danger">Delete</button>
                 </td>

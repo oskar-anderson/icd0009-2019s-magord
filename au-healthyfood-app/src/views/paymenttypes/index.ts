@@ -43,7 +43,6 @@ export class PaymentTypesIndex {
     }
 
     deleteOnClick(area: IPaymentType) {
-        console.log("Delete")
         this.paymentTypeService
         .deletePaymentType(area.id)
         .then(

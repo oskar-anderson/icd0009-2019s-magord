@@ -25,7 +25,6 @@ export class TownsCreate {
     }
 
     onSubmit(event: Event) {
-        console.log(event);
         this.townService
         .createTown({ name: this._name})
         .then(
@@ -43,9 +42,5 @@ export class TownsCreate {
                 }
             }   
         );
-
-
-        event.preventDefault();
     }
-
 }

@@ -86,8 +86,8 @@
                     </div>
                 </td>
                 <td>
-                    <a if.bind="isAdmin" route-href="route: foods-edit; params.bind: { id: food.id }">Edit</a>
-                    <span if.bind="isAdmin">|</span>
+                    <a if.bind="isAdmin" route-href="route: foods-edit; params.bind: { id: food.id }"
+                        class="btn btn-primary active" role="button">Edit</a>
                     <button style="float: right" if.bind="isAdmin" click.trigger="deleteOnClick(food)" type="button"
                         class="btn btn-danger">Delete</button>
                 </td>

@@ -5,7 +5,7 @@
     <alert alert-data.bind="_alert"></alert>
 
 
-    <h1>Prices Index</h1>
+    <h1>Prices</h1>
 
     <p>
         <a if.bind="isAdmin" route-href="route: prices-create; params.bind: {}">Create New</a>
@@ -31,7 +31,7 @@
         <tbody>
             <tr repeat.for="price of _prices">
                 <td>
-                    ${price.value}€
+                    ${price.value.toFixed(2)}€
                 </td>
                 <td>
                     ${price.from}
@@ -43,9 +43,8 @@
                     ${price.campaign}
                 </td>
                 <td>
-                    <a if.bind="isAdmin" route-href="route: prices-edit; params.bind: { id: price.id }">Edit</a>
-                    <span if.bind="isAdmin">|</span>
-                    <a route-href="route: prices-details; params.bind: { id: price.id }">Details</a> 
+                    <a if.bind="isAdmin" route-href="route: prices-edit; params.bind: { id: price.id }"
+                        class="btn btn-primary active" role="button">Edit</a>
                     <button style="float: right" if.bind="isAdmin" click.trigger="deleteOnClick(price)" type="button"
                         class="btn btn-danger">Delete</button>
                 </td>

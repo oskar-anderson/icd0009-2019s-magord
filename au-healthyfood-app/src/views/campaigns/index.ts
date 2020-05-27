@@ -36,7 +36,6 @@ export class CampaignsIndex {
     }
 
     deleteOnClick(campaign: ICampaign) {
-        console.log("Delete")
         this.campaignService
         .deleteCampagin(campaign.id)
         .then(

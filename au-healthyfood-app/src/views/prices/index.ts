@@ -43,7 +43,6 @@ export class PricesIndex {
     }
 
     deleteOnClick(price: IPrice) {
-        console.log("Delete")
         this.priceService
         .deletePrice(price.id)
         .then(
@@ -62,7 +61,4 @@ export class PricesIndex {
             }
         );
     }
-
-
-
 }

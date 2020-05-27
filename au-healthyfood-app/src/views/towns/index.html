@@ -5,7 +5,7 @@
     <alert alert-data.bind="_alert"></alert>
 
 
-    <h1>Towns Index</h1>
+    <h1>Towns</h1>
 
 <p>
     <a if.bind="isAdmin" route-href="route: towns-create; params.bind: {}">Create New</a>
@@ -25,9 +25,10 @@
                 ${town.name}
             </td>
             <td>
-                <a route-href="route: towns-edit; params.bind: { id: town.id }">Edit</a> |
-                <a route-href="route: towns-details; params.bind: { id: town.id }">Details</a> |
-                <a route-href="route: towns-delete; params.bind: { id: town.id }">Delete</a>
+                <a if.bind="isAdmin" route-href="route: towns-edit; params.bind: { id: town.id }"
+                        class="btn btn-primary active" role="button">Edit</a>
+                    <button style="float: right" if.bind="isAdmin" click.trigger="deleteOnClick(town)" type="button"
+                        class="btn btn-danger">Delete</button>
             </td>
         </tr>
     </tbody>

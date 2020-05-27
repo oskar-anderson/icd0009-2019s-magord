@@ -34,4 +34,24 @@ export class TownsIndex {
             }
         );
     }
+
+    deleteOnClick(town: ITown) {
+        this.townService
+        .deleteTown(town.id)
+        .then(
+            response => {
+                if (response.statusCode >= 200 && response.statusCode < 300) {
+                    this._alert = null;
+                    this.attached();
+                } else {
+                    // show error message
+                    this._alert = {
+                        message: response.statusCode.toString() + ' - ' + response.errorMessage,
+                        type: AlertType.Danger,
+                        dismissable: true,
+                    }
+                }
+            }
+        );
+    }
 }

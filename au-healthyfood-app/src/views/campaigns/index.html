@@ -13,7 +13,7 @@
         <a if.bind="isAdmin" route-href="route: campaigns-create; params.bind: {}">Create New</a>
     </p>
     <table class="table">
-        <thead>
+        <thead class="thead-light">
             <tr>
                 <th>
                     Name
@@ -45,8 +45,8 @@
                     ${campaign.comment}
                 </td>
                 <td>
-                    <a if.bind="isAdmin" route-href="route: campaigns-edit; params.bind: { id: campaign.id }">Edit</a>
-                    <span if.bind="isAdmin">|</span>
+                    <a if.bind="isAdmin" route-href="route: campaigns-edit; params.bind: { id: campaign.id }"
+                        class="btn btn-primary active" role="button">Edit</a>
                     <button style="float: right" if.bind="isAdmin" click.trigger="deleteOnClick(campaign)" type="button"
                         class="btn btn-danger">Delete</button>
                 </td>

@@ -3,7 +3,7 @@
     <require from="../../components/alert"></require>
 
     <alert alert-data.bind="_alert"></alert>
-    
+
 
 
     <h1 class="text-center">Drinks</h1>
@@ -42,9 +42,11 @@
                     ${drink.size}L
                 </td>
                 <td>
-                    <button style="font-size: 10px; margin-right:30px" class="btn btn-primary btn-sm" click.trigger="decrement(drink.id)" type="button"> <span class ="fa fa-minus"></span></button>
+                    <button style="font-size: 10px; margin-right:30px" class="btn btn-primary btn-sm"
+                        click.trigger="decrement(drink.id)" type="button"> <span class="fa fa-minus"></span></button>
                     ${drink.amount}
-                    <button style="font-size: 10px; margin-left:30px" class="btn btn-primary btn-sm" click.trigger="increment(drink.id)" type="button"> <span class ="fa fa-plus"></span></button>
+                    <button style="font-size: 10px; margin-left:30px" class="btn btn-primary btn-sm"
+                        click.trigger="increment(drink.id)" type="button"> <span class="fa fa-plus"></span></button>
                 </td>
                 <td>
                     ${drink.price.toFixed(2)}€
@@ -54,7 +56,8 @@
                         class="btn btn-success">Add to cart</button>
                 </td>
                 <td>
-                    <a if.bind="isAdmin" route-href="route: drinks-edit; params.bind: { id: drink.id }">Edit</a>
+                    <a if.bind="isAdmin" route-href="route: drinks-edit; params.bind: { id: drink.id }"
+                        class="btn btn-primary active" role="button">Edit</a>
                     <button style="float: right" if.bind="isAdmin" click.trigger="deleteOnClick(drink)" type="button"
                         class="btn btn-danger">Delete</button>
                 </td>

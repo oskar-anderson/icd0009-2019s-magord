@@ -43,7 +43,6 @@ export class IngredientsIndex {
     }
 
     deleteOnClick(ingredient: IIngredient) {
-        console.log("Delete")
         this.ingredientService
         .deleteIngredient(ingredient.id)
         .then(

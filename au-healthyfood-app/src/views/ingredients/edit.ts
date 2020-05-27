@@ -81,7 +81,6 @@ export class IngredientsEdit {
 
     onSubmit(event: Event) {
         event.preventDefault();
-        this.ingredient!.amount = Number(this.ingredient!.amount);
         this.ingredientService
             .updateIngredient(this.ingredient!)
             .then(

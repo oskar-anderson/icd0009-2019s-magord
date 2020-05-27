@@ -74,26 +74,21 @@ export class App {
 
 
             { route: ['orderitems', 'orderitems/index'], name: 'orderitems-index', moduleId: PLATFORM.moduleName('views/orderitems/index'), nav: true, title: 'My cart', settings: { roles: [] } },
-            { route: ['orderitems/details/:id?'], name: 'orderitems-details', moduleId: PLATFORM.moduleName('views/orderitems/details'), nav: false, title: 'Order items details', settings: { roles: [] } },
             { route: ['orderitems/edit/:id?'], name: 'orderitems-edit', moduleId: PLATFORM.moduleName('views/orderitems/edit'), nav: false, title: 'Order items Edit', settings: { roles: [] } },
             { route: ['orderitems/create'], name: 'orderitems-create', moduleId: PLATFORM.moduleName('views/orderitems/create'), nav: false, title: 'Order items Create', settings: { roles: [] } },
             { route: ['orderitems/orderCheckout'], name: 'orderitems-checkout', moduleId: PLATFORM.moduleName('views/orderitems/orderCheckout'), nav: false, title: 'Order items checkout', settings: { roles: [] } },
 
             { route: ['ordertypes', 'ordertypes/index'], name: 'ordertypes-index', moduleId: PLATFORM.moduleName('views/ordertypes/index'), nav: true, title: 'Order types', settings: { roles: ['admin'] } },
-            { route: ['ordertypes/details/:id?'], name: 'ordertypes-details', moduleId: PLATFORM.moduleName('views/ordertypes/details'), nav: false, title: 'Order Types details', settings: { roles: ['admin'] } },
             { route: ['ordertypes/edit/:id?'], name: 'ordertypes-edit', moduleId: PLATFORM.moduleName('views/ordertypes/edit'), nav: false, title: 'Order Types Edit', settings: { roles: ['admin'] } },
-            { route: ['ordertypes/delete/:id?'], name: 'ordertypes-delete', moduleId: PLATFORM.moduleName('views/ordertypes/delete'), nav: false, title: 'Order Types Delete', settings: { roles: ['admin'] } },
             { route: ['ordertypes/create'], name: 'ordertypes-create', moduleId: PLATFORM.moduleName('views/ordertypes/create'), nav: false, title: 'Order Types Create', settings: { roles: ['admin'] } },
 
 
             { route: ['paymenttypes', 'paymenttypes/index'], name: 'paymenttypes-index', moduleId: PLATFORM.moduleName('views/paymenttypes/index'), nav: true, title: 'Payment types', settings: { roles: ['admin'] } },
-            { route: ['paymenttypes/details/:id?'], name: 'paymenttypes-details', moduleId: PLATFORM.moduleName('views/paymenttypes/details'), nav: false, title: 'Payment Types details', settings: { roles: ['admin'] } },
             { route: ['paymenttypes/edit/:id?'], name: 'paymenttypes-edit', moduleId: PLATFORM.moduleName('views/paymenttypes/edit'), nav: false, title: 'Payment Types Edit', settings: { roles: ['admin'] } },
             { route: ['paymenttypes/create'], name: 'paymenttypes-create', moduleId: PLATFORM.moduleName('views/paymenttypes/create'), nav: false, title: 'Payment Types Create', settings: { roles: ['admin'] } },
 
 
             { route: ['prices', 'prices/index'], name: 'prices-index', moduleId: PLATFORM.moduleName('views/prices/index'), nav: true, title: 'Prices', settings: { roles: ['admin'] } },
-            { route: ['prices/details/:id?'], name: 'prices-details', moduleId: PLATFORM.moduleName('views/prices/details'), nav: false, title: 'Prices details', settings: { roles: ['admin'] } },
             { route: ['prices/edit/:id?'], name: 'prices-edit', moduleId: PLATFORM.moduleName('views/prices/edit'), nav: false, title: 'Prices Edit', settings: { roles: ['admin'] } },
             { route: ['prices/create'], name: 'prices-create', moduleId: PLATFORM.moduleName('views/prices/create'), nav: false, title: 'Prices Create', settings: { roles: ['admin'] } },
 
@@ -104,9 +99,7 @@ export class App {
 
 
             { route: ['towns', 'towns/index'], name: 'towns-index', moduleId: PLATFORM.moduleName('views/towns/index'), nav: true, title: 'Towns', settings: { roles: ['admin'] } },
-            { route: ['towns/details/:id?'], name: 'towns-details', moduleId: PLATFORM.moduleName('views/towns/details'), nav: false, title: 'Towns Details', settings: { roles: ['admin'] } },
             { route: ['towns/edit/:id?'], name: 'towns-edit', moduleId: PLATFORM.moduleName('views/towns/edit'), nav: false, title: 'Towns Edit', settings: { roles: ['admin'] } },
-            { route: ['towns/delete/:id?'], name: 'towns-delete', moduleId: PLATFORM.moduleName('views/towns/delete'), nav: false, title: 'Towns Delete', settings: { roles: ['admin'] } },
             { route: ['towns/create'], name: 'towns-create', moduleId: PLATFORM.moduleName('views/towns/create'), nav: false, title: 'Towns Create', settings: { roles: ['admin'] } }
         ]);
 

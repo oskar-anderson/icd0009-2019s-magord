@@ -40,7 +40,7 @@ export class PricesEdit {
             flatpickr('#From, #To', {
                 altInput: true,
                 altFormat: "F j, Y",
-                dateFormat: "d/m/Y"
+                dateFormat: "d.m.Y"
             })
     }
 
@@ -50,7 +50,6 @@ export class PricesEdit {
                 response => {
                     if (response.statusCode >= 200 && response.statusCode < 300) {
                         this._alert = null;
-                        console.log(response.data)
                         this.price = response.data!;
                     } else {
                         // show error message
@@ -86,9 +85,5 @@ export class PricesEdit {
                     }
                 }
             );
-        event.preventDefault();
     }
-
-
-
 }

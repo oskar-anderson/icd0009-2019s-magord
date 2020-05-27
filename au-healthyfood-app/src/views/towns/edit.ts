@@ -59,8 +59,5 @@ export class TownsEdit {
                     }
                 }
             );
-
-
-        event.preventDefault();
     }
 }
