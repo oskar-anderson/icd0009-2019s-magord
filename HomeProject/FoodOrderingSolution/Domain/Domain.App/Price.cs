@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using Domain.Base;
+using ee.itcollege.magord.healthyfood.Domain.Base;
 
 namespace Domain.App
 {

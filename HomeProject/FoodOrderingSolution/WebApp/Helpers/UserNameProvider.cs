@@ -1,5 +1,5 @@
 ﻿#pragma warning disable 1591
-using Contracts.DAL.Base;
+using ee.itcollege.magord.healthyfood.Contracts.DAL.Base;
 using Microsoft.AspNetCore.Http;
 
 namespace WebApp.Helpers

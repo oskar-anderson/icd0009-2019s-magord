@@ -9,7 +9,7 @@ using BLL.App;
 using Contracts.BLL.App;
 using Contracts.DAL.App;
 using Contracts.DAL.App.Repositories;
-using Contracts.DAL.Base;
+using ee.itcollege.magord.healthyfood.Contracts.DAL.Base;
 using DAL.App.EF;
 using DAL.App.EF.Repositories;
 using Domain.App.Identity;

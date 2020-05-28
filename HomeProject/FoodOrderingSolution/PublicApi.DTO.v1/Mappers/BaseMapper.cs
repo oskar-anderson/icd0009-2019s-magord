@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+﻿using DAL=ee.itcollege.magord.healthyfood.DAL;
 
 namespace PublicApi.DTO.v1.Mappers
 {

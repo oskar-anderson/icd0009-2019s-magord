@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using BLL.App.DTO;
 
 namespace PublicApi.DTO.v1.Mappers
 {

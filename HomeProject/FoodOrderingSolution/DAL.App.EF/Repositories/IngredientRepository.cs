@@ -5,8 +5,8 @@ using System.Threading.Tasks;
 using Contracts.DAL.App.Repositories;
 using DAL.App.DTO;
 using DAL.App.EF.Mappers;
-using DAL.Base.EF.Repositories;
-using DAL.Base.Mappers;
+using ee.itcollege.magord.healthyfood.DAL.Base.EF.Repositories;
+using ee.itcollege.magord.healthyfood.DAL.Base.Mappers;
 using Microsoft.EntityFrameworkCore;
 
 

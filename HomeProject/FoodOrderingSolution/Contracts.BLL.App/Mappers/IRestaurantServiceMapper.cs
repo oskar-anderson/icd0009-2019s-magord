@@ -1,4 +1,4 @@
-﻿using Contracts.BLL.Base.Mappers;
+﻿using ee.itcollege.magord.healthyfood.Contracts.BLL.Base.Mappers;
 using DALAppDTO=DAL.App.DTO;
 using BLLAppDTO=BLL.App.DTO;
 

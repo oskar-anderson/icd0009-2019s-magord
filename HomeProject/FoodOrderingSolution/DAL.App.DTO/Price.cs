@@ -1,5 +1,5 @@
 ﻿using System;
-using Contracts.Domain.Base;
+using ee.itcollege.magord.healthyfood.Contracts.Domain.Base;
 
 
 namespace DAL.App.DTO

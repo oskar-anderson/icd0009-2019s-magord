@@ -1,5 +1,5 @@
 ﻿using System;
-using Contracts.BLL.Base.Services;
+using ee.itcollege.magord.healthyfood.Contracts.BLL.Base.Services;
 using Contracts.DAL.App.Repositories;
 using BLL.App.DTO;
 

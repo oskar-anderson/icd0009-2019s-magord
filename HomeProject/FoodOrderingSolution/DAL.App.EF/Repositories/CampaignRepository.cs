@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Contracts.DAL.App.Repositories;
-using DAL.Base.EF.Repositories;
-using DAL.Base.Mappers;
+using ee.itcollege.magord.healthyfood.DAL.Base.EF.Repositories;
+using ee.itcollege.magord.healthyfood.DAL.Base.Mappers;
 using Microsoft.EntityFrameworkCore;
 
 

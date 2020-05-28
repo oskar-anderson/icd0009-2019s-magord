@@ -6,8 +6,11 @@
 
     <ItemGroup>
       <ProjectReference Include="..\BLL.App.DTO\BLL.App.DTO.csproj" />
-      <ProjectReference Include="..\Contracts.BLL.Base\Contracts.BLL.Base.csproj" />
       <ProjectReference Include="..\Contracts.DAL.App\Contracts.DAL.App.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="ee.itcollege.magord.healthyfood.Contracts.BLL.Base" Version="1.0.0" />
     </ItemGroup>
 
 </Project>

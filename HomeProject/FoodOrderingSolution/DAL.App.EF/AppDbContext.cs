@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Contracts.DAL.Base;
-using Contracts.Domain.Base;
+using ee.itcollege.magord.healthyfood.Contracts.Domain.Base;
 using Domain.App;
 using Domain.App.Identity;
+using ee.itcollege.magord.healthyfood.Contracts.DAL.Base;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 

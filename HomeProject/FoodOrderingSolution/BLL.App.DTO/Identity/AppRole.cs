@@ -1,6 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
-using Contracts.Domain.Base;
+using ee.itcollege.magord.healthyfood.Contracts.Domain.Base;
 
 namespace BLL.App.DTO.Identity
 {

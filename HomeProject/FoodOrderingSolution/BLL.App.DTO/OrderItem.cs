@@ -1,6 +1,6 @@
 ﻿using System;
 using BLL.App.DTO.Identity;
-using Contracts.Domain.Base;
+using ee.itcollege.magord.healthyfood.Contracts.Domain.Base;
 
 namespace BLL.App.DTO
 {

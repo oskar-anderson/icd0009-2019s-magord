@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using DAL.Base.Mappers;
+using ee.itcollege.magord.healthyfood.DAL.Base.Mappers;
 
 namespace DAL.App.EF.Mappers
 {

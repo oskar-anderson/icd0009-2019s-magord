@@ -1,7 +1,6 @@
 ﻿using Contracts.DAL.App.Repositories;
-using Contracts.DAL.Base.Mappers;
-using DAL.Base.EF.Repositories;
-using DAL.Base.Mappers;
+using ee.itcollege.magord.healthyfood.DAL.Base.EF.Repositories;
+using ee.itcollege.magord.healthyfood.DAL.Base.Mappers;
 using Domain;
 
 namespace DAL.App.EF.Repositories

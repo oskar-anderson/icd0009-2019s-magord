@@ -1,0 +1,19 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>netstandard2.1</TargetFramework>
+        <AssemblyName>ee.itcollege.magord.healthyfood.DAL.Base</AssemblyName>
+        <RootNamespace>ee.itcollege.magord.healthyfood.DAL.Base</RootNamespace>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Contracts.DAL.Base\Contracts.DAL.Base.csproj" />
+      <ProjectReference Include="..\Contracts.Domain.Base\Contracts.Domain.Base.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="AutoMapper" Version="9.0.0" />
+      <PackageReference Include="System.ComponentModel.Annotations" Version="4.7.0" />
+    </ItemGroup>
+
+</Project>

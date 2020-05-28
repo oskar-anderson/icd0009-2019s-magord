@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using Domain.App.Identity;
-using Domain.Base;
+using ee.itcollege.magord.healthyfood.Domain.Base;
 
 namespace Domain.App
 {

@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>netstandard2.1</TargetFramework>
+        <AssemblyName>ee.itcollege.magord.healthyfood.Contracts.BLL.Base</AssemblyName>
+        <RootNamespace>ee.itcollege.magord.healthyfood.Contracts.BLL.Base</RootNamespace>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Contracts.DAL.Base\Contracts.DAL.Base.csproj" />
+    </ItemGroup>
+
+</Project>

@@ -5,7 +5,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Contracts.DAL.Base\Contracts.DAL.Base.csproj" />
+      <PackageReference Include="ee.itcollege.magord.healthyfood.Contracts.Domain.Base" Version="1.0.0" />
     </ItemGroup>
 
 </Project>

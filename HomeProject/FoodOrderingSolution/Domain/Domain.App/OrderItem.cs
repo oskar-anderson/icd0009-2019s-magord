@@ -1,6 +1,6 @@
 ﻿using System;
 using Domain.App.Identity;
-using Domain.Base;
+using ee.itcollege.magord.healthyfood.Domain.Base;
 
 namespace Domain.App
 {
