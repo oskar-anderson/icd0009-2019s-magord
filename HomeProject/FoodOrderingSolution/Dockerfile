@@ -8,18 +8,13 @@ COPY *.sln .
 
 COPY BLL.App/*.csproj ./BLL.App/
 COPY BLL.App.DTO/*.csproj ./BLL.App.DTO/
-COPY BLL.Base/*.csproj ./BLL.Base/
 COPY Contracts.BLL.App/*.csproj ./Contracts.BLL.App/
-COPY Contracts.BLL.Base/*.csproj ./Contracts.BLL.Base/
 
 COPY Contracts.DAL.App/*.csproj ./Contracts.DAL.App/
-COPY Contracts.DAL.Base/*.csproj ./Contracts.DAL.Base/
 COPY DAL.App.DTO/*.csproj ./DAL.App.DTO/
 COPY DAL.App.EF/*.csproj ./DAL.App.EF/
-COPY DAL.Base/*.csproj ./DAL.Base/
-COPY DAL.Base.EF/*.csproj ./DAL.Base.EF/
 
-COPY Domain/*.csproj ./Domain/
+COPY Domain/Domain.App/*.csproj ./Domain/Domain.App/
 
 COPY PublicApi.DTO.v1/*.csproj ./PublicApi.DTO.v1/
 COPY Extensions/*.csproj ./Extensions/
@@ -32,18 +27,13 @@ RUN dotnet restore
 # copy everything else and build app
 COPY BLL.App/. ./BLL.App/
 COPY BLL.App.DTO/. ./BLL.App.DTO/
-COPY BLL.Base/. ./BLL.Base/
 COPY Contracts.BLL.App/. ./Contracts.BLL.App/
-COPY Contracts.BLL.Base/. ./Contracts.BLL.Base/
 
 COPY Contracts.DAL.App/. ./Contracts.DAL.App/
-COPY Contracts.DAL.Base/. ./Contracts.DAL.Base/
 COPY DAL.App.DTO/. ./DAL.App.DTO/
 COPY DAL.App.EF/. ./DAL.App.EF/
-COPY DAL.Base/. ./DAL.Base/
-COPY DAL.Base.EF/. ./DAL.Base.EF/
 
-COPY Domain/. ./Domain/
+COPY Domain/Domain.App/. ./Domain/Domain.App/
 
 COPY PublicApi.DTO.v1/. ./PublicApi.DTO.v1/
 COPY Extensions/. ./Extensions/
