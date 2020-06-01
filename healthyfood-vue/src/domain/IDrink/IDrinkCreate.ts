@@ -1,5 +1,6 @@
 export interface IDrinkCreate {
     name: string;
-    size: number | string;
-    amount: number | string;
+    amount: number | null;
+    size: number | null;
+    priceId: string | null;
 }

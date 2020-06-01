@@ -1,4 +1,5 @@
 <template>
+
     <div class="row">
         <div class="col-md-4">
             <form>
@@ -8,6 +9,21 @@
                 <div class="form-group">
                     <label for="Input_Email">Email</label>
                     <input class="form-control" type="email" v-model="registerInfo.email" />
+                </div>
+
+                <div class="form-group">
+                    <label for="Input_FirstName">First name</label>
+                    <input class="form-control" type="firstName" v-model="registerInfo.firstName" />
+                </div>
+
+                <div class="form-group">
+                    <label for="Input_LastName">Last name</label>
+                    <input class="form-control" type="lastName" v-model="registerInfo.lastName" />
+                </div>
+
+                <div class="form-group">
+                    <label for="Input_Password">Phone number <br><i><b>(Example 5306945)</b></i></label>
+                    <input class="form-control" type="phoneNumber" v-model="registerInfo.phoneNumber" />
                 </div>
 
                 <div class="form-group">
@@ -46,6 +62,9 @@ import store from "../../store";
 export default class Register extends Vue {
     private registerInfo: IRegisterDTO = {
         email: "",
+        firstName: "",
+        lastName: "",
+        phoneNumber: "",
         password: ""
     };
 
@@ -117,6 +136,7 @@ export default class Register extends Vue {
         }
         store.dispatch("registerUser", this.registerInfo).then((isLoggedIn: boolean) => {
             if (isLoggedIn) {
+                store.commit("setPhoneNumber", this.registerInfo);
                 this.registerWasOk = true;
                 router.push("/");
                 alert("Registration successful!")

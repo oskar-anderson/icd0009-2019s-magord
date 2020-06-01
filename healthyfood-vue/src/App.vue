@@ -21,13 +21,13 @@
                         <Identity />
                         <ul class="navbar-nav flex-grow-1">
                             <li class="nav-item">
-                                <router-link to="/towns" class="nav-link text-dark">Towns</router-link>
-                            </li>
-                            <li class="nav-item">
-                                <router-link to="/persons" class="nav-link text-dark">Persons</router-link>
+                                <router-link to="/campaigns" class="nav-link text-dark">Campaigns</router-link>
                             </li>
                             <li class="nav-item">
                                 <router-link to="/drinks" class="nav-link text-dark">Drinks</router-link>
+                            </li>
+                            <li class="nav-item">
+                                <router-link to="/prices" class="nav-link text-dark">Prices</router-link>
                             </li>
                         </ul>
                     </div>

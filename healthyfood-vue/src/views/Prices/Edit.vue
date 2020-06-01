@@ -1,44 +1,49 @@
 <template>
     <div>
         <h1>Edit</h1>
-        <h4>Drink</h4>
+        <h4>Price</h4>
         <hr />
         <div class="row">
             <div class="col-md-4">
                 <form>
                     <div class="form-group">
-                        <label class="control-label">Edit name</label>
+                        <label class="control-label">Edit value</label>
                         <input
                             class="form-control"
                             type="text"
                             id="Name"
                             maxlength="256"
-                            v-model="drink.name"
+                            v-model="price.value"
                         />
-                        <label class="control-label">Edit size</label>
+                        <label class="control-label">Edit from</label>
                         <input
                             class="form-control"
                             type="text"
-                            id="Size"
+                            id="From"
                             maxlength="256"
-                            v-model="drink.size"
+                            v-model="price.from"
                         />
-                        <label class="control-label">Edit amount</label>
-                        <input class="form-control" type="text" id="Amount" v-model="drink.amount" />
-                        <label class="control-label">Edit price. <b>Current price is {{drink.price }}€ </b></label>
+                        <label class="control-label">Edit to</label>
+                        <input class="form-control" type="text" id="To" v-model="price.to" />
+                        <label class="control-label">
+                            Edit campaign.
+                            <div>
+                                <b>Current campaign is: {{price.campaign }}</b>
+                            </div>
+                        </label>
                         <select
                             class="form-control"
                             type="text"
                             id="Comment"
                             maxlength="256"
-                            v-model="drink.priceId"
+                            v-model="price.campaignId"
                         >
-                            <option v-bind:value="null">No price</option>
+                            <option v-bind:value="null">No campaign</option>
                             <option
-                                v-for="price in prices"
-                                :key="price.id"
-                                v-bind:value="price.id"
-                            >{{ price.value }}</option>
+                                v-for="campaign in campaigns"
+                                :key="campaign.id"
+                                v-bind:value="campaign.id"
+                            >{{ campaign.name }}</option>
                         </select>
                     </div>
                     <div class="form-group">
@@ -50,7 +55,7 @@
                         />
                     </div>
                     <div>
-                        <router-link :to="{ name: 'Drinks' }">Back to List</router-link>
+                        <router-link :to="{ name: 'Prices' }">Back to List</router-link>
                     </div>
                 </form>
             </div>
@@ -63,49 +68,38 @@
 import { Component, Prop, Vue } from "vue-property-decorator";
 import store from "../../store";
 import router from "../../router";
-import { IDrink } from "@/domain/IDrink/IDrink";
-import { IPrice } from '@/domain/IPrice/IPrice';
+import flatpickr from "flatpickr";
+import { ICampaign } from "@/domain/ICampaign/ICampaign";
+import { IPrice } from "@/domain/IPrice/IPrice";
+require("flatpickr/dist/flatpickr.css");
 
 @Component
-export default class DrinkEdit extends Vue {
+export default class PriceEdit extends Vue {
     @Prop()
     private id!: string;
-
-    get drink(): IDrink | null {
-        return store.state.drink;
-    }
 
     get price(): IPrice | null {
         return store.state.price;
     }
 
-    get prices(): IPrice[] | null {
-        return store.state.prices;
+    get campaign(): ICampaign | null {
+        return store.state.campaign;
+    }
+
+    get campaigns(): ICampaign[] | null {
+        return store.state.campaigns;
     }
 
     onSubmit(event: Event): void | null {
         event.preventDefault();
         if (
-            isNaN(Number(this.drink!.size)) ||
-            isNaN(Number(this.drink!.amount))
+            this.price!.value !== null &&
+            this.price!.from !== "" &&
+            this.price!.to !== ""
         ) {
-            alert("Please enter a number into size and amount!");
-            return null;
-        }
-        if (this.drink!.size <= 0 || this.drink!.amount <= 0) {
-            alert("Please enter a correct number!");
-            return null;
-        }
-        console.log(event);
-        if (
-            this.drink!.name.length > 0 &&
-            String(this.drink!.size).length > 0 &&
-            String(this.drink!.amount).length > 0
-        ) {
-            this.drink!.size = Number(this.drink!.size);
-            this.drink!.amount = Number(this.drink!.amount);
-            store.dispatch("updateDrink", this.drink!);
-            router.push("/drinks");
+            this.price!.value = Number(this.price!.value);
+            store.dispatch("updatePrice", this.price);
+            router.push("/prices");
         }
     }
 
@@ -124,8 +118,13 @@ export default class DrinkEdit extends Vue {
 
     mounted(): void {
         console.log("mounted");
-        store.dispatch('getPrices');
-        store.dispatch("getDrink", this.id);
+        store.dispatch("getPrice", this.id);
+        store.dispatch("getCampaigns");
+        flatpickr("#From, #To", {
+            altInput: true,
+            altFormat: "F j, Y",
+            dateFormat: "d.m.Y"
+        });
     }
 
     beforeUpdate(): void {

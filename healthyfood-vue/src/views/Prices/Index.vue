@@ -1,34 +1,31 @@
 <template>
     <div>
-        <h1>Persons</h1>
+        <h1>Prices</h1>
         <p>
-            <router-link v-if="userRole != null && userRole.includes('Admin')" :to="{ name: 'PersonsCreate', params: { }}">Create new</router-link>
+            <router-link v-if="userRole != null && userRole.includes('Admin')" :to="{ name: 'PricesCreate', params: { }}">Create new</router-link>
         </p>
         <table class="table">
             <thead>
                 <tr>
-                    <th>First name</th>
-                    <th>Last name</th>
-                    <th>Sex</th>
-                    <th>Date of birth</th>
-
+                    <th>Value</th>
+                    <th>From</th>
+                    <th>To</th>
+                    <th>Campaign</th>
                     <th></th>
                 </tr>
             </thead>
             <tbody>
-                <tr v-for="person in persons" :key="person.id">
-                    <td>{{person.firstName}}</td>
-                    <td>{{person.lastName}}</td>
-                    <td>{{person.sex}}</td>
-                    <td>{{person.dateOfBirth}}</td>
+                <tr v-for="price in prices" :key="price.id">
+                    <td>{{price.value.toFixed(2)}}€</td>
+                    <td>{{price.from}}</td>
+                    <td>{{price.to}}</td>
+                    <td>{{price.campaign}}</td>
                     <td>
-                        <router-link v-if="userRole != null && userRole.includes('Admin')" :to="{ name: 'PersonsEdit', params: {id: person.id } }">Edit</router-link>
-                        <span v-if="userRole != null && userRole.includes('Admin')"> | </span>
-                        <router-link :to="{ name: 'PersonsDetails', params: {id: person.id } }">Details</router-link>
+                        <router-link  class ="btn btn-primary active" v-if="userRole != null && userRole.includes('Admin')" :to="{ name: 'PricesEdit', params: {id: price.id } }">Edit</router-link>
                         <button
                             style="float: right"
                             v-if="userRole != null && userRole.includes('Admin')"
-                            @click="deleteOnClick(person)"
+                            @click="deleteOnClick(price)"
                             type="button"
                             class="btn btn-danger"
                         >Delete</button>
@@ -41,11 +38,11 @@
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
-import { IPerson } from "../../domain/IPerson/IPerson";
 import store from "../../store";
+import { IPrice } from '../../domain/IPrice/IPrice';
 
 @Component
-export default class PersonsIndex extends Vue {
+export default class PricesIndex extends Vue {
     get isAuthenticated(): boolean {
         return store.getters.isAuthenticated;
     }
@@ -54,12 +51,12 @@ export default class PersonsIndex extends Vue {
         return store.getters.userRole;
     }
 
-    get persons(): IPerson[] {
-        return store.state.persons;
+    get prices(): IPrice[] {
+        return store.state.prices;
     }
 
-    deleteOnClick(person: IPerson): void {
-        store.dispatch("deletePerson", person.id);
+    deleteOnClick(price: IPrice): void {
+        store.dispatch("deletePrice", price.id);
     }
 
     // ============ Lifecycle methods ==========
@@ -77,7 +74,7 @@ export default class PersonsIndex extends Vue {
 
     mounted(): void {
         console.log("mounted");
-        store.dispatch("getPersons");
+        store.dispatch("getPrices");
     }
 
     beforeUpdate(): void {

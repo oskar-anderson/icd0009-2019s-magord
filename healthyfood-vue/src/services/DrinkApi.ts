@@ -16,10 +16,10 @@ export abstract class DrinkApi {
         }
     )
 
-    static async getAllDrinks(): Promise<IDrink[]> {
+    static async getAllDrinks(jwt: string): Promise<IDrink[]> {
         const url = "";
         try {
-            const response = await this.axios.get<IDrink[]>(url);
+            const response = await this.axios.get<IDrink[]>(url, { headers: { Authorization: 'Bearer ' + jwt } });
             console.log('getAll response', response);
             if (response.status === 200) {
                 return response.data;
@@ -31,10 +31,10 @@ export abstract class DrinkApi {
         }
     }
 
-    static async getDrink(id: string): Promise<IDrink | null> {
+    static async getDrink(id: string, jwt: string): Promise<IDrink | null> {
         const url = "" + id;
         try {
-            const response = await this.axios.get<IDrink>(url);
+            const response = await this.axios.get<IDrink>(url, { headers: { Authorization: 'Bearer ' + jwt } });
             if (response.status === 200) {
                 return response.data;
             }

@@ -1,13 +1,13 @@
-import { IPersonCreate } from './../domain/IPerson/IPersonCreate';
+import { IPriceCreate } from './../domain/IPrice/IPriceCreate';
 import { IFetchResponse } from './../types/IFetchResponse';
-import { IPerson } from '../domain/IPerson/IPerson';
+import { IPrice } from '../domain/IPrice/IPrice';
 import Axios from 'axios'
-import { IPersonEdit } from '@/domain/IPerson/IPersonEdit';
+import { IPriceEdit } from '@/domain/IPrice/IPriceEdit';
 
-export abstract class PersonApi {
+export abstract class PriceApi {
     private static axios = Axios.create(
         {
-            baseURL: "https://localhost:5001/api/v1.0/Persons/",
+            baseURL: "https://localhost:5001/api/v1.0/Prices/",
             headers: {
                 common: {
                     'Content-Type': 'application/json'
@@ -16,10 +16,10 @@ export abstract class PersonApi {
         }
     )
 
-    static async getAllPersons(): Promise<IPerson[]> {
+    static async getAllPrices(jwt: string): Promise<IPrice[]> {
         const url = "";
         try {
-            const response = await this.axios.get<IPerson[]>(url);
+            const response = await this.axios.get<IPrice[]>(url, { headers: { Authorization: 'Bearer ' + jwt } });
             console.log('getAll response', response);
             if (response.status === 200) {
                 return response.data;
@@ -31,10 +31,10 @@ export abstract class PersonApi {
         }
     }
 
-    static async getPerson(id: string): Promise<IPerson | null> {
+    static async getPrice(id: string, jwt: string): Promise<IPrice | null> {
         const url = "" + id;
         try {
-            const response = await this.axios.get<IPerson>(url);
+            const response = await this.axios.get<IPrice>(url, { headers: { Authorization: 'Bearer ' + jwt } });
             if (response.status === 200) {
                 return response.data;
             }
@@ -45,10 +45,10 @@ export abstract class PersonApi {
         }
     }
 
-    static async createPerson(person: IPersonCreate, jwt: string): Promise<IFetchResponse<void>> {
+    static async createPrice(drink: IPriceCreate, jwt: string): Promise<IFetchResponse<void>> {
         const url = ""
         try {
-            const response = await this.axios.post<IPerson>(url, person, { headers: { Authorization: 'Bearer ' + jwt } });
+            const response = await this.axios.post<IPrice>(url, drink, { headers: { Authorization: 'Bearer ' + jwt } });
             console.log('post response', response);
             if (response.status === 200) {
                 return {
@@ -67,10 +67,10 @@ export abstract class PersonApi {
         }
     }
 
-    static async updatePerson(person: IPersonEdit, jwt: string): Promise<IFetchResponse<string>> {
-        const url = "" + person.id
+    static async updatePrice(drink: IPriceEdit, jwt: string): Promise<IFetchResponse<string>> {
+        const url = "" + drink.id
         try {
-            const response = await this.axios.put(url, person, { headers: { Authorization: 'Bearer ' + jwt } });
+            const response = await this.axios.put(url, drink, { headers: { Authorization: 'Bearer ' + jwt } });
             if (response.status === 200) {
                 return {
                     statusCode: response.status
@@ -88,10 +88,10 @@ export abstract class PersonApi {
         }
     }
 
-    static async deletePerson(id: string, jwt: string): Promise<void> {
+    static async deletePrice(id: string, jwt: string): Promise<void> {
         const url = "" + id;
         try {
-            const response = await this.axios.delete<IPerson>(url, { headers: { Authorization: 'Bearer ' + jwt } });
+            const response = await this.axios.delete<IPrice>(url, { headers: { Authorization: 'Bearer ' + jwt } });
             console.log('delete response', response);
             if (response.status === 200) {
                 return;

@@ -1,6 +1,8 @@
-export interface IDrinkEdit {
+export interface IDrinkEdit{
     id: string;
     name: string;
-    size: number | string;
-    amount: number | string;
+    amount: number;
+    size: number;
+    priceId: string | null;
+    price: number;
 }

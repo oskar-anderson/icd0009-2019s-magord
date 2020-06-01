@@ -2,26 +2,62 @@
     <div>
         <h1>Drinks</h1>
         <p>
-            <router-link v-if="userRole != null && userRole.includes('Admin')" :to="{ name: 'DrinksCreate', params: { }}">Create new</router-link>
+            <router-link
+                v-if="userRole != null && userRole.includes('Admin')"
+                :to="{ name: 'DrinksCreate', params: { }}"
+            >Create new</router-link>
         </p>
         <table class="table">
             <thead>
                 <tr>
                     <th>Name</th>
                     <th>Size</th>
-                    <th>Amount</th>
+                    <th>
+                        <a style="margin-left:33px">Amount</a>
+                    </th>
+                    <th>Price</th>
+                    <th></th>
                     <th></th>
                 </tr>
             </thead>
             <tbody>
                 <tr v-for="drink in drinks" :key="drink.id">
                     <td>{{drink.name}}</td>
-                    <td>{{drink.size}}</td>
-                    <td>{{drink.amount}}</td>
+                    <td>{{drink.size}}L</td>
                     <td>
-                        <router-link v-if="userRole != null && userRole.includes('Admin')" :to="{ name: 'DrinksEdit', params: {id: drink.id } }">Edit</router-link>
-                        <span v-if="userRole != null && userRole.includes('Admin')"> | </span>
-                        <router-link :to="{ name: 'DrinksDetails', params: {id: drink.id } }">Details</router-link>
+                        <button
+                            style="font-size: 10px; margin-right:30px"
+                            class="btn btn-primary btn-sm"
+                            v-on:click="decrement(drink.id)"
+                            type="button"
+                        >
+                            <span class="fa fa-minus"></span>
+                        </button>
+                        {{ drink.amount }}
+                        <button
+                            style="font-size: 10px; margin-left:30px"
+                            class="btn btn-primary btn-sm"
+                            v-on:click="increment(drink.id)"
+                            type="button"
+                        >
+                            <span class="fa fa-plus"></span>
+                        </button>
+                    </td>
+                    <td>{{drink.price.toFixed(2)}}€</td>
+                    <td>
+                        <button
+                            click.trigger="addToCart(drink)"
+                            style="margin:auto; display:block"
+                            type="button"
+                            class="btn btn-success"
+                        >Add to cart</button>
+                    </td>
+                    <td>
+                        <router-link
+                            class="btn btn-primary active"
+                            v-if="userRole != null && userRole.includes('Admin')"
+                            :to="{ name: 'DrinksEdit', params: {id: drink.id } }"
+                        >Edit</router-link>
                         <button
                             style="float: right"
                             v-if="userRole != null && userRole.includes('Admin')"
@@ -53,6 +89,24 @@ export default class DrinksIndex extends Vue {
 
     get drinks(): IDrink[] {
         return store.state.drinks;
+    }
+
+    decrement(id: string) {
+        for (const drink of this.drinks) {
+            if (drink.id === id) {
+                if (drink.amount !== 1) {
+                    --drink.amount;
+                }
+            }
+        }
+    }
+
+    increment(id: string) {
+        for (const drink of this.drinks) {
+            if (drink.id === id) {
+                ++drink.amount;
+            }
+        }
     }
 
     deleteOnClick(drink: IDrink): void {

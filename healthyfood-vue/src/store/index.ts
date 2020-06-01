@@ -1,23 +1,25 @@
+import { IPriceEdit } from './../domain/IPrice/IPriceEdit';
+import { IPriceCreate } from './../domain/IPrice/IPriceCreate';
+import { ICampaignEdit } from './../domain/ICampaign/ICampaignEdit';
+import { ICampaignCreate } from './../domain/ICampaign/ICampaignCreate';
+import { ICampaign } from './../domain/ICampaign/ICampaign';
 import { IDrinkEdit } from './../domain/IDrink/IDrinkEdit';
 import { IDrinkCreate } from './../domain/IDrink/IDrinkCreate';
-import { IPersonEdit } from './../domain/IPerson/IPersonEdit';
 import { IChangePasswordDTO } from './../types/IChangePasswordDTO';
 import { IChangeEmailDTO } from './../types/IChangeEmailDTO';
 import { IRegisterDTO } from './../types/IRegisterDTO';
-import { ITownEdit } from './../domain/ITown/ITownEdit';
-import { ITownCreate } from './../domain/ITown/ITownCreate';
 import Vue from 'vue'
 import Vuex from 'vuex'
+// import createPersistedState from 'vuex-persistedstate';
 import { ILoginDTO } from '@/types/ILoginDTO';
 import { AccountApi } from '@/services/AccountApi';
 
-import { TownApi } from '@/services/TownApi';
-import { ITown } from '../domain/ITown/ITown';
-import { IPerson } from '@/domain/IPerson/IPerson';
-import { PersonApi } from '@/services/PersonApi';
-import { IPersonCreate } from '@/domain/IPerson/IPersonCreate';
 import { IDrink } from '@/domain/IDrink/IDrink';
 import { DrinkApi } from '@/services/DrinkApi';
+import { CampaignApi } from '@/services/CampaignApi';
+import { IChangePhoneNumberDTO } from '@/types/IChangePhoneNumberDTO';
+import { IPrice } from '@/domain/IPrice/IPrice';
+import { PriceApi } from '@/services/PriceApi';
 
 Vue.use(Vuex)
 
@@ -25,36 +27,23 @@ export default new Vuex.Store({
     state: {
         jwt: null as string | null,
 
-        towns: [] as ITown[],
-        town: null as ITown | null,
-
-        persons: [] as IPerson[],
-        person: null as IPerson | null,
-
         drinks: [] as IDrink[],
         drink: null as IDrink | null,
 
+        campaigns: [] as ICampaign[],
+        campaign: null as ICampaign | null,
+
+        prices: [] as IPrice[],
+        price: null as IPrice | null,
+
         userRole: null as string | null,
         userEmail: null as string | null,
+        phoneNumber: null as string | null,
         password: null as string | null
     },
     mutations: {
         setJwt(state, jwt: string | null) {
             state.jwt = jwt;
-        },
-
-        setTowns(state, towns: ITown[]) {
-            state.towns = towns;
-        },
-        setTown(state, town: ITown) {
-            state.town = town;
-        },
-
-        setPersons(state, persons: IPerson[]) {
-            state.persons = persons;
-        },
-        setPerson(state, person: IPerson) {
-            state.person = person;
         },
 
         setDrinks(state, drinks: IDrink[]) {
@@ -64,11 +53,29 @@ export default new Vuex.Store({
             state.drink = drink;
         },
 
+        setCampaigns(state, campaigns: ICampaign[]) {
+            state.campaigns = campaigns;
+        },
+        setCampaign(state, campaign: ICampaign) {
+            state.campaign = campaign;
+        },
+
+        setPrices(state, prices: IPrice[]) {
+            state.prices = prices;
+        },
+        setPrice(state, price: IPrice) {
+            console.log("Setting price")
+            state.price = price;
+        },
+
         setUserRole(state, userRole: string | null) {
             state.userRole = userRole;
         },
         setUserEmail(state, userEmail: string | null) {
             state.userEmail = userEmail;
+        },
+        setPhoneNumber(state, phoneNumber: string | null) {
+            state.phoneNumber = phoneNumber;
         },
         setPassword(state, password: string | null) {
             state.password = password;
@@ -84,21 +91,21 @@ export default new Vuex.Store({
         userEmail(context): string | null {
             return context.userEmail;
         },
-
+        phoneNumber(context): string | null {
+            return context.phoneNumber;
+        },
         password(context): string | null {
             return context.password;
         },
 
-        town(context): ITown {
-            return context.town as ITown;
-        },
-
-        person(context): IPerson {
-            return context.person as IPerson;
-        },
-
         drink(context): IDrink {
             return context.drink as IDrink;
+        },
+        campaign(context): ICampaign {
+            return context.campaign as ICampaign;
+        },
+        price(context): IPrice {
+            return context.price as IPrice;
         }
     },
     actions: {
@@ -107,6 +114,11 @@ export default new Vuex.Store({
         },
         async changeEmail(context, emailDTO: IChangeEmailDTO): Promise<boolean> {
             const jwt = await AccountApi.changeEmail(emailDTO);
+            context.commit('setJwt', jwt);
+            return jwt !== null;
+        },
+        async changePhoneNumber(context, phoneNumberDTO: IChangePhoneNumberDTO): Promise<boolean> {
+            const jwt = await AccountApi.changePhoneNumber(phoneNumberDTO);
             context.commit('setJwt', jwt);
             return jwt !== null;
         },
@@ -120,6 +132,7 @@ export default new Vuex.Store({
             context.commit('setJwt', jwt);
             context.commit('setUserEmail', registerDTO.email)
             context.commit('setPassword', registerDTO.password)
+            context.commit('setPhoneNumber', registerDTO.phoneNumber)
             return jwt !== null;
         },
         async authenticateUser(context, loginDTO: ILoginDTO): Promise<boolean> {
@@ -130,78 +143,19 @@ export default new Vuex.Store({
             return jwt !== null;
         },
 
-        async getTowns(context): Promise<void> {
-            const towns = await TownApi.getAllTowns();
-            context.commit('setTowns', towns);
-        },
-        async getTown(context, id: string): Promise<boolean> {
-            const town = await TownApi.getTown(id);
-            context.commit('setTown', town);
-            return true;
-        },
-        async deleteTown(context, id: string): Promise<void> {
-            console.log('deleteTown', context.getters.isAuthenticated);
-            if (context.getters.isAuthenticated && context.state.jwt) {
-                await TownApi.deleteTown(id, context.state.jwt);
-                await context.dispatch('getTowns');
-            }
-        },
-        async createTown(context, town: ITownCreate): Promise<void> {
-            console.log('createTown', context.getters.isAuthenticated);
-            if (context.getters.isAuthenticated && context.state.jwt) {
-                await TownApi.createTown(town, context.state.jwt);
-                await context.dispatch('getTowns');
-            }
-        },
-        async updateTown(context, town: ITownEdit): Promise<void> {
-            console.log('editTown', context.getters.isAuthenticated);
-            if (context.getters.isAuthenticated && context.state.jwt) {
-                context.commit('setTown', town)
-                await TownApi.updateTown(town, context.state.jwt);
-                await context.dispatch('getTowns');
-            }
-        },
-
-        async getPersons(context): Promise<void> {
-            const persons = await PersonApi.getAllPersons();
-            context.commit('setPersons', persons);
-        },
-        async getPerson(context, id: string): Promise<boolean> {
-            const person = await PersonApi.getPerson(id);
-            context.commit('setPerson', person);
-            return true;
-        },
-        async deletePerson(context, id: string): Promise<void> {
-            console.log('deletePerson', context.getters.isAuthenticated);
-            if (context.getters.isAuthenticated && context.state.jwt) {
-                await PersonApi.deletePerson(id, context.state.jwt);
-                await context.dispatch('getPersons');
-            }
-        },
-        async createPerson(context, person: IPersonCreate): Promise<void> {
-            console.log('createTown', context.getters.isAuthenticated);
-            if (context.getters.isAuthenticated && context.state.jwt) {
-                await PersonApi.createPerson(person, context.state.jwt);
-                await context.dispatch('getPersons');
-            }
-        },
-        async updatePerson(context, person: IPersonEdit): Promise<void> {
-            console.log('editPerson', context.getters.isAuthenticated);
-            if (context.getters.isAuthenticated && context.state.jwt) {
-                context.commit('setPerson', person)
-                await PersonApi.updatePerson(person, context.state.jwt);
-                await context.dispatch('getPersons');
-            }
-        },
-
         async getDrinks(context): Promise<void> {
-            const drinks = await DrinkApi.getAllDrinks();
-            context.commit('setDrinks', drinks);
+            if (context.getters.isAuthenticated && context.state.jwt) {
+                const drinks = await DrinkApi.getAllDrinks(context.state.jwt);
+                context.commit('setDrinks', drinks);
+            }
         },
         async getDrink(context, id: string): Promise<boolean> {
-            const drink = await DrinkApi.getDrink(id);
-            context.commit('setDrink', drink);
-            return true;
+            if (context.getters.isAuthenticated && context.state.jwt) {
+                const drink = await DrinkApi.getDrink(id, context.state.jwt);
+                context.commit('setDrink', drink);
+                return true;
+            }
+            return false;
         },
         async deleteDrink(context, id: string): Promise<void> {
             console.log('deleteDrink', context.getters.isAuthenticated);
@@ -224,8 +178,76 @@ export default new Vuex.Store({
                 await DrinkApi.updateDrink(drink, context.state.jwt);
                 await context.dispatch('getDrinks');
             }
+        },
+
+        async getPrices(context): Promise<void> {
+            if (context.getters.isAuthenticated && context.state.jwt) {
+                const prices = await PriceApi.getAllPrices(context.state.jwt);
+                context.commit('setPrices', prices);
+            }
+        },
+        async getPrice(context, id: string): Promise<void> {
+            if (context.getters.isAuthenticated && context.state.jwt) {
+                const price = await PriceApi.getPrice(id, context.state.jwt);
+                context.commit('setPrice', price);
+                console.log("Price has been set")
+            }
+        },
+        async deletePrice(context, id: string): Promise<void> {
+            if (context.getters.isAuthenticated && context.state.jwt) {
+                await PriceApi.deletePrice(id, context.state.jwt);
+                await context.dispatch('getPrices');
+            }
+        },
+        async createPrice(context, price: IPriceCreate): Promise<void> {
+            if (context.getters.isAuthenticated && context.state.jwt) {
+                await PriceApi.createPrice(price, context.state.jwt);
+                await context.dispatch('getPrices');
+            }
+        },
+        async updatePrice(context, price: IPriceEdit): Promise<void> {
+            if (context.getters.isAuthenticated && context.state.jwt) {
+                context.commit('setPrice', price)
+                await PriceApi.updatePrice(price, context.state.jwt);
+                await context.dispatch('getPrices');
+            }
+        },
+
+        async getCampaigns(context): Promise<void> {
+            if (context.getters.isAuthenticated && context.state.jwt) {
+                const campaigns = await CampaignApi.getAllCampaigns(context.state.jwt);
+                context.commit('setCampaigns', campaigns);
+            }
+        },
+        async getCampaign(context, id: string): Promise<boolean> {
+            if (context.getters.isAuthenticated && context.state.jwt) {
+                const campaign = await CampaignApi.getCampaign(id, context.state.jwt);
+                context.commit('setCampaign', campaign);
+                return true;
+            }
+            return false;
+        },
+        async deleteCampaign(context, id: string): Promise<void> {
+            if (context.getters.isAuthenticated && context.state.jwt) {
+                await CampaignApi.deleteCampaign(id, context.state.jwt);
+                await context.dispatch('getCampaigns');
+            }
+        },
+        async createCampaign(context, campaign: ICampaignCreate): Promise<void> {
+            if (context.getters.isAuthenticated && context.state.jwt) {
+                await CampaignApi.createCampaign(campaign, context.state.jwt);
+                await context.dispatch('getCampaigns');
+            }
+        },
+        async updateCampaign(context, campaign: ICampaignEdit): Promise<void> {
+            if (context.getters.isAuthenticated && context.state.jwt) {
+                context.commit('setCampaign', campaign)
+                await CampaignApi.updateCampaign(campaign, context.state.jwt);
+                await context.dispatch('getCampaigns');
+            }
         }
     },
     modules: {
     }
-})
+    // plugins: [createPersistedState()]
+});

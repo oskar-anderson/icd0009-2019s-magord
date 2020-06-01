@@ -15,6 +15,14 @@
                     <li class="nav-item">
                         <a><router-link to="/account/manage/password" class="nav-link text-dark">Change password</router-link> </a>
                     </li>
+                    <li class="nav-item">
+                        <a>
+                            <router-link
+                                to="/account/manage/phoneNumber"
+                                class="nav-link text-dark"
+                            >Change phone number</router-link>
+                        </a>
+                    </li>
                 </ul>
 
             </div>

@@ -1,50 +1,50 @@
 <template>
     <div>
         <h1>Create</h1>
-        <h4>Drink</h4>
+        <h4>Price</h4>
         <hr />
         <div class="row">
             <div class="col-md-4">
                 <form>
                     <div class="form-group">
-                        <label class="control-label" for="Name">Name</label>
+                        <label class="control-label" for="Name">Value</label>
                         <input
                             class="form-control"
                             type="text"
                             id="Name"
                             maxlength="256"
-                            v-model="drinkInfo.name"
+                            v-model="priceInfo.value"
                         />
-                        <label class="control-label" for="Size">Size</label>
+                        <label class="control-label" for="From">From</label>
                         <input
                             class="form-control"
                             type="text"
-                            id="Size"
+                            id="From"
                             maxlength="256"
-                            v-model="drinkInfo.size"
+                            v-model="priceInfo.from"
                         />
-                        <label class="control-label" for="Amount">Amount</label>
+                        <label class="control-label" for="To">To</label>
                         <input
                             class="form-control"
                             type="text"
-                            id="Amount"
+                            id="To"
                             maxlength="256"
-                            v-model="drinkInfo.amount"
+                            v-model="priceInfo.to"
                         />
-                        <label class="control-label" for="Price">Price</label>
+                        <label class="control-label" for="Comment">Campaign</label>
                         <select
                             class="form-control"
                             type="text"
                             id="Comment"
                             maxlength="256"
-                            v-model="drinkInfo.priceId"
+                            v-model="priceInfo.campaignId"
                         >
-                            <option value="null">No price</option>
+                        <option value=null>No campaign</option>
                             <option
-                                v-for="price in prices"
-                                :key="price.id"
-                                v-bind:value="price.id"
-                            >{{ price.value }}</option>
+                                v-for="campaign in campaigns"
+                                :key="campaign.id"
+                                v-bind:value= campaign.id
+                            >{{ campaign.name }}</option>
                         </select>
                     </div>
                     <div class="form-group">
@@ -56,7 +56,7 @@
                         />
                     </div>
                     <div>
-                        <router-link :to="{ name: 'Drinks' }">Back to List</router-link>
+                        <router-link :to="{ name: 'Prices' }">Back to List</router-link>
                     </div>
                 </form>
             </div>
@@ -65,53 +65,34 @@
 </template>
 
 <script lang="ts">
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { Component, Vue } from "vue-property-decorator";
 import store from "../../store";
-import { IDrinkCreate } from "../../domain/IDrink/IDrinkCreate";
 import router from "../../router";
-import { IPrice } from "@/domain/IPrice/IPrice";
+import flatpickr from "flatpickr";
+import { IPriceCreate } from "../../domain/IPrice/IPriceCreate";
+import { ICampaign } from "@/domain/ICampaign/ICampaign";
+require("flatpickr/dist/flatpickr.css");
 
 @Component
-export default class DrinksCreate extends Vue {
-    private drinkInfo: IDrinkCreate = {
-        name: "",
-        size: null,
-        amount: null,
-        priceId: null
+export default class PricesCreate extends Vue {
+    private priceInfo: IPriceCreate = {
+        value: null,
+        from: "",
+        to: "",
+        campaignId: null
     };
 
-    get prices(): IPrice[] {
-        return store.state.prices;
+    get campaigns(): ICampaign[] | null {
+        return store.state.campaigns;
     }
 
     onSubmit(event: Event): void | null {
         event.preventDefault();
-        if (
-            isNaN(Number(this.drinkInfo.size)) ||
-            isNaN(Number(this.drinkInfo.amount))
-        ) {
-            alert("Please enter a number into size and amount!");
-            return null;
+        if (this.priceInfo.value !== null && this.priceInfo.from !== "" && this.priceInfo.to !== "") {
+            this.priceInfo.value = Number(this.priceInfo.value);
+            store.dispatch("createPrice", this.priceInfo);
+            router.push("/prices");
         }
-        if (!this.isInt(Number(this.drinkInfo.amount))) {
-            alert("Please enter correct amount!");
-            return null;
-        }
-        if (this.drinkInfo.size! <= 0 || this.drinkInfo.amount! <= 0) {
-            alert("Please enter a correct number!");
-            return null;
-        }
-        if (this.drinkInfo.name.length > 0) {
-            this.drinkInfo.size = Number(this.drinkInfo.size);
-            this.drinkInfo.amount = Number(this.drinkInfo.amount);
-            store.dispatch("createDrink", this.drinkInfo);
-            router.push("/drinks");
-        }
-    }
-
-    isInt(n: any): boolean {
-        return n % 1 === 0;
     }
 
     // ============ Lifecycle methods ==========
@@ -128,8 +109,13 @@ export default class DrinksCreate extends Vue {
     }
 
     mounted(): void {
-        store.dispatch("getPrices");
         console.log("mounted");
+        flatpickr("#From, #To", {
+            altInput: true,
+            altFormat: "F j, Y",
+            dateFormat: "d.m.Y"
+        });
+        store.dispatch("getCampaigns");
     }
 
     beforeUpdate(): void {

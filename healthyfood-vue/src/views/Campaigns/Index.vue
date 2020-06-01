@@ -1,28 +1,31 @@
 <template>
     <div>
-        <h1>Towns</h1>
+        <h1>Campaings</h1>
         <p>
-            <router-link v-if="userRole != null && userRole.includes('Admin')" :to="{ name: 'TownsCreate', params: { }}">Create new</router-link>
+            <router-link v-if="userRole != null && userRole.includes('Admin')" :to="{ name: 'CampaignsCreate', params: { }}">Create new</router-link>
         </p>
         <table class="table">
             <thead>
                 <tr>
                     <th>Name</th>
-
+                    <th>From</th>
+                    <th>To</th>
+                    <th>Description</th>
                     <th></th>
                 </tr>
             </thead>
             <tbody>
-                <tr v-for="town in towns" :key="town.id">
-                    <td>{{town.name}}</td>
+                <tr v-for="campaign in campaigns" :key="campaign.id">
+                    <td>{{campaign.name}}</td>
+                    <td>{{campaign.from}}</td>
+                    <td>{{campaign.to}}</td>
+                    <td>{{campaign.comment}}</td>
                     <td>
-                        <router-link v-if="userRole != null && userRole.includes('Admin')" :to="{ name: 'TownsEdit', params: {id: town.id } }">Edit</router-link>
-                        <span v-if="userRole != null && userRole.includes('Admin')"> | </span>
-                        <router-link :to="{ name: 'TownsDetails', params: {id: town.id } }">Details</router-link>
+                        <router-link  class ="btn btn-primary active" v-if="userRole != null && userRole.includes('Admin')" :to="{ name: 'CampaignsEdit', params: {id: campaign.id } }">Edit</router-link>
                         <button
                             style="float: right"
                             v-if="userRole != null && userRole.includes('Admin')"
-                            @click="deleteOnClick(town)"
+                            @click="deleteOnClick(campaign)"
                             type="button"
                             class="btn btn-danger"
                         >Delete</button>
@@ -35,11 +38,11 @@
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
-import { ITown } from "../../domain/ITown/ITown";
+import { ICampaign } from "../../domain/ICampaign/ICampaign";
 import store from "../../store";
 
 @Component
-export default class TownsIndex extends Vue {
+export default class CampaignsIndex extends Vue {
     get isAuthenticated(): boolean {
         return store.getters.isAuthenticated;
     }
@@ -48,12 +51,12 @@ export default class TownsIndex extends Vue {
         return store.getters.userRole;
     }
 
-    get towns(): ITown[] {
-        return store.state.towns;
+    get campaigns(): ICampaign[] {
+        return store.state.campaigns;
     }
 
-    deleteOnClick(town: ITown): void {
-        store.dispatch("deleteTown", town.id);
+    deleteOnClick(campaign: ICampaign): void {
+        store.dispatch("deleteCampaign", campaign.id);
     }
 
     // ============ Lifecycle methods ==========
@@ -71,7 +74,7 @@ export default class TownsIndex extends Vue {
 
     mounted(): void {
         console.log("mounted");
-        store.dispatch("getTowns");
+        store.dispatch("getCampaigns");
     }
 
     beforeUpdate(): void {

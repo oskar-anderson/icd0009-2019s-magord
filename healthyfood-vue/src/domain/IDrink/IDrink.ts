@@ -1,6 +1,8 @@
 export interface IDrink {
     id: string;
     name: string;
-    size: Number;
-    amount: Number;
+    amount: number;
+    size: number;
+    priceId: string;
+    price: number;
 }
