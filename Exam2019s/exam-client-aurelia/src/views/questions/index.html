@@ -1,0 +1,48 @@
+<template>
+
+    <require from="../../components/alert"></require>
+
+    <alert alert-data.bind="_alert"></alert>
+
+
+    <h1 class="text-center">${quizName} quiz</h1>
+
+    <br>
+    <p class="text-center">
+        <a if.bind="isAdmin" route-href="route: questions-create; params.bind: { id: quizId }"
+            class="btn btn-primary active" role="button">Add a new question</a>
+        <a route-href="route: home; params.bind: {}" class="btn btn-warning active" role="button">Back to quizzes</a>
+    </p>
+    <br>
+
+
+    <div style="border-style: solid" repeat.for="question of _questions" class="text-center">
+        <br>
+        <a if.bind="isAdmin" route-href="route: questions-edit; params.bind: { id: quiz.id }"
+            class="btn btn-primary active" role="button">Edit</a>
+        <a if.bind="isAdmin" route-href="route: choices-create; params.bind: { id: question.id }"
+            class="btn btn-success active" role="button">Add choice</a>
+        <button if.bind="isAdmin" click.trigger="deleteOnClick(question)" type="button"
+            class="btn btn-danger">Delete</button>
+        <h5>${question.number}. ${question.description} (${question.points} points)</h5>
+        <div repeat.for="choice of _choices" if.bind="choice.questionId == question.id">
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="exampleRadiosName${question.number}"
+                    id="exampleRadiosId${question.number}" value=true checked.bind="choice.isSelected">
+                <label class="form-check-label" for="exampleRadios1">
+                    ${choice.value}
+                </label>
+            </div>
+            <br>
+        </div>
+        <br>
+    </div>
+
+    <p class="text-center">
+        <br>
+        <button if.bind="_questions.length > 0" click.trigger="onSubmit($event)" type="button"
+            class="btn-lg btn-success">Submit</button>
+    </p>
+    <br>
+    <br>
+</template>

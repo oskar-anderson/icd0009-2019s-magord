@@ -1,0 +1,35 @@
+<template>
+
+    <require from="../../components/alert"></require>
+
+    <alert alert-data.bind="_alert"></alert>
+
+
+    <h1 class="text-center">Add a new questions to your quiz</h1>
+    <hr />
+    <div class="row">
+        <div class="col-md-4">
+            <form submit.trigger="onSubmit($event)">
+                <div class="form-group">
+                    <label class="control-label" for="TotalPoints">The question</label>
+                    <input class="form-control" type="text" id="TotalPoints" maxlength="256" value.bind="question.description"/>
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label" for="TotalPoints">How many points does the question give?</label>
+                    <input class="form-control" type="text" id="TotalPoints" maxlength="256" value.bind="question.points"/>
+                </div>
+                
+
+                <div class="form-group">
+                    <input type="submit" value="Create" class="btn btn-primary" />
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div>
+        <button click.trigger="navigateBack()" type="button" class="btn btn-warning active">Back to questions</button>
+    </div>
+
+</template>

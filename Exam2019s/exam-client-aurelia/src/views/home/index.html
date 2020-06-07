@@ -1,0 +1,47 @@
+<template>
+    <br>
+    <h1 class="text-center">Welcome to Quiz-Fun!</h1>
+    <br>
+    <br>
+    <div class="text-center">
+        <h3>Feel free to browse the selection of quizzes available!</h3>
+        <br>
+
+        <p class="text-center">
+            <a if.bind="isAdmin" route-href="route: quizzes-create; params.bind: {}" class="btn btn-success active"
+                role="button">Create a new quiz</a>
+        </p>
+        <br>
+        <table class="table table-borderless">
+            <thead class="thead-dark">
+                <tr>
+                    <th>
+                        Name
+                    </th>
+                    <th>
+                        Total points
+                    </th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr repeat.for="quiz of _quizzes">
+                    <td>
+                        <a route-href="route: questions-index; params.bind: { id: quiz.id }"> ${quiz.name} </a>
+                    </td>
+                    <td>
+                        ${quiz.totalPoints} points
+                    </td>
+                    <td>
+                        <a if.bind="isAdmin" route-href="route: quizzes-edit; params.bind: { id: quiz.id }"
+                            class="btn btn-primary active" role="button">Edit</a>
+                        <button style="float: right" if.bind="isAdmin" click.trigger="deleteOnClick(quiz)" type="button"
+                            class="btn btn-danger">Delete</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+
+</template>
