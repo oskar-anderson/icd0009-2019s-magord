@@ -6,8 +6,7 @@
     <br>
     <div class="text-center">
         <h3>Feel free to play some of our community quizzes!</h3>
-        <br>
-        <h4 if.bind="appState.jwt == null">Or take a moment to sign up to see your quizz stats! :)</h4>
+        <h4 if.bind="appState.jwt == null">Or take a moment to sign up to keep track of your quizz stats! :)</h4>
         <br>
 
         <p class="text-center">
@@ -45,7 +44,7 @@
                         <b>${result.timesPlayed}</b>
                     </td>
                     <td repeat.for="result of _results" if.bind="appState.jwt !== null && result.quizId == quiz.id">
-                        <b>${(result.averageScore / result.timesPlayed).toFixed(2)}</b>
+                        <b>${(result.totalScore / result.timesPlayed).toFixed(2)}</b>
                     </td>
                     <td>
                         <a if.bind="isAdmin && appState.jwt !== null" route-href="route: quizzes-edit; params.bind: { id: quiz.id }"

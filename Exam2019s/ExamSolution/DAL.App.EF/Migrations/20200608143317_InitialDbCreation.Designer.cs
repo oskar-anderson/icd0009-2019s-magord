@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DAL.App.EF.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20200608121936_InitialDbCreation")]
+    [Migration("20200608143317_InitialDbCreation")]
     partial class InitialDbCreation
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -258,9 +258,6 @@ namespace DAL.App.EF.Migrations
                     b.Property<Guid>("AppUserId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<decimal>("AverageScore")
-                        .HasColumnType("decimal(18,4)");
-
                     b.Property<DateTime>("ChangedAt")
                         .HasColumnType("datetime2");
 
@@ -280,6 +277,9 @@ namespace DAL.App.EF.Migrations
 
                     b.Property<int>("TimesPlayed")
                         .HasColumnType("int");
+
+                    b.Property<decimal>("TotalScore")
+                        .HasColumnType("decimal(18,4)");
 
                     b.HasKey("Id");
 

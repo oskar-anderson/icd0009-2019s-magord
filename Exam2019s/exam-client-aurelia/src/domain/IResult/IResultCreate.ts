@@ -1,6 +1,6 @@
 export interface IResultCreate {
     timesPlayed: number;
-    averageScore: number;
+    totalScore: number;
     
     quizId: string | null;
 }

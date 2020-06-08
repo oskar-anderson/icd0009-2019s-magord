@@ -216,7 +216,7 @@ export class QuestionsIndex {
             if (this.appState.jwt !== null) {
 
                 if (!this.resultsForQuiz.length) {
-                    this.result = { timesPlayed: 1, averageScore: nrOfPoints, quizId: this.quizId }
+                    this.result = { timesPlayed: 1, totalScore: nrOfPoints, quizId: this.quizId }
 
                     this.resultService
                         .createResult(this.result)
@@ -242,9 +242,9 @@ export class QuestionsIndex {
 
                     const id = existingResult.id
                     let timesPlayed = existingResult.timesPlayed + 1;
-                    const totalScore = existingResult.averageScore + nrOfPoints;
+                    const totalScore = existingResult.totalScore + nrOfPoints;
 
-                    this.resultToUpdate = { id: id, timesPlayed: timesPlayed, averageScore: totalScore, quizId: this.quizId }
+                    this.resultToUpdate = { id: id, timesPlayed: timesPlayed, totalScore: totalScore, quizId: this.quizId }
                     this.resultService
                         .updateResult(this.resultToUpdate)
                         .then(

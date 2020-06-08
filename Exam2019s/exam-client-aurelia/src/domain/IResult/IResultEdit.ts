@@ -1,7 +1,7 @@
 export interface IResultEdit {
     id: string;
     timesPlayed: number;
-    averageScore: number;
+    totalScore: number;
     
     quizId: string | null;
 }

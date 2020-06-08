@@ -10,7 +10,7 @@ namespace DAL.App.DTO
         
         public int TimesPlayed { get; set; }
 
-        public decimal AverageScore { get; set; }
+        public decimal TotalScore { get; set; }
 
         public Guid QuizId { get; set; }
         public Quiz? Quiz { get; set; }

@@ -256,9 +256,6 @@ namespace DAL.App.EF.Migrations
                     b.Property<Guid>("AppUserId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<decimal>("AverageScore")
-                        .HasColumnType("decimal(18,4)");
-
                     b.Property<DateTime>("ChangedAt")
                         .HasColumnType("datetime2");
 
@@ -278,6 +275,9 @@ namespace DAL.App.EF.Migrations
 
                     b.Property<int>("TimesPlayed")
                         .HasColumnType("int");
+
+                    b.Property<decimal>("TotalScore")
+                        .HasColumnType("decimal(18,4)");
 
                     b.HasKey("Id");
 
