@@ -45,7 +45,7 @@
                         <b>${result.timesPlayed}</b>
                     </td>
                     <td repeat.for="result of _results" if.bind="appState.jwt !== null && result.quizId == quiz.id">
-                        <b>${result.averageScore.toFixed(2)}</b>
+                        <b>${(result.averageScore / result.timesPlayed).toFixed(2)}</b>
                     </td>
                     <td>
                         <a if.bind="isAdmin && appState.jwt !== null" route-href="route: quizzes-edit; params.bind: { id: quiz.id }"

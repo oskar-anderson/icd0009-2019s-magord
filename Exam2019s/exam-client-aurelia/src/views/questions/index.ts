@@ -19,11 +19,9 @@ export class QuestionsIndex {
     private _alert: IAlertData | null = null;
 
     private _questions: IQuestion[] = [];
-    private questionId: string = null;
     private _choices: IChoice[] = [];
     private nrOfQuestion = 0;
     private quizId: string | null = null
-    private quizName: string = ""
     private quiz: IQuiz | null = null;
 
     private result: IResultCreate | null = null;
@@ -51,7 +49,6 @@ export class QuestionsIndex {
                         this._questions = response.data!;
                         for (const question of this._questions) {
                             this.nrOfQuestion += 1;
-                            this.quizName = question.quiz;
                         }
                     } else {
                         // show error message
@@ -182,6 +179,12 @@ export class QuestionsIndex {
         }
     }
 
+    finishQuiz(nrOfCorrectAnswers: number, nrOfPoints: number) {
+        alert("Congratulations! You answered " + nrOfCorrectAnswers + " questions out of " + this.nrOfQuestion + " right! \n\n" +
+            "That's a total of " + nrOfPoints + "/" + this.quiz.totalPoints)
+        this.router.navigateToRoute("home")
+    }
+
 
     onSubmit(event: Event) {
         event.preventDefault();
@@ -212,11 +215,8 @@ export class QuestionsIndex {
 
             if (this.appState.jwt !== null) {
 
-                let timesPlayed = 1;
-                const averageScore = (nrOfPoints / timesPlayed)
-
                 if (!this.resultsForQuiz.length) {
-                    this.result = { timesPlayed: timesPlayed, averageScore: nrOfPoints, quizId: this.quizId }
+                    this.result = { timesPlayed: 1, averageScore: nrOfPoints, quizId: this.quizId }
 
                     this.resultService
                         .createResult(this.result)
@@ -225,9 +225,7 @@ export class QuestionsIndex {
                                 if (response.statusCode >= 200 && response.statusCode < 300) {
                                     this._alert = null;
                                     console.log("CREATED")
-                                    alert("Congratulations! You answered " + nrOfCorrectAnswers + " questions out of " + this.nrOfQuestion + " right! \n\n" +
-                                        "That's a total of " + nrOfPoints + "/" + this.quiz.totalPoints)
-                                    this.router.navigateToRoute("home")
+                                    this.finishQuiz(nrOfCorrectAnswers, nrOfPoints);
                                 } else {
                                     // show error message
                                     this._alert = {
@@ -244,10 +242,9 @@ export class QuestionsIndex {
 
                     const id = existingResult.id
                     let timesPlayed = existingResult.timesPlayed + 1;
-                    const averageScore = (existingResult.averageScore + nrOfPoints) / timesPlayed
-                    console.log(existingResult.averageScore)
+                    const totalScore = existingResult.averageScore + nrOfPoints;
 
-                    this.resultToUpdate = { id: id, timesPlayed: timesPlayed, averageScore: averageScore, quizId: this.quizId }
+                    this.resultToUpdate = { id: id, timesPlayed: timesPlayed, averageScore: totalScore, quizId: this.quizId }
                     this.resultService
                         .updateResult(this.resultToUpdate)
                         .then(
@@ -255,9 +252,7 @@ export class QuestionsIndex {
                                 if (response.statusCode >= 200 && response.statusCode < 300) {
                                     this._alert = null;
                                     console.log("UPDATED")
-                                    alert("Congratulations! You answered " + nrOfCorrectAnswers + " questions out of " + this.nrOfQuestion + " right! \n\n" +
-                                        "That's a total of " + nrOfPoints + "/" + this.quiz.totalPoints)
-                                    this.router.navigateToRoute("home")
+                                    this.finishQuiz(nrOfCorrectAnswers, nrOfPoints);
                                 } else {
                                     // show error message
                                     this._alert = {
@@ -271,9 +266,7 @@ export class QuestionsIndex {
                 }
             }
             else {
-                alert("Congratulations! You answered " + nrOfCorrectAnswers + " questions out of " + this.nrOfQuestion + " right! \n\n" +
-                    "That's a total of " + nrOfPoints + "/" + this.quiz.totalPoints)
-                this.router.navigateToRoute("home")
+                this.finishQuiz(nrOfCorrectAnswers, nrOfPoints);
             }
         }
     }

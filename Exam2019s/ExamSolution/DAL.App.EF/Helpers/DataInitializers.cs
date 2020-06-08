@@ -245,7 +245,7 @@ namespace DAL.App.EF.Helpers
                 new Choice()
                 {
                     Id = new Guid("00000000-0000-0000-0000-000000000009"),
-                    Value = "Beijing",
+                    Value = "Tokyo",
                     IsSelected = false,
                     IsAnswer = false,
                     Question = questions[2]
