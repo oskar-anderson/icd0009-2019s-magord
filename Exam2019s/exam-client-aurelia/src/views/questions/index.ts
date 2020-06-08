@@ -1,3 +1,5 @@
+import { QuizService } from './../../service/quiz-service';
+import { IQuiz } from './../../domain/IQuiz/IQuiz';
 import { IQuestion } from './../../domain/IQuestion/IQuestion';
 import { ChoiceService } from './../../service/choice-service';
 import { IChoice } from './../../domain/IChoice/IChoice';
@@ -18,16 +20,19 @@ export class QuestionsIndex {
     private nrOfQuestion = 0;
     private quizId: string | null = null
     private quizName: string = ""
+    private quiz: IQuiz | null = null;
 
     private isAdmin: boolean = false;
 
-    constructor(private choiceService: ChoiceService, private questionService: QuestionService, private appState: AppState, private router: Router) {
+    constructor(private quizService: QuizService, private choiceService: ChoiceService,
+        private questionService: QuestionService, private appState: AppState, private router: Router) {
 
     }
 
     activate(params: any, routeConfig: RouteConfig, navigationInstruction: NavigationInstruction) {
         if (params.id && typeof (params.id) == 'string') {
             this.quizId = params.id;
+            this.setQuiz(params.id)
             this.questionService.getAllForQuiz(params.id).then(
                 response => {
                     if (response.statusCode >= 200 && response.statusCode < 300) {
@@ -48,6 +53,24 @@ export class QuestionsIndex {
                 }
             );
         }
+    }
+
+    setQuiz(quizId: string) {
+        this.quizService.getQuiz(quizId).then(
+            response => {
+                if (response.statusCode >= 200 && response.statusCode < 300) {
+                    this._alert = null;
+                    this.quiz = response.data!;
+                } else {
+                    // show error message
+                    this._alert = {
+                        message: response.statusCode.toString() + ' - ' + response.errorMessage,
+                        type: AlertType.Danger,
+                        dismissable: true,
+                    }
+                }
+            }
+        )
     }
 
 
@@ -80,7 +103,7 @@ export class QuestionsIndex {
                 response => {
                     if (response.statusCode >= 200 && response.statusCode < 300) {
                         this._alert = null;
-                        this.router.navigateToRoute('home')
+                        this.router.navigateToRoute('deleted')
                     } else {
                         // show error message
                         this._alert = {
@@ -91,6 +114,36 @@ export class QuestionsIndex {
                     }
                 }
             );
+    }
+
+    deleteChoiceOnClick(choice: IChoice) {
+        this.choiceService
+            .deleteChoice(choice.id)
+            .then(
+                response => {
+                    if (response.statusCode >= 200 && response.statusCode < 300) {
+                        this._alert = null;
+                        this.router.navigateToRoute('deleted')
+                    } else {
+                        // show error message
+                        this._alert = {
+                            message: response.statusCode.toString() + ' - ' + response.errorMessage,
+                            type: AlertType.Danger,
+                            dismissable: true,
+                        }
+                    }
+                }
+            );
+    }
+
+
+    changeRadioButton(choice: IChoice) {
+        for (const aChoice of this._choices) {
+            if (aChoice.questionId === choice.questionId) {
+                aChoice.isSelected = false;
+            }
+        }
+        return true;
     }
 
 
@@ -107,17 +160,23 @@ export class QuestionsIndex {
             return null;
         } else {
             let nrOfCorrectAnswers = 0;
+            let nrOfPoints = 0;
 
             for (const question of this._questions) {
                 for (const choice of this._choices) {
                     if (question.id == choice.questionId) {
-                        if(choice.isSelected && choice.isAnswer) {
+                        if (choice.isSelected && choice.isAnswer) {
                             nrOfCorrectAnswers += 1;
+                            nrOfPoints += question.points
                         }
                     }
                 }
             }
-            alert("Congratulations! You answered " + nrOfCorrectAnswers + " questions out of " + this.nrOfQuestion + " right!")
+
+            //TODO: SET LATEST SCORE FOR THIS GIVEN QUIZ???
+
+            alert("Congratulations! You answered " + nrOfCorrectAnswers + " questions out of " + this.nrOfQuestion + " right! \n\n" +
+                "That's a total of " + nrOfPoints + "/" + this.quiz.totalPoints)
             this.router.navigateToRoute("home")
         }
     }

@@ -27,6 +27,13 @@ export class QuizzesCreate {
 
     onSubmit(event: Event) {
         event.preventDefault();
+        if(this.quiz.name.length < 1) {
+            alert("Please enter a name for the quiz!")
+            return null;
+        }
+        if(isNaN(this.quiz.totalPoints)){
+            this.quiz.totalPoints = 0;
+        }
         this.quiz.totalPoints = Number(this.quiz.totalPoints);
         this.quizService
             .createQuiz(this.quiz!)

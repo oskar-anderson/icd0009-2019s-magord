@@ -1,3 +1,5 @@
+import { IQuestionEdit } from './../../domain/IQuestion/IQuestionEdit';
+import { QuestionService } from './../../service/question-service';
 import { QuizService } from '../../service/quiz-service';
 import { IQuizEdit } from '../../domain/IQuiz/IQuizEdit';
 import { autoinject } from 'aurelia-framework';
@@ -11,19 +13,19 @@ export class QuizzesEdit {
 
     private _alert: IAlertData | null = null;
 
-    private quiz: IQuizEdit | null = null;
+    private question: IQuestionEdit | null = null;
 
-    constructor(private quizService: QuizService, private router: Router) {
+    constructor(private questionService: QuestionService, private router: Router) {
     }
 
     activate(params: any, routeConfig: RouteConfig, navigationInstruction: NavigationInstruction) {
         if (params.id && typeof (params.id) == 'string') {
-            this.quizService.getQuiz(params.id).then(
+            this.questionService.getQuestion(params.id).then(
                 response => {
                     if (response.statusCode >= 200 && response.statusCode < 300) {
                         this._alert = null;
                         console.log(response.data)
-                        this.quiz = response.data!;
+                        this.question = response.data!;
                     } else {
                         // show error message
                         this._alert = {
@@ -37,17 +39,28 @@ export class QuizzesEdit {
         }
     }
 
+    navigateBack(){
+        this.router.navigateBack();
+    }
 
     onSubmit(event: Event) {
         event.preventDefault();
-        this.quiz.totalPoints = Number(this.quiz.totalPoints);
-        this.quizService
-            .updateQuiz(this.quiz!)
+        if(this.question.description.length < 1) {
+            alert("Please enter a question!")
+            return null;
+        }
+        if(isNaN(this.question.points)){
+            alert("Please enter a number into the points field")
+            return null;
+        }
+        this.question.points = Number(this.question.points)
+        this.questionService
+            .updateQuestion(this.question!)
             .then(
                 response => {
                     if (response.statusCode >= 200 && response.statusCode < 300) {
                         this._alert = null;
-                        this.router.navigateToRoute('home', {});
+                        this.navigateBack();
                     } else {
                         // show error message
                         this._alert = {

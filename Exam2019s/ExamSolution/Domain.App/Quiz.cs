@@ -12,7 +12,7 @@ namespace Domain.App
 
         [Column(TypeName = "decimal(18,4)")]
         public decimal TotalPoints { get; set; }
-        
         public ICollection<Question>? Questions { get; set; }
+        // public ICollection<Result>? Results { get; set; }
     }
 }

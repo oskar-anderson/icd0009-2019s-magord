@@ -81,6 +81,9 @@ export class ChoiceService {
             const response = await this.httpClient
                 .fetch(this._baseUrl + '/' + id, {
                     cache: "no-store",
+                    headers: {
+                        authorization: "Bearer " + this.appState.jwt
+                    }
                 });
 
             if (response.status >= 200 && response.status < 300) {
@@ -170,12 +173,12 @@ export class ChoiceService {
     async deleteChoice(id: string): Promise<IFetchResponse<string>> {
         try {
             const response = await this.httpClient
-            .delete(this._baseUrl + '/' + id, null, {
-                cache: 'no-store',
-                headers: {
+                .delete(this._baseUrl + '/' + id, null, {
+                    cache: 'no-store',
+                    headers: {
                         authorization: "Bearer " + this.appState.jwt
                     }
-            });
+                });
 
             if (response.status >= 200 && response.status < 300) {
                 return {

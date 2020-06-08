@@ -33,6 +33,9 @@ export class App {
             { route: ['account/managePassword'], name: 'account-managePassword', moduleId: PLATFORM.moduleName('views/account/manage/password'), nav: false, title: 'Manage password', settings: { roles: [] } },
 
 
+
+            { route: ['shared/deleted'], name: 'deleted', moduleId: PLATFORM.moduleName('views/shared/deleted'), nav: false, title: 'Item deleted', settings: { roles: ['admin'] } },
+
             
 
             { route: ['quizzes/edit/:id?'], name: 'quizzes-edit', moduleId: PLATFORM.moduleName('views/quizzes/edit'), nav: false, title: 'Quizzes Edit', settings: { roles: ['admin'] } },
@@ -44,8 +47,7 @@ export class App {
             { route: ['questions/create'], name: 'questions-create', moduleId: PLATFORM.moduleName('views/questions/create'), nav: false, title: 'Questions Create', settings: { roles: ['admin'] } },
 
             
-            //{ route: ['choices', 'choices/index'], name: 'choices-index', moduleId: PLATFORM.moduleName('views/choices/index'), nav: true, title: 'Choices', settings: { roles: [] } },
-            //{ route: ['choices/edit/:id?'], name: 'choices-edit', moduleId: PLATFORM.moduleName('views/choices/edit'), nav: false, title: 'Choices Edit', settings: { roles: ['admin'] } },
+            { route: ['choices/edit/:id?'], name: 'choices-edit', moduleId: PLATFORM.moduleName('views/choices/edit'), nav: false, title: 'Choices Edit', settings: { roles: ['admin'] } },
             { route: ['choices/create'], name: 'choices-create', moduleId: PLATFORM.moduleName('views/choices/create'), nav: false, title: 'Choices Create', settings: { roles: ['admin'] } }
             
         ]);
