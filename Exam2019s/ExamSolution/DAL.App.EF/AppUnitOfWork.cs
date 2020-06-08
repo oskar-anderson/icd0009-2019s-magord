@@ -21,5 +21,8 @@ namespace DAL.App.EF
         public IChoiceRepository Choices =>
             GetRepository<IChoiceRepository>(() => new ChoiceRepository(UowDbContext));
         
+        public IResultRepository Results =>
+            GetRepository<IResultRepository>(() => new ResultRepository(UowDbContext));
+        
     }
 }

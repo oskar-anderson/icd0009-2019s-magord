@@ -1,3 +1,6 @@
+import { IResultEdit } from './../../domain/IResult/IResultEdit';
+import { IResultCreate } from './../../domain/IResult/IResultCreate';
+import { IResult } from './../../domain/IResult/IResult';
 import { QuizService } from './../../service/quiz-service';
 import { IQuiz } from './../../domain/IQuiz/IQuiz';
 import { IQuestion } from './../../domain/IQuestion/IQuestion';
@@ -9,6 +12,7 @@ import { autoinject } from 'aurelia-framework';
 import { AppState } from 'state/app-state';
 import { IAlertData } from '../../../types/IAlertData';
 import { AlertType } from '../../../types/AlertType';
+import { ResultService } from 'service/result-service';
 
 @autoinject
 export class QuestionsIndex {
@@ -22,9 +26,16 @@ export class QuestionsIndex {
     private quizName: string = ""
     private quiz: IQuiz | null = null;
 
+    private result: IResultCreate | null = null;
+    private resultToUpdate: IResultEdit | null = null;
+
+    private resultsForQuiz = []
+
+    private _results: IResult[] = []
+
     private isAdmin: boolean = false;
 
-    constructor(private quizService: QuizService, private choiceService: ChoiceService,
+    constructor(private resultService: ResultService, private quizService: QuizService, private choiceService: ChoiceService,
         private questionService: QuestionService, private appState: AppState, private router: Router) {
 
     }
@@ -92,7 +103,24 @@ export class QuestionsIndex {
                 }
             }
         );
-
+        if (this.appState.jwt !== null) {
+            this.resultService.getResults().then(
+                response => {
+                    if (response.statusCode >= 200 && response.statusCode < 300) {
+                        this.isAdmin = this.appState.isAdmin
+                        this._alert = null;
+                        this._results = response.data!;
+                    } else {
+                        // show error message
+                        this._alert = {
+                            message: response.statusCode.toString() + ' - ' + response.errorMessage,
+                            type: AlertType.Danger,
+                            dismissable: true,
+                        }
+                    }
+                }
+            );
+        }
     }
 
 
@@ -146,9 +174,18 @@ export class QuestionsIndex {
         return true;
     }
 
+    populateResultsArray() {
+        for (const result of this._results) {
+            if (result.quizId == this.quizId) {
+                this.resultsForQuiz.push(result)
+            }
+        }
+    }
+
 
     onSubmit(event: Event) {
         event.preventDefault();
+        this.populateResultsArray();
         let nrOfSelectedChoices = 0;
         for (const choice of this._choices) {
             if (choice.isSelected) {
@@ -173,11 +210,71 @@ export class QuestionsIndex {
                 }
             }
 
-            //TODO: SET LATEST SCORE FOR THIS GIVEN QUIZ???
+            if (this.appState.jwt !== null) {
 
-            alert("Congratulations! You answered " + nrOfCorrectAnswers + " questions out of " + this.nrOfQuestion + " right! \n\n" +
-                "That's a total of " + nrOfPoints + "/" + this.quiz.totalPoints)
-            this.router.navigateToRoute("home")
+                let timesPlayed = 1;
+                const averageScore = (nrOfPoints / timesPlayed)
+
+                if (!this.resultsForQuiz.length) {
+                    this.result = { timesPlayed: timesPlayed, averageScore: nrOfPoints, quizId: this.quizId }
+
+                    this.resultService
+                        .createResult(this.result)
+                        .then(
+                            response => {
+                                if (response.statusCode >= 200 && response.statusCode < 300) {
+                                    this._alert = null;
+                                    console.log("CREATED")
+                                    alert("Congratulations! You answered " + nrOfCorrectAnswers + " questions out of " + this.nrOfQuestion + " right! \n\n" +
+                                        "That's a total of " + nrOfPoints + "/" + this.quiz.totalPoints)
+                                    this.router.navigateToRoute("home")
+                                } else {
+                                    // show error message
+                                    this._alert = {
+                                        message: response.statusCode.toString() + ' - ' + response.errorMessage,
+                                        type: AlertType.Danger,
+                                        dismissable: true,
+                                    }
+                                }
+                            }
+                        );
+                }
+                else {
+                    let existingResult = this.resultsForQuiz[0] as IResult
+
+                    const id = existingResult.id
+                    let timesPlayed = existingResult.timesPlayed + 1;
+                    const averageScore = (existingResult.averageScore + nrOfPoints) / timesPlayed
+                    console.log(existingResult.averageScore)
+
+                    this.resultToUpdate = { id: id, timesPlayed: timesPlayed, averageScore: averageScore, quizId: this.quizId }
+                    this.resultService
+                        .updateResult(this.resultToUpdate)
+                        .then(
+                            response => {
+                                if (response.statusCode >= 200 && response.statusCode < 300) {
+                                    this._alert = null;
+                                    console.log("UPDATED")
+                                    alert("Congratulations! You answered " + nrOfCorrectAnswers + " questions out of " + this.nrOfQuestion + " right! \n\n" +
+                                        "That's a total of " + nrOfPoints + "/" + this.quiz.totalPoints)
+                                    this.router.navigateToRoute("home")
+                                } else {
+                                    // show error message
+                                    this._alert = {
+                                        message: response.statusCode.toString() + ' - ' + response.errorMessage,
+                                        type: AlertType.Danger,
+                                        dismissable: true,
+                                    }
+                                }
+                            }
+                        );
+                }
+            }
+            else {
+                alert("Congratulations! You answered " + nrOfCorrectAnswers + " questions out of " + this.nrOfQuestion + " right! \n\n" +
+                    "That's a total of " + nrOfPoints + "/" + this.quiz.totalPoints)
+                this.router.navigateToRoute("home")
+            }
         }
     }
 }

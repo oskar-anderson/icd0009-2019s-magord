@@ -8,5 +8,6 @@ namespace Contracts.DAL.App
         IChoiceRepository Choices { get; }
         IQuestionRepository Questions { get; }
         IQuizRepository Quizzes { get; }
+        IResultRepository Results { get; }
     }
 }

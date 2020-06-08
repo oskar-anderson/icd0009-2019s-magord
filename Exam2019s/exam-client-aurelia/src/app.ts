@@ -21,7 +21,7 @@ export class App {
         config.addAuthorizeStep(AuthorizeStep);
 
         config.map([
-            { route: ['', 'home', 'home/index'], name: 'home', moduleId: PLATFORM.moduleName('views/home/index'), nav: true, title: 'Home', settings: { roles: [] } },
+            { route: ['', 'home', 'home/index'], name: 'home', moduleId: PLATFORM.moduleName('views/home/index'), nav: false, title: 'Home', settings: { roles: [] } },
 
 
             { route: ['account/login'], name: 'account-login', moduleId: PLATFORM.moduleName('views/account/login'), nav: false, title: 'Login', settings: { roles: [] } },
@@ -59,6 +59,10 @@ export class App {
 
     logoutOnClick() {
         this.appState.jwt = null;
+        this.appState.email = null
+        this.appState.firstName = null
+        this.appState.lastName = null
+        this.appState.password = null
         this.router!.navigateToRoute('home');
     }
 }

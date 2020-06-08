@@ -1,3 +1,5 @@
+import { ResultService } from './../../service/result-service';
+import { IResult } from './../../domain/IResult/IResult';
 import { IAlertData } from './../../../types/IAlertData';
 import { AppState } from 'state/app-state';
 import { autoinject } from 'aurelia-framework';
@@ -12,11 +14,12 @@ export class HomeIndex {
     private _alert: IAlertData | null = null;
 
     private _quizzes: IQuiz[] = [];
+    private _results: IResult[] = []
 
     private isAdmin: boolean = false;
 
 
-    constructor(private quizService: QuizService, private appState: AppState, private router: Router) {
+    constructor(private resultService: ResultService, private quizService: QuizService, private appState: AppState, private router: Router) {
 
     }
 
@@ -42,26 +45,45 @@ export class HomeIndex {
                 }
             }
         );
+        if (this.appState.jwt !== null) {
+            this.resultService.getResults().then(
+                response => {
+                    if (response.statusCode >= 200 && response.statusCode < 300) {
+                        this.isAdmin = this.appState.isAdmin
+                        this._alert = null;
+                        this._results = response.data!;
+                    } else {
+                        // show error message
+                        this._alert = {
+                            message: response.statusCode.toString() + ' - ' + response.errorMessage,
+                            type: AlertType.Danger,
+                            dismissable: true,
+                        }
+                    }
+                }
+            );
+        }
+
     }
 
     deleteOnClick(quiz: IQuiz) {
         this.quizService
-        .deleteQuiz(quiz.id)
-        .then(
-            response => {
-                if (response.statusCode >= 200 && response.statusCode < 300) {
-                    this._alert = null;
-                    this.attached();
-                } else {
-                    // show error message
-                    this._alert = {
-                        message: response.statusCode.toString() + ' - ' + response.errorMessage,
-                        type: AlertType.Danger,
-                        dismissable: true,
+            .deleteQuiz(quiz.id)
+            .then(
+                response => {
+                    if (response.statusCode >= 200 && response.statusCode < 300) {
+                        this._alert = null;
+                        this.attached();
+                    } else {
+                        // show error message
+                        this._alert = {
+                            message: response.statusCode.toString() + ' - ' + response.errorMessage,
+                            type: AlertType.Danger,
+                            dismissable: true,
+                        }
                     }
                 }
-            }
-        );
+            );
     }
 
 }

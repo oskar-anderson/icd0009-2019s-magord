@@ -1,14 +1,17 @@
 <template>
     <br>
-    <h1 class="text-center">Welcome to Quiz-Fun!</h1>
+    <h1 class="text-center">Welcome to Quiz-Fun ${appState.firstName}!</h1>
+    <br>
     <br>
     <br>
     <div class="text-center">
-        <h3>Feel free to browse the selection of quizzes available!</h3>
+        <h3>Feel free to play some of our community quizzes!</h3>
+        <br>
+        <h4 if.bind="appState.jwt == null">Or take a moment to sign up to see your quizz stats! :)</h4>
         <br>
 
         <p class="text-center">
-            <a if.bind="isAdmin" route-href="route: quizzes-create; params.bind: {}" class="btn btn-success active"
+            <a if.bind="isAdmin && appState.jwt !== null" route-href="route: quizzes-create; params.bind: {}" class="btn btn-success active"
                 role="button">Create a new quiz</a>
         </p>
         <br>
@@ -16,10 +19,16 @@
             <thead class="thead-dark">
                 <tr>
                     <th>
-                        Name
+                        Quizzes
                     </th>
                     <th>
-                        Total points
+                        Maximum possible points
+                    </th>
+                    <th if.bind="appState.jwt !== null && _results.length > 0">
+                        Times quizzed
+                    </th>
+                    <th if.bind="appState.jwt !== null && _results.length > 0">
+                         My average quiz-score
                     </th>
                     <th></th>
                 </tr>
@@ -30,12 +39,18 @@
                         <a route-href="route: questions-index; params.bind: { id: quiz.id }"> ${quiz.name} </a>
                     </td>
                     <td>
-                        ${quiz.totalPoints} points
+                       <b>${quiz.totalPoints} points</b>
+                    </td>
+                    <td repeat.for="result of _results" if.bind="appState.jwt !== null && result.quizId == quiz.id">
+                        <b>${result.timesPlayed}</b>
+                    </td>
+                    <td repeat.for="result of _results" if.bind="appState.jwt !== null && result.quizId == quiz.id">
+                        <b>${result.averageScore.toFixed(2)}</b>
                     </td>
                     <td>
-                        <a if.bind="isAdmin" route-href="route: quizzes-edit; params.bind: { id: quiz.id }"
+                        <a if.bind="isAdmin && appState.jwt !== null" route-href="route: quizzes-edit; params.bind: { id: quiz.id }"
                             class="btn btn-primary active" role="button">Edit</a>
-                        <button style="float: right" if.bind="isAdmin" click.trigger="deleteOnClick(quiz)" type="button"
+                        <button style="float: right" if.bind="isAdmin && appState.jwt !== null" click.trigger="deleteOnClick(quiz)" type="button"
                             class="btn btn-danger">Delete</button>
                     </td>
                 </tr>

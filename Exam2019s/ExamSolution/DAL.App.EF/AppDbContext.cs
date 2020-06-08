@@ -20,6 +20,7 @@ namespace DAL.App.EF
         public DbSet<Choice> Choices { get; set; } = default!;
         public DbSet<Question> Questions { get; set; } = default!;
         public DbSet<Quiz> Quizzes { get; set; } = default!;
+        public DbSet<Result> Results { get; set; } = default!;
         
         
         
@@ -53,6 +54,13 @@ namespace DAL.App.EF
             // Enable cascade delete on Quiz
             builder.Entity<Quiz>()
                 .HasMany(s => s.Questions)
+                .WithOne(l => l.Quiz!)
+                .HasForeignKey(l => l.QuizId)
+                .OnDelete(DeleteBehavior.Cascade);
+            
+            // Enable cascade delete on Quiz
+            builder.Entity<Quiz>()
+                .HasMany(s => s.Results)
                 .WithOne(l => l.Quiz!)
                 .HasForeignKey(l => l.QuizId)
                 .OnDelete(DeleteBehavior.Cascade);

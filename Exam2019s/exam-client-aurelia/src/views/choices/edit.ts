@@ -37,6 +37,10 @@ export class ChoicesEdit {
         }
     }
 
+    navigateBack(){
+        this.router.navigateBack();
+    }
+
 
     onSubmit(event: Event) {
         event.preventDefault();
