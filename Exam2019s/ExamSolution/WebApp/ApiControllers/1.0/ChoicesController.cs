@@ -26,7 +26,7 @@ namespace WebApp.ApiControllers._1._0
         // GET: api/Choices
         [HttpGet]
         [AllowAnonymous]
-        public async Task<ActionResult<IEnumerable<DAL.App.DTO.ChoiceView>>> GetChoices()
+        public async Task<ActionResult<IEnumerable<DAL.App.DTO.Choice>>> GetChoices()
         {
             return Ok(await _uow.Choices.GetAllAsync());
         }

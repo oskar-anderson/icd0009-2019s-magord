@@ -40,10 +40,10 @@
                 <label class="form-check-label" for="exampleRadios1">
                     ${choice.value}
                 </label>
-                <button style="margin-left: 10px;" if.bind="isAdmin" click.trigger="deleteChoiceOnClick(choice)"
-                    type="button" class="btn btn-danger btn-sm">Delete</button>
-                <a if.bind="isAdmin" route-href="route: choices-edit; params.bind: { id: choice.id }"
+                <a style="margin-left: 10px;" if.bind="isAdmin" route-href="route: choices-edit; params.bind: { id: choice.id }"
                     class="btn btn-primary btn-sm active" role="button">Edit</a>
+                <button if.bind="isAdmin" click.trigger="deleteChoiceOnClick(choice)"
+                    type="button" class="btn btn-danger btn-sm">Delete</button>
             </div>
             <br>
         </div>

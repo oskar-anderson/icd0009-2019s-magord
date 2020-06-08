@@ -7,6 +7,7 @@ import { Router, RouteConfig, NavigationInstruction } from 'aurelia-router';
 import { IQuiz } from 'domain/IQuiz/IQuiz';
 import { QuizService } from 'service/quiz-service';
 import { AlertType } from '../../../types/AlertType';
+import * as $ from 'jquery'
 
 @autoinject
 export class HomeIndex {
@@ -64,6 +65,9 @@ export class HomeIndex {
             );
         }
 
+        $(function () {
+            $('[data-toggle="tooltip"]').tooltip()
+          })
     }
 
     deleteOnClick(quiz: IQuiz) {

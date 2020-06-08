@@ -17,7 +17,7 @@ export class App {
     configureRouter(config: RouterConfiguration, router: Router): void {
         this.router = router;
 
-        config.title = "HealthyFood";
+        config.title = "Quiz-Fun";
         config.addAuthorizeStep(AuthorizeStep);
 
         config.map([

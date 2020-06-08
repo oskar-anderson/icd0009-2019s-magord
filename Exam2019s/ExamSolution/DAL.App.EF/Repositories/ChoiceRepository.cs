@@ -17,29 +17,5 @@ namespace DAL.App.EF.Repositories
         {
         }
         
-        
-
-        /*
-        public virtual async Task<IEnumerable<DTO.Course>> GetAllForViewAsync(Guid? userId = null, bool noTracking = true)
-        {
-            var query = PrepareQuery(userId, noTracking);
-            var domainEntities = await query.ToListAsync();
-            var result = domainEntities.Select(e => Mapper.Map(e));
-            return result;
-        }
-        */
-        public virtual async Task<IEnumerable<ChoiceView>> GetAllForViewAsync(Guid questionId, object? userId = null, bool noTracking = true)
-        {
-            return await RepoDbSet
-                .Where(c => c.QuestionId == questionId)
-                .Select(c => new ChoiceView()
-                {
-                    Id = c.Id,
-                    IsAnswer = c.IsAnswer,
-                    IsSelected = c.IsSelected,
-                    Value = c.Value,
-                    QuestionId = c.QuestionId
-                }).ToListAsync();
-        }
     }
 }

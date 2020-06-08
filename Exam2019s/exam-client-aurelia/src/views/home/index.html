@@ -17,17 +17,17 @@
         <table class="table table-borderless">
             <thead class="thead-dark">
                 <tr>
-                    <th>
+                    <th data-toggle="tooltip" data-placement="top" title="Click on the quiz to start playing!">
                         Quizzes
                     </th>
-                    <th>
+                    <th data-toggle="tooltip" data-placement="top" title="This represents the total maximum points you can get from the quiz!">
                         Maximum possible points
                     </th>
-                    <th if.bind="appState.jwt !== null && _results.length > 0">
+                    <th data-html="true" data-toggle="tooltip" data-placement="top" title="This represents the number of times you have played the quiz!" if.bind="appState.jwt !== null && _results.length > 0">
                         Times quizzed
                     </th>
                     <th if.bind="appState.jwt !== null && _results.length > 0">
-                         My average quiz-score
+                         <a data-html="true" data-toggle="tooltip" data-placement="top" title="This represents the average score you currently have!">My average quiz-score</a>
                     </th>
                     <th></th>
                 </tr>
