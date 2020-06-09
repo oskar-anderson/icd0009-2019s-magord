@@ -23,7 +23,7 @@
                         Polls
                     </th>
                     <th>
-                        See results
+                        Results
                     </th>
                     <th></th>
                 </tr>
@@ -38,10 +38,10 @@
                             here</a>
                     </td>
                     <td>
-                        <a style="float: right" if.bind="isAdmin && appState.jwt !== null"
+                        <a if.bind="isAdmin && appState.jwt !== null"
                             route-href="route: polls-edit; params.bind: { id: quiz.id }"
                             class="btn btn-primary active" role="button">Edit</a>
-                        <button style="float: right" if.bind="isAdmin && appState.jwt !== null"
+                        <button if.bind="isAdmin && appState.jwt !== null"
                             click.trigger="deleteOnClick(quiz)" type="button" class="btn btn-danger">Delete</button>
                     </td>
                 </tr>
