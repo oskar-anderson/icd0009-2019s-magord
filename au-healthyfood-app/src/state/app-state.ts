@@ -4,7 +4,7 @@ export class AppState {
     constructor(){
 
     }
-    public readonly baseUrl = 'https://healthyfood2020.azurewebsites.net/api/v1.0/'
+    public readonly baseUrl = 'https://localhost:5001/api/v1.0/'
 
     // Json Web Token to keep track of logged in status
 
