@@ -179,12 +179,50 @@ export class QuestionsIndex {
         }
     }
 
+
+    updatePollAnswers() {
+        if (this.quiz.totalPoints == null) {
+            for (const question of this._questions) {
+                for (const choice of this._choices) {
+                    if (question.id == choice.questionId) {
+                        if (choice.isSelected) {
+                            choice.numberOfAnswers = choice.numberOfAnswers + 1
+                            choice.isSelected = false;
+                            this.choiceService.updateChoice(choice).then(
+                                response => {
+                                    if (response.statusCode >= 200 && response.statusCode < 300) {
+                                        this._alert = null;
+                                        console.log("UPDATED POLL")
+                                    } else {
+                                        // show error message
+                                        this._alert = {
+                                            message: response.statusCode.toString() + ' - ' + response.errorMessage,
+                                            type: AlertType.Danger,
+                                            dismissable: true,
+                                        }
+                                    }
+                                }
+                            )
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+
+
     finishQuiz(nrOfCorrectAnswers: number, nrOfPoints: number) {
         alert("Congratulations! You answered " + nrOfCorrectAnswers + " questions out of " + this.nrOfQuestion + " right! \n\n" +
             "That's a total of " + nrOfPoints + "/" + this.quiz.totalPoints)
         this.router.navigateToRoute("home")
     }
 
+
+    finishPoll() {
+        alert("Thank you for being a good member of the community and voting! \n\n We really appreciate it!")
+        this.router.navigateToRoute("polls-index")
+    }
 
     onSubmit(event: Event) {
         event.preventDefault();
@@ -195,78 +233,88 @@ export class QuestionsIndex {
                 nrOfSelectedChoices += 1
             }
         }
+
+        console.log(nrOfSelectedChoices)
+        console.log(this.nrOfQuestion)
+
         if (nrOfSelectedChoices !== this.nrOfQuestion) {
             alert("Please answer all the questions")
             return null;
         } else {
-            let nrOfCorrectAnswers = 0;
-            let nrOfPoints = 0;
+            // It is a poll
+            if (this.quiz.totalPoints == null) {
+                this.updatePollAnswers();
+                this.finishPoll();
+            } else {
+                let nrOfCorrectAnswers = 0;
+                let nrOfPoints = 0;
 
-            for (const question of this._questions) {
-                for (const choice of this._choices) {
-                    if (question.id == choice.questionId) {
-                        if (choice.isSelected && choice.isAnswer) {
-                            nrOfCorrectAnswers += 1;
-                            nrOfPoints += question.points
+                for (const question of this._questions) {
+                    for (const choice of this._choices) {
+                        if (question.id == choice.questionId) {
+                            if (choice.isSelected && choice.isAnswer) {
+                                nrOfCorrectAnswers += 1;
+                                nrOfPoints += question.points
+                            }
                         }
                     }
                 }
-            }
 
-            if (this.appState.jwt !== null) {
+                if (this.appState.jwt !== null) {
 
-                if (!this.resultsForQuiz.length) {
-                    this.result = { timesPlayed: 1, totalScore: nrOfPoints, quizId: this.quizId }
+                    if (!this.resultsForQuiz.length) {
+                        this.result = { timesPlayed: 1, totalScore: nrOfPoints, quizId: this.quizId }
 
-                    this.resultService
-                        .createResult(this.result)
-                        .then(
-                            response => {
-                                if (response.statusCode >= 200 && response.statusCode < 300) {
-                                    this._alert = null;
-                                    console.log("CREATED")
-                                    this.finishQuiz(nrOfCorrectAnswers, nrOfPoints);
-                                } else {
-                                    // show error message
-                                    this._alert = {
-                                        message: response.statusCode.toString() + ' - ' + response.errorMessage,
-                                        type: AlertType.Danger,
-                                        dismissable: true,
+                        this.resultService
+                            .createResult(this.result)
+                            .then(
+                                response => {
+                                    if (response.statusCode >= 200 && response.statusCode < 300) {
+                                        this._alert = null;
+                                        console.log("CREATED QUIZ RESULT")
+                                        this.finishQuiz(nrOfCorrectAnswers, nrOfPoints);
+                                    } else {
+                                        // show error message
+                                        this._alert = {
+                                            message: response.statusCode.toString() + ' - ' + response.errorMessage,
+                                            type: AlertType.Danger,
+                                            dismissable: true,
+                                        }
                                     }
                                 }
-                            }
-                        );
+                            );
+                    }
+                    else {
+                        let existingResult = this.resultsForQuiz[0] as IResult
+
+                        const id = existingResult.id
+                        let timesPlayed = existingResult.timesPlayed + 1;
+                        const totalScore = existingResult.totalScore + nrOfPoints;
+
+                        this.resultToUpdate = { id: id, timesPlayed: timesPlayed, totalScore: totalScore, quizId: this.quizId }
+                        this.resultService
+                            .updateResult(this.resultToUpdate)
+                            .then(
+                                response => {
+                                    if (response.statusCode >= 200 && response.statusCode < 300) {
+                                        this._alert = null;
+                                        console.log("UPDATED QUIZ RESULT")
+                                        this.finishQuiz(nrOfCorrectAnswers, nrOfPoints);
+                                    } else {
+                                        // show error message
+                                        this._alert = {
+                                            message: response.statusCode.toString() + ' - ' + response.errorMessage,
+                                            type: AlertType.Danger,
+                                            dismissable: true,
+                                        }
+                                    }
+                                }
+                            );
+                    }
                 }
                 else {
-                    let existingResult = this.resultsForQuiz[0] as IResult
-
-                    const id = existingResult.id
-                    let timesPlayed = existingResult.timesPlayed + 1;
-                    const totalScore = existingResult.totalScore + nrOfPoints;
-
-                    this.resultToUpdate = { id: id, timesPlayed: timesPlayed, totalScore: totalScore, quizId: this.quizId }
-                    this.resultService
-                        .updateResult(this.resultToUpdate)
-                        .then(
-                            response => {
-                                if (response.statusCode >= 200 && response.statusCode < 300) {
-                                    this._alert = null;
-                                    console.log("UPDATED")
-                                    this.finishQuiz(nrOfCorrectAnswers, nrOfPoints);
-                                } else {
-                                    // show error message
-                                    this._alert = {
-                                        message: response.statusCode.toString() + ' - ' + response.errorMessage,
-                                        type: AlertType.Danger,
-                                        dismissable: true,
-                                    }
-                                }
-                            }
-                        );
+                    this.finishQuiz(nrOfCorrectAnswers, nrOfPoints);
                 }
-            }
-            else {
-                this.finishQuiz(nrOfCorrectAnswers, nrOfPoints);
             }
         }
     }

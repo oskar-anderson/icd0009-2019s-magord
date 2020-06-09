@@ -45,6 +45,9 @@ namespace DAL.App.EF.Migrations
                     b.Property<bool>("IsSelected")
                         .HasColumnType("bit");
 
+                    b.Property<int?>("NumberOfAnswers")
+                        .HasColumnType("int");
+
                     b.Property<Guid>("QuestionId")
                         .HasColumnType("uniqueidentifier");
 
@@ -192,7 +195,7 @@ namespace DAL.App.EF.Migrations
                     b.Property<int>("Number")
                         .HasColumnType("int");
 
-                    b.Property<decimal>("Points")
+                    b.Property<decimal?>("Points")
                         .HasColumnType("decimal(18,4)");
 
                     b.Property<Guid>("QuizId")
@@ -235,7 +238,7 @@ namespace DAL.App.EF.Migrations
                         .HasColumnType("nvarchar(256)")
                         .HasMaxLength(256);
 
-                    b.Property<decimal>("TotalPoints")
+                    b.Property<decimal?>("TotalPoints")
                         .HasColumnType("decimal(18,4)");
 
                     b.HasKey("Id");
@@ -276,7 +279,7 @@ namespace DAL.App.EF.Migrations
                     b.Property<int>("TimesPlayed")
                         .HasColumnType("int");
 
-                    b.Property<decimal>("TotalScore")
+                    b.Property<decimal?>("TotalScore")
                         .HasColumnType("decimal(18,4)");
 
                     b.HasKey("Id");

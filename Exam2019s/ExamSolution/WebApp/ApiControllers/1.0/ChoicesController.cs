@@ -49,7 +49,7 @@ namespace WebApp.ApiControllers._1._0
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPut("{id}")]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "User")]
         public async Task<IActionResult> PutChoice(Guid id, DAL.App.DTO.Choice choice)
         {
             if (id != choice.Id)

@@ -2,17 +2,19 @@
     <br>
     <h1 class="text-center">Welcome to Quiz-Fun ${appState.firstName}!</h1>
     <br>
-    <br>
-    <br>
     <div class="text-center">
+        <h1>Quizzes</h1>
+        <br>
         <h3>Feel free to play some of our community quizzes!</h3>
         <h4 if.bind="appState.jwt == null">Or take a moment to sign up to keep track of your quizz stats! :)</h4>
         <br>
 
         <p class="text-center">
-            <a if.bind="isAdmin && appState.jwt !== null" route-href="route: quizzes-create; params.bind: {}" class="btn btn-success active"
-                role="button">Create a new quiz</a>
+            <a if.bind="isAdmin && appState.jwt !== null" route-href="route: quizzes-create; params.bind: {}"
+                class="btn btn-success active" role="button">Create a new quiz</a>
         </p>
+
+
         <br>
         <table class="table table-borderless">
             <thead class="thead-dark">
@@ -20,25 +22,29 @@
                     <th data-toggle="tooltip" data-placement="top" title="Click on the quiz to start playing!">
                         Quizzes
                     </th>
-                    <th data-toggle="tooltip" data-placement="top" title="This represents the total maximum points you can get from the quiz!">
+                    <th data-toggle="tooltip" data-placement="top"
+                        title="This represents the total maximum points you can get from the quiz!">
                         Maximum possible points
                     </th>
-                    <th data-html="true" data-toggle="tooltip" data-placement="top" title="This represents the number of times you have played the quiz!" if.bind="appState.jwt !== null && _results.length > 0">
+                    <th data-html="true" data-toggle="tooltip" data-placement="top"
+                        title="This represents the number of times you have played the quiz!"
+                        if.bind="appState.jwt !== null && _results.length > 0">
                         Times quizzed
                     </th>
                     <th if.bind="appState.jwt !== null && _results.length > 0">
-                         <a data-html="true" data-toggle="tooltip" data-placement="top" title="This represents the average score you currently have!">My average quiz-score</a>
+                        <a data-html="true" data-toggle="tooltip" data-placement="top"
+                            title="This represents the average score you currently have!">My average quiz-score</a>
                     </th>
                     <th></th>
                 </tr>
             </thead>
             <tbody>
-                <tr repeat.for="quiz of _quizzes">
+                <tr repeat.for="quiz of _quizzes" if.bind="quiz.totalPoints !== null">
                     <td>
                         <a route-href="route: questions-index; params.bind: { id: quiz.id }"> ${quiz.name} </a>
                     </td>
                     <td>
-                       <b>${quiz.totalPoints} points</b>
+                        <b>${quiz.totalPoints} points</b>
                     </td>
                     <td repeat.for="result of _results" if.bind="appState.jwt !== null && result.quizId == quiz.id">
                         <b>${result.timesPlayed}</b>
@@ -47,10 +53,11 @@
                         <b>${(result.totalScore / result.timesPlayed).toFixed(2)}</b>
                     </td>
                     <td>
-                        <a if.bind="isAdmin && appState.jwt !== null" route-href="route: quizzes-edit; params.bind: { id: quiz.id }"
+                        <a if.bind="isAdmin && appState.jwt !== null"
+                            route-href="route: quizzes-edit; params.bind: { id: quiz.id }"
                             class="btn btn-primary active" role="button">Edit</a>
-                        <button style="float: right" if.bind="isAdmin && appState.jwt !== null" click.trigger="deleteOnClick(quiz)" type="button"
-                            class="btn btn-danger">Delete</button>
+                        <button style="float: right" if.bind="isAdmin && appState.jwt !== null"
+                            click.trigger="deleteOnClick(quiz)" type="button" class="btn btn-danger">Delete</button>
                     </td>
                 </tr>
             </tbody>

@@ -1,0 +1,53 @@
+<template>
+    <br>
+    <h1 class="text-center">Welcome to Quiz-Fun ${appState.firstName}!</h1>
+    <br>
+    <div class="text-center">
+        <h1>Polls</h1>
+        <br>
+        <h3>Be a part of the community and take part in our polls!</h3>
+        <h4 if.bind="appState.jwt == null">But first...please sign in!</h4>
+        <br>
+
+        <p class="text-center">
+            <a if.bind="isAdmin && appState.jwt !== null" route-href="route: polls-create; params.bind: {}"
+                class="btn btn-success active" role="button">Create a new Poll</a>
+        </p>
+
+
+        <br>
+        <table if.bind="appState.jwt !== null" class="table table-borderless">
+            <thead class="thead-dark">
+                <tr>
+                    <th>
+                        Polls
+                    </th>
+                    <th>
+                        See results
+                    </th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr repeat.for="quiz of _quizzes" if.bind="quiz.totalPoints == null">
+                    <td>
+                        <a route-href="route: questions-index; params.bind: { id: quiz.id }"> ${quiz.name} </a>
+                    </td>
+                    <td>
+                        <a route-href="route: poll-results-index; params.bind: { id: quiz.id }">Click
+                            here</a>
+                    </td>
+                    <td>
+                        <a style="float: right" if.bind="isAdmin && appState.jwt !== null"
+                            route-href="route: polls-edit; params.bind: { id: quiz.id }"
+                            class="btn btn-primary active" role="button">Edit</a>
+                        <button style="float: right" if.bind="isAdmin && appState.jwt !== null"
+                            click.trigger="deleteOnClick(quiz)" type="button" class="btn btn-danger">Delete</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+
+</template>

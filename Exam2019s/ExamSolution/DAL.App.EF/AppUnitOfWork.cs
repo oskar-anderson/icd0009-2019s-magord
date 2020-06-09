@@ -23,6 +23,6 @@ namespace DAL.App.EF
         
         public IResultRepository Results =>
             GetRepository<IResultRepository>(() => new ResultRepository(UowDbContext));
-        
+
     }
 }

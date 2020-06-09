@@ -12,7 +12,7 @@ namespace DAL.App.DTO
         
         public string Description { get; set; } = default!;
 
-        public decimal Points { get; set; } = default!;
+        public decimal? Points { get; set; } = default!;
 
         public Guid QuizId { get; set; } = default!;
         public Quiz? Quiz { get; set; }

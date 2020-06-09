@@ -3,6 +3,7 @@ export interface IChoiceEdit {
     value: string;
     isSelected: boolean;
     isAnswer: boolean;
+    numberOfAnswers?: number;
     
     questionId: string | null;
     question: string

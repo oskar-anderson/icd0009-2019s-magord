@@ -9,7 +9,7 @@ namespace DAL.App.DTO
         public Guid Id { get; set; }
         public string Name { get; set; } = default!;
         
-        public decimal TotalPoints { get; set; }
+        public decimal? TotalPoints { get; set; }
         
         public Guid AppUserId { get; set; } = default!;
         public AppUser? AppUser { get; set; }

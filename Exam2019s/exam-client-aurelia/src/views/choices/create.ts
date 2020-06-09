@@ -7,6 +7,8 @@ import { autoinject } from 'aurelia-framework';
 import { RouteConfig, NavigationInstruction, Router } from 'aurelia-router';
 import { IAlertData } from '../../../types/IAlertData';
 import { AlertType } from '../../../types/AlertType';
+import { QuizService } from 'service/quiz-service';
+import { IQuiz } from 'domain/IQuiz/IQuiz';
 
 
 
@@ -18,9 +20,10 @@ export class ChoicesCreate {
     private choice: IChoiceCreate | null = null;
     private questionId: string | null = null
     private question: IQuestion | null = null;
+    private quiz: IQuiz | null = null;
 
 
-    constructor(private questionService: QuestionService, private choiceService: ChoiceService, private router: Router) {
+    constructor(private quizService: QuizService, private questionService: QuestionService, private choiceService: ChoiceService, private router: Router) {
     }
 
 
@@ -33,6 +36,23 @@ export class ChoicesCreate {
                         this._alert = null;
                         console.log(response.data)
                         this.question = response.data!;
+                        this.questionId = params.id
+                        this.quizService.getQuiz(this.question.quizId).then(
+                            response => {
+                                if (response.statusCode >= 200 && response.statusCode < 300) {
+                                    this._alert = null;
+                                    console.log(response.data)
+                                    this.quiz = response.data!;
+                                } else {
+                                    // show error message
+                                    this._alert = {
+                                        message: response.statusCode.toString() + ' - ' + response.errorMessage,
+                                        type: AlertType.Danger,
+                                        dismissable: true,
+                                    }
+                                }
+                            }
+                        );
                     } else {
                         // show error message
                         this._alert = {
@@ -46,13 +66,13 @@ export class ChoicesCreate {
         }
     }
 
-    navigateBack(){
+    navigateBack() {
         this.router.navigateBack();
     }
 
     onSubmit(event: Event) {
         event.preventDefault();
-        if(this.choice.isAnswer == undefined) {
+        if (this.choice.isAnswer == undefined && this.quiz.totalPoints !== null) {
             alert("Please choose if the answer is correct or not!")
             return null;
         }

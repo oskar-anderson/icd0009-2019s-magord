@@ -13,7 +13,7 @@ namespace Domain.App
         public string Description { get; set; } = default!;
 
         [Column(TypeName = "decimal(18,4)")]
-        public decimal Points { get; set; } = default!;
+        public decimal? Points { get; set; } = default!;
 
         public Guid QuizId { get; set; } = default!;
         public Quiz? Quiz { get; set; }

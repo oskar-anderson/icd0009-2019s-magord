@@ -5,16 +5,25 @@
     <alert alert-data.bind="_alert"></alert>
 
 
-    <h1 class="text-center">${quiz.name} quiz</h1>
-    <h5 class="text-center">${quiz.totalPoints} total points</h5>
+    <div if.bind="quiz.totalPoints !== null">
+        <h1 class="text-center">${quiz.name} quiz</h1>
+        <h5 class="text-center">${quiz.totalPoints} total points</h5>
+    </div>
+
+    <div if.bind="quiz.totalPoints == null">
+        <h1 class="text-center">${quiz.name}</h1>
+    </div>
 
     <br>
     <p class="text-center">
         <a if.bind="isAdmin" route-href="route: questions-create; params.bind: { id: quizId }"
             class="btn btn-primary active" role="button">Add a new question</a>
     </p>
-    <p class="text-center">
+    <p class="text-center" if.bind="quiz.totalPoints !== null">
         <a route-href="route: home; params.bind: {}" class="btn btn-warning active" role="button">Back to quizzes</a>
+    </p>
+    <p class="text-center" if.bind="quiz.totalPoints == null">
+        <a route-href="route: polls-index; params.bind: {}" class="btn btn-warning active" role="button">Back to polls</a>
     </p>
     <br>
 
@@ -30,7 +39,8 @@
             <br>
             <br>
         </div>
-        <h5>${question.number}. ${question.description} (${question.points} points)</h5>
+        <h5 if.bind="quiz.totalPoints !== null">${question.number}. ${question.description} (${question.points} points)</h5>
+        <h5 if.bind="quiz.totalPoints == null">${question.number}. ${question.description}</h5>
         <div repeat.for="choice of _choices" if.bind="choice.questionId == question.id">
             <br>
             <div class="form-check">
@@ -40,10 +50,11 @@
                 <label class="form-check-label" for="exampleRadios1">
                     ${choice.value}
                 </label>
-                <a style="margin-left: 10px;" if.bind="isAdmin" route-href="route: choices-edit; params.bind: { id: choice.id }"
+                <a style="margin-left: 10px;" if.bind="isAdmin"
+                    route-href="route: choices-edit; params.bind: { choiceId: choice.id }"
                     class="btn btn-primary btn-sm active" role="button">Edit</a>
-                <button if.bind="isAdmin" click.trigger="deleteChoiceOnClick(choice)"
-                    type="button" class="btn btn-danger btn-sm">Delete</button>
+                <button if.bind="isAdmin" click.trigger="deleteChoiceOnClick(choice)" type="button"
+                    class="btn btn-danger btn-sm">Delete</button>
             </div>
             <br>
         </div>

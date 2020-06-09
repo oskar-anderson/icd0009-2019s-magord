@@ -11,6 +11,8 @@ namespace Domain.App
 
         public bool IsAnswer { get; set; }
 
+        public int? NumberOfAnswers { get; set; }
+
         public Guid QuestionId { get; set; }
         public Question? Question { get; set; }
 

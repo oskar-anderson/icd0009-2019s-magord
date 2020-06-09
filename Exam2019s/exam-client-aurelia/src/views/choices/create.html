@@ -16,11 +16,11 @@
                     <input class="form-control" type="text" id="Name" maxlength="256" value.bind="choice.value" />
                 </div>
 
-                <div>
+                <div if.bind="quiz.totalPoints !== null">
                     Is this the correct answer?
                 </div>
 
-                <div class="form-check">
+                <div class="form-check" if.bind="quiz.totalPoints !== null">
                     <input class="form-check-input" type="radio" name="exampleRadiosName${question.number}"
                         id="exampleRadiosId1" model.bind="true" checked.bind="choice.isAnswer">
                     <label class="form-check-label" for="exampleRadios1">
@@ -28,14 +28,14 @@
                     </label>
                 </div>
 
-                <div class="form-check">
+                <div class="form-check" if.bind="quiz.totalPoints !== null">
                     <input class="form-check-input" type="radio" name="exampleRadiosName${question.number}"
                         id="exampleRadiosId1" model.bind="false" checked.bind="choice.isAnswer">
                     <label class="form-check-label" for="exampleRadios1">
                         No
                     </label>
+                    <br>
                 </div>
-                <br>
 
 
                 <div class="form-group">

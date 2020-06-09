@@ -1,7 +1,7 @@
 export interface IQuestionCreate {
     number: number;
     description: string;
-    points: number;
+    points?: number;
     
     quizId: string | null;
 }

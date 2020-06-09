@@ -3,6 +3,7 @@ export interface IChoice {
     value: string;
     isSelected: boolean;
     isAnswer: boolean;
+    numberOfAnswers?: number;
     
     questionId: string;
     question: string

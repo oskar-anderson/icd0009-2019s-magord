@@ -1,4 +1,4 @@
 export interface IQuizCreate {
     name: string;
-    totalPoints: number;
+    totalPoints?: number;
 }

@@ -15,7 +15,7 @@
                     <input class="form-control" type="text" id="TotalPoints" maxlength="256" value.bind="question.description"/>
                 </div>
 
-                <div class="form-group">
+                <div if.bind="quiz.totalPoints != null" class="form-group">
                     <label class="control-label" for="TotalPoints">How many points does the question give?</label>
                     <input class="form-control" type="text" id="TotalPoints" maxlength="256" value.bind="question.points"/>
                 </div>

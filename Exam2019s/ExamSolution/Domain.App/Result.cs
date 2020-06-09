@@ -10,7 +10,7 @@ namespace Domain.App
         public int TimesPlayed { get; set; }
 
         [Column(TypeName = "decimal(18,4)")]
-        public decimal TotalScore { get; set; }
+        public decimal? TotalScore { get; set; }
 
         public Guid QuizId { get; set; }
         public Quiz? Quiz { get; set; }

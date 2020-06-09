@@ -21,7 +21,7 @@ export class App {
         config.addAuthorizeStep(AuthorizeStep);
 
         config.map([
-            { route: ['', 'home', 'home/index'], name: 'home', moduleId: PLATFORM.moduleName('views/home/index'), nav: false, title: 'Home', settings: { roles: [] } },
+            { route: ['', 'home', 'home/index'], name: 'home', moduleId: PLATFORM.moduleName('views/home/index'), nav: true, title: 'Quizzes', settings: { roles: [] } },
 
 
             { route: ['account/login'], name: 'account-login', moduleId: PLATFORM.moduleName('views/account/login'), nav: false, title: 'Login', settings: { roles: [] } },
@@ -35,6 +35,12 @@ export class App {
 
 
             { route: ['shared/deleted'], name: 'deleted', moduleId: PLATFORM.moduleName('views/shared/deleted'), nav: false, title: 'Item deleted', settings: { roles: ['admin'] } },
+
+            { route: ['polls/create'], name: 'polls-create', moduleId: PLATFORM.moduleName('views/polls/create'), nav: false, title: 'Polls create', settings: { roles: ['admin'] } },
+            { route: ['polls/edit/:id?'], name: 'polls-edit', moduleId: PLATFORM.moduleName('views/polls/edit'), nav: false, title: 'Polls edit', settings: { roles: ['admin'] } },
+            { route: ['polls', 'polls/index'], name: 'polls-index', moduleId: PLATFORM.moduleName('views/polls/index'), nav: true, title: 'Polls', settings: { roles: [] } },
+
+            { route: ['poll-results', 'poll-results/index'], name: 'poll-results-index', moduleId: PLATFORM.moduleName('views/poll-results/index'), nav: false, title: 'Polls results', settings: { roles: [] } },
 
             
 

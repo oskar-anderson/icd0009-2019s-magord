@@ -25,6 +25,7 @@ namespace WebApp.ApiControllers._1._0
 
         // GET: api/Results
         [HttpGet]
+        [AllowAnonymous]
         public async Task<ActionResult<IEnumerable<DAL.App.DTO.Result>>> GetResults()
         {
             return Ok(await _uow.Results.GetAllAsync(User.UserId()));

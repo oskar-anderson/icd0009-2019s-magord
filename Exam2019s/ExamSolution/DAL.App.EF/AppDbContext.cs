@@ -64,8 +64,8 @@ namespace DAL.App.EF
                 .WithOne(l => l.Quiz!)
                 .HasForeignKey(l => l.QuizId)
                 .OnDelete(DeleteBehavior.Cascade);
-            
-            
+
+
             // Enable cascade delete on Question
             builder.Entity<Question>()
                 .HasMany(s => s.Choices)

@@ -1,0 +1,39 @@
+<template>
+
+    <require from="../../components/alert"></require>
+
+    <alert alert-data.bind="_alert"></alert>
+
+
+    <h1 class="text-center">${quiz.name}</h1>
+
+    <br>
+    <p class="text-center" if.bind="quiz.totalPoints == null">
+        <a route-href="route: polls-index; params.bind: {}" class="btn btn-warning active" role="button">Back to
+            polls</a>
+    </p>
+    <br>
+
+
+    <div style="border-style: solid" repeat.for="question of _questions" class="text-center">
+        <br>
+        <h5 if.bind="quiz.totalPoints == null">${question.number}. ${question.description}</h5>
+        <div repeat.for="choice of _choices" if.bind="choice.questionId == question.id">
+            <br>
+            <div class="form-check">
+
+                <label class="form-check-label" for="exampleRadios1">
+                    ${choice.value} <b if.bind="choice.numberOfAnswers > 0"> - ${choice.numberOfAnswers} answers</b>
+                    <b if.bind="choice.numberOfAnswers == undefined">- 0 answers</b>
+                </label>
+            </div>
+            <br>
+        </div>
+        <br>
+    </div>
+
+
+    <br>
+    <br>
+    <br>
+</template>

@@ -11,7 +11,7 @@ namespace Domain.App
         [MinLength(1)] [MaxLength(256)] public string Name { get; set; } = default!;
 
         [Column(TypeName = "decimal(18,4)")]
-        public decimal TotalPoints { get; set; }
+        public decimal? TotalPoints { get; set; }
         public ICollection<Question>? Questions { get; set; }
         public ICollection<Result>? Results { get; set; }
     }

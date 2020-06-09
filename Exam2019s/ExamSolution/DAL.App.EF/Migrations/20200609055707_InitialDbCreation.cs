@@ -165,7 +165,7 @@ namespace DAL.App.EF.Migrations
                     ChangedAt = table.Column<DateTime>(nullable: false),
                     AppUserId = table.Column<Guid>(nullable: false),
                     Name = table.Column<string>(maxLength: 256, nullable: false),
-                    TotalPoints = table.Column<decimal>(type: "decimal(18,4)", nullable: false)
+                    TotalPoints = table.Column<decimal>(type: "decimal(18,4)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -189,7 +189,7 @@ namespace DAL.App.EF.Migrations
                     ChangedAt = table.Column<DateTime>(nullable: false),
                     Number = table.Column<int>(nullable: false),
                     Description = table.Column<string>(nullable: false),
-                    Points = table.Column<decimal>(type: "decimal(18,4)", nullable: false),
+                    Points = table.Column<decimal>(type: "decimal(18,4)", nullable: true),
                     QuizId = table.Column<Guid>(nullable: false)
                 },
                 constraints: table =>
@@ -214,7 +214,7 @@ namespace DAL.App.EF.Migrations
                     ChangedAt = table.Column<DateTime>(nullable: false),
                     AppUserId = table.Column<Guid>(nullable: false),
                     TimesPlayed = table.Column<int>(nullable: false),
-                    TotalScore = table.Column<decimal>(type: "decimal(18,4)", nullable: false),
+                    TotalScore = table.Column<decimal>(type: "decimal(18,4)", nullable: true),
                     QuizId = table.Column<Guid>(nullable: false)
                 },
                 constraints: table =>
@@ -246,6 +246,7 @@ namespace DAL.App.EF.Migrations
                     Value = table.Column<string>(nullable: false),
                     IsSelected = table.Column<bool>(nullable: false),
                     IsAnswer = table.Column<bool>(nullable: false),
+                    NumberOfAnswers = table.Column<int>(nullable: true),
                     QuestionId = table.Column<Guid>(nullable: false)
                 },
                 constraints: table =>
